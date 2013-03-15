@@ -612,7 +612,9 @@ function MakeLineGraph(axesCont, config) { //begin line graph object generator t
 
 		this.series = graph.selectAll("g.series")
 		.data(this.Data).enter()
-		.append("g").attr("class", function(d, i) {
+		.append("g")
+		.attr("clip-path", "url(#clip_" + this.id + ")")
+		.attr("class", function(d, i) {
 			return "series fill" + i;
 		});
 
@@ -632,14 +634,14 @@ function MakeLineGraph(axesCont, config) { //begin line graph object generator t
 		.attr("transform", function(d, i) {
 			return "translate(" + axesCont.xScale(d.x) + "," + axesCont.yScale(d.y) + ")";
 										})
-		.attr("clip-path", "url(#clip_" + this.id + ")")
+		
 		//move each symbol to the x,y coordinates
 		.append("path")
-		.attr("d", d3.svg.symbol().type("circl")
-		
-		//function(d,i,j){
-		//	return (d3.svg.symbol().type(d3.svg.symbolTypes[j]));
-		//}
+		.attr("d", 
+		//j is the index of the series, i of the data points in the series
+		function(d,i,j){
+		   return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
+		}
 		);
 		//pick the shapes sequentially off the list
 	}
