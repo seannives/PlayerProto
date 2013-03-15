@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+    <head>
+ 	<title class="setTitle"></title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="eCourses Author, Title" name="description">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen">
+	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen">
+	<link href="css/graphics_and_svg.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+    </head>
+	<body>
+		<div class="titler">
+			<span class='number setId'>
+			<span class="setTitle">Test Cases for SVG Container, Axes Container, Line Graph</span>
+		</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+				<div id="widgetTarget0"><p>0. Single bar graph</p></div>
+				<div id="widgetTarget1"><p>1. Multiple series bar graph (these just stack up labels, or overprint bars with the same label)</p></div>
+				<div id="widgetTarget2"><p>2. Grouped bars (separate series with same label shown in group)</p></div>
+				
+			</div>
+			<div class="span6 rightCol">
+				<div id="widgetTarget50"><p>3. Double-sided pyramid bar graph (negatives)</p></div>
+				<div id="widgetTarget55"><p>4. Double-sided bar graph (double positive axis)</p></div>
+				<div id="widgetTarget70"><p>5. Small multiples (several line graphs in container)</p></div>
+				<div id="widgetTarget80"><p>6. bar with Legend</p></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/jquery-latest.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v2.min.js"></script>
+	<script src="js/assessment.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
+<script>
+
+var highIncome = [
+	{	y: "Cardiovascular disease",	x: 37},
+	{	y: "Infectious and parasitic", x: 2},
+	{	y: "Cancers",				x: 27},
+	{	y: "Injuries", 				x: 6},
+	{	y: "Respiratory diseases", 	x: 6},
+	{	y: "Respiratory infections", x: 4},
+	{	y: "Infant Deaths",			x: 0},
+	{	y: "Digestive Diseases",		x:4},
+	{	y: "Diabetes",				x: 3},
+	{	y: "Nutritional deficiencies", x: 0},
+	{	y: "Pregnancy-related deaths", x: 0},
+	{	y: "Other", 					x: 11}
+	]; 
+var middleIncome = [
+	{	y: "Cardiovascular disease",	x: 33},
+	{	y: "Infectious and parasitic", x: 14},
+	{	y: "Cancers",				x: 12},
+	{	y: "Injuries", 				x: 10},
+	{	y: "Respiratory diseases", 	x: 9},
+	{	y: "Respiratory infections", x: 6},
+	{	y: "Infant Deaths",			x: 5},
+	{	y: "Digestive Diseases",		x: 4},
+	{	y: "Diabetes",				x: 2},
+	{	y: "Nutritional deficiencies", x: 1},
+	{	y: "Pregnancy-related deaths", x: 1},
+	{	y: "Other", 					x: 5}
+	]; 
+
+var lowIncome = [
+	{	y: "Cardiovascular disease",	x: 16},
+	{	y: "Infectious and parasitic", x: 34},
+	{	y: "Cancers",				x: 5},
+	{	y: "Injuries", 				x: 9},
+	{	y: "Respiratory diseases", 	x: 4},
+	{	y: "Respiratory infections", x: 12},
+	{	y: "Infant Deaths",			x: 9},
+	{	y: "Digestive Diseases",		x:3},
+	{	y: "Diabetes",				x: 2},
+	{	y: "Nutritional deficiencies", x: 2},
+	{	y: "Pregnancy-related deaths", x: 2},
+	{	y: "Other", 					x: 4}
+	]; 
+
+var growthMen = [
+	{	y: "0-10", x: -10},
+	{	y: "11-20", x: -9},
+	{	y: "21-30", x: -8},
+	{	y: "31-40", x: -7},
+	{	y: "41-50", x: -5},
+	{	y: "51-60", x: -4},
+	{	y: "61-70",x: -3},
+	{	y: "71-80",x: -2}
+	]
+ var growthWomen = [
+	{	y: "0-10", x: 10},
+	{	y: "11-20", x: 9},
+	{	y: "21-30", x: 8},
+	{	y: "31-40", x: 7},
+	{	y: "41-50", x: 5},
+	{	y: "51-60", x: 4},
+	{	y: "61-70",x: 3},
+	{	y: "71-80",x: 2.5}
+	]
+var shrinkMen = [
+	{	y: "0-10", x: -3},
+	{	y: "11-20", x: -4},
+	{	y: "21-30", x: -5},
+	{	y: "31-40", x: -6},
+	{	y: "41-50", x: -7},
+	{	y: "51-60", x: -7.5},
+	{	y: "61-70",x: -8},
+	{	y: "71-80",x: -8.5}
+	]
+ var shrinkWomen = [
+	{	y: "0-10", x: 3},
+	{	y: "11-20", x: 4},
+	{	y: "21-30", x: 5},
+	{	y: "31-40", x: 6},
+	{	y: "41-50", x: 7},
+	{	y: "51-60", x: 8},
+	{	y: "61-70",x: 8.5},
+	{	y: "71-80",x: 9}
+	];
+		
+		var ordinalData = [
+					{	x: 34.7,
+						y: "tabloids"
+					},
+					{	x: 23.9,
+						y: "periodicals"
+					},
+					{	x: 41.2,
+						y: "novellas"}
+						];
+var ordinalData1 = [
+			{	x: 3,
+				y: "Energy 1"
+			},
+			{	x: 6,
+				y: "Energy 2"}
+				];
+var ordinalData2 = [
+			{	x: 1,	y: "Energy 2"	},
+			{	x: 4,	y: "Energy 1"},
+								];
+		
+	var lineData2 = [
+		{	x: 12,	y: -3.1},
+		{	x: 16.7,	y: -2.02},
+		{	x: 19.8,	y: -1.2},
+		{	x: 124.9, y: -0.36},
+		{	x: 156.0,	y: -0.34	},
+		{	x: 234,	y: 0.425},
+		{	x: 456.7,	y: 0.545},
+		{	x: 555,	y: 0.61},
+		{	x: 666.6,	y: 0.7},
+		{	x: 700,	y: 0.9},
+		{	x: 892.1,	y: 1.128},
+		{	x: 899,	y: 1.55	},
+		{	x: 910,	y: 1.75},
+		{	x: 920,	y: 1.86}
+		]; // array of line data
+		
+	
+	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
+	
+	var svg0 = new MakeSVGContainer(
+		{ordinal: 0,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	
+	var axes0 = new MakeAxes(svg0,{
+		id: 0,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [ordinalData],
+		xaxisType: "linear",
+		xTicks: 4,
+		xOrient: "bottom",
+		xLabel: "linear bar value (%)",
+		yaxisType: "ordinal",
+		yOrient: "left",
+		yLabel: "bar category labels"
+	});
+	
+	var lines0 = new MakeBarGraph(axes0,{
+		Data: [ordinalData],
+		type: "linear" //ignored for anything but grouped
+	});
+
+	
+//	<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
+	var svg1 = new MakeSVGContainer(
+		{ordinal: 1,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	var axes1 = new MakeAxes(svg1,{
+		id: 1,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [ordinalData, ordinalData2],
+		xaxisType: "linear",
+		xTicks: 5,
+		xOrient: "bottom",
+		xLabel: "counts",
+		yaxisType: "ordinal",
+		yOrient: "left",
+	});
+	
+	var lines1 = new MakeBarGraph(axes1,{
+		Data: [ordinalData, ordinalData2],
+		type: "lines"
+	});
+
+	//	<div id="widgetTarget2"><p>Grouped bars (separate series with same label shown in group)</p></div>
+	
+	var svg2 = new MakeSVGContainer(
+		{ordinal: 2,
+		maxWid: 500,
+		maxHt: 500
+		}
+	);
+	var axes2 = new MakeAxes(svg2,{
+		id: 2,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lowIncome,middleIncome,highIncome],
+		xaxisType: "linear",
+		xTicks: 5,
+		xOrient: "bottom",
+		xLabel: "Percentage for Low, Middle, and High Income",
+		yaxisType: "ordinal",
+		yTicks: 5,
+		yOrient: "left",
+	});
+	
+	var lines2 = new MakeBarGraph(axes2,{
+		Data: [lowIncome,middleIncome,highIncome],
+		type: "grouped"
+	});
+	
+	
+	//	<div id="widgetTarget50"><p>4. Doublesided bar</p></div>
+	var svg50 = new MakeSVGContainer(
+		{ordinal: 50,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	var axes50 = new MakeAxes(svg50,{
+		id: 50,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [growthMen,growthWomen],
+		xaxisType: "linear", yaxisType: "ordinal",
+		xTicks: 10,
+		xOrient: "bottom",
+		yOrient: "left",
+		xLabel: "linear axis showing negative values",
+		yLabel: "Age ranges"
+	});
+
+	var lines50 = new MakeBarGraph(axes50,{
+		Data: [growthMen,growthWomen],
+		type: "linear"
+	});
+	
+	//	<div id="widgetTarget50"><p>4. Doublesided bar double positive axis</p></div>
+	var svg55 = new MakeSVGContainer(
+		{ordinal: 55,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	var axes55 = new MakeAxes(svg55,{
+		id: 55,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [growthMen,growthWomen],
+		xaxisType: "double positive", yaxisType: "ordinal",
+		xTicks: 10,
+		xOrient: "bottom",
+		yOrient: "left",
+		xLabel: "double positive axis",
+		yLabel: "Age ranges"
+		
+	});
+
+	var lines50 = new MakeBarGraph(axes55,{
+		Data: [growthMen,growthWomen],
+		type: "linear"
+	});
+
+	//	<div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
+
+
+	var svg70 = new MakeSVGContainer(
+		{ordinal: 70,
+		maxWid: 600,
+		maxHt: 300
+		}
+	);
+	var axes70 = new MakeAxes(svg70,{
+		id: 70,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: .5, yPerc: 1,//full height and half width
+		Data: [shrinkWomen],
+		xaxisType: "linear", yaxisType: "ordinal",
+		xTicks: 3,
+		xOrient: "bottom",
+		yTicks: 3,
+		yOrient: "left",
+		xLabel: "population",
+		yLabel: "age groups"
+
+	});
+	var lines70 = new MakeBarGraph(axes70,{
+		Data: [shrinkWomen],
+		type: "linear"
+	});
+	
+	var axes72 = new MakeAxes(svg70,{
+		id: 72,
+		xPosPerc: .5, yPosPerc:0,
+		xPerc: .5, yPerc: 1,//full height 
+		Data: [shrinkMen],
+		xaxisType: "linear", yaxisType: "ordinal",
+		xTicks: 3,
+		xOrient: "bottom",
+		yTicks: 3,
+		yOrient: "left",
+		xLabel: "population",
+	 
+
+	});
+	var lines72 = new MakeLineGraph(axes72,{
+		Data: [shrinkMen],
+		type: "linear"
+	});
+	
+	//	<div id="widgetTarget80"><p>5. Bars with Legend</p></div>
+	var svg5 = new MakeSVGContainer(
+		{ordinal: 80,
+		maxWid: 500,
+		maxHt: 500
+		}
+	);
+	var axes5 = new MakeAxes(svg5,{
+		id: 5,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lowIncome,middleIncome,highIncome],
+		xaxisType: "linear",
+		xTicks: 5,
+		xOrient: "bottom",
+		xLabel: "Percentage for Low, Middle, and High Income",
+		yaxisType: "ordinal",
+		yTicks: 5,
+		yOrient: "left",
+	});
+	
+	var lines2 = new MakeBarGraph(axes5,{
+		Data: [lowIncome,middleIncome,highIncome],
+		type: "grouped"
+	});
+	
+	var legend5 = new MakeLegend(axes5,{
+		xPos: "right", yPos: "top",
+		labels: ["low income", "middle income", "high income"],
+		type: "box"
+	});
+</script>
+</body>
+</html>

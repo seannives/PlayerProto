@@ -1,0 +1,259 @@
+
+/* Basic stylin' */
+
+html, html > body {
+    XXXcolor: #333333;
+    font-family: Georgia,serif;
+    font-size: 16px;
+    XXXline-height: 20px;
+    XXXmargin: 0;
+    XXXpadding: 0;
+    height: 100%;
+}
+
+p {
+    margin: 0 0 10px;
+    text-align: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+/* Links */
+
+a {
+    color: #0088CC;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #005580;
+    text-decoration: underline;
+}
+
+a.remote {
+    padding-right: 1.7em;
+    background: url('../img/remote.png') no-repeat top right;
+}
+
+a .info  {
+	margin-bottom: .4em; 
+	margin-left: .1em;
+}
+
+a .lit {
+	color: #f49524;
+}
+/* Swipes */
+
+
+a.swipe {
+    position: fixed;
+    top: 49%;
+    font-size: 72pt;
+    width: 35px;
+    height: 41px;
+    z-index: 5;
+    opacity:0.3;
+    filter:alpha(opacity=30);
+}
+
+a.swipe:hover {
+    opacity:0.6;
+    filter:alpha(opacity=60);
+}
+
+a.swipe.prev {
+    left: 4px;
+    background: url('../img/arrow-prev.png') no-repeat top left;
+}
+a.swipe.prev.inv {
+    background-image: url('../img/arrow-prev-inv.png');
+}
+
+a.swipe.next {
+    right: 4px;
+    background: url('../img/arrow-next.png') no-repeat top right;    
+}
+a.swipe.next.inv {
+    background-image: url('../img/arrow-next-inv.png');
+}
+
+/* TOC for Module Openers (and book root?) */
+
+
+.toc .ignore {
+    color: #f66;
+}
+
+
+/* Terms/asides */
+
+
+.term {
+    font-weight: bold;
+}
+
+.term b {
+    /* remove style when we're sure all of this selector are removed! */
+    background-color: #f33;
+    padding: 0 3px;
+}
+
+
+.aside {
+    /* Never seen after processing: consider removal */
+    margin-top: .5em;
+}
+
+
+/* Top bar */
+
+
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    XXXwidth: 100%;
+    background-color: #333;
+    color: #ddd;
+    padding-top: .5em;
+    padding-bottom: .5em;
+	
+	background: -webkit-gradient(linear, left top, left bottom, from(#555), to(#222)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #555,  #222); /* for firefox 3.6+ */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#555', endColorstr='#222'); /* for IE */
+
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
+
+}
+
+.topbar .left-slot {
+    float: left;
+    padding-left: 3em;
+}
+.topbar .right-slot {
+    float: right;
+    padding-right: 1em;
+    padding-left: 3em;
+}
+
+
+/* Expander */
+
+
+.expando {
+    position: fixed;
+    top: 5px;
+    left: 7px;
+    width: 40px;
+    height: 40px;
+    XXXbackground-color: red;
+    z-index: 1039;
+    background: url('../img/expander-closed.png') no-repeat;    
+    opacity:0.5;
+    filter:alpha(opacity=50);    
+}
+
+.mousey .expando:hover {
+    background-image: url('../img/expander-closed-hover.png');    
+    opacity:0.8;
+    filter:alpha(opacity=80);        
+}
+
+.expando.opened {
+    background: url('../img/expander-opened.png') no-repeat;
+}
+
+.mousey .expando.opened:hover {
+    background-image: url('../img/expander-opened-hover.png');    
+    opacity:0.8;
+    filter:alpha(opacity=80);        
+}
+
+.hidden ,
+.hide /* oops, the Bootstrap configurator dropped this one! */
+{
+    display: none;
+    visibility: invisible;
+}
+
+
+/* Breadcrumbs */
+
+.crumbs {
+    margin: 0;
+    padding: 0;
+}
+
+.crumbs li {
+    list-style-type: none;
+    display: inline;
+    padding-right: 4px;
+}
+
+.crumbs li a {
+    white-space: nowrap;
+	color: #88C4FF;
+}
+
+.crumbs li .divider {
+	font-size: 0.8em;
+	color: #CCC;
+}
+
+
+
+/* Misc debugging shims */
+
+.leftCol {
+    XXXbackground-color: #9ff;
+}
+.rightCol {
+    XXXbackground-color: #f9f;
+}
+
+.flippy {
+    position: fixed;
+    left: 5px;
+    bottom: 5px;
+    background-color: yellow;
+    border: 1px solid red;
+    padding: 5px 3px;
+    z-index: 5000;
+}
+
+.flippy span {
+    color: black;
+    padding: 2px 5px;
+    background-color: white;
+    border: 1px solid black;    
+}
+
+.flippy span.active {
+    background-color: #ccffcc;
+}
+
+
+
+/* Interactive indicators */
+
+.inter {
+    position: relative;
+}
+
+.inter-indy {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    width: 23px;
+    height: 27px;
+    background: url('../img/inter-icon.png') no-repeat top right;
+}
+
+
+

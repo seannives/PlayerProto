@@ -1,0 +1,46 @@
+div.gadget.solutionAppletLabel div.label {
+    position: absolute;
+    text-align: center;
+    z-index: 1;
+
+    border: 2px solid #666;
+    background-color: #ddf;
+    color: black;
+    height: 17px;
+    
+    padding: 3px 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;    
+}
+
+div.gadget.solutionAppletLabel div.label.dragme {
+    z-index: 2;
+}
+
+div.gadget.solutionAppletLabel div.label.target {
+    opacity: 0.5;
+    filter:alpha(opacity=50);
+    background-color: white;
+    border-color: black;
+    border: none;
+}
+
+div.gadget.solutionAppletLabel div.label.dragme:hover,
+div.gadget.solutionAppletLabel div.label.dragme.active,
+div.gadget.solutionAppletLabel div.label:focus {
+    z-index: 3;
+    border-color: #39f;
+    background-color: #dff;
+}
+
+div.gadget.solutionAppletLabel .bottomlinks {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    margin: 0;
+}
+
+
+
+
+

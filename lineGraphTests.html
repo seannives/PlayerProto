@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+    <head>
+ 	<title class="setTitle"></title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="eCourses Author, Title" name="description">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen">
+	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen">
+	<link href="css/graphics_and_svg.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+    </head>
+	<body>
+		<div class="titler">
+			<span class='number setId'>
+			<span class="setTitle">Test Cases for SVG Container, Axes Container, Line Graph</span>
+		</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+				<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
+				<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
+				<div id="widgetTarget2"><p>2. Scatter graph</p></div>
+				<div id="widgetTarget3"><p>3. Lines and points several traces linear</p></div>
+				
+			</div>
+			<div class="span6 rightCol">
+				<div id="widgetTarget50"><p>4. Several traces log scale</p></div>
+				<div id="widgetTarget60"><p>5. Several traces Ordinal</p></div>
+				<div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
+				<div id="widgetTarget80"><p>7. Lines with Legend</p></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/jquery-latest.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v2.min.js"></script>
+	<script src="js/assessment.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
+<script>
+var testData = [
+	{	x: 0,
+		y: 0
+	},
+	{	x: 5,
+		y: 5
+	},
+	{	x: 1000,
+		y: 1000}
+		];
+		
+var ordinalData = [
+			{	x: 3,
+				y: "Energy 2"
+			},
+			{	x: 6,
+				y: "Energy 2"}
+				];
+var ordinalData2 = [
+			{	x: 1,	y: "Energy 1"	},
+			{	x: 4,	y: "Energy 1"},
+								];
+		
+var lineData1 = [
+	{	x: 1,	y: 0.0011},
+	{	x: 150,	y: 0.02},
+	{	x: 500,	y: 0.2},
+	{	x: 1300, y: 0.36},
+	{	x: 1400,	y: 0.34	},
+	{	x: 1500,	y: 0.425},
+	{	x: 1600,	y: 0.545},
+	{	x: 1700,	y: 0.61},
+	{	x: 1750,	y: 0.7},
+	{	x: 1800,	y: 0.9},
+	{	x: 1850,	y: 1.128},
+	{	x: 1900,	y: 1.55	},
+	{	x: 1910,	y: 1.75},
+	{	x: 1920,	y: 1.86},
+	{	x: 1925,	y: 2.0	},
+	{	x: 1940,	y: 2.3	},
+	{	x: 1950,	y: 2.529346	},
+	{	x: 1960,	y: 3.023358	},
+	{	x: 1965,	y: 3.33167	},
+	{	x: 1970,	y: 3.685777},
+	{	x: 1974,	y: 4.00},
+	{	x: 1980,	y: 4.437609},
+	{	x: 1985,	y: 4.846247},
+	{	x: 1990,	y: 5.290452},
+	{	x: 1996,	y: 6.00},
+	{	x: 2000,	y: 6.115367},
+	{	x: 2005,	y: 6.512276},
+	{	x: 2010,	y: 6.908688}
+	]; // array of line data
+	
+	var lineData2 = [
+		{	x: 12,	y: -3.1},
+		{	x: 16.7,	y: -2.02},
+		{	x: 19.8,	y: -1.2},
+		{	x: 124.9, y: -0.36},
+		{	x: 156.0,	y: -0.34	},
+		{	x: 234,	y: 0.425},
+		{	x: 456.7,	y: 0.545},
+		{	x: 555,	y: 0.61},
+		{	x: 666.6,	y: 0.7},
+		{	x: 700,	y: 0.9},
+		{	x: 892.1,	y: 1.128},
+		{	x: 899,	y: 1.55	},
+		{	x: 910,	y: 1.75},
+		{	x: 920,	y: 1.86}
+		]; // array of line data
+		
+		
+		var specData = [
+		{x: 280.0, y:8.2000E-02},
+		{x: 290.0, y:5.6300E-01},
+		{x: 300.0, y:4.5794E-01},
+		{x: 310.0, y:5.3300E-01},
+		{x: 320.0, y:7.7500E-01},
+		{x: 330.0, y:1.1098E+00},
+		{x: 340.0, y:1.0544E+00},
+		{x: 340.5, y:1.0463E+00},
+		{x: 341.0, y:9.7100E-01},
+		{x: 341.5, y:9.5900E-01},
+		{x: 350.0, y:1.0122E+00},
+		{x: 360.0, y:1.0890E+00},
+		{x: 370.0, y:1.2934E+00}, 
+		{x: 370.5, y:1.1660E+00},
+		{x: 380.0, y:1.1520E+00},
+		{x: 380.5, y:1.2310E+00},
+		{x: 390.0, y:1.2519E+00},
+		{x: 400.0, y:1.6885E+00},
+		{x: 420.0, y:1.5990E+00},
+		{x: 430.0, y:1.2120E+00},
+		{x: 450.0, y:2.0690E+00},
+		{x: 460.0, y:1.9973E+00},
+		{x: 470.0, y:1.9390E+00},
+		{x: 480.0, y:2.0680E+00},
+		{x: 490.0, y:2.0320E+00},
+		{x: 500.0, y:1.9160E+00},
+		{x: 510.0, y:1.9100E+00},
+		{x: 520.0, y:1.8600E+00},
+		{x: 530.0, y:1.8920E+00},
+		{x: 540.0, y:1.8000E+00},
+		{x: 550.0, y:1.8630E+00},
+		{x: 560.0, y:1.7860E+00},
+		{x: 570.0, y:1.8280E+00},
+		{x: 580.0, y:1.8340E+00},
+		{x: 590.0, y:1.7218E+00},
+		{x: 600.0, y:1.7700E+00},
+		{x: 630.0, y:1.6650E+00},
+		{x: 660.0, y:1.5580E+00},
+		{x: 690.0, y:1.4790E+00},
+		{x: 700.0, y:1.4220E+00},
+		{x: 730.0, y:1.3357E+00},
+		{x: 760.0, y:1.2590E+00},
+		{x: 780.0, y:1.1930E+00},
+		{x: 800.0, y:1.1248E+00},
+		{x: 830.0, y:1.0563E+00},
+		{x: 860.0, y:1.0000E+00},
+		{x: 890.0, y:9.4236E-01},
+		{x: 900.0, y:9.1378E-01},
+		{x: 925.0, y:8.7642E-01},
+		{x: 950.0, y:8.2867E-01},
+		{x: 975.0, y:7.7348E-01},
+		{x: 1000.0, y:7.4255E-01},
+		{x: 1025.0, y:6.9918E-01},
+		{x: 1050.0, y:6.6117E-01},
+		{x: 1150.0, y:5.4623E-01},
+		{x: 1175.0, y:5.1852E-01}
+		]
+	//<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
+	
+	var svg0 = new MakeSVGContainer(
+		{ordinal: 0,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	
+	var axes0 = new MakeAxes(svg0,{
+		id: 0,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lineData1],
+		xaxisType: "linear",
+		xTicks: 5,
+		xOrient: "bottom",
+		xLabel: "one line with markup <span class='math'>y=x<sup>2</sup></span>",
+		yaxisType: "linear",
+		yTicks: 5,
+		yOrient: "right",
+		yLabel: "Labels can have extended chars (&mu;m)"
+	});
+	
+	var lines0 = new MakeLineGraph(axes0,{
+		Data: [lineData1],
+		type: "lines"
+	});
+
+	
+//	<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
+	var svg1 = new MakeSVGContainer(
+		{ordinal: 1,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	var axes1 = new MakeAxes(svg1,{
+		id: 1,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lineData1,lineData2],
+		xaxisType: "linear",
+		xTicks: 5,
+		xOrient: "bottom",
+		xLabel: "an x axis on bottom",
+			yaxisType: "linear",
+			yTicks: 5,
+			yOrient: "left",
+			yLabel: "Population (Billions)"
+	});
+	
+	var lines1 = new MakeLineGraph(axes1,{
+		Data: [lineData1,lineData2],
+		type: "lines"
+	});
+
+	//	<div id="widgetTarget2"><p>2. Scatter graph</p></div>
+	
+	var svg2 = new MakeSVGContainer(
+		{ordinal: 2,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	var axes2 = new MakeAxes(svg2,{
+		id: 2,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lineData1],
+			xaxisType: "linear",
+			xTicks: [1200,1500,1900,2050],
+			xOrient: "bottom",
+			xLabel: "Year (explicit ticks)",
+		yaxisType: "linear",
+		yTicks: 5,
+		yOrient: "left",
+		yLabel: "Population (Billions)"
+	});
+	
+	var lines2 = new MakeLineGraph(axes2,{
+		Data: [lineData1],
+		type: "points"
+	});
+	
+//	<div id="widgetTarget3"><p>3. Lines and points several traces linear</p></div>
+	var svg3 = new MakeSVGContainer(
+		{ordinal: 3,
+		maxWid: 400,
+		maxHt: 200
+		}
+	);
+	var axes3 = new MakeAxes(svg3,{
+		id: 3,
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lineData1,specData],
+		xaxisType: "linear", yaxisType: "linear",
+		xTicks: [400,600,800,1000],
+		xOrient: "top",
+		xLabel: "x axis on the top",
+		yTicks: 5,
+		yOrient: "right",
+		yLabel: "a y axis on the right"
+	});
+	
+	var lines2 = new MakeLineGraph(axes3,{
+		Data: [lineData2,specData],
+		type: "lines+points"
+	});
+	
+	//	<div id="widgetTarget50"><p>4. Several traces log scale</p></div>
+	var svg50 = new MakeSVGContainer(
+		{ordinal: 50,
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	var axes50 = new MakeAxes(svg50,{
+		id: 10,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [specData],
+		xaxisType: "log", yaxisType: "linear",
+		xTicks: 5,
+		xOrient: "bottom",
+		yTicks: 5,
+		yOrient: "left",
+		xLabel: "log scale",
+		yLabel: "linear scale"
+
+	});
+
+	var lines50 = new MakeLineGraph(axes50,{
+		Data: [specData],
+		type: "lines"
+	});
+	
+	//	<div id="widgetTarget60"><p>5. traces Ordinal</p></div>
+	
+	var svg60 = new MakeSVGContainer(
+		{ordinal: 60,
+		maxWid: 400,
+		maxHt: 400
+		}
+	);
+	var axes60 = new MakeAxes(svg60,{
+		id: 60,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [ordinalData,ordinalData2],
+		xaxisType: "linear", yaxisType: "ordinal",
+		xTicks: [0,10],
+		xOrient: "bottom",
+		yOrient: "left",
+		xLabel: "linear scale",
+		yLabel: "ordinal scale"
+
+	});
+	var lines60 = new MakeLineGraph(axes60,{
+		Data: [ordinalData,ordinalData2],
+		type: "lines"
+	});
+
+	//	<div id="widgetTarget60"><p>6. Small multiples (several line graphs in container)</p></div>
+	//	<div id="widgetTarget60"><p>7. Lines with Legend</p></div>
+
+	var svg70 = new MakeSVGContainer(
+		{ordinal: 70,
+		maxWid: 600,
+		maxHt: 300
+		}
+	);
+	var axes70 = new MakeAxes(svg70,{
+		id: 70,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: .33, yPerc: 1,//full height and width
+		Data: [testData],
+		xaxisType: "linear", yaxisType: "linear",
+		xTicks: 3,
+		xOrient: "bottom",
+		yTicks: 3,
+		yOrient: "left",
+		xLabel: "x vals",
+		yLabel: "vertical"
+
+	});
+	var lines70 = new MakeLineGraph(axes70,{
+		Data: [testData],
+		type: "lines"
+	});
+	
+	var axes72 = new MakeAxes(svg70,{
+		id: 72,
+		xPosPerc: .33, yPosPerc:0,
+		xPerc: .33, yPerc: 1,//full height and width
+		Data: [lineData1],
+		xaxisType: "linear", yaxisType: "linear",
+		xTicks: 3,
+		xOrient: "bottom",
+		yTicks: 3,
+		yOrient: "left",
+		xLabel: "x vals",
+		yLabel: "vertical"
+
+	});
+	var lines72 = new MakeLineGraph(axes72,{
+		Data: [lineData1],
+		type: "lines"
+	});
+	
+	var axes75 = new MakeAxes(svg70,{
+		id: 75,
+		xPosPerc: .66, yPosPerc:0,
+		xPerc: .33, yPerc: 1,//full height and width
+		Data: [specData],
+		xaxisType: "linear", yaxisType: "linear",
+		xTicks: 3,
+		xOrient: "bottom",
+		yTicks: 3,
+		yOrient: "left",
+		xLabel: "x vals",
+		yLabel: "vertical"
+
+	});
+	var lines75 = new MakeLineGraph(axes75,{
+		Data: [specData],
+		type: "lines"
+	});
+	
+
+</script>
+</body>
+</html>
