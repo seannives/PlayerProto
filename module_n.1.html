@@ -73,7 +73,7 @@ for (j=-10;j<11; j++){
 }
 
 var svg0 = new MakeSVGContainer(
-	{ordinal: 0,
+	{node: d3.select("#widgetTarget0"),
 	maxWid: 600,
 	maxHt: 400
 	}
@@ -99,7 +99,6 @@ var axes1 = new MakeAxes(svg0,{
 	id: 1,
 	xPosPerc: .6, yPosPerc:0,
 	xPerc: 0.3, yPerc: 0.3,//partial height and width
-	Data: [[{x:0,y:0},{x:1,y:1}]],
 	xscale: d3.scale.linear(),
 	yscale: d3.scale.linear(),
 	xaxisType: "linear", yaxisType: "linear",

@@ -48,25 +48,41 @@ console.log("compare string a to string bbbb equal lengths ", compareLen("a","bb
  * containers
  *
  *=============================================*/
-function renderActivity(activityElement, sequenceNode) {
-	
-}
+function renderInteractive(interactiveElement, interactiveNode){
+
+  // I'm interpreting interactiveNode as the ID of the div where the widget will get
+  //written out, and interactiveElement as the type and content.  My guess is this should be server-
+  //side code. interactiveElement will either be an HTML-based set (tables, eqn's, forms)
+  //or an SVG-based set (graphs, images).  But you'll need a different top-level 
+  //container for each. Note that either can nest, with SVG in HTML, or HTML in an SVG foreign
+  //object. Not using this yet, just pondering it.
+
+  // load item body
+    var interactive;
+    if (interactiveElement.type == "HTML")
+   		{ interactive = MakeHTMLContainer(interactiveElement.content); }
+		else
+		{ interactive = MakeSVGContainer(interactiveElement.content); }
+    interactive.appendChild(interactiveNode);
+
+ }
+
 
 
 function MakeSVGContainer(config) {
-	this.widget = config.widget;
-	this.ordinal = config.ordinal;
-	//ordinal:an integer>=0 that identifies which div to write it into, since there may be several
+	this.node = config.node;
+	//node:a d3 selection that identifies where to append the SVG tag and its contents
+	//will need to update this to use standard DOM node pointers I guess
 	this.maxWid = config.maxWid;
 	this.maxHt = config.maxHt;
 	//maxWid, maxHt: the width and height of the graph region, without margins, integers
 	this.containerName = "svg" + this.ordinal;
 
 	//select the div in the document where the graph will go
-	var container = d3.select("#widgetTarget" + this.ordinal);
+	//var container = d3.select("#widgetTarget" + this.ordinal);
 
 	//create an svg element of the appropriate size and scaling
-	this.svgObj = container.append("svg").attr("viewBox", "0 0 " + this.maxWid + " " + this.maxHt)
+	this.svgObj = this.node.append("svg").attr("viewBox", "0 0 " + this.maxWid + " " + this.maxHt)
 	//makes it scale correctly in single-column or phone layouts
 	.attr("preserveAspectRatio", "xMinYMin meet") //ditto
 	.attr("id", this.containerName).style("max-width", this.maxWid + "px")

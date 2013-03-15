@@ -45,8 +45,7 @@
 <script>
 
 var svg0 = new MakeSVGContainer(
-	{ widget: d3.select("#widgetTarget0");
-	ordinal: 0,
+	{ node: d3.select("#widgetTarget0"),
 	maxWid: 480,
 	maxHt: 400
 	}
@@ -68,7 +67,7 @@ var axes0 = new MakeAxes(svg0,{
 });
 
 var svg1 = new MakeSVGContainer(
-	{ordinal: 1,
+	{node: d3.select("#widgetTarget1"),
 	maxWid: 500,
 	maxHt: 180
 	}
