@@ -60,7 +60,7 @@ var lineData = [
 	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
 	
 	var svg0 = new MakeSVGContainer(
-		{ordinal: 0,
+		{node: d3.select("#widgetTarget0"),
 		maxWid: 550,
 		maxHt: 450
 		}
@@ -88,7 +88,7 @@ var lineData = [
 	
 //	<div id="widgetTarget1"><p>1. Multiple images with autoCarousel</p></div>
 	var svg1 = new MakeSVGContainer(
-		{ordinal: 1,
+		{node: d3.select("#widgetTarget1"),
 		maxWid: 400,
 		maxHt: 300
 		}
@@ -119,7 +119,7 @@ var lineData = [
 	//	<div id="widgetTarget2"><p>Grouped bars (separate series with same label shown in group)</p></div>
 	
 	var svg2 = new MakeSVGContainer(
-		{ordinal: 2,
+		{node: d3.select("#widgetTarget2"),
 		maxWid: 500,
 		maxHt: 400
 		}
@@ -157,7 +157,7 @@ var lineData = [
 
 
 	var svg70 = new MakeSVGContainer(
-		{ordinal: 50,
+		{node: d3.select("#widgetTarget50"),
 		maxWid: 800,
 		maxHt: 300
 		}
@@ -206,7 +206,7 @@ var lineData = [
 			});
 	//	<div id="widgetTarget80"><p>5. Carousel with Legend</p></div>
 	var svg5 = new MakeSVGContainer(
-		{ordinal: 80,
+		{node: d3.select("#widgetTarget80"),
 		maxWid: 600,
 		maxHt:500
 		}
