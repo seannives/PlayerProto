@@ -453,9 +453,8 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 	var boxLength = 15, //attractive length for the colored lines or boxes
 		inset = 10, //attractive spacing from edge of axes boxes (innerWid/Ht)
 		//also used to space the enclosing legend box from the text 
-	//take the number of rows from the inherited Data length (number of series) of the
-	//enclosing axis container.
-		rowCt = this.Data.length;
+	//take the number of rows from the number of labels
+		rowCt = this.labels.length;
 	var boxHeight = (boxLength + 5) * rowCt;
 	var longest = d3.last(this.labels, compareLen);
 	console.log("Longest legend label: ", longest);
