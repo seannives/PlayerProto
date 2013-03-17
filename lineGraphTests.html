@@ -171,7 +171,45 @@ var lineData1 = [
 		{x: 1050.0, y:6.6117E-01},
 		{x: 1150.0, y:5.4623E-01},
 		{x: 1175.0, y:5.1852E-01}
-		]
+		];
+		
+		
+		var lineData = [
+		{x:	1900	, y:	1.55},
+		{x:	1910	, y:	1.75},
+		{x:	1920	, y:	1.86},
+		{x:	1930	, y:	2.07},
+		{x:	1940	, y:	2.3	},
+		{x:	1950	, y:	2.529346},
+		{x:	1955	, y:	2.763453},
+		{x:	1960	, y:	3.023358},
+		{x:	1965	, y:	3.33167	},
+		{x:	1970	, y:	3.685777},
+		{x:	1975	, y:	4.061317},
+		{x:	1980	, y:	4.437609},
+		{x:	1985	, y:	4.846247},
+		{x:	1990	, y:	5.290452},
+		{x:	1995	, y:	5.713073},
+		{x:	2000	, y:	6.115367},
+		{x:	2005	, y:	6.512276},
+		{x:	2010	, y:	6.908688}
+			]; // array of data - could be read from file
+
+		projected = [];
+		for (i=0;i<10;i++){
+			projected[i] = { x: 2010 + i*5,
+							 y: 6.908688*Math.exp(0.12*(.5*i))};
+		}
+
+		nineB = [
+		{x: 1900, y:9},
+		{x: 2050, y:9}
+		];
+
+
+		
+		
+		
 	//<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
 	
 	var svg0 = new MakeSVGContainer(
@@ -336,8 +374,7 @@ var lineData1 = [
 		type: "lines"
 	});
 
-	//	<div id="widgetTarget60"><p>6. Small multiples (several line graphs in container)</p></div>
-	//	<div id="widgetTarget60"><p>7. Lines with Legend</p></div>
+	//	<div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
 
 	var svg70 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget70"),
@@ -402,7 +439,40 @@ var lineData1 = [
 		type: "lines"
 	});
 	
+	//	<div id="widgetTarget80"><p>7. Lines with Legend</p></div>
+		var litekey = [0,1,2];
+	var svg80 = new MakeSVGContainer(
+		{node: d3.select("#widgetTarget80"),
+		maxWid: 500,
+		maxHt: 400
+		}
+	);
+	var axes80 = new MakeAxes(svg80,{
+		id: 80,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and width
+		Data: [lineData,projected,nineB],
+		xaxisType: "linear", yaxisType: "linear",
+		xTicks: [1900,1950,1990,2010,2030,2050],
+		xOrient: "bottom",
+		yTicks: 8,
+		yOrient: "left",
+		xLabel: "Year",
+		yLabel: "Human Population (Billions)"
 
+	});
+	var lines80 = new MakeLineGraph(axes80,{
+		Data: [lineData,projected,nineB],
+		type: "lines",
+		liteKey: litekey
+	});
+	
+    axes80.Legend({
+		xPos:"right", yPos: "bottom",
+		labels: ["Historical Population","Projected Growth", "Nine Billion"],
+		type: "line",
+		liteKey: litekey
+	});
 </script>
 </body>
 </html>

@@ -232,7 +232,7 @@ var lineData = [
 		}
 	);
 	
-	var legend5 = new MakeLegend(axes5,{
+	axes5.Legend({
 		xPos: "right", yPos: "top",
 		labels: ["wildfire", "tornado", "hurricane"],
 		type: "box",
@@ -246,10 +246,10 @@ var lineData = [
 //	images5.setState(start2);
 //	legend5.setState(start2);
 		
-	 d3.selectAll('.liteable')
-	 	.on("click", function(d,i){ 
-		console.log("TODO: Log click and time on ", this.id);
-		return stateCycle(this,IDList);});
+//	 d3.selectAll('.liteable')
+//	 	.on("click", function(d,i){ 
+//		console.log("TODO: Log click and time on ", this.id);
+//		return stateCycle(this,IDList);});
 	
 </script>
 </body>
