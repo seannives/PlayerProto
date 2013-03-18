@@ -48,25 +48,41 @@ console.log("compare string a to string bbbb equal lengths ", compareLen("a","bb
  * containers
  *
  *=============================================*/
-function renderActivity(activityElement, sequenceNode) {
-	
-}
+function renderInteractive(interactiveElement, interactiveNode){
+
+  // I'm interpreting interactiveNode as the ID of the div where the widget will get
+  //written out, and interactiveElement as the type and content.  My guess is this should be server-
+  //side code. interactiveElement will either be an HTML-based set (tables, eqn's, forms)
+  //or an SVG-based set (graphs, images).  But you'll need a different top-level 
+  //container for each. Note that either can nest, with SVG in HTML, or HTML in an SVG foreign
+  //object. Not using this yet, just pondering it.
+
+  // load item body
+    var interactive;
+    if (interactiveElement.type == "HTML")
+   		{ interactive = MakeHTMLContainer(interactiveElement.content); }
+		else
+		{ interactive = MakeSVGContainer(interactiveElement.content); }
+    interactive.appendChild(interactiveNode);
+
+ }
+
 
 
 function MakeSVGContainer(config) {
-	this.widget = config.widget;
-	this.ordinal = config.ordinal;
-	//ordinal:an integer>=0 that identifies which div to write it into, since there may be several
+	this.node = config.node;
+	//node:a d3 selection that identifies where to append the SVG tag and its contents
+	//will need to update this to use standard DOM node pointers I guess
 	this.maxWid = config.maxWid;
 	this.maxHt = config.maxHt;
 	//maxWid, maxHt: the width and height of the graph region, without margins, integers
 	this.containerName = "svg" + this.ordinal;
 
 	//select the div in the document where the graph will go
-	var container = d3.select("#widgetTarget" + this.ordinal);
+	//var container = d3.select("#widgetTarget" + this.ordinal);
 
 	//create an svg element of the appropriate size and scaling
-	this.svgObj = container.append("svg").attr("viewBox", "0 0 " + this.maxWid + " " + this.maxHt)
+	this.svgObj = this.node.append("svg").attr("viewBox", "0 0 " + this.maxWid + " " + this.maxHt)
 	//makes it scale correctly in single-column or phone layouts
 	.attr("preserveAspectRatio", "xMinYMin meet") //ditto
 	.attr("id", this.containerName).style("max-width", this.maxWid + "px")
@@ -422,6 +438,120 @@ function MakeAxes(svgCont, config) {
 	this.group.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 } // end makeAxis method
 
+MakeAxes.prototype.Legend = function (config) { //begin legend method to go with axes object
+	var myID = "legend" + this.id;
+	//I define this local var because there are difficulties using
+	//this.id inside data functions from d3,the scope changes, so I need the local name
+	//x and yPos are strings, and required: they state left/right/top/bottom
+	var xPos = config.xPos;
+	var yPos = config.yPos;
+	//labels is an array of strings containing the data labels to be printed on the legend
+	this.labels = config.labels;
+	//type is a string specifying box or line legend 
+	var type = config.type;
+	var liteKey = config.liteKey;
+	var boxLength = 15, //attractive length for the colored lines or boxes
+		inset = 10, //attractive spacing from edge of axes boxes (innerWid/Ht)
+		//also used to space the enclosing legend box from the text 
+	//take the number of rows from the number of labels
+		rowCt = this.labels.length;
+	var boxHeight = (boxLength + 5) * rowCt;
+	var longest = d3.last(this.labels, compareLen);
+	console.log("Longest legend label: ", longest);
+	//to calculate the width of the box big enough for the longest text string, we have to 
+	//render the string, get its bounding box, then remove it.
+	var longBox = this.group.append("g");
+	longBox.append("text").text(longest);
+	this.boxWid = longBox.node().getBBox().width + inset/2 + boxLength;
+	//the box around the legend should be the width of the 
+	//longest piece of text + inset + the marker length
+	//so it's always outside the text and markers, plus a little padding
+	longBox.remove();
+	console.log(this.boxWid);
+	var xOffset = (xPos == "left") ? inset : (this.innerWid - this.boxWid - inset);
+	//if the position is left, start the legend on the left margin edge,
+	//otherwise start it across the graph box less its width less padding
+	var yOffset = (yPos == "bottom") ? this.innerHt - boxHeight - inset : inset;
+	//if the position is at the bottom, measure up from bottom of graph,
+	//otherwise just space it down from the top.
+	this.legendBox = this.group.append("g")
+	//make a new group to hold the legend
+	.attr('id', myID)
+	//move it to left/right/top/bottom position
+	.attr('transform', 'translate(' + xOffset + ',' + yOffset + ')');
+
+	console.log("sensible values for legend horizontal position ", xPos, xPos == "right" || xPos == "left");
+
+	console.log("sensible values for legend vertical position ", yPos, yPos == "top" || yPos == "bottom");
+
+	this.legendBox.append("rect").attr("x", -5).attr("y", -5)
+	//create small padding around the contents at leading edge
+	.attr("width", this.boxWid).attr("height", boxHeight) //lineheight+padding x rows
+	.attr("class", "legendBox");
+
+	var rows = this.legendBox.selectAll("g.slice")
+	//this selects all <g> elements with class slice (there aren't any yet)
+	.data(this.labels) //associate the data to create stacked slices 
+	.enter() //this will create <g> elements for every data element 
+	.append("svg:g") //create groups
+	.attr("transform", function(d, i) {
+		return "translate(0," + (rowCt - i - 1) * (boxLength+3) + ")";
+		//each row contains a colored marker and a label.  They are spaced according to the 
+		//vertical size of the markers plus a little padding, 3px in this case
+	})
+	//counting up from the bottom, make a group for each series and move to stacked position
+	.style("opacity", 0.9);
+
+	if (liteKey) {
+		rows.attr("id", function(d, i) {
+			return myID + "_" + liteKey[i];
+		})
+		//name it so it can be manipulated or highlighted later
+		.attr("class", "liteable");
+	}
+
+	if (type == "box") {
+		rows.append("rect") 
+		.attr("x", 0).attr("y", 0) 
+		//make the rectangle a square with width and height set to boxLength
+		.attr("width", boxLength) 
+		.attr("height", boxLength)
+		.attr("class", function(d, i) {
+			return "fill" + i;
+		});
+	} else if (type == "line") {
+		rows.append("line") //add a line to each slice
+		.attr("class", function(d, i) {
+			return "trace stroke" + i;
+		}).attr("x1", 0) //start at the left edge of box
+		.attr("x2", boxLength) //set line width
+		.attr("y1", boxLength / 2).attr("y2", boxLength / 2);
+	}
+
+	rows.append("text") //this is native svg text, it doesn't wrap
+	.attr("text-anchor", "start") //left align text 
+	.attr("class", "legendLabel").attr("dx", boxLength + 4)
+	//offset text to the right beyond marker by 4 px
+	.attr("dy", boxLength/2 ) //offset text down so it winds up in the middle of the marker
+	.attr("alignment-baseline","central")//and put the vertical center of the text on that midline
+	.text(function(d, i) {
+		return d; //get the label from legend array
+	}); 
+} //end of Legend method for Axes
+Legend.prototype.setState = function(liteKey) {
+	if (this.legend[liteKey]) {
+		//TODO/put all rows back to normal width (clear old state)
+		d3.selectAll("#legend"+this.id).style("stroke-width",2);
+		//TODO/emphasize the line selected
+		d3.select("#legend" + this.id + "_" + liteKey)
+		.style("stroke-width",4);
+		return liteKey;
+	} else {
+		console.log("Invalid key. No legend row " + liteKey);
+	}
+};
+
+
 function MakeLegend(axesCont, config) { //begin legend generator to go with widget container
 	//inherit the width, height and margins from the axes container
 	this.xDim = axesCont.innerWid;
@@ -596,7 +726,9 @@ function MakeLineGraph(axesCont, config) { //begin line graph object generator t
 
 		this.series = graph.selectAll("g.series")
 		.data(this.Data).enter()
-		.append("g").attr("class", function(d, i) {
+		.append("g")
+		.attr("clip-path", "url(#clip_" + this.id + ")")
+		.attr("class", function(d, i) {
 			return "series fill" + i;
 		});
 
@@ -609,21 +741,24 @@ function MakeLineGraph(axesCont, config) { //begin line graph object generator t
 		}
 
 		this.points = this.series.selectAll("g.points") 
-		//this selects all <g> elements with class points (there aren't any yet)
-		.data(Object) //drill down into the nested Data
+		//this selects all <g> elements with class points (there aren't any yet) 
+		//within the selection series.  Note that series has the nested point
+		//Data associated with it.  So the data for the points is each array 
+		//in the data series.  This can also be done by using the keyword Object
+		//as the .data for points, but it's a little obscure why that works.
+		.data(function(d,i){return d;}) //drill down into the nested Data
 		.enter() //this will create <g> elements for every data element, useful in case you want to label them
 		.append("g") //create groups
 		.attr("transform", function(d, i) {
 			return "translate(" + axesCont.xScale(d.x) + "," + axesCont.yScale(d.y) + ")";
 										})
-		.attr("clip-path", "url(#clip_" + this.id + ")")
 		//move each symbol to the x,y coordinates
 		.append("path")
-		.attr("d", d3.svg.symbol().type("circl")
-		
-		//function(d,i,j){
-		//	return (d3.svg.symbol().type(d3.svg.symbolTypes[j]));
-		//}
+		.attr("d", 
+		//j is the index of the series, i of the data points in the series
+		function(d,i,j){
+		   return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
+		}
 		);
 		//pick the shapes sequentially off the list
 	}
