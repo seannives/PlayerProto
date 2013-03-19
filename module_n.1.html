@@ -76,8 +76,7 @@ var svg0 = new MakeSVGContainer(
 	{node: d3.select("#widgetTarget0"),
 	maxWid: 600,
 	maxHt: 400
-	}
-);
+	});
  
 var axes0 = new MakeAxes(svg0,{
 	id: 0,
@@ -92,8 +91,6 @@ var axes0 = new MakeAxes(svg0,{
 	xLabel: "Wavelength (log[micrometers])",
 
 });
- 
-
 				
 var axes1 = new MakeAxes(svg0,{
 	id: 1,
@@ -109,6 +106,7 @@ var axes1 = new MakeAxes(svg0,{
 	yOrient: "right",
 	
 });
+
 var marks0 = new MakeAreaMarkers(axes0,
 	{xBands: [
 		[Math.pow(10,-10),Math.pow(10,-6)],

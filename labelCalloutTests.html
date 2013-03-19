@@ -14,19 +14,19 @@
 	<body>
 		<div class="titler">
 			<span class='number setId'>
-			<span class="setTitle">Test Cases for SVG Container, Axes Container, Line Graph</span>
+			<span class="setTitle">Test Cases for Labels Graph</span>
 		</div>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
-				<div id="widgetTarget0"><p>0. Single image</p></div>
-				<div id="widgetTarget1"><p>1. Multiple images with autoCarousel (events)</p></div>
-				<div id="widgetTarget2"><p>2. Image with graph overlay on local coordinate system (set by data in graph)</p></div>
+				<div id="widgetTarget0"><p>0. Single image with labels</p></div>
+				<div id="widgetTarget1"><p>1. Graph with labels</p></div>
+				<div id="widgetTarget2"><p>2. Carousel with callouts (events)</p></div>
 				
 			</div>
 			<div class="span6 rightCol">
-				<div id="widgetTarget50"><p>3. Three scaled images in grid</p></div>
-				<div id="widgetTarget80"><p>6. Image with Legend</p></div>
+				<div id="widgetTarget50"><p>3. Labels and legend</p></div>
+				<div id="widgetTarget80"><p>4. markers and labels</p></div>
 			</div>
 		</div>
 	</div>
@@ -61,8 +61,8 @@ var lineData = [
 	
 	var svg0 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget0"),
-		maxWid: 550,
-		maxHt: 450
+		maxWid: 300,
+		maxHt: 240
 		}
 	);
 	
@@ -71,7 +71,6 @@ var lineData = [
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
-		//xTicks: 4,
 		xOrient: "bottom",
 		xLabel: "caption",
 		yaxisType: "linear",
@@ -80,10 +79,34 @@ var lineData = [
 	
 	var images0 = new MakeScalableImage(axes0,
 		{images: [	
-				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."}
+				{URI:'img/FG12_5_3.jpg', caption: "Examples of ecological footprints"}
 			]
 		}
 	);
+	
+	axes0.Labels(
+		{labels: 	
+		  [	
+			{content: "United States",
+			xyPos: [0,0], width: 150
+			},
+			{content: "European Union",
+			xyPos:[axes0.innerWid/3,0], width: 110
+			},
+			{content: "Afghanistan",
+			xyPos:[2*axes0.innerWid/3,.58], width: 110
+			},
+			{content:"23 Acres/person",
+			xyPos:[0,1], width: 60
+			},
+			{content:"Infrared",
+			xyPos:[axes0.innerWid/3,1], width: 100
+			},
+			{content:"Radio",
+			xyPos:[2*axes0.innerWid/3,1], width: 180
+			}
+		  ],
+		});
 
 	
 //	<div id="widgetTarget1"><p>1. Multiple images with autoCarousel</p></div>

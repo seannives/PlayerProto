@@ -439,7 +439,8 @@ function MakeAxes(svgCont, config) {
 } // end makeAxis method
 
 MakeAxes.prototype.Legend = function (config) { //begin legend method to go with axes object
-	var myID = "legend" + this.id;
+	var myID = "legend" + this.id + "_";
+	this.legend = {id: myID};
 	//I define this local var because there are difficulties using
 	//this.id inside data functions from d3,the scope changes, so I need the local name
 	//x and yPos are strings, and required: they state left/right/top/bottom
@@ -455,7 +456,7 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 		//also used to space the enclosing legend box from the text 
 	//take the number of rows from the number of labels
 		rowCt = this.labels.length;
-	var boxHeight = (boxLength + 5) * rowCt;
+	var boxHeight = (boxLength + 6) * rowCt;
 	var longest = d3.last(this.labels, compareLen);
 	console.log("Longest legend label: ", longest);
 	//to calculate the width of the box big enough for the longest text string, we have to 
@@ -467,14 +468,13 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 	//longest piece of text + inset + the marker length
 	//so it's always outside the text and markers, plus a little padding
 	longBox.remove();
-	console.log(this.boxWid);
 	var xOffset = (xPos == "left") ? inset : (this.innerWid - this.boxWid - inset);
 	//if the position is left, start the legend on the left margin edge,
 	//otherwise start it across the graph box less its width less padding
 	var yOffset = (yPos == "bottom") ? this.innerHt - boxHeight - inset : inset;
 	//if the position is at the bottom, measure up from bottom of graph,
 	//otherwise just space it down from the top.
-	this.legendBox = this.group.append("g")
+	var legendBox = this.group.append("g")
 	//make a new group to hold the legend
 	.attr('id', myID)
 	//move it to left/right/top/bottom position
@@ -483,35 +483,42 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 	console.log("sensible values for legend horizontal position ", xPos, xPos == "right" || xPos == "left");
 
 	console.log("sensible values for legend vertical position ", yPos, yPos == "top" || yPos == "bottom");
-
-	this.legendBox.append("rect").attr("x", -5).attr("y", -5)
+	//next make a filter definition for highlighting
+	var filter = legendBox.append("defs").append("filter").attr("id","drop-shadow");
+	filter.append("feGaussianBlur").attr("in","SourceAlpha").attr("stdDeviation",2).attr("result","blur");
+	filter.append("feOffset").attr("in","blur").attr("dx",2).attr("dy",2).attr("result","offsetBlur");
+ 	var merge = filter.append("feMerge");
+	merge.append("feMergeNode").attr("in","offsetBlur");
+	merge.append("feMergeNode").attr("in","SourceGraphic");
+	
+	
+	legendBox.append("rect").attr("x", -5).attr("y", -5)
 	//create small padding around the contents at leading edge
 	.attr("width", this.boxWid).attr("height", boxHeight) //lineheight+padding x rows
 	.attr("class", "legendBox");
 
-	var rows = this.legendBox.selectAll("g.slice")
+	this.legendRows = legendBox.selectAll("g.slice")
 	//this selects all <g> elements with class slice (there aren't any yet)
 	.data(this.labels) //associate the data to create stacked slices 
 	.enter() //this will create <g> elements for every data element 
 	.append("svg:g") //create groups
 	.attr("transform", function(d, i) {
-		return "translate(0," + (rowCt - i - 1) * (boxLength+3) + ")";
+		return "translate(0," + (rowCt - i - 1) * (boxLength+4) + ")";
 		//each row contains a colored marker and a label.  They are spaced according to the 
 		//vertical size of the markers plus a little padding, 3px in this case
-	})
-	//counting up from the bottom, make a group for each series and move to stacked position
-	.style("opacity", 0.9);
+		//counting up from the bottom, make a group for each series and move to stacked position
+	});
 
 	if (liteKey) {
-		rows.attr("id", function(d, i) {
-			return myID + "_" + liteKey[i];
+		this.legendRows.attr("id", function(d, i) {
+			return myID + liteKey[i];
 		})
 		//name it so it can be manipulated or highlighted later
 		.attr("class", "liteable");
 	}
 
 	if (type == "box") {
-		rows.append("rect") 
+		this.legendRows.append("rect") 
 		.attr("x", 0).attr("y", 0) 
 		//make the rectangle a square with width and height set to boxLength
 		.attr("width", boxLength) 
@@ -520,7 +527,7 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 			return "fill" + i;
 		});
 	} else if (type == "line") {
-		rows.append("line") //add a line to each slice
+		this.legendRows.append("line") //add a line to each slice
 		.attr("class", function(d, i) {
 			return "trace stroke" + i;
 		}).attr("x1", 0) //start at the left edge of box
@@ -528,7 +535,7 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 		.attr("y1", boxLength / 2).attr("y2", boxLength / 2);
 	}
 
-	rows.append("text") //this is native svg text, it doesn't wrap
+	this.legendRows.append("text") //this is native svg text, it doesn't wrap
 	.attr("text-anchor", "start") //left align text 
 	.attr("class", "legendLabel").attr("dx", boxLength + 4)
 	//offset text to the right beyond marker by 4 px
@@ -538,128 +545,84 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 		return d; //get the label from legend array
 	}); 
 } //end of Legend method for Axes
-Legend.prototype.setState = function(liteKey) {
-	if (this.legend[liteKey]) {
+
+MakeAxes.prototype.setState = function(liteKey) {
+	console.log("TODO: Log highlight event on ", this.id);
+	
+	if (this.legendRows.selectAll(".liteable")) {
 		//TODO/put all rows back to normal width (clear old state)
-		d3.selectAll("#legend"+this.id).style("stroke-width",2);
+		this.legendRows.attr("filter",null);
 		//TODO/emphasize the line selected
-		d3.select("#legend" + this.id + "_" + liteKey)
-		.style("stroke-width",4);
+		d3.selectAll("#legend" + this.id + "_" + liteKey)
+		.attr("filter", "url(#drop-shadow)");
+		//.selectAll("rect").style("stroke-width",1).style("stroke","#333333");
 		return liteKey;
 	} else {
 		console.log("Invalid key. No legend row " + liteKey);
 	}
 };
 
+MakeAxes.prototype.Labels = function(options) { //begin labeled image object generator
+	
+	//labels is an array of objects with keys content: string with HTML markup
+	//xyPos: an [x,y] array to orient the position on the axes grid, in local coordinates
+	//width: the width of the label
+	//visibility: boolean saying whether it's visible at start
+	//and TODO role: a string which is one of "label", "distractor".
+	this.labels = options.labels;
+	var numLabels = this.labels.length;
+	var labelID  = "label" + this.id + "_";
+	this.labels = {id: labelID};
+	var liteKey = options.liteKey;
+	 
 
-function MakeLegend(axesCont, config) { //begin legend generator to go with widget container
-	//inherit the width, height and margins from the axes container
-	this.xDim = axesCont.innerWid;
-	this.yDim = axesCont.innerHt;
-	this.xMargin = axesCont.margin.left;
-	this.yMargin = axesCont.margin.top;
-	var myID = "legend" + axesCont.id;
-	this.id = myID; //I define both local var and property because there are difficulties using
-	//this.id inside data functions from d3,the scope changes, so I need the local name
-	//x and yPos state left/right/top/bottom
-	var xPos = config.xPos;
-	var yPos = config.yPos;
-	this.labels = config.labels;
-	//type is a string specifying box or line legend 
-	var type = config.type;
-	var liteKey = config.liteKey;
-	var boxLength = 20,
-		inset = 10,
-		rowCt = this.labels.length;
-	var boxHeight = (boxLength + 5) * rowCt;
-	var longest = d3.last(this.labels, compareLen);
-	console.log("Longest legend label: ", longest);
-	//to calculate the width of the box big enough for the longest text string, we have to 
-	//render the string, get its bounding box, then remove it.
-	var longBox = axesCont.group.append("g").append("text");
-	longBox.text(longest);
-	this.boxWid = longBox.node().getBBox().width + 2 * inset;
-	longBox.remove();
-	console.log(axesCont.innerWid, this.xMargin);
-	var xOffset = (xPos == "left") ? inset : (axesCont.innerWid - this.boxWid - inset);
-	//if the position is left, start the legend on the left margin edge,
-	//otherwise start it across the graph box less its width less padding
-	var yOffset = (yPos == "bottom") ? axesCont.innerHt - boxHeight - inset : inset;
-	//if the position is at the bottom, measure up from bottom of graph,
-	//otherwise start it on the margin from the top.
-	this.legendBox = axesCont.group.append("g")
-	//make a new group to hold the legend
-	.attr('id', myID)
-	//move it to left/right/top/bottom position
-	.attr('transform', 'translate(' + xOffset + ',' + yOffset + ')');
+	var graph = this.group.append("g") //make a group to hold labels
+	.attr("class", "labels")
+	.attr("id", this.labels.id);
 
-	console.log("sensible values for legend horizontal position ", xPos, xPos == "right" || xPos == "left");
-
-	console.log("sensible values for legend vertical position ", yPos, yPos == "top" || yPos == "bottom");
-
-	this.legendBox.append("rect").attr("x", -5).attr("y", -5)
-	//create small padding around the contents at leading edge
-	.attr("width", this.boxWid).attr("height", boxHeight) //lineheight+padding x rows
-	.attr("class", "legendBox");
-
-	var rows = this.legendBox.selectAll("g.slice")
-	//this selects all <g> elements with class slice (there aren't any yet)
-	.data(this.labels) //associate the data to create stacked slices 
-	.enter() //this will create <g> elements for every data element 
-	.append("svg:g") //create groups
-	.attr("transform", function(d, i) {
-		return "translate(0," + (rowCt - i - 1) * boxLength + ")";
-	})
-	//counting up from the bottom, make a group for each series and move to stacked position
-	.style("opacity", 0.9);
-
-	if (liteKey) {
-		rows.attr("id", function(d, i) {
-			return myID + "_" + liteKey[i];
+	graph.selectAll("g.label")
+		.data(this.labels).enter()
+		.append("g").attr("id", function(d, i) { return labelID + (liteKey?liteKey[i]:i);})
+		.attr("class", "liteable labels")
+		.attr("transform", function(d, i) {
+			return "translate(" + this.xScale(d.xyPos[0]) + "," + this.yScale(d.xyPos[1]) + ")";
 		})
-		//name it so it can be manipulated or highlighted later
-		.attr("class", "liteable");
-	}
+		.append("foreignObject")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", function(d,i) { return d.width;})
+			.attr("height", 200)
+			.append("xhtml:body").style("margin", "0px") 
+			//this interior body shouldn't inherit margins from page body
+			.append("div").attr("class", "markerLabel")
+			//.style("visibility",function(d,i) { return d.viz;})
+			.html(function(d, i) {
+				return d.content;}); //make the label 
 
-	if (type == "box") {
-		rows.append("rect") //add a line tag to each slice
-		.attr("x", 0).attr("y", 0) //start at the left edge of box, but move down
-		//a little to line up with text
-		.attr("width", boxLength).attr("height", boxLength).attr("class", function(d, i) {
-			return "fill" + i;
-		});
-	} else if (type == "line") {
-		rows.append("line") //add a line to each slice
-		.attr("class", function(d, i) {
-			return "trace stroke" + i;
-		}).attr("x1", 0) //start at the left edge of box
-		.attr("x2", boxLength) //set line width
-		.attr("y1", boxLength / 2).attr("y2", boxLength / 2);
-	}
-
-	rows.append("text") //this is native svg text, it doesn't wrap
-	.attr("text-anchor", "start") //left align text 
-	.attr("class", "legendLabel").attr("dx", boxLength + 4)
-	//offset text to the right beyond leader
-	.attr("dy", 2 * boxLength / 3) //offset text to the right beyond leader
-	//.attr("alignment-baseline","bottom")
-	.text(function(d, i) {
-		return d;
-	}); //get the label from legend array
-} //end of MakeLegend function
-
-MakeLegend.prototype.setState = function(liteKey) {
-	if (this.legend[liteKey]) {
-		//TODO/put all rows back to normal width (clear old state)
-		d3.selectAll("#"+this.id).style("stroke-width",2);
-		//TODO/emphasize the line selected
-		d3.select("#" + this.id + liteKey)
-		.style("stroke-width",4);
+} //end MakeLabels object generator function
+MakeAxes.prototype.setLabels = function(liteKey) {
+	if (this.labels[liteKey]) {
+		//return all styles to normal on the labels
+		var unset = d3.select("#" + this.id).selectAll(".markerLabel");
+		console.log("Unsetting label lites: ", unset);
+		unset.transition().duration(200)
+		.style("color","")
+		.style("font-weight","")
+		.style("background-color","")
+	;
+		
+		//highlight the selected label(s)
+		var set = d3.selectAll("#" + this.id + liteKey).select(".markerLabel");
+		console.log("Setting label lites", set);
+		set.transition().duration(200).style("color", "#1d456e")
+		.style("font-weight", "600")
+		.style("background-color", "#e3effe");
 		return liteKey;
 	} else {
-		console.log("Invalid key. No legend row " + liteKey);
+		console.log("Invalid key. No image " + liteKey);
 	}
 };
+
 
 function MakeLineGraph(axesCont, config) { //begin line graph object generator to go with widget containers
 	//inherit the width, height and margins from the axes container
@@ -1321,7 +1284,7 @@ function stateCycle(currentObj, linkedObjList) {
 		if (!d3.selectAll("#" + o.id + liteKey)) {
 			console.log("id ", o.id + liteKey, " not found.");
 		} else {
-			console.log("objects are found according to IDList: ", "#" + o.id + liteKey, d3.selectAll("#" + o.id + liteKey));
+			console.log("object found in IDList: ", "#" + o.id + liteKey, d3.selectAll("#" + o.id + liteKey));
 			o.setState(liteKey);
 		}
 	})
