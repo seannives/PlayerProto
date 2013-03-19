@@ -547,7 +547,7 @@ MakeAxes.prototype.Legend = function (config) { //begin legend method to go with
 } //end of Legend method for Axes
 
 MakeAxes.prototype.setState = function(liteKey) {
-	console.log("TODO: Log highlight event on ", this.id);
+	console.log("TODO: Log highlight event on ", this.legend.id);
 	
 	if (this.legendRows.selectAll(".liteable")) {
 		//TODO/put all rows back to normal width (clear old state)
@@ -564,30 +564,39 @@ MakeAxes.prototype.setState = function(liteKey) {
 
 MakeAxes.prototype.Labels = function(options) { //begin labeled image object generator
 	
-	//labels is an array of objects with keys content: string with HTML markup
+	//labels: is an array of objects with keys content: string with HTML markup
 	//xyPos: an [x,y] array to orient the position on the axes grid, in local coordinates
 	//width: the width of the label
-	//visibility: boolean saying whether it's visible at start
 	//and TODO role: a string which is one of "label", "distractor".
-	this.labels = options.labels;
-	var numLabels = this.labels.length;
-	var labelID  = "label" + this.id + "_";
-	this.labels = {id: labelID};
+	//TODO: we need some sort of autowidth intelligence on these, but I don't
+	//know how to reconcile that with giving user control over wrapping
+	
+	var myID  = "label" + this.id + "_";
+	this.labels = {id: myID,
+				  labels: options.labels
+				};
+	var numLabels = this.labels.labels.length;
 	var liteKey = options.liteKey;
-	 
+	var xScale = this.xScale, yScale = this.yScale;
 
 	var graph = this.group.append("g") //make a group to hold labels
 	.attr("class", "labels")
 	.attr("id", this.labels.id);
 
-	graph.selectAll("g.label")
-		.data(this.labels).enter()
-		.append("g").attr("id", function(d, i) { return labelID + (liteKey?liteKey[i]:i);})
-		.attr("class", "liteable labels")
+	var filter = graph.append("defs").append("filter").attr("id","drop-shadow");
+	filter.append("feGaussianBlur").attr("in","SourceAlpha").attr("stdDeviation",2).attr("result","blur");
+	filter.append("feOffset").attr("in","blur").attr("dx",2).attr("dy",2).attr("result","offsetBlur");
+ 	var merge = filter.append("feMerge");
+	merge.append("feMergeNode").attr("in","offsetBlur");
+	merge.append("feMergeNode").attr("in","SourceGraphic");
+	
+	this.labelCollection = graph.selectAll("g.label")
+		.data(this.labels.labels).enter()
+		.append("g")
 		.attr("transform", function(d, i) {
-			return "translate(" + this.xScale(d.xyPos[0]) + "," + this.yScale(d.xyPos[1]) + ")";
-		})
-		.append("foreignObject")
+			return "translate(" + xScale(d.xyPos[0]) + "," + yScale(d.xyPos[1]) + ")";
+		});
+	this.labelCollection.append("foreignObject")
 			.attr("x", 0)
 			.attr("y", 0)
 			.attr("width", function(d,i) { return d.width;})
@@ -597,26 +606,39 @@ MakeAxes.prototype.Labels = function(options) { //begin labeled image object gen
 			.append("div").attr("class", "markerLabel")
 			//.style("visibility",function(d,i) { return d.viz;})
 			.html(function(d, i) {
-				return d.content;}); //make the label 
-
+				return d.content;
+				}
+				); //make the label 
+				
+				
+		if (liteKey) {
+			this.labelCollection.attr("id", function(d, i) {
+				return myID + liteKey[i];
+			})
+			//name it so it can be manipulated or highlighted later
+			.attr("class", "liteable");
+		}
 } //end MakeLabels object generator function
-MakeAxes.prototype.setLabels = function(liteKey) {
-	if (this.labels[liteKey]) {
+
+MakeAxes.prototype.setLabelLite = function(liteKey) {
+	if (this.labelCollection.selectAll(".liteable")) {
+		console.log("TODO: Log highlight event on ", this.labels.id);
 		//return all styles to normal on the labels
-		var unset = d3.select("#" + this.id).selectAll(".markerLabel");
-		console.log("Unsetting label lites: ", unset);
+		var unset = d3.select("#" + this.labels.id).selectAll(".markerLabel");
 		unset.transition().duration(200)
-		.style("color","")
-		.style("font-weight","")
-		.style("background-color","")
+		.attr("filter", null)
+		.style("color",null)
+		.style("font-weight",null)
+	//	.style("background-color","")
 	;
 		
 		//highlight the selected label(s)
-		var set = d3.selectAll("#" + this.id + liteKey).select(".markerLabel");
+		var set = d3.selectAll("#" + this.labels.id + liteKey).select(".markerLabel");
 		console.log("Setting label lites", set);
 		set.transition().duration(200).style("color", "#1d456e")
 		.style("font-weight", "600")
-		.style("background-color", "#e3effe");
+		.attr("filter", "url(#drop-shadow)");
+	//	.style("background-color", "#e3effe");
 		return liteKey;
 	} else {
 		console.log("Invalid key. No image " + liteKey);

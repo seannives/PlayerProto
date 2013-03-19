@@ -83,7 +83,7 @@ var bookConfig = {
 			    type: "objective", 
 			    url: "mapTests.html", 
 			    id: "n.2.5", 
-		        title: "Label and Callout Tests"
+		        title: "Map and Contour Plot Tests"
 			    }
             ]
         }

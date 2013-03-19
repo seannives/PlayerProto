@@ -13,7 +13,7 @@
     </head>
 	<body>
 		<div class="titler">
-			<span class='number setId'>
+			<span class='number setId'></span>
 			<span class="setTitle">Test Cases for Labels Graph</span>
 		</div>
 	<div class="container-fluid">
@@ -39,30 +39,264 @@
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
-var lineData = [
-		{	x: 0,	y: -3.1},
-		{	x: 2,	y: -2.02},
-		{	x: 12,	y: -1.2},
-		{	x: 19.1, y: -0.36},
-		{	x: 26.0,	y: -0.34	},
-		{	x: 29,	y: 0.425},
-		{	x: 45.7,	y: 0.545},
-		{	x: 55,	y: 0.61},
-		{	x: 66.6,	y: 0.7},
-		{	x: 73,	y: 0.9},
-		{	x: 89.1,	y: 1.128},
-		{	x: 90.1,	y: 1.55	},
-		{	x: 91.0,	y: 1.75},
-		{	x: 92.9,	y: 1.86}
-		]; // array of line data
+var birth = [
+		{x: 0,	y: 2.0	},
+		{x: 1,	y: 1.95},
+		{ x: 2,	 y: 1.9 },
+		 { x: 3, y: 1.85 },
+		 { x: 4, y: 1.9	 },
+		 { x: 5, y: 1.95 },
+		 { x: 6, y: 2.0	 },
+		 { x: 7, y: 1.95 },
+		 { x: 8, y: 1.9	 },
+		 { x: 9, y: 1.85 },
+		 { x: 10, y: 1.9 },
+		 { x: 11, y: 1.95},
+		 { x: 12, y: 2.0 },
+		 { x: 13, y: 1.95 },
+		 { x: 14, y: 1.9 },
+		 { x: 15, y: 1.85 },
+		 { x: 16, y: 1.9 },
+		 { x: 17, y: 1.95 },
+		 { x: 18, y: 1.96 },
+		 { x: 19, y: 1.95 },
+		 { x: 20, y: 1.94 },
+		 { x: 21, y: 1.93 },
+		 { x: 22, y: 1.94 },
+		 { x: 23, y: 1.95 },
+		 { x: 24, y: 1.94 },
+		 { x: 25, y: 1.93 },
+		 { x: 26, y: 1.8 },
+		 { x: 27, y: 1.7 },
+		 { x: 28, y: 1.6 },
+		 { x: 29, y: 1.5 },
+		 { x: 30, y: 1.4 },
+		 { x: 31, y: 1.3 },
+		 { x: 32, y: 1.2 },
+		 { x: 33, y: 1.1 },
+		 { x: 34, y: 1.0 },
+		 { x: 35, y: 0.9 },
+		 { x: 36, y: 0.8 },
+		 { x: 37, y: 0.7 },
+		 { x: 38, y: 0.6 },
+		 { x: 39, y: .5 },
+		 { x: 40, y: 0.4 },
+		 { x: 41, y: 0.35 },
+		 { x: 42, y: 0.35 },
+		 { x: 43, y: 0.34 },
+		 { x: 44, y: 0.33 },
+		 { x: 45, y: 0.33 },
+		 { x: 46, y: 0.32 },
+		 { x: 47, y: 0.33 },
+		 { x: 48, y: 0.31 },
+		 { x: 49, y: 0.29 },
+		 { x: 50, y: .25 },
+		 { x: 51, y: .198 },
+		 { x: 52, y: 0.2 },
+		 { x: 53, y: 0.19 },
+		 { x: 54, y: 0.18 },
+		 { x: 55, y: 0.175 },
+		 { x: 56, y: 0.172 },
+		 { x: 57, y: 0.16 },
+		 { x: 58, y: 0.155 },
+		 { x: 59, y: 0.153 },
+		 { x: 60, y: 0.151 },
+		 { x: 61, y: 0.15 },
+		 { x: 62, y: .145 },
+		 { x: 63, y: 0.145 },
+		 { x: 64, y: 0.15 },
+		 { x: 65, y: 0.145 }];
+ 
+var death = [
+		{x: 0,
+		y: 1.95
+		},
+		{x: 1,
+		y: 1.95
+		},
+		{ x: 2,
+		 y: 1.98
+		 },
+		 { x: 3,
+		 y: 1.95
+		 },
+		 { x: 4,
+		 y: 1.95
+		 },
+		 { x: 5,
+		 y: 1.98
+		 },
+		 { x: 6,
+		 y: 1.95
+		 },
+		 { x: 7,
+		 y: 1.88
+		 },
+		 { x: 8,
+		 y:  1.85
+		 },
+		 { x: 9,
+		 y: 1.85
+		 },
+		 { x: 10,
+		 y: 1.84
+		 },
+		 { x: 11,
+		 y: 1.8
+		 },
+		 { x: 12,
+		 y: 1.7
+		 },
+		 { x: 13,
+		 y: 1.6
+		 },
+		 { x: 14,
+		 y: 1.5
+		 },
+		 { x: 15,
+		 y: 1.4
+		 },
+		 { x: 16,
+		 y: 1.3
+		 },
+		 { x: 17,
+		 y: 1.2
+		 },
+		 { x: 18,
+		 y: 1.1
+		 },
+		 { x: 19,
+		 y: 0.9
+		 },
+		 { x: 20,
+		 y: 0.8
+		 },
+		 { x: 21,
+		 y: 0.7
+		 },
+		 { x: 22,
+		 y: 0.55
+		 },
+		 { x: 23,
+		 y: 0.45
+		 },
+		 { x: 24,
+		 y: 0.35
+		 },
+		 { x: 25,
+		 y: 0.2
+		 },
+		 { x: 26,
+		 y: 0.195
+		 },
+		 { x: 27,
+		 y: 0.19
+		 },
+		 { x: 28,
+		 y: 0.18
+		 },
+		 { x: 29,
+		 y: 0.19
+		 },
+		 { x: 30,
+		 y:  0.195
+		 },
+		 { x: 31,
+		 y: 0.2
+		 },
+		 { x: 32,
+		 y: 0.195
+		 },
+		 { x: 33,
+		 y: 0.19
+		 },
+		 { x: 34,
+		 y: 0.195
+		 },
+		 { x: 35,
+		 y: 0.198
+		 },
+		 { x: 36,
+		 y: 0.2
+		 },
+		 { x: 37,
+		 y: 0.2
+		 },
+		 { x: 38,
+		 y: 0.19
+		 },
+		 { x: 39,
+		 y: 0.18
+		 },
+		 { x: 40,
+		 y: 	0.19
+		 },
+		 { x: 41,
+		 y: 0.195
+		 },
+		 { x: 42,
+		 y: 0.2
+		 },
+		 { x: 43,
+		 y: 0.195
+		 },
+		 { x: 44,
+		 y: 0.198
+		 },
+		 { x: 45,
+		 y: 0.2
+		 },
+		 { x: 46,
+		 y: 0.2
+		 },
+		 { x: 47,
+		 y: 0.195
+		 },
+		 { x: 48,
+		 y: 0.192
+		 },
+		 { x: 49,
+		 y: 0.192
+		 },
+		 { x: 50,
+		 y: .19
+		 },
+		 { x: 51,
+		 y: .198
+		 },
+		 { x: 52,
+		 y: 0.2
+		 },
+		 { x: 53,
+		 y: 0.19
+		 },
+		 { x: 54, y: 0.18
+		 },
+		 { x: 55, y: 0.198	 },
+		 { x: 56, y: 0.195	 },
+		 { x: 57,	 y: 0.2	 },
+		 { x: 58,	 y: 0.19	 },
+		 { x: 59,	 y: 0.195	 },
+		 { x: 60,	 y: 0.198	 },
+		 { x: 61,	 y: 0.193},
+		 { x: 62,	 y: .145	 },
+		 { x: 63,	 y: 0.192		 },
+		 { x: 64,	 y: 0.198	 },
+		 { x: 65,	 y: 0.199	 }];
+var dataPts = birth.length;
+var popGrowth = [];
+for(i=0;i<dataPts;i++){
+		popGrowth[i] = {x: birth[i].x,
+						y: birth[i].y - death[i].y};
+		}
 		
 	
 	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
 	
 	var svg0 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget0"),
-		maxWid: 300,
-		maxHt: 240
+		maxWid: 400,
+		maxHt: 300
 		}
 	);
 	
@@ -87,59 +321,60 @@ var lineData = [
 	axes0.Labels(
 		{labels: 	
 		  [	
-			{content: "United States",
-			xyPos: [0,0], width: 150
-			},
-			{content: "European Union",
-			xyPos:[axes0.innerWid/3,0], width: 110
-			},
-			{content: "Afghanistan",
-			xyPos:[2*axes0.innerWid/3,.58], width: 110
-			},
-			{content:"23 Acres/person",
-			xyPos:[0,1], width: 60
-			},
-			{content:"Infrared",
-			xyPos:[axes0.innerWid/3,1], width: 100
-			},
-			{content:"Radio",
-			xyPos:[2*axes0.innerWid/3,1], width: 180
-			}
+			{content: "United States",	xyPos: [0,.2], width: 80	},
+			{content: "European Union",	xyPos:[0.45,0.2], width: 100},
+			{content: "Afghanistan", xyPos:[0.8,0.2], 
+			//because I used the default Data, my scale on the image is
+			//now 0 to 1, so I want this label to be 8/10 of the way across, 
+			//and 1/5 from the bottom
+			width: 60	},
+			{content:"23 Acres/person",	xyPos:[0,1], width: 100},
+			{content:"11.5 acres/person", xyPos:[0.45,.7], width: 100	},
+			{content:"1 acre/ person", xyPos:[0.8,0.5], width: 60}
 		  ],
 		});
-
 	
-//	<div id="widgetTarget1"><p>1. Multiple images with autoCarousel</p></div>
+	
+//	<div id="widgetTarget1"><p>1. Graph with Labels</p></div>
 	var svg1 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget1"),
-		maxWid: 400,
-		maxHt: 300
+		maxWid: 500,
+		maxHt: 400
 		}
 	);
 	var axes1 = new MakeAxes(svg1,{
 		id: 1,
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
+		Data: [birth,death,popGrowth, [{x:0,y:-0.5}]],
 		xaxisType: "linear",
+		xTicks: 5,
 		xOrient: "bottom",
-		xLabel: "counts",
+		xLabel: "Time",
 		yaxisType: "linear",
+		yTicks: 0,
 		yOrient: "left",
 	});
 	
-	var images1 = new MakeScalableImage(axes1,
-		{images: [
-			{URI:'img/ch4_0_1.png', caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/multimedia/imagegallery/ image_feature_1529.html"},
-			{URI:'img/ch4_03.jpg', caption: "The seasons"},
-			{URI:'img/ch4_0_2.jpg', caption: "Heat transfer mechanisms"},	
-				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."},
-				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."},
-				{URI:'img/ch4_4.jpg', caption: "Seaside Heights, NJ after Hurricane Sandy."}
-			]
+	var lines1 = new MakeLineGraph(axes1,
+		{Data: [birth,death,popGrowth],
+			type: "lines"
 		}
 	);
 
-	//	<div id="widgetTarget2"><p>Grouped bars (separate series with same label shown in group)</p></div>
+	axes1.Labels(
+		{labels: 	
+		  [	
+			{content: "Pre-development", xyPos: [0,-.25], width: 100	},
+			{content: "Developing",	xyPos:[15,-.25], width: 80},
+			{content: "Modernizing", xyPos:[30,-.25], width: 80},
+			{content:"Developed",	xyPos:[40,-.25], width: 70},
+			{content:"Post-development", xyPos:[50,-.25], width: 100	},
+		  ],
+		liteKey: [10,20,30,40,50]
+		});
+	
+	//	<div id="widgetTarget2"><p>Carousel with callouts (events)</p></div>
 	
 	var svg2 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget2"),
@@ -151,13 +386,11 @@ var lineData = [
 		id: 2,
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
-		Data: [lineData],
+	 
 		xaxisType: "linear",
-		xTicks: 5,
 		xOrient: "bottom",
 		xLabel: "distance",
 		yaxisType: "linear",
-		yTicks: 5,
 		yOrient: "left",
 		yLabel: "Strata dividing line"
 	});
@@ -168,11 +401,7 @@ var lineData = [
 			]
 		}
 	);
-	var lines2 = new MakeLineGraph(axes2,{
-		Data: [lineData],
-		type: "lines"
-	});
-	
+
 	
 
 
@@ -262,14 +491,13 @@ var lineData = [
 		liteKey: [0,1,2]
 	});
 
-	var IDList = [images1, images5, axes5];
-	console.log(images1,images5,axes5);
+	var IDList = [images5, axes5];
+	console.log(axes1,images5,axes5);
 	var startState = 0, start2 = 51;
 	
-	images1.setState(startState);
 	images5.setState(startState);
 	axes5.setState(startState);
-	
+	axes1.setLabelLite(20);
 images5.setState(startState);
 //	legend5.setState(start2);
 		
