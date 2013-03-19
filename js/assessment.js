@@ -573,7 +573,8 @@ MakeAxes.prototype.Labels = function(options) { //begin labeled image object gen
 	
 	var myID  = "label" + this.id + "_";
 	this.labels = {id: myID,
-				  labels: options.labels
+				  labels: options.labels,
+				  eventFunc: this.setLabelLite
 				};
 	var numLabels = this.labels.labels.length;
 	var liteKey = options.liteKey;
@@ -633,12 +634,84 @@ MakeAxes.prototype.setLabelLite = function(liteKey) {
 	;
 		
 		//highlight the selected label(s)
+		//d3.selectAll("#" + this.labels.id + liteKey).attr("filter", "url(#drop-shadow)");
+		//this won't render - browser bug
 		var set = d3.selectAll("#" + this.labels.id + liteKey).select(".markerLabel");
 		console.log("Setting label lites", set);
-		set.transition().duration(200).style("color", "#1d456e")
-		.style("font-weight", "600")
-		.attr("filter", "url(#drop-shadow)");
+		set.transition().duration(200)
+		.style("color", "#1d95ae")
+		.style("font-weight", "600");
+	
 	//	.style("background-color", "#e3effe");
+	// this renders badly from Chrome refresh bug
+		return liteKey;
+	} else {
+		console.log("Invalid key. No image " + liteKey);
+	}
+};
+
+MakeAxes.prototype.AreaMarkers = function(config) { //begin area marker generator
+	
+	//make x and y scales from the axes container into variables so they can be 
+	//used inside functions
+	var xScale = this.xScale;
+	var yScale = this.yScale;
+	var myID  = "areaMark" + this.id + "_";
+	this.areaMarkers = {
+		id: myID,
+		eventFunc: this.setMarkerLite
+				};
+	//x and y bands determine the leading and trailing edges of the 
+	//area rectangles, and the orientation (vertical if x, horiz if y)
+	//bands are specified as an array of 2-element arrays
+	this.xBands = config.xBands;
+	//maxWid and maxHt are the width and height, respectively, integers
+	//margin is an associative array of top, bottom, left, right integers
+	this.yBands = config.yBands;
+
+	var liteKey = config.liteKey;
+	//make a group to hold the area markers  
+	var bandMarks = this.group.append("g").attr("class", "areaMarker");
+
+	//these tests pull the sets of markers for each band and then report whether the bands are all in the shown range of the graph which calls them
+	if (this.xBands) {
+		bandMarks.selectAll("rect")
+		.data(this.xBands).enter()
+		.append("rect").attr("x", function(d) {return xScale(d[0]); })
+		.attr("y", 0)
+		.attr("width", function(d) {return Math.abs(xScale(d[1]) - xScale(d[0]));})
+		.attr("height", this.innerHt)
+	//	.attr("class", function(d,i){ return "fill"+i;})
+	//TODO figure out a coloring scheme for when they overlap
+		;
+		
+	
+	}
+
+	if (this.yBands) {
+			bandMarks.selectAll("rect")
+			.data(this.yBands).enter()
+			.append("rect").attr("y", function(d) {return yScale(d[0]); })
+			.attr("x", 0)
+			.attr("height", function(d) {return Math.abs(yScale(d[1]) - yScale(d[0]));})
+			.attr("width", this.innerWid)
+	}
+
+	if (liteKey) {
+		bandMarks.attr("id", function(d, i) {
+			return this.areaMarkers.id + liteKey[i];
+		})
+	} //name it 
+} //end area marker object generator function
+
+MakeAxes.prototype.markerHighLite = function(liteKey) {
+	if (this.markers) {
+		//TODO - test and clean this up
+		//turn off any previous highlights (clear old state)
+		d3.selectAll(".areaMarker").transition().duration(200).style("fill-opacity","");
+		//emphasize the selected marker
+		d3.select("#" + this.id + liteKey)
+		.transition().duration(200).style("fill-opacity","5");
 		return liteKey;
 	} else {
 		console.log("Invalid key. No image " + liteKey);
@@ -1307,6 +1380,7 @@ function stateCycle(currentObj, linkedObjList) {
 			console.log("id ", o.id + liteKey, " not found.");
 		} else {
 			console.log("object found in IDList: ", "#" + o.id + liteKey, d3.selectAll("#" + o.id + liteKey));
+		//	o.eventFunc(liteKey);
 			o.setState(liteKey);
 		}
 	})

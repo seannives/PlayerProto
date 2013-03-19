@@ -355,7 +355,11 @@ for(i=0;i<dataPts;i++){
 		yTicks: 0,
 		yOrient: "left",
 	});
-	
+		
+	axes1.AreaMarkers(
+	{xBands:  [[0,14],[25,40],[50,65]]
+		});
+			
 	var lines1 = new MakeLineGraph(axes1,
 		{Data: [birth,death,popGrowth],
 			type: "lines"
@@ -366,13 +370,14 @@ for(i=0;i<dataPts;i++){
 		{labels: 	
 		  [	
 			{content: "Pre-development", xyPos: [0,-.25], width: 100	},
-			{content: "Developing",	xyPos:[15,-.25], width: 80},
-			{content: "Modernizing", xyPos:[30,-.25], width: 80},
+			{content: "Developing",	xyPos:[14,-.25], width: 80},
+			{content: "Modernizing", xyPos:[27,-.25], width: 80},
 			{content:"Developed",	xyPos:[40,-.25], width: 70},
-			{content:"Post-development", xyPos:[50,-.25], width: 100	},
+			{content:"Post-development", xyPos:[51,-.25], width: 100	},
 		  ],
 		liteKey: [10,20,30,40,50]
 		});
+		
 	
 	//	<div id="widgetTarget2"><p>Carousel with callouts (events)</p></div>
 	
@@ -498,7 +503,7 @@ for(i=0;i<dataPts;i++){
 	images5.setState(startState);
 	axes5.setState(startState);
 	axes1.setLabelLite(20);
-images5.setState(startState);
+	images5.setState(startState);
 //	legend5.setState(start2);
 		
 	 d3.selectAll('.liteable')
