@@ -82,8 +82,14 @@ var bookConfig = {
 			{		
 			    type: "objective", 
 			    url: "mapTests.html", 
-			    id: "n.2.5", 
+			    id: "n.2.6", 
 		        title: "Map and Contour Plot Tests"
+			    },
+			{		
+			    type: "objective", 
+			    url: "pieTests.html", 
+			    id: "n.2.7", 
+		        title: "Pie Chart Tests"
 			    }
             ]
         }

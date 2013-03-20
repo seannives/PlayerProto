@@ -661,12 +661,10 @@ MakeAxes.prototype.AreaMarkers = function(config) { //begin area marker generato
 		id: myID,
 		eventFunc: this.setMarkerLite
 				};
-	//x and y bands determine the leading and trailing edges of the 
-	//area rectangles, and the orientation (vertical if x, horiz if y)
-	//bands are specified as an array of 2-element arrays
+	//x and y bands are arrays of  of 2-element arrays of reals
+	// they determine the leading and trailing edges of the 
+	//area marker rectangles, and the orientation (vertical if x, horiz if y)
 	this.xBands = config.xBands;
-	//maxWid and maxHt are the width and height, respectively, integers
-	//margin is an associative array of top, bottom, left, right integers
 	this.yBands = config.yBands;
 
 	var liteKey = config.liteKey;
@@ -718,6 +716,64 @@ MakeAxes.prototype.markerHighLite = function(liteKey) {
 	}
 };
 
+MakeAxes.prototype.Pie = function(config) { //begin area marker generator
+	
+	//make x and y scales from the axes container into variables so they can be 
+	//used inside functions
+	var xScale = this.xScale;
+	var yScale = this.yScale;
+	var myID  = "pie" + this.id + "_";
+	this.pieChart = {
+		id: myID,
+		eventFunc: this.pieLite
+				};
+	//Data is an array of real, positive values, one for each slice of pie
+	this.Data = config.Data;
+	var liteKey = config.liteKey;
+	var r = this.innerWid/3;//use one dimension of the axes box for a radius
+	
+	var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
+	        .outerRadius(r);//use one dimension of the axes box for a radius
+	
+	//make a group to hold the pie 
+	var pieGroup = this.group.append("g").attr("class", "pie")
+	.attr("transform", "translate(" + this.innerWid/2 + "," + this.innerHt/2 + ")"); //center it
+
+	var pieArcs = d3.layout.pie()           //this will create arc data for us given a list of values
+	        .value(function(d) { return d; });    
+
+	var arcs = pieGroup.selectAll("g.slice")     
+	        .data(pieArcs(this.Data))                     
+	//associate the generated pie data (an array of arcs w/startAngle, endAngle and value props) 
+	        .enter()                            
+	        .append("g")       
+	        .attr("class", function(d, i) {
+				return "fill" + i;
+			});    //color with predefined sequential colors
+
+	arcs.append("path")
+	   .attr("d", arc);      //this creates the path using the associated data (pie) with the arc drawing function
+
+	if (liteKey) {
+		arcs.attr("id", function(d, i) {
+			return this.pieChart.id + liteKey[i];
+		}).attr("class","liteable");
+	} //name it if it's got an associative key
+} //end pie chart object generator function
+
+MakeAxes.prototype.pieLite = function(liteKey) {
+	if (this.markers) {
+		//TODO - test and clean this up
+		//turn off any previous highlights (clear old state)
+		d3.selectAll(".areaMarker").transition().duration(200).style("fill-opacity","");
+		//emphasize the selected marker
+		d3.select("#" + this.id + liteKey)
+		.transition().duration(200).style("fill-opacity","5");
+		return liteKey;
+	} else {
+		console.log("Invalid key. No image " + liteKey);
+	}
+};
 
 function MakeLineGraph(axesCont, config) { //begin line graph object generator to go with widget containers
 	//inherit the width, height and margins from the axes container
