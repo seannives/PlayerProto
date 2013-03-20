@@ -78,7 +78,13 @@ var bookConfig = {
 	            url: "labelCalloutTests.html", 
 	            id: "n.2.5", 
                 title: "Label and Callout Tests"
-	            }
+	            },
+			{		
+			    type: "objective", 
+			    url: "mapTests.html", 
+			    id: "n.2.5", 
+		        title: "Map and Contour Plot Tests"
+			    }
             ]
         }
         ]
