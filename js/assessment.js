@@ -48,24 +48,37 @@ console.log("compare string a to string bbbb equal lengths ", compareLen("a","bb
  * containers
  *
  *=============================================*/
-function renderInteractive(interactiveElement, interactiveNode){
-
-  // I'm interpreting interactiveNode as the ID of the div where the widget will get
-  //written out, and interactiveElement as the type and content.  My guess is this should be server-
-  //side code. interactiveElement will either be an HTML-based set (tables, eqn's, forms)
-  //or an SVG-based set (graphs, images).  But you'll need a different top-level 
-  //container for each. Note that either can nest, with SVG in HTML, or HTML in an SVG foreign
-  //object. Not using this yet, just pondering it.
-
-  // load item body
-    var interactive;
-    if (interactiveElement.type == "HTML")
-   		{ interactive = MakeHTMLContainer(interactiveElement.content); }
-		else
+ 
+/* **************************************************************************
+ * renderInteractive                                                    *//**
+ *
+ * Create a container (html or svg) as specified and put the given node into
+ * it.
+ *
+ * @param interactiveElement	the type of content (HTML for an html
+ *								container, otherwise an svg container)
+ * @param interactiveNode		The ID of the div where the widget will get
+ *								written out.
+ *
+ * Notes:
+ * I'm interpreting interactiveNode as the ID of the div where the widget
+ * will get written out, and interactiveElement as the type and content.
+ * My guess is this should be server-side code. interactiveElement will
+ * either be an HTML-based set (tables, eqn's, forms) or an SVG-based set
+ * (graphs, images).  But you'll need a different top-level container for
+ * each. Note that either can nest, with SVG in HTML, or HTML in an SVG
+ * foreign object. Not using this yet, just pondering it.
+ ****************************************************************************/
+function renderInteractive(interactiveElement, interactiveNode) {
+	// load item body
+	var interactive;
+	if (interactiveElement.type == "HTML")
+		{ interactive = MakeHTMLContainer(interactiveElement.content); }
+	else
 		{ interactive = MakeSVGContainer(interactiveElement.content); }
-    interactive.appendChild(interactiveNode);
 
- }
+	interactive.appendChild(interactiveNode);
+}
 
 
 
