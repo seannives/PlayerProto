@@ -562,7 +562,7 @@ MakeAxes.prototype.setState = function(liteKey) {
 	}
 };
 
-MakeAxes.prototype.Labels = function(options) { //begin labeled image object generator
+MakeAxes.prototype.Labels = function(config) { //begin labeled image object generator
 	
 	//labels: is an array of objects with keys content: string with HTML markup
 	//xyPos: an [x,y] array to orient the position on the axes grid, in local coordinates
@@ -573,17 +573,19 @@ MakeAxes.prototype.Labels = function(options) { //begin labeled image object gen
 	
 	var myID  = "label" + this.id + "_";
 	this.labels = {id: myID,
-				  labels: options.labels,
-				  eventFunc: this.setLabelLite
+				  labels: config.labels,
+				  eventFunc: this.setLabelLite,
+				  type: config.type
 				};
 	var numLabels = this.labels.labels.length;
-	var liteKey = options.liteKey;
+	var liteKey = config.liteKey;
 	var xScale = this.xScale, yScale = this.yScale;
 
 	var graph = this.group.append("g") //make a group to hold labels
 	.attr("class", "labels")
 	.attr("id", this.labels.id);
 
+//this filter can be used to add dropshadows to highlighted labels and bullets
 	var filter = graph.append("defs").append("filter").attr("id","drop-shadow");
 	filter.append("feGaussianBlur").attr("in","SourceAlpha").attr("stdDeviation",2).attr("result","blur");
 	filter.append("feOffset").attr("in","blur").attr("dx",2).attr("dy",2).attr("result","offsetBlur");
@@ -597,20 +599,29 @@ MakeAxes.prototype.Labels = function(options) { //begin labeled image object gen
 		.attr("transform", function(d, i) {
 			return "translate(" + xScale(d.xyPos[0]) + "," + yScale(d.xyPos[1]) + ")";
 		});
+	
 	this.labelCollection.append("foreignObject")
-			.attr("x", 0)
-			.attr("y", 0)
-			.attr("width", function(d,i) { return d.width;})
-			.attr("height", 200)
-			.append("xhtml:body").style("margin", "0px") 
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("width", function(d,i) { return d.width;})
+		.attr("height", 200)
+		.append("xhtml:body").style("margin", "0px") 
 			//this interior body shouldn't inherit margins from page body
-			.append("div").attr("class", "markerLabel")
-			//.style("visibility",function(d,i) { return d.viz;})
+		.append("div").attr("class", "markerLabel")
+		//.style("visibility",function(d,i) { return d.viz;})
+		//I punted on the show/hide thing, but it could come back
 			.html(function(d, i) {
 				return d.content;
 				}
 				); //make the label 
 				
+	if(this.labels.type == "bullets"){			
+		this.labelCollection.append("circle")
+		.attr("cx",0).attr("cy",0).attr("r",10)
+		.attr("class",function(d, i) {
+				return "fill"+i;
+				});
+	}
 				
 		if (liteKey) {
 			this.labelCollection.attr("id", function(d, i) {
@@ -730,7 +741,7 @@ MakeAxes.prototype.Pie = function(config) { //begin area marker generator
 	//Data is an array of real, positive values, one for each slice of pie
 	this.Data = config.Data;
 	var liteKey = config.liteKey;
-	var r = this.innerWid/3;//use one dimension of the axes box for a radius
+	var r = this.innerHt/3;//use one dimension of the axes box for a radius
 	
 	var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
 	        .outerRadius(r);//use one dimension of the axes box for a radius
@@ -904,7 +915,7 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 	this.type = config.type;
 	//highlitekey is an array of integers relating the traces to other selectable things on the page, optional
 	var liteKey = config.liteKey;
-	this.id = "lines" + axesCont.id;
+	this.id = "bars" + axesCont.id + "_";
 	var prefix = this.id;
 
 	var graph = axesCont.group.append("g") //make a group to hold new line chart
@@ -930,7 +941,7 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 	};
 
 
-	var series = graph.selectAll("g.series")
+	this.barSeries = graph.selectAll("g.series")
 	.data(this.Data).enter()
 	.append("g")
 	.attr("class", function(d, i) {
@@ -938,11 +949,11 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 	});
 	//If it's a grouped barchart, shimmie out the bars by group
 	if (this.type == "grouped") {
-		series.attr("transform", function(d, i) {
+		this.barSeries.attr("transform", function(d, i) {
 			return "translate(0," + (groupScale(i)) + ")";
 		})
 	}
-	//If it's highliteable, add a key
+	//If it's highliteable, add a key to the series
 	if (liteKey) {
 		series.attr("id", function(d, i) {
 			return "series_" + (liteKey[i]);
@@ -950,7 +961,7 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 	}
 
 
-	var bars = series.selectAll("g.bar") //this selects all <g> elements with class bar (there aren't any yet)
+	var bars = this.barSeries.selectAll("g.bar") //this selects all <g> elements with class bar (there aren't any yet)
 	.data(Object) //drill down into the nested Data
 	.enter() //this will create <g> elements for every data element 
 	.append("g") //create groups
@@ -962,14 +973,15 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 			+ (axesCont.yScale(d.y)) + ")";
 	})
 
-	//this allows us to draw pyramid charts, although normally bar charts are bin counts and all positive
+	//the x<0 logic allows us to draw pyramid charts, although normally bar charts 
+	//are bin counts and all positive
 	//move the group to the y=ordinal position vertically
 	//I enclose the bars in individual groups so you could choose to label the ends with data or label
 	//and have it stick to the bar by putting it in the same group
 	.attr("id", function(d, i, j) {
 		return prefix + "_" + i;
 	}); //name it for the region to highlight
-	bars.append("svg:rect") //make the bars
+	bars.append("rect") //make the bars
 	.attr("height", (this.type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
 	//divide height into uniform bar widths
 	.attr("width", function(d, i) {
