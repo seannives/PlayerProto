@@ -31,15 +31,10 @@
  ****************************************************************************/
 function EventManager()
 {
-	// Public Methods
-	this.publish = EventManager_publish;
-	this.subscribe = EventManager_subscribe;
-	this.fire = EventManager_fire;
-	
 	// Private Fields
 	
 	/**
-	 * events associates eventIds with an array of publishers and an array of
+	 * events_ associates eventIds with an array of publishers and an array of
 	 * subscribers to that event.
 	 * @type Object.<string, ManagedEventInfo>
 	 * @private
@@ -58,18 +53,18 @@ function EventManager()
  *						the event on the page.
  *
  ****************************************************************************/
-EventManager.prototype.publish = function( publisher, eventId )
+EventManager.prototype.publish = function(publisher, eventId)
 {
 	// If the eventId has never been published, add it
-	if (!(eventId in this.events))
+	if (!(eventId in this.events_))
 	{
-		this.events[eventId] = this.getEmptyManagedEventInfo_();
+		this.events_[eventId] = this.getEmptyManagedEventInfo_();
 	}
 	
-	var event = this.events[eventId];
+	var event = this.events_[eventId];
 	
 	// If the publisher has already published this eventId, todo: error or ignore?
-	if ($.inArray(event.publishers, publisher) == -1)
+	if ($.inArray(event.publishers, publisher) != -1)
 	{
 		alert('event was already published by this publisher');
 		return;
@@ -95,15 +90,15 @@ EventManager.prototype.publish = function( publisher, eventId )
  * - If you subscribe the same callback multiple times, when the event is
  *   fired it will be called once for each subscription.
  ****************************************************************************/
-EventManager.prototype.subscribe function( eventId, callback )
+EventManager.prototype.subscribe = function(eventId, callback)
 {
 	// If the eventId has never been published, add it (todo: or error?)
-	if (!(eventId in this.events))
+	if (!(eventId in this.events_))
 	{
-		this.events[eventId] =  this.getEmptyManagedEventInfo_();
+		this.events_[eventId] =  this.getEmptyManagedEventInfo_();
 	}
 	
-	var event = this.events[eventId];
+	var event = this.events_[eventId];
 	
 	// Add the callback to the list of callbacks of the eventId
 	event.callbacks.push(callback);
@@ -122,15 +117,15 @@ EventManager.prototype.subscribe function( eventId, callback )
  *							subscriber's callback.
  *
  ****************************************************************************/
-EventManager.prototype.fire function( invoker, eventId, eventDetails )
+EventManager.prototype.fire = function(invoker, eventId, eventDetails)
 {
 	// If the eventId has never been published, report an error
-	if (!(eventId in this.events))
+	if (!(eventId in this.events_))
 	{
 		alert('Error: attempt to fire the unpublished event "' + eventId + '"');
 	}
 	
-	var event = this.events[eventId];
+	var event = this.events_[eventId];
 	
 	// Check that the firing object is one of the publishers of the event
 	if ($.inArray(event.publishers, invoker) == -1)
@@ -152,7 +147,7 @@ EventManager.prototype.fire function( invoker, eventId, eventDetails )
  * used to initialize a new entry in the events_ field.
  * @private
  ****************************************************************************/
-EventManager.prototype.getEmptyManagedEventInfo_ function()
+EventManager.prototype.getEmptyManagedEventInfo_ = function()
 {
 	return { publishers: [], callbacks: [] };
 }
