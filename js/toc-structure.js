@@ -87,8 +87,14 @@ var bookConfig = {
             },
             {
                 type: "objective",
-                url: "eventmanagerTests.html",
+                url: "pieTests.html",
                 id: "n.2.7",
+                title: "Pie Chart Tests"
+            },
+            {
+                type: "objective",
+                url: "eventmanagerTests.html",
+                id: "n.2.8",
                 title: "Event Manager Tests"
             }
             ]
