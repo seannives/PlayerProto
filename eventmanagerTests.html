@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title class="setTitle"></title>
+	
+	<meta name="Author" content="Michael Jay Lippert" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="eCourses Author, Title" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen" />
+	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen" />
+	<link href="css/graphics_and_svg.css" rel="stylesheet" />
+	<link href="css/learning-objective.css" rel="stylesheet" />
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+	<div class="titler">
+		<span class='number setId'></span>
+		<span class="setTitle">Test Cases for SVG Container, Axes Container, Line Graph</span>
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+				<div id="widgetTarget0"><p>Button 1</p></div>
+				<div id="widgetTarget1"><p>Button 2</p></div>
+				<div id="widgetTarget2"><button type="button" style="background: red">Click Me!</button></div>
+			</div>
+			<div class="span6 rightCol">
+				<div id="widgetTarget50"><p>3. Three scaled images in grid</p></div>
+				<div id="widgetTarget80"><p>6. Image with Legend</p></div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="js/jquery-latest.js"></script>
+	<script src="js/d3.v2.min.js"></script>
+	<script src="js/toc-structure.js"></script>
+	<script src="js/eCourse-master.js"></script>
+	<script src="js/assessment.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/eventmanager.js"></script>
+
+	<script>
+	function ButtonWidget(id, eventManager)
+	{
+		this.id = id;
+		this.eventManager = eventManager;
+		
+		// Define the ids of the events the ButtonWidget uses
+		this.pressedEventId = id + 'Pressed';
+
+		this.rootEl = $('<div><button type="button">Default text</button></div>');
+		
+		// Define private callbacks for subscribed events
+		function pressedCallback()
+		{
+		}
+		
+		// Publish events a ButtonWidget may fire
+		eventManager.publish(this, this.pressedEventId);
+		
+		// Subscribe to events the ButtonWidget responds to
+		eventManager.subscribe(this.pressedEventId, pressedCallback);
+	}
+	
+	ButtonWidget.prototype.setText = function(text)
+	{
+		// Update the DOM in getRootEl
+		var b = $("button", this.rootEl);
+		var t = b.text();
+		$("button", this.rootEl).text(text);
+	}
+
+	ButtonWidget.prototype.getText = function()
+	{
+		return $("button", this.rootEl).text();
+	}
+
+	ButtonWidget.prototype.getRootEl = function()
+	{
+		return this.rootEl;
+	}
+
+	// ======== Button Widget class defined above here...below here is script that creates buttons on the test page
+	
+	var eventManager = new EventManager();
+	
+	// Create the 1st button widget
+	var button1 = new ButtonWidget("button1", eventManager);
+	button1.setText('Hello world');
+	
+	// Add the button1 widget to the page
+	$('#widgetTarget0').append(button1.getRootEl());
+	
+	// Create the 2nd button widget
+	var button2 = new ButtonWidget("button2", eventManager);
+	button2.setText('Hello moon');
+	
+	// Add the button2 widget to the page
+	$('#widgetTarget1').append(button2.getRootEl());
+	
+	// Modify the text of button 2 when button 1 is pressed
+	eventManager.subscribe(button1.pressedEventId, addCountToButton2);
+	
+	function addCountToButton2()
+	{
+		button2.setText(button2.getText() + '#');
+	}
+	
+	</script>
+</body>
+</html>
