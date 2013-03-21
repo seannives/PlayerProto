@@ -64,7 +64,7 @@ EventManager.prototype.publish = function(publisher, eventId)
 	var event = this.events_[eventId];
 	
 	// If the publisher has already published this eventId, todo: error or ignore?
-	if ($.inArray(event.publishers, publisher) != -1)
+	if ($.inArray(publisher, event.publishers) != -1)
 	{
 		alert('event was already published by this publisher');
 		return;
@@ -128,7 +128,7 @@ EventManager.prototype.fire = function(invoker, eventId, eventDetails)
 	var event = this.events_[eventId];
 	
 	// Check that the firing object is one of the publishers of the event
-	if ($.inArray(event.publishers, invoker) == -1)
+	if ($.inArray(invoker, event.publishers) == -1)
 	{
 		alert('Warning: event is being fired by an object which has not published the event');
 	}

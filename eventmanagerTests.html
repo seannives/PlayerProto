@@ -3,8 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title class="setTitle"></title>
-	
+	<meta charset="UTF-8">
 	<meta name="Author" content="Michael Jay Lippert" />
 	<meta name="Owner" content="Pearson" />
 	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
@@ -17,6 +16,8 @@
 	<link href="css/graphics_and_svg.css" rel="stylesheet" />
 	<link href="css/learning-objective.css" rel="stylesheet" />
 	<link href="css/eCourse-master.css" rel="stylesheet" media="screen" />
+	
+	<title class="setTitle"></title>
 </head>
 
 <body>
@@ -57,9 +58,19 @@
 
 		this.rootEl = $('<div><button type="button">Default text</button></div>');
 		
+		var that = this;
+		$("button", this.rootEl).click(function()
+										{
+											that.eventManager.fire(that, that.pressedEventId);
+										} );
+		
 		// Define private callbacks for subscribed events
 		function pressedCallback()
 		{
+			var button = $('button', that.rootEl);
+			var color = button.css('background-color');
+			var newColor = color == 'rgb(0, 128, 0)' ? 'red' : 'green';
+			button.css('background-color', newColor);
 		}
 		
 		// Publish events a ButtonWidget may fire
