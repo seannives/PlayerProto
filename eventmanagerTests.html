@@ -61,11 +61,11 @@
 		var that = this;
 		$("button", this.rootEl).click(function()
 										{
-											that.eventManager.fire(that, that.pressedEventId);
+											that.eventManager.publish(that.pressedEventId);
 										} );
 		
-		// Define private callbacks for subscribed events
-		function pressedCallback()
+		// Define private handlers for subscribed events
+		function pressedHandler()
 		{
 			var button = $('button', that.rootEl);
 			var color = button.css('background-color');
@@ -73,11 +73,8 @@
 			button.css('background-color', newColor);
 		}
 		
-		// Publish events a ButtonWidget may fire
-		eventManager.publish(this, this.pressedEventId);
-		
 		// Subscribe to events the ButtonWidget responds to
-		eventManager.subscribe(this.pressedEventId, pressedCallback);
+		eventManager.subscribe(this.pressedEventId, pressedHandler);
 	}
 	
 	ButtonWidget.prototype.setText = function(text)
