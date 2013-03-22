@@ -4,6 +4,11 @@
  *
  * @fileoverview Implementation of an EventManager object.
  *
+ * The EventManager implements the Observer pattern, aka (Publish/Subscribe)
+ * as described here: http://msdn.microsoft.com/en-us/magazine/hh201955.aspx
+ * A javascript implementation of this pattern is available at:
+ * https://github.com/mroderick/PubSubJS
+ *
  * Created on		March 18, 2013
  * @author			Michael Jay Lippert
  *
@@ -22,16 +27,21 @@
 /* **************************************************************************
  * EventManager                                                         *//**
  *
- * @constructor for event manager object
+ * @constructor
  *
- * The event manager should be used for all events. By publishing events that
- * a widget may fire, and subscribing to the events the widget will respond
- * to widgets can respond to events fired by other widgets on the page.
+ * The event manager keeps track of subscribers of a particular topic (event)
+ * so that when a publisher publishes that topic all of the subscribers can
+ * be notified.
+ *
+ * The event manager should be used for all events. That will allow
+ * one widget on a page to respond to an event published (fired) by another
+ * widget on the page. It also will allow for multiple response to a single
+ * event.
  *
  ****************************************************************************/
 function EventManager()
 {
-	// Private Fields
+	// Private Fields (should not be referenced except by EventManager methods)
 	
 	/**
 	 * events_ associates eventIds with an array of publishers and an array of
@@ -43,111 +53,61 @@ function EventManager()
 }
 
 /* **************************************************************************
- * EventManager.publish                                                 *//**
- *
- * EventManager class method to publish an event that an object may fire.
- *
- * @param	publisher	The object that will fire the published event
- * @param	eventId		The identifier of the event that is used when the
- *						event is fired. This event ID must be unique to
- *						the event on the page.
- *
- ****************************************************************************/
-EventManager.prototype.publish = function(publisher, eventId)
-{
-	// If the eventId has never been published, add it
-	if (!(eventId in this.events_))
-	{
-		this.events_[eventId] = this.getEmptyManagedEventInfo_();
-	}
-	
-	var event = this.events_[eventId];
-	
-	// If the publisher has already published this eventId, todo: error or ignore?
-	if ($.inArray(publisher, event.publishers) != -1)
-	{
-		alert('event was already published by this publisher');
-		return;
-	}
-	
-	// Add the publisher to the list of publishers of the eventId
-	event.publishers.push(publisher);
-}
-
-/* **************************************************************************
  * EventManager.subscribe                                               *//**
  *
  * EventManager class method to subscribe to an event that an object may fire.
  *
- * @param	eventId		The identifier of the event that when fired should
- *						invoke the given callback.
- * @param	callback	The function that will be called when the event is
- *						fired.  
+ * @param {string} eventId		The identifier of the event that when fired
+ *								should invoke the given callback. aka topic.
+ * @param {Function} handler	The function that will be called when the
+ *								event is fired.  
  *
  * Notes:
- * - I don't see usefulness of recording the subscriber object at this
- *   time, so it isn't a parameter.
- * - If you subscribe the same callback multiple times, when the event is
+ * - We'll need to create some unique token if we want to allow unsubscribe.
+ * - If you subscribe to the same callback multiple times, when the event is
  *   fired it will be called once for each subscription.
  ****************************************************************************/
-EventManager.prototype.subscribe = function(eventId, callback)
+EventManager.prototype.subscribe = function(eventId, handler)
 {
-	// If the eventId has never been published, add it (todo: or error?)
+	// If the eventId has never been subscribed to, add it
 	if (!(eventId in this.events_))
 	{
-		this.events_[eventId] =  this.getEmptyManagedEventInfo_();
+		this.events_[eventId] =  { handlers: [] };
 	}
 	
 	var event = this.events_[eventId];
 	
-	// Add the callback to the list of callbacks of the eventId
-	event.callbacks.push(callback);
+	// Add the handler to the list of handlers of the eventId
+	event.handlers.push(handler);
 }
 
 /* **************************************************************************
- * EventManager.fire                                                    *//**
+ * EventManager.publish                                                 *//**
  *
- * EventManager class method to fire an event.
+ * EventManager class method to publish (fire) an event calling the
+ * notification function of all subscribers of that event.
  *
- * @param	invoker			The object that is firing the event, it is
- *							expected that the invoker has published the event.
- * @param	eventId			The identifier of the event that when fired should
- *							invoke the given callback.
- * @param	eventDetails	The details of the event to be passed to each
- *							subscriber's callback.
+ * @param {string} eventId		The identifier of the event being fired.
+ *								aka topic.
+ * @param {Object} eventDetails	The details of the event to be passed to each
+ *								subscriber's notification function. Its value
+ *								is specific to the particular event.
  *
  ****************************************************************************/
-EventManager.prototype.fire = function(invoker, eventId, eventDetails)
+EventManager.prototype.publish = function(eventId, eventDetails)
 {
-	// If the eventId has never been published, report an error
+	// If there are no subscribers, do nothing
 	if (!(eventId in this.events_))
 	{
-		alert('Error: attempt to fire the unpublished event "' + eventId + '"');
+		return;
 	}
 	
 	var event = this.events_[eventId];
 	
-	// Check that the firing object is one of the publishers of the event
-	if ($.inArray(invoker, event.publishers) == -1)
+	// Call all the subscribed notification functions for this event
+	for (var i = 0; i < event.handlers.length; ++i)
 	{
-		alert('Warning: event is being fired by an object which has not published the event');
+		var handler = event.handlers[i];
+		handler(eventDetails);
 	}
-	
-	// Call all the subscribed functions for this event
-	for (var i = 0; i < event.callbacks.length; ++i)
-	{
-		event.callbacks[i].call(eventDetails);
-	}
-}
-
-/* **************************************************************************
- * EventManager.getEmptyManagedEventInfo_                               *//**
- *
- * EventManager class method to create an empty managed event info object
- * used to initialize a new entry in the events_ field.
- * @private
- ****************************************************************************/
-EventManager.prototype.getEmptyManagedEventInfo_ = function()
-{
-	return { publishers: [], callbacks: [] };
 }
