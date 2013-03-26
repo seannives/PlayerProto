@@ -109,6 +109,82 @@ function MakeSVGContainer(config) {
 	//http://www.brichards.co.uk/blog/webkit-svg-height-bug-workaround
 }
 
+/* HTML widgets 
+/* these are widgets that will just write as HTML fields, not SVG, although they can be used
+/* inside foreign object containers to the extent that browsers will render them
+********************************************/
+
+function Readout(config, eventManager)
+	{
+		//Readout Widget is just a way to display calculated or event-driven text
+		//in a page.  This is commonly used for meters, results, tests, updatable text, etc.
+		//Currently done as a text input so you can either display or type into it
+		this.node = config.node;
+		this.id = config.id;
+		this.startVal = config.startVal;
+		//Whatever the readout displays at page load. String value
+		this.eventManager = eventManager;
+		
+		this.unit = config.unit;
+		//if the readout requires a unit to be appended, do so. String value.
+		this.label = config.label;
+		//if the readout requires a label to be prepended, do so. String value.
+		// Define the ids of the events this widget broadcasts
+		this.changedValueId = this.id + 'Number';
+		var that = this;
+		var size = config.size;
+		var placeHolder = config.placeHolder;
+		var readOnly = config.readOnly; //boolean - display but no typing
+
+		//<input type="text" id="myID" maxLength="<number>" value="startVal" readonly>;
+		this.rootEl = this.node.append("span");
+		//write a label in front of the input if there is one
+		var readout = this.rootEl.append("span").html(this.label?this.label:"").attr("role","label");
+		this.rootEl
+		.append("input")
+		.attr("type","text")
+		.property("value",this.startVal)
+		.attr("size",size?size:6)
+		.attr("id",that.id)
+		.attr("class","dataLabel")
+		;
+		
+		if(this.startVal){
+			readout.attr("value",startVal);
+		} else if (placeHolder)
+		{
+			readout.attr("placeholder",placeHolder);
+		}
+		
+		if(readOnly){
+			readout.property("readonly");
+		}
+	
+		this.rootEl.append("span").html(this.unit?this.unit:"");
+		
+		this.rootEl.on('change', function()
+										{ 
+										//this publishes the onChange event to the eventManager
+										//passing along the updated value in the numeric field.
+										//note that jQuery returns an array for selections, the
+										//first element of which is the actual pointer to the 
+										//tag in the DOM
+											that.eventManager.publish(that.changedValueId, 
+												{value: $("#" + that.id)[0].value});
+										} );
+		
+		// Define private handlers for subscribed events
+		//This doesn't do anything - it's broken, but the numeric input
+		//works just fine on it's own in the browser
+		function updateValue(eventDetails)
+		{
+			$("#" + that.id)[0].value = eventDetails.value;
+		}
+		
+		// Subscribe to own events, if appropriate
+		//eventManager.subscribe(that.changedValueId, changedValueHandler);
+	}//end Readout widget
+
 function MakeAxes(svgCont, config) {
 	//Top left corner of axis box as percentage of the width/height of the svg box
 	//xPosPerc and yPosPerc are decimals telling how much of the container box to use, 

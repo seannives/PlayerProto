@@ -285,7 +285,7 @@ td.rightAlign {
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 	padding: .2em;
-	margin: .2em;
-	font: 1.4em Helvetica, sans;
+	margin: .1em;
+	font: 1.2em Helvetica, sans;
 	text-align:right;
 }
