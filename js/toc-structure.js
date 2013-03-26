@@ -98,7 +98,33 @@ var bookConfig = {
                 title: "Event Manager Tests"
             }
             ]
-        }
+        },
+		    {
+            type: "module",
+            url: "module_n.3.html",
+            id: "n.3",
+            title: "Demo Files",
+            children: [
+            {
+                type: "objective",
+                url: "KantorowskiRotation.html",
+                id: "n.3.1",
+                title: "Kantorowski"
+            },
+            {
+                type: "objective",
+                url: "NeffPop.html",
+                id: "n.3.2",
+                title: "Neff Population Dynamics"
+            },
+            {
+                type: "objective",
+                url: "RitterImages.html",
+                id: "n.3.3",
+                title: "Ritter Images and Callouts"
+            }
+			]
+		}
         ]
     }
     ]

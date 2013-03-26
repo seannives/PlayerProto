@@ -96,7 +96,10 @@
 	}
 
 	// ======== Button Widget class defined above here...below here is script that creates buttons on the test page
-	
+	//the eventManager is an object that is specific to this page.  A new one
+	//is created for every page, and then passed to the widgets in that page
+	//that must talk to it.  Q: what about widgets who don't need events for 
+	//some particular page?  Is the second arg optional?
 	var eventManager = new EventManager();
 	
 	// Create the 1st button widget

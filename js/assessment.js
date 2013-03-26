@@ -799,6 +799,219 @@ MakeAxes.prototype.pieLite = function(liteKey) {
 	}
 };
 
+
+MakeAxes.prototype.LineGraph = function(config,eventManager) { 
+//begin line graph object generator 
+
+	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
+	//one array for each trace.
+	this.Data = config.Data;
+	//renderType is a string specifying "lines","points", or "lines+points" for line, scatter, or interpolated plots TODO supply images as point glyphs
+	this.type = config.type;
+	//highlitekey is an array of integers relating the traces to other selectable things on the page, optional
+	var liteKey = config.liteKey;
+	var myID = "lines" + this.id + "_";
+
+	if(d3.select("#"+myID)[0][0]==null){
+		var graph = this.group.append("g") //make a group to hold new bar chart
+		.attr("id", myID);//name it so it can be manipulated or highlighted later
+		console.log("graph group is made:", graph.attr("id"));
+	}
+	else {
+		var graph = d3.select("#"+this.id); 
+		console.log("graph group is found: ", graph.attr("id"));	
+	}
+	
+	var that = this;
+
+	// make a clippath, which is used in the case that we zoom or pan the graph dynamically
+	graph.append("defs").append("clipPath").attr("id", "clip_" + myID)
+	.append("rect").attr("width", that.innerWid)
+	.attr("height", that.innerHt);
+
+	//draw the trace(s)
+	if (this.type == "lines" || this.type == "lines+points") {
+		var line = d3.svg.line()
+		//d3 utility function for generating all the point to point paths using the scales set up above
+		.interpolate("basis").x(function(d, i) {
+			return that.xScale(d.x);
+		}).y(function(d, i) {
+			return that.yScale(d.y);
+		});
+
+		this.traces = graph.selectAll("g.traces")
+		.data(this.Data)
+		.enter().append("g").attr("class", "traces");
+
+		//associate the clip path so it doesn't slop over the axes
+		this.traces.append("path").attr("clip-path", "url(#clip_" + this.id + ")")
+		//use the line function defined above to set the path data
+		.attr("d", function(d, i) {
+			return line(d);
+		})
+		//pick the colors sequentially off the list
+		.attr("class", function(d, i) {
+			return "trace stroke" + i;
+		});
+
+		if (liteKey) {
+			this.traces.attr("class", "traces liteable").attr("id", function(d, i) {
+				return myID + liteKey[i];
+			});
+		}
+
+	}
+
+
+	if (this.type == "points" || this.type == "lines+points") {
+
+		this.series = graph.selectAll("g.series")
+		.data(this.Data).enter()
+		.append("g")
+		.attr("clip-path", "url(#clip_" + this.id + ")")
+		.attr("class", function(d, i) {
+			return "series fill" + i;
+		});
+
+		if (this.liteKey) {
+			series.attr("id", function(d, i) {
+				return this.id + "_" + this.liteKey[i];
+			})
+			.attr("class", function(d, i) {
+				return "liteable series fill" + i;});
+		}
+
+		this.points = this.series.selectAll("g.points") 
+		//this selects all <g> elements with class points (there aren't any yet) 
+		//within the selection series.  Note that series has the nested point
+		//Data associated with it.  So the data for the points is each array 
+		//in the data series.  This can also be done by using the keyword Object
+		//as the .data for points, but it's a little obscure why that works.
+		.data(function(d,i){return d;}) //drill down into the nested Data
+		.enter() //this will create <g> elements for every data element, useful in case you want to label them
+		.append("g") //create groups
+		.attr("transform", function(d, i) {
+			return "translate(" + axesCont.xScale(d.x) + "," + axesCont.yScale(d.y) + ")";
+										})
+		//move each symbol to the x,y coordinates
+		.append("path")
+		.attr("d", 
+		//j is the index of the series, i of the data points in the series
+		function(d,i,j){
+		   return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
+		}
+		);
+		//pick the shapes sequentially off the list
+	}
+
+} //end line graph object generator function to go with container widgets
+
+
+MakeAxes.prototype.BarChart = function (config,eventManager) { //begin bar graph object generator
+	 
+	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
+	//one array for each trace.
+	this.Data = config.Data;
+	//type is a string setting whether it's a "grouped" chart or linear, optional
+	var type = config.type;
+	//highlitekey is an array of integers relating the traces to other selectable things on the page, optional
+	var liteKey = config.liteKey;
+	var myID = "bars" + this.id + "_";
+	var that = this;
+	
+	console.log("ID", "#"+myID, d3.select("#"+myID)[0][0]);
+
+	if(d3.select("#"+myID)[0][0] === null){
+		var graph = this.group.append("g") //make a group to hold new bar chart
+		.attr("id", myID);//name it so it can be manipulated or highlighted later
+		console.log("graph group is made:", graph.attr("id"));
+	}
+	else {
+		var graph = d3.select("#"+this.id); 
+		console.log("graph group is found: ", graph.attr("id"));	
+	}
+	
+	var bandsize = that.yScale.rangeBand(); 
+	//returns the size of the bands produced by ordinal scale
+	
+	
+	if (type == "grouped") {
+		//grouped bar charts find the common labels in each data set and draw non-overlapping
+		//bars in a group representing the value for that label for each data array.
+		//The effect of the following code is to calculate a "subspacing" that fans
+		//the individual bars in each group out around the central point for the data
+		//label.
+		var indices = [];
+
+		for (i = 0; i < this.Data.length; i++) {
+		indices.push(i); //needed to space out grouped barcharts
+		}
+	
+		var groupScale = d3.scale.ordinal()
+		.domain(indices) //creates an extra ordinal set that encloses the data label, 
+		//one for each group (element in data array)
+		.rangeRoundBands([bandsize, 0]);
+		console.log("Grouped barChart last bar mapped to 0 offset: ", 
+		groupScale(this.Data.length - 1) == 0);
+	};
+
+
+	this.barSeries = graph.selectAll("g.series")
+	.data(that.Data);
+	
+	this.barSeries.enter()
+	.append("g")
+	.attr("class", function(d, i) {
+		return "series fill" + i;
+	});
+	
+	this.barSeries.exit().remove();
+	//If it's a grouped barchart, shimmie out the bars by group
+	if (type == "grouped") {
+		this.barSeries.attr("transform", function(d, i) {
+			return "translate(0," + (groupScale(i)) + ")";
+		})
+	}
+	//If it's highliteable, add a key to the series
+	if (liteKey) {
+		series.attr("id", function(d, i) {
+			return "series_" + (liteKey[i]);
+		})
+	}
+
+
+	this.bars = this.barSeries.selectAll("rect.bar") 
+	//this selects all <g> elements with class bar (there aren't any yet)
+	.data(function(d,i){return d;}); 	//drill down into the nested Data
+	this.bars.enter() 		//this will create <g> elements for every data element 
+	.append("rect") 	//create groups
+	.attr("class", "bar");
+	//move each group to the x=0 position horizontally if it's a positive bar, or 
+	// start at it's negative x value if it's reversed. 
+	this.bars.attr("transform", function(d, i) {
+		return "translate(" + ((d.x < 0) ? that.xScale(d.x) : that.xScale(0)) + "," 
+			+ (that.yScale(d.y)) + ")";
+	})
+	//the x<0 logic allows us to draw pyramid charts, although normally bar charts 
+	//are bin counts and all positive
+	//move the group to the y=ordinal position vertically
+	//I enclose the bars in individual groups so you could choose to label the ends with data or label
+	//and have it stick to the bar by putting it in the same group
+	.attr("id", function(d, i) {
+		return myID + i;
+	})
+	.attr("height", (this.type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
+	//divide height into uniform bar widths
+	.attr("width", function(d, i) {
+		return ((d.x < 0) ? (that.xScale(0) - that.xScale(d.x)) : 
+			(that.xScale(d.x) - that.xScale(0)));
+	}); 
+	//returns the value of the data associated with each slice as the width, 
+	//or expands to the y=0 line if it's negative
+	 this.bars.exit().remove();
+} //end bar chart object generator function
+
+
 function MakeLineGraph(axesCont, config) { //begin line graph object generator to go with widget containers
 	//inherit the width, height and margins from the axes container
 	this.xDim = axesCont.innerWid;
@@ -955,7 +1168,9 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 
 
 	this.barSeries = graph.selectAll("g.series")
-	.data(this.Data).enter()
+	.data(this.Data);
+	this.barSeries.exit().remove();
+	this.barSeries.enter()
 	.append("g")
 	.attr("class", function(d, i) {
 		return "series liteable fill" + i;
@@ -974,7 +1189,7 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 	}
 
 
-	var bars = this.barSeries.selectAll("g.bar") //this selects all <g> elements with class bar (there aren't any yet)
+	this.bars = this.barSeries.selectAll("g.bar") //this selects all <g> elements with class bar (there aren't any yet)
 	.data(Object) //drill down into the nested Data
 	.enter() //this will create <g> elements for every data element 
 	.append("g") //create groups
@@ -994,7 +1209,7 @@ function MakeBarGraph(axesCont, config) { //begin bar graph object generator
 	.attr("id", function(d, i, j) {
 		return prefix + "_" + i;
 	}); //name it for the region to highlight
-	bars.append("rect") //make the bars
+	this.bars.append("rect") //make the bars
 	.attr("height", (this.type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
 	//divide height into uniform bar widths
 	.attr("width", function(d, i) {

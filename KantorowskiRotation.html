@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="Leslie Bondaryk" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="eCourses Author, Title" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen" />
+	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen" />
+	<link href="css/graphics_and_svg.css" rel="stylesheet" />
+	<link href="css/learning-objective.css" rel="stylesheet" />
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen" />
+	
+	<title class="setTitle"></title>
+</head>
+
+<body>
+	<div class="titler">
+		<span class='number setId'></span>
+		<span class="setTitle">Bar Chart Length Updater</span>
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+            	<p>Mathematically, the percentage of each enantiomer can be expressed as follows:</p>
+				<img src="img/Kequation1.png" />
+				<p>and</p>
+				<img src="img/Kequation2.png"/>
+				<p>For both equations, the numerator of the term in parentheses relates to the optically inactive portion of the sample. Halving this value provides the percentage of the enantiomer present in lesser amount. This same value needs to be added to the %ee to provide the percentage of the dominant enantiomer.
+</p>
+<p>
+The % ee can also be calculated if the composition of the mixture is known. The enantiomer present in smaller number is subtracted from the dominant enantiomer. Consider a sample that contains 35% of the dextrorotatory enantiomer and 65% of the levorotatory component. The % ee is then (65% – 35%) = 30%.
+				</p>
+			</div>
+			<div class="span6 rightCol">
+            	<div id="roto">rotational chart here</div>
+				<div id="barChart0"></div>
+				<p><span id="Levo"></span> &minus; <span id="Dextro"></span></p>
+			
+			</div>
+		</div>
+	</div>
+	
+	<script src="js/jquery-latest.js"></script>
+	<script src="js/d3.v2.min.js"></script>
+	<script src="js/toc-structure.js"></script>
+	<script src="js/eCourse-master.js"></script>
+	<script src="js/assessment.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/eventmanager.js"></script>
+
+	<script>
+	function NumericInput(config, eventManager)
+	{
+		this.node = config.node;
+		this.id = config.id;
+		this.startVal = config.startVal;
+		this.eventManager = eventManager;
+		
+		var minVal = config.minVal;
+		var maxVal = config.maxVal;
+		this.unit = config.unit;
+		this.label = config.label;
+		// Define the ids of the events the ButtonWidget uses
+		this.changedValueId = this.id + 'Number';
+		var that = this;
+
+		//this.rootEl = $('<div><input type="number" min="0" max="100" step="5" value="50"    id="numInput_0" class="dataLabel"></div>');
+		this.rootEl = this.node.append("div");
+		//write a label in front of the input if there is one
+		this.rootEl.append("span").html(this.label?this.label:"").attr("role","label");
+		this.rootEl
+		.append("input")
+		.attr("type","number")
+		.attr("min",minVal)
+		.attr("max",maxVal)
+		.attr("value",this.startVal)
+		.attr("id",that.id)
+		.attr("class","dataLabel")
+		;
+		
+		this.rootEl.append("span").html(this.unit?this.unit:"");
+		
+		this.rootEl.on('change', function()
+										{ 
+										//this publishes the onChange event to the eventManager
+										//passing along the updated value in the numeric field.
+										//note that jQuery returns an array for selections, the
+										//first element of which is the actual pointer to the 
+										//tag in the DOM
+											that.eventManager.publish(that.changedValueId, 
+												{value: $("#" + that.id)[0].value});
+										} );
+		
+		// Define private handlers for subscribed events
+		//This doesn't do anything - it's broken, but the numeric input
+		//works just fine on it's own in the browser
+		function updateValue(eventDetails)
+		{
+			$("#" + that.id)[0].value = eventDetails.value;
+		}
+		
+		// Subscribe to own events, if appropriate
+		//eventManager.subscribe(that.changedValueId, changedValueHandler);
+	}//end NumericInput widget
+	
+	NumericInput.prototype.updateValue = function(eventDetails)
+		{
+			console.log("TODO: fired updateNumericInputValue log", this.id);
+			//$("#" + that.id)[0].value = 10;
+		}
+	
+	//the eventManager is an object that is specific to this page.  A new one
+	//is created for every page, and then passed to the widgets in that page
+	//that must talk to it. 
+	var eventManager = new EventManager();
+	
+	// Create the Levo numeric input widget
+	var inputLevo = new NumericInput({
+		node: d3.select("#Levo"),
+        id: 'levo',
+		startVal: 50,
+		minVal:0,
+		maxVal: 100,
+		unit: "%",
+		label: "Levo"
+	}, eventManager);
+	
+	// Create the Dextro numeric input widget
+	var inputDextro = new NumericInput({
+		node: d3.select("#Dextro"),
+        id: 'dextro',
+		startVal: 50,
+		minVal:0,
+		maxVal: 100,
+		unit: "%", 
+		label: "Dextro"
+	}, eventManager);
+	
+	
+	var levoData = [
+			{	x: 50,
+				y: "Levo"
+			}], 
+		dextroData=[
+			{	x: 50,
+				y: "Dextro"}
+				];
+				
+				
+	var svg70 = new MakeSVGContainer(
+		{node: d3.select("#barChart0"),
+		maxWid: 450,
+		maxHt: 300
+		}
+	);
+				
+	var axes70 = new MakeAxes(svg70,{
+		id: 70,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,
+		xaxisType: "linear", yaxisType: "ordinal",
+		Data:[levoData, dextroData],
+		xTicks: [0,10,20,30,40,50,60,70,80,90,100],
+		xOrient: "bottom",
+		yOrient: "left",
+		xLabel: "% enantiomers"
+	});
+	
+	axes70.BarChart({
+		Data: [levoData, dextroData],
+		type: "linear" //ignored for anything but grouped
+	});
+	
+		
+	var lineData = [
+			{x: 50, y: .2},
+			{x: 50, y: .8},
+			];
+				
+				//TODO Double y axis on the same axis set, linear and other together
+	var axes10 = new MakeAxes(svg70,{
+		id: 10,
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,
+		xaxisType: "linear", 
+		yaxisType: "linear",
+		Data:[lineData,[{x:100,y:1}]],
+		xTicks: [0,10,20,30,40,50,60,70,80,90,100],
+		xOrient: "bottom",
+		yOrient: "right",
+		yTicks: 0
+	});
+	
+	axes10.LineGraph({
+		Data: [lineData],
+		type: "lines" 
+	});	
+			
+	// Modify the value of the data for the bar graph when the
+	//numerical input changes.  So, subscribe to the event emitted by inputLevo,
+	//and target whatever is identified by the handler in the second argument.
+	//TODO: make these methods of the target widget.  Data updates should
+	//be targets of axes, or maybe the chart type, display/value updates should
+	//be targets of inputs or readout values, etc.
+	
+	eventManager.subscribe(inputLevo.changedValueId, updateLevoData);
+	eventManager.subscribe(inputLevo.changedValueId, updateValue);
+	//TODO updateInput, readout widget, updateReadout
+	//eventManager.subscribe(inputLevo.changedValueId, updateReadout);
+	eventManager.subscribe(inputDextro.changedValueId, updateLevoData);
+	
+	function updateValue(eventDetails)
+		{
+			$("#" + inputDextro.id)[0].value = 100 - eventDetails.value;
+		}
+		
+	function updateLevoData(eventDetails)
+	{
+		console.log("TODO: fired updateBarData log");
+		levoData[0].x = eventDetails.value;
+		dextroData[0].x = 100 - levoData[0].x;
+		axes70.BarChart({
+		Data: [levoData, dextroData],
+		type: "linear" //ignored for anything but grouped
+		});
+	}
+	
+	function updateDextroData(eventDetails)
+	{
+		console.log("TODO: fired updateBarData log");
+		dextroData[0].x = eventDetails.value;
+		levoData[0].x = 100 - dextroData[0].x;
+		axes70.BarChart({
+		Data: [levoData, dextroData],
+		type: "linear" //ignored for anything but grouped
+		});
+	}
+	
+	//TODO Make Line Graph events work
+	
+	function updateLineData(eventDetails)
+	{
+		console.log("TODO: fired updateLineData log");
+		lineData[2].y = eventDetails.value;
+		axes10.LineGraph({
+		Data: [lineData],
+		type: "lines" 
+		});	
+	}
+	</script>
+</body>
+</html>
