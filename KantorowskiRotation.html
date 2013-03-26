@@ -41,13 +41,9 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			<div class="span6 rightCol">
             	<div id="roto">rotational chart here</div>
 				<div id="barChart0"></div>
-<<<<<<< HEAD
-				<p><span id="Levo"></span> &minus; <span id="Dextro"></span></p>
-
-=======
-				<p><span id="Levo"></span> &minus; <span id="Dextro"></span> = <span id="ee"></span> </p>
-			
->>>>>>> readout widget
+				<p>&#124;<span id="Levo"></span> &minus; <span id="Dextro"></span>&#124;
+                	= <span id="ee"></span> 
+                </p>
 			</div>
 		</div>
 	</div>
@@ -173,7 +169,6 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 
 	// Create the Dextro numeric input widget
 	var inputDextro = new NumericInput({
-<<<<<<< HEAD
 			node: d3.select("#Dextro"),
 			id: 'dextro',
 			startVal: 50,
@@ -207,15 +202,11 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			xLabel: "% enantiomers"
 		});
 
-=======
-		node: d3.select("#Dextro"),
-        id: 'dextro',
-		startVal: 50,
-		minVal:0,
-		maxVal: 100,
-		unit: "%", 
-		label: "Dextro"
-	}, eventManager);
+		
+	axes70.BarChart({
+		Data: [levoData, dextroData],
+		type: "linear" //ignored for anything but grouped
+	});
 	
 	// Create the ee readout widget
 	var eeReadout = new Readout({
@@ -229,41 +220,6 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	}, eventManager);
 	
 	
-	var levoData = [
-			{	x: 50,
-				y: "Levo"
-			}], 
-		dextroData=[
-			{	x: 50,
-				y: "Dextro"}
-				];
-				
-				
-	var svg70 = new MakeSVGContainer(
-		{node: d3.select("#barChart0"),
-		maxWid: 450,
-		maxHt: 300
-		}
-	);
-				
-	var axes70 = new MakeAxes(svg70,{
-		id: 70,
-		xPosPerc: 0, yPosPerc:0,
-		xPerc: 1, yPerc: 1,
-		xaxisType: "linear", yaxisType: "ordinal",
-		Data:[levoData, dextroData],
-		xTicks: [0,10,20,30,40,50,60,70,80,90,100],
-		xOrient: "bottom",
-		yOrient: "left",
-		xLabel: "% enantiomers"
-	});
-	
->>>>>>> readout widget
-	axes70.BarChart({
-		Data: [levoData, dextroData],
-		type: "linear" //ignored for anything but grouped
-	});
-
 
 	var lineData = [
 			{x: 50, y: .2},
@@ -300,9 +256,12 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	eventManager.subscribe(inputLevo.changedValueEventId, handleLevoValueChanged);
 	eventManager.subscribe(inputDextro.changedValueEventId, handleDextroValueChanged);
 	
-<<<<<<< HEAD
-	//TODO updateInput, readout widget, updateReadout
-	//eventManager.subscribe(inputLevo.changedValueEventId, updateReadout);
+	eventManager.subscribe(inputLevo.changedValueId, updateeeValue);
+	//eventManager.subscribe(inputLevo.changedValueId, updateLineData);
+
+	eventManager.subscribe(inputDextro.changedValueId, updateeeValue);
+	//eventManager.subscribe(inputDextro.changedValueId, updateLineData);
+
 
 	/* **************************************************************************
 	 * handleLevoValueChanged                                               *//**
@@ -315,30 +274,6 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	 *
 	 ****************************************************************************/
 	function handleLevoValueChanged(eventDetails)
-=======
-	eventManager.subscribe(inputLevo.changedValueId, updateLevoData);
-	eventManager.subscribe(inputLevo.changedValueId, updateDextroValue);
-	eventManager.subscribe(inputLevo.changedValueId, updateeeValue);
-	//eventManager.subscribe(inputLevo.changedValueId, updateLineData);
-
-	eventManager.subscribe(inputDextro.changedValueId, updateDextroData);
-	eventManager.subscribe(inputDextro.changedValueId, updateLevoValue);
-	eventManager.subscribe(inputDextro.changedValueId, updateeeValue);
-	//eventManager.subscribe(inputDextro.changedValueId, updateLineData);
-
-	function updateDextroValue(eventDetails)
-		{
-			console.log("TODO: fired updateDextroValue log");
-			$("#" + inputDextro.id)[0].value = 100 - eventDetails.value;
-		}
-	function updateLevoValue(eventDetails)
-		{
-			console.log("TODO: fired updateLevoValue log");
-			$("#" + inputLevo.id)[0].value = 100 - eventDetails.value;
-		}
-	
-	function updateLevoData(eventDetails)
->>>>>>> readout widget
 	{
 		inputDextro.setValue(100 - eventDetails.value);
 		updateBarChart();
@@ -377,35 +312,19 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			type: "linear" //ignored for anything but grouped
 		});
 	}
-<<<<<<< HEAD
 
-=======
 	
-	function updateLineData(eventDetails)
-	{
-		console.log("TODO: fired updateBarData log");
-		var minVal = $("#" + inputLevo.id)[0].value 
-				> $("#" + inputDextro.id)[0].value ?
-				$("#" + inputDextro.id)[0].value :
-				$("#" + inputLevo.id)[0].value ;
-		lineData[0].x = minVal;
-		lineData[1].x = minVal;
-		axes70.LineGraph({
-		Data: [lineData],
-		type: "lines" //ignored for anything but grouped
-		});
-	}
+
 	
 	function updateeeValue()
 		{
 			console.log("TODO: fired updateeeValue log");
-			var diff = Math.abs($("#" + inputLevo.id)[0].value 
-				- $("#" + inputDextro.id)[0].value);
+			var diff = Math.abs(inputLevo.getValue() 
+				- inputDextro.gatValue);
 			console.log($("#" + eeReadout.id)[0]);
 			$("#" + eeReadout.id)[0].value = diff;
 		}
 		
->>>>>>> readout widget
 	//TODO Make Line Graph events work
 
 	/* **************************************************************************
@@ -416,13 +335,18 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	 * @param {Object} eventDetails	...
 	 *
 	 ****************************************************************************/
-	function updateLineData(eventDetails)
+		function updateLineData(eventDetails)
 	{
-		console.log("TODO: fired updateLineData log");
-		lineData[2].y = eventDetails.value;
+		console.log("TODO: fired updateBarData log");
+		var minVal = $("#" + inputLevo.id)[0].value 
+				> $("#" + inputDextro.id)[0].value ?
+				$("#" + inputDextro.id)[0].value :
+				$("#" + inputLevo.id)[0].value ;
+		lineData[0].x = minVal;
+		lineData[1].x = minVal;
 		axes10.LineGraph({
-			Data: [lineData],
-			type: "lines"
+		Data: [lineData],
+		type: "lines" //ignored for anything but grouped
 		});
 	}
 	</script>
