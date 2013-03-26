@@ -253,8 +253,10 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	//be targets of inputs or readout values, etc.
 
 	// Handle changes of the levo and dextro input values
-	eventManager.subscribe(inputLevo.changedValueEventId, handleLevoValueChanged);
-	eventManager.subscribe(inputDextro.changedValueEventId, handleDextroValueChanged);
+	eventManager.subscribe(inputLevo.changedValueEventId,
+						   function(ed) { handleInputValueChanged(inputDextro, ed.value); });
+	eventManager.subscribe(inputDextro.changedValueEventId,
+						   function(ed) { handleInputValueChanged(inputLevo, ed.value); });
 	
 	eventManager.subscribe(inputLevo.changedValueId, updateeeValue);
 	//eventManager.subscribe(inputLevo.changedValueId, updateLineData);
@@ -263,35 +265,25 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	//eventManager.subscribe(inputDextro.changedValueId, updateLineData);
 
 
-	/* **************************************************************************
-	 * handleLevoValueChanged                                               *//**
-	 *
-	 * handleLevoValueChanged is the event handler when the Levo
-	 * input is changed. It updates the dextro value to match the new
-	 * levo value and then updates the bar chart.
-	 *
-	 * @param {Object} eventDetails	-Contains the new value of the levo input.
-	 *
-	 ****************************************************************************/
-	function handleLevoValueChanged(eventDetails)
-	{
-		inputDextro.setValue(100 - eventDetails.value);
-		updateBarChart();
-	}
 
 	/* **************************************************************************
-	 * handleDextroValueChanged                                             *//**
+	 * handleInputValueChanged                                              *//**
 	 *
-	 * handleDextroValueChanged is the event handler when the Dextro
-	 * input is changed. It updates the levo value to match the new
-	 * dextro value and then updates the bar chart.
-	 *
-	 * @param {Object} eventDetails	-Contains the new value of the dextro input.
-	 *
-	 ****************************************************************************/
-	function handleDextroValueChanged(eventDetails)
+	* handleInputValueChanged is called from the event handler for one of
+	* the input widgets when the user changes its value. It updates the
+	* given matching input widget's value to match the new value and then
+	* updates the bar chart.
+	*
+	* @param {NumericInput} otherInputWidget -This is the other input widget
+	*                                         whose value needs to be updated
+	*                                         to match the user changed widget.
+	* @param {number} newValue - The value of the widget that was changed.
+	*
+	****************************************************************************/
+	function handleInputValueChanged(otherInputWidget, newValue)
 	{
-		inputLevo.setValue(100 - eventDetails.value);
+		otherInputWidget.setValue(100 - newValue);
+		updateeeValue();
 		updateBarChart();
 	}
 
@@ -313,17 +305,20 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		});
 	}
 
-	
-
-	
+	/* **************************************************************************
+	 * updateeeValue                                                        *//**
+	 *
+	 * updateeeValue updates the ee value readout widget to match the current
+	 * values of the levo and dextro input widgets.
+	 *
+	 ****************************************************************************/
 	function updateeeValue()
-		{
-			console.log("TODO: fired updateeeValue log");
-			var diff = Math.abs(inputLevo.getValue() 
-				- inputDextro.gatValue);
-			console.log($("#" + eeReadout.id)[0]);
-			$("#" + eeReadout.id)[0].value = diff;
-		}
+	{
+		console.log("TODO: fired updateeeValue log");
+		var diff = Math.abs(inputLevo.getValue() - inputDextro.getValue());
+		console.log($("#" + eeReadout.id)[0]);
+		$("#" + eeReadout.id)[0].value = diff;
+	}
 		
 	//TODO Make Line Graph events work
 
