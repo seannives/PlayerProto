@@ -238,48 +238,50 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	//be targets of axes, or maybe the chart type, display/value updates should
 	//be targets of inputs or readout values, etc.
 
-	// Update the value widgets 1st, so that their values are correct when
-	// we update the bar chart in axes70
-	eventManager.subscribe(inputLevo.changedValueEventId, updateDextroValue);
-	eventManager.subscribe(inputDextro.changedValueEventId, updateLevoValue);
-	
-	// We need to update the bar chart whenever either input changes
-	eventManager.subscribe(inputLevo.changedValueEventId, updateBarChart);
-	eventManager.subscribe(inputDextro.changedValueEventId, updateBarChart);
+	// Handle changes of the levo and dextro input values
+	eventManager.subscribe(inputLevo.changedValueEventId, handleLevoValueChanged);
+	eventManager.subscribe(inputDextro.changedValueEventId, handleDextroValueChanged);
 	
 	//TODO updateInput, readout widget, updateReadout
 	//eventManager.subscribe(inputLevo.changedValueEventId, updateReadout);
 
 	/* **************************************************************************
-	 * updateDextroValue                                                    *//**
+	 * handleLevoValueChanged                                               *//**
 	 *
-	 * The updateDextroValue method...
+	 * handleLevoValueChanged is the event handler when the Levo
+	 * input is changed. It updates the dextro value to match the new
+	 * levo value and then updates the bar chart.
 	 *
-	 * @param {Object} eventDetails	-...
+	 * @param {Object} eventDetails	-Contains the new value of the levo input.
 	 *
 	 ****************************************************************************/
-	function updateDextroValue(eventDetails)
+	function handleLevoValueChanged(eventDetails)
 	{
 		inputDextro.setValue(100 - eventDetails.value);
+		updateBarChart();
 	}
 
 	/* **************************************************************************
-	 * updateLevoValue                                                    *//**
+	 * handleDextroValueChanged                                             *//**
 	 *
-	 * The updateLevoValue method...
+	 * handleDextroValueChanged is the event handler when the Dextro
+	 * input is changed. It updates the levo value to match the new
+	 * dextro value and then updates the bar chart.
 	 *
-	 * @param {Object} eventDetails	-...
+	 * @param {Object} eventDetails	-Contains the new value of the dextro input.
 	 *
 	 ****************************************************************************/
-	function updateLevoValue(eventDetails)
+	function handleDextroValueChanged(eventDetails)
 	{
 		inputLevo.setValue(100 - eventDetails.value);
+		updateBarChart();
 	}
 
 	/* **************************************************************************
 	 * updateBarChart                                                       *//**
 	 *
-	 * The updateBarChart...
+	 * updateBarChart updates the bar chart widget to match the current values
+	 * of the levo and dextro input widgets.
 	 *
 	 ****************************************************************************/
 	function updateBarChart()
