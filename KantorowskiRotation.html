@@ -112,30 +112,43 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 									} );
 
 		// Define private handlers for subscribed events
-		//This doesn't do anything - it's broken, but the numeric input
-		//works just fine on it's own in the browser
-		function updateValue(eventDetails)
+		function changedValueHandler(eventDetails)
 		{
-			$("#" + that.id)[0].value = eventDetails.value;
+			that.setValue(eventDetails.value);
 		}
 
 		// Subscribe to own events, if appropriate
-		//eventManager.subscribe(that.changedValueEventId, changedValueHandler);
+		eventManager.subscribe(that.changedValueEventId, changedValueHandler);
 	}//end NumericInput widget
-	
+
 	/* **************************************************************************
-	 * NumericInput.updateValue                                             *//**
+	 * NumericInput.getValue                                                *//**
 	 *
-	 * The NumericInput updateValue method ...
+	 * The NumericInput getValue method returns the value of the NumericInput
+	 * widget.
+	 ****************************************************************************/
+	NumericInput.prototype.getValue = function()
+	{
+		// The value is kept in the input element which was given an id
+		return $("#" + this.id)[0].value;
+	}
+
+	/* **************************************************************************
+	 * NumericInput.setValue                                                *//**
 	 *
-	 * @param {Object} eventDetails	-...
+	 * The NumericInput setValue method sets the value of the NumericInput
+	 * widget. This does NOT fire the changedValue event.
+	 *
+	 * @param {number} newValue	-The new value for the widget
 	 *
 	 ****************************************************************************/
-	NumericInput.prototype.updateValue = function(eventDetails)
-		{
-			console.log("TODO: fired updateNumericInputValue log", this.id);
-			//$("#" + that.id)[0].value = 10;
-		}
+	NumericInput.prototype.setValue = function(newValue)
+	{
+		console.log("TODO: called setNumericInputValue log", this.id, newValue);
+		
+		// The value is kept in the input element which was given an id
+		$("#" + this.id)[0].value = newValue;
+	}
 
 	//the eventManager is an object that is specific to this page.  A new one
 	//is created for every page, and then passed to the widgets in that page
@@ -165,8 +178,8 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		}, eventManager);
 
 
-	var levoData = [ { x: 50, y: "Levo" } ];
-	var dextroData=[ { x: 50, y: "Dextro" } ];
+	var levoData =   [ { x: 50, y: "Levo" } ];
+	var dextroData = [ { x: 50, y: "Dextro" } ];
 
 
 	var svg70 = new MakeSVGContainer({
@@ -225,57 +238,55 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	//be targets of axes, or maybe the chart type, display/value updates should
 	//be targets of inputs or readout values, etc.
 
-	eventManager.subscribe(inputLevo.changedValueEventId, updateLevoData);
-	eventManager.subscribe(inputLevo.changedValueEventId, updateValue);
+	// Update the value widgets 1st, so that their values are correct when
+	// we update the bar chart in axes70
+	eventManager.subscribe(inputLevo.changedValueEventId, updateDextroValue);
+	eventManager.subscribe(inputDextro.changedValueEventId, updateLevoValue);
+	
+	// We need to update the bar chart whenever either input changes
+	eventManager.subscribe(inputLevo.changedValueEventId, updateBarChart);
+	eventManager.subscribe(inputDextro.changedValueEventId, updateBarChart);
+	
 	//TODO updateInput, readout widget, updateReadout
 	//eventManager.subscribe(inputLevo.changedValueEventId, updateReadout);
-	eventManager.subscribe(inputDextro.changedValueEventId, updateLevoData);
 
 	/* **************************************************************************
-	 * updateValue                                                          *//**
+	 * updateDextroValue                                                    *//**
 	 *
-	 * The updateValue method...
+	 * The updateDextroValue method...
 	 *
-	 * @param {Object} eventDetails	...
+	 * @param {Object} eventDetails	-...
 	 *
 	 ****************************************************************************/
-	function updateValue(eventDetails)
+	function updateDextroValue(eventDetails)
 	{
-		$("#" + inputDextro.id)[0].value = 100 - eventDetails.value;
+		inputDextro.setValue(100 - eventDetails.value);
 	}
 
 	/* **************************************************************************
-	 * updateLevoData                                                       *//**
+	 * updateLevoValue                                                    *//**
 	 *
-	 * The updateLevoData...
+	 * The updateLevoValue method...
 	 *
-	 * @param {Object} eventDetails	...
+	 * @param {Object} eventDetails	-...
 	 *
 	 ****************************************************************************/
-	function updateLevoData(eventDetails)
+	function updateLevoValue(eventDetails)
 	{
-		console.log("TODO: fired updateBarData log");
-		levoData[0].x = eventDetails.value;
-		dextroData[0].x = 100 - levoData[0].x;
-		axes70.BarChart({
-			Data: [levoData, dextroData],
-			type: "linear" //ignored for anything but grouped
-		});
+		inputLevo.setValue(100 - eventDetails.value);
 	}
 
 	/* **************************************************************************
-	 * updateDextroData                                                     *//**
+	 * updateBarChart                                                       *//**
 	 *
-	 * The updateDextroData...
-	 *
-	 * @param {Object} eventDetails	...
+	 * The updateBarChart...
 	 *
 	 ****************************************************************************/
-	function updateDextroData(eventDetails)
+	function updateBarChart()
 	{
-		console.log("TODO: fired updateBarData log");
-		dextroData[0].x = eventDetails.value;
-		levoData[0].x = 100 - dextroData[0].x;
+		console.log("TODO: fired updateBarChart log");
+		levoData[0].x = inputLevo.getValue();
+		dextroData[0].x = inputDextro.getValue();
 		axes70.BarChart({
 			Data: [levoData, dextroData],
 			type: "linear" //ignored for anything but grouped
