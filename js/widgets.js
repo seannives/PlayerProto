@@ -1254,6 +1254,28 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 
 } //end line graph object generator function to go with container widgets
 
+/* **************************************************************************
+ * BarChart                                                             *//**
+ *
+ * Method of MakeSVGContainer: 	Create a bar chart, pyramid chart (two sided)
+ *								or grouped bar chart (several bars on the same 
+ *								label from different series - multivariate)
+ *
+ * @param config				an object containing the following names: 
+ *
+ * @param Data					array of arrays of objects with keys x: and y: 
+ *								real floating pt, one for each point, one 
+ *								array for each trace.
+ *
+ * @param type					string specifying "grouped", or anything else (ignored)
+ *
+ * @param liteKey 				array of integers setting correspondance with
+ * 								other page elements in other widgets
+ * 
+ * NOTES: There's a lot of logic in here to make sure that both positive and
+ * negative values are accomodated.  Negative values have to count right to x=0
+ * and positive must always count right from x=0.
+ **************************************************************************/
 
 MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin bar graph object generator
 	 
@@ -1348,7 +1370,7 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin b
 	.attr("id", function(d, i) {
 		return myID + i;
 	})
-	.attr("height", (this.type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
+	.attr("height", (type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
 	//divide height into uniform bar widths
 	.attr("width", function(d, i) {
 		return ((d.x < 0) ? (that.xScale(0) - that.xScale(d.x)) : 
