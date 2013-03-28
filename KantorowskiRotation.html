@@ -52,104 +52,13 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	<script src="js/d3.v2.min.js"></script>
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
-	<script src="js/assessment.js"></script>
+	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/eventmanager.js"></script>
 
 	<script>
 
-	/* **************************************************************************
-	 * NumericInput                                                         *//**
-	 *
-	 * @constructor
-	 *
-	 * A NumericInput widget...
-	 *
-	 * @param {string} eventId		The identifier of the event that when fired
-	 *								should invoke the given callback. aka topic.
-	 * @param {Function} handler	The function that will be called when the
-	 *								event is fired.
-	 *
-	 ****************************************************************************/
-	function NumericInput(config, eventManager)
-	{
-		this.node = config.node;
-		this.id = config.id;
-		this.startVal = config.startVal;
-		this.eventManager = eventManager;
 
-		var minVal = config.minVal;
-		var maxVal = config.maxVal;
-		this.unit = config.unit;
-		this.label = config.label;
-		// Define the ids of the events the ButtonWidget uses
-		this.changedValueEventId = this.id + 'Number';
-		var that = this;
-
-		//this.rootEl = $('<div><input type="number" min="0" max="100" step="5" value="50"    id="numInput_0" class="dataLabel"></div>');
-		this.rootEl = this.node.append("span");
-		//write a label in front of the input if there is one
-		this.rootEl.append("span").html(this.label ? this.label : "").attr("role", "label");
-		this.rootEl.append("input")
-			.attr("type", "number")
-			.attr("min", minVal)
-			.attr("max", maxVal)
-			.attr("value", this.startVal)
-			.attr("id", that.id)
-			.attr("class", "dataLabel")
-			;
-
-		this.rootEl.append("span").html(this.unit ? this.unit : "");
-
-		this.rootEl.on('change', function()
-									{
-										//this publishes the onChange event to the eventManager
-										//passing along the updated value in the numeric field.
-										//note that jQuery returns an array for selections, the
-										//first element of which is the actual pointer to the
-										//tag in the DOM
-										that.eventManager.publish(that.changedValueEventId,
-											{value: $("#" + that.id)[0].value});
-									} );
-
-		// Define private handlers for subscribed events
-		function changedValueHandler(eventDetails)
-		{
-			that.setValue(eventDetails.value);
-		}
-
-		// Subscribe to own events, if appropriate
-		eventManager.subscribe(that.changedValueEventId, changedValueHandler);
-	}//end NumericInput widget
-
-	/* **************************************************************************
-	 * NumericInput.getValue                                                *//**
-	 *
-	 * The NumericInput getValue method returns the value of the NumericInput
-	 * widget.
-	 ****************************************************************************/
-	NumericInput.prototype.getValue = function()
-	{
-		// The value is kept in the input element which was given an id
-		return $("#" + this.id)[0].value;
-	}
-
-	/* **************************************************************************
-	 * NumericInput.setValue                                                *//**
-	 *
-	 * The NumericInput setValue method sets the value of the NumericInput
-	 * widget. This does NOT fire the changedValue event.
-	 *
-	 * @param {number} newValue	-The new value for the widget
-	 *
-	 ****************************************************************************/
-	NumericInput.prototype.setValue = function(newValue)
-	{
-		console.log("TODO: called setNumericInputValue log", this.id, newValue);
-		
-		// The value is kept in the input element which was given an id
-		$("#" + this.id)[0].value = newValue;
-	}
 
 	//the eventManager is an object that is specific to this page.  A new one
 	//is created for every page, and then passed to the widgets in that page
@@ -183,13 +92,14 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	var dextroData = [ { x: 50, y: "Dextro" } ];
 
 
-	var svg70 = new MakeSVGContainer({
+	var svg70 = new MakeSVGContainer(
+		{
 			node: d3.select("#barChart0"),
 			maxWid: 450,
 			maxHt: 300
 		});
 
-	var axes70 = new MakeAxes(svg70,
+	svg70.Axes( 
 		{
 			id: 70,
 			xPosPerc: 0, yPosPerc:0,
@@ -203,7 +113,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		});
 
 		
-	axes70.BarChart({
+	svg70.BarChart({
 		Data: [levoData, dextroData],
 		type: "linear" //ignored for anything but grouped
 	});
@@ -227,7 +137,8 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		];
 
 				//TODO Double y axis on the same axis set, linear and other together
-	var axes10 = new MakeAxes(svg70, {
+	svg70.Axes(
+		{
 			id: 10,
 			xPosPerc: 0, yPosPerc:0,
 			xPerc: 1, yPerc: 1,
@@ -240,7 +151,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			yTicks: 0
 		});
 
-	axes10.LineGraph({
+	svg70.LineGraph({
 		Data: [lineData],
 		type: "lines"
 	});
@@ -258,10 +169,10 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	eventManager.subscribe(inputDextro.changedValueEventId,
 						   function(ed) { handleInputValueChanged(inputLevo, ed.value); });
 	
-	eventManager.subscribe(inputLevo.changedValueId, updateeeValue);
+	//eventManager.subscribe(inputLevo.changedValueId, updateeeValue);
 	//eventManager.subscribe(inputLevo.changedValueId, updateLineData);
 
-	eventManager.subscribe(inputDextro.changedValueId, updateeeValue);
+	//eventManager.subscribe(inputDextro.changedValueId, updateeeValue);
 	//eventManager.subscribe(inputDextro.changedValueId, updateLineData);
 
 
@@ -299,7 +210,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		console.log("TODO: fired updateBarChart log");
 		levoData[0].x = inputLevo.getValue();
 		dextroData[0].x = inputDextro.getValue();
-		axes70.BarChart({
+		svg70.BarChart({
 			Data: [levoData, dextroData],
 			type: "linear" //ignored for anything but grouped
 		});

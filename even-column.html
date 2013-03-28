@@ -20,7 +20,7 @@
 		<div class="row-fluid">
 			<div class="span6 leftCol">
 				<p>Here is some test in a paragraph in the left column.</p>
-				<div id="widgetTarget0"></div>
+				<div id="Target0"></div>
 				
 			</div>
 			<div class="span6 rightCol">
@@ -33,7 +33,7 @@
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v2.min.js"></script>
-	<script src="js/assessment.js"></script>
+	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -136,13 +136,13 @@ var logData = [
 	]; // array of line data
 	
 	var svg0 = new MakeSVGContainer(
-		{ordinal: 0,
+		{node: d3.select("#Target0"),
 		maxWid: 400,
 		maxHt: 300
 		}
 	);
 	
-	var axes0 = new makeAxes(svg0,{
+	svg0.Axes({
 		id: 1,
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width

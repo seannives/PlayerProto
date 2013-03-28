@@ -38,7 +38,7 @@
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v2.min.js"></script>
-	<script src="js/assessment.js"></script>
+	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -234,8 +234,7 @@
 			maxHt: 300
         });
 
-    var axes0 = new MakeAxes(svg0, {
-			id: 0,
+	svg0.Axes({
 			xPosPerc: 0, yPosPerc:0, //top, left corner
 			xPerc: 1, yPerc: 1,//full height and width
 			Data: [lineData1],
@@ -249,7 +248,7 @@
 			yLabel: "Labels can have extended chars (&mu;m)"
 		});
 
-    var lines0 = new MakeLineGraph(axes0, {
+	svg0.LineGraph({
 			Data: [lineData1],
 			type: "lines"
 		});
@@ -262,8 +261,7 @@
         maxHt: 300
         }
     );
-    var axes1 = new MakeAxes(svg1,{
-        id: 1,
+	svg1.Axes({
         xPosPerc: 0, yPosPerc:0, //top, left corner
         xPerc: 1, yPerc: 1,//full height and width
         Data: [lineData1,lineData2],
@@ -277,7 +275,7 @@
             yLabel: "Population (Billions)"
     });
 
-    var lines1 = new MakeLineGraph(axes1,{
+	svg1.LineGraph({
         Data: [lineData1,lineData2],
         type: "lines"
     });
@@ -290,22 +288,21 @@
         maxHt: 300
         }
     );
-    var axes2 = new MakeAxes(svg2,{
-        id: 2,
+	svg2.Axes({
         xPosPerc: 0, yPosPerc:0, //top, left corner
         xPerc: 1, yPerc: 1,//full height and width
         Data: [lineData1],
-            xaxisType: "linear",
-            xTicks: [1200,1500,1900,2050],
-            xOrient: "bottom",
-            xLabel: "Year (explicit ticks)",
+		xaxisType: "linear",
+		xTicks: [1200,1500,1900,2050],
+		xOrient: "bottom",
+		xLabel: "Year (explicit ticks)",
         yaxisType: "linear",
         yTicks: 5,
         yOrient: "left",
         yLabel: "Population (Billions)"
     });
 
-    var lines2 = new MakeLineGraph(axes2,{
+	svg2.LineGraph({
         Data: [lineData1],
         type: "points"
     });
@@ -317,8 +314,7 @@
         maxHt: 200
         }
     );
-    var axes3 = new MakeAxes(svg3,{
-        id: 3,
+	svg3.Axes({
         xPosPerc: 0, yPosPerc:0, //top, left corner
         xPerc: 1, yPerc: 1,//full height and width
         Data: [lineData1,specData],
@@ -331,7 +327,7 @@
         yLabel: "a y axis on the right"
     });
 
-    var lines2 = new MakeLineGraph(axes3,{
+	svg3.LineGraph({
         Data: [lineData2,specData],
         type: "lines+points"
     });
@@ -343,8 +339,7 @@
         maxHt: 300
         }
     );
-    var axes50 = new MakeAxes(svg50,{
-        id: 10,
+	svg50.Axes({
         xPosPerc: 0, yPosPerc:0,
         xPerc: 1, yPerc: 1,//full height and width
         Data: [specData],
@@ -358,7 +353,7 @@
 
     });
 
-    var lines50 = new MakeLineGraph(axes50,{
+	svg50.LineGraph({
         Data: [specData],
         type: "lines"
     });
@@ -371,8 +366,7 @@
         maxHt: 400
         }
     );
-    var axes60 = new MakeAxes(svg60,{
-        id: 60,
+	svg60.Axes({
         xPosPerc: 0, yPosPerc:0,
         xPerc: 1, yPerc: 1,//full height and width
         Data: [ordinalData,ordinalData2],
@@ -384,7 +378,7 @@
         yLabel: "ordinal scale"
 
     });
-    var lines60 = new MakeLineGraph(axes60,{
+	svg60.LineGraph({
         Data: [ordinalData,ordinalData2],
         type: "lines"
     });
@@ -397,8 +391,7 @@
         maxHt: 300
         }
     );
-    var axes70 = new MakeAxes(svg70,{
-        id: 70,
+	svg70.Axes({
         xPosPerc: 0, yPosPerc:0,
         xPerc: .33, yPerc: 1,//full height and width
         Data: [testData],
@@ -411,13 +404,13 @@
         yLabel: "vertical"
 
     });
-    var lines70 = new MakeLineGraph(axes70,{
+	
+	svg70.MakeLineGraph({
         Data: [testData],
         type: "lines"
     });
 
-    var axes72 = new MakeAxes(svg70,{
-        id: 72,
+	svg70.MakeAxes({
         xPosPerc: .33, yPosPerc:0,
         xPerc: .33, yPerc: 1,//full height and width
         Data: [lineData1],
@@ -430,13 +423,13 @@
         yLabel: "vertical"
 
     });
-    var lines72 = new MakeLineGraph(axes72,{
+	svg70.MakeLineGraph({
         Data: [lineData1],
         type: "lines"
     });
-
-    var axes75 = new MakeAxes(svg70,{
-        id: 75,
+	//TODO: we will have to make axes a collection inside the SVG if we want
+	//to be able to target which one to use.
+	svg70.Axes({
         xPosPerc: .66, yPosPerc:0,
         xPerc: .33, yPerc: 1,//full height and width
         Data: [specData],
@@ -449,7 +442,7 @@
         yLabel: "vertical"
 
     });
-    var lines75 = new MakeLineGraph(axes75,{
+	svg70.LineGraph({
         Data: [specData],
         type: "lines"
     });
@@ -462,8 +455,7 @@
         maxHt: 400
         }
     );
-    var axes80 = new MakeAxes(svg80,{
-        id: 80,
+	svg80.Axes({
         xPosPerc: 0, yPosPerc:0,
         xPerc: 1, yPerc: 1,//full height and width
         Data: [lineData,projected,nineB],
@@ -476,13 +468,13 @@
         yLabel: "Human Population (Billions)"
 
     });
-    var lines80 = new MakeLineGraph(axes80,{
+	svg80.LineGraph({
         Data: [lineData,projected,nineB],
         type: "lines",
         liteKey: litekey
     });
 
-    axes80.Legend({
+    svg80.Legend({
         xPos:"right", yPos: "bottom",
         labels: ["Historical Population","Projected Growth", "Nine Billion"],
         type: "line",
