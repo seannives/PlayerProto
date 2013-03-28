@@ -1353,16 +1353,16 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	
 	var graph = this.group.append("g") //make a group to hold new line chart
 	.attr("class", "scalableImage");
-	graph.append("rect").attr("width",xDim).attr("height",yDim).attr("fill","#efefef");
+	graph.append("rect").attr("width",this.innerWid).attr("height",this.innerHt).attr("fill","#efefef");
 
 	graph.append("image").attr("xlink:href", this.images[0].URI)
 	.attr("id", this.id) //name it so it can be manipulated or highlighted later
-	.attr("width", xDim).attr("height", yDim)
+	.attr("width", this.innerWid).attr("height", this.innerHt)
 	.append("desc").text(this.images[0].caption);
 	
-	console.log("axesobj ",	axesCont.xaxis.select(".axisLabel"));
+	console.log("axesobj ",	this.xaxis.select(".axisLabel"));
 
-	this.captionCont.select(".axisLabel").html(this.images[0].caption);
+	this.xaxis.select(".axisLabel").html(this.images[0].caption);
 	console.log("image group is made:", d3.select("#" + this.id).attr("id"),
 	 ", number of images in container is ", numImg);
 
@@ -1370,18 +1370,20 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 		//if there are multiple images, calculate dimensions for thumbnails, and make the 
 		//svg box bigger to display them in a new group at the top.
 		var thumbScale = 0.85 / (numImg + 2);
-		this.xThumbDim = d3.round(xDim * thumbScale), this.yThumbDim = d3.round(yDim * thumbScale);
-		var maxWid = axesCont.container.maxWid;
-		var maxHt = axesCont.container.maxHt;
-		axesCont.margin.top = axesCont.margin.top + this.yThumbDim;
+		this.xThumbDim = d3.round(this.innerWid * thumbScale), this.yThumbDim = 
+			d3.round(this.innerHt * thumbScale);
+		var maxWid = this.maxWid;
+		var maxHt = this.maxHt;
+		this.margin.top = this.margin.top + this.yThumbDim;
 
-		axesCont.container.svgObj.append("g").attr("class", "thumbs")
+		this.group.append("g").attr("class", "thumbs")
 		.attr("id","thumbs"+this.id)
 		.selectAll("image.thumbs").data(this.images).enter()
-		.append("g").attr("id", function(d, i) { return (thumbid + i);})
+		.append("g").attr("id", function(d, i) { return (myID + i);})
 		.attr("class", "liteable thumbs")
 		.attr("transform", function(d, i) {
-			return "translate(" + (d3.round((i + 1) * xDim / (numImg + 2)) + axesCont.margin.left) 
+			return "translate(" + (d3.round((i + 1) * that.innerWid / (numImg + 2)) 
+				+ that.margin.left) 
 			+ "," + 5 + ")";})
 		.append("image").attr("xlink:href", function(d) {
 			return d.URI;
@@ -1392,8 +1394,8 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 		});
 		//required - we should never have an image inserted without a description for ARIA
 		//then move the main image down to make room for the thumbnails
-		axesCont.group.attr("transform", "translate(" + axesCont.margin.left + "," + axesCont.margin.top + ")");
-		axesCont.container.svgObj.attr("viewBox", "0 0 " + maxWid + " " + (maxHt + this.yThumbDim)).style("max-height", (maxHt + this.yThumbDim) + "px");
+		that.group.attr("transform", "translate(" + that.margin.left + "," + that.margin.top + ")");
+		that.rootEl.attr("viewBox", "0 0 " + that.maxWid + " " + (that.maxHt + this.yThumbDim)).style("max-height", (maxHt + this.yThumbDim) + "px");
 	}
 
 } //end MakeScalableImage object generator function

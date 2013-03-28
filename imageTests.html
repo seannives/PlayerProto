@@ -66,8 +66,7 @@ var lineData = [
 		}
 	);
 	
-	var axes0 = new MakeAxes(svg0,{
-		id: 0,
+	svg0.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -78,7 +77,7 @@ var lineData = [
 		yOrient: "left",
 	});
 	
-	var images0 = new MakeScalableImage(axes0,
+	svg0.ScalableImage(
 		{images: [	
 				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."}
 			]
@@ -93,8 +92,7 @@ var lineData = [
 		maxHt: 300
 		}
 	);
-	var axes1 = new MakeAxes(svg1,{
-		id: 1,
+	svg1.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -104,7 +102,7 @@ var lineData = [
 		yOrient: "left",
 	});
 	
-	var images1 = new MakeScalableImage(axes1,
+	svg1.ScalableImage(
 		{images: [
 			{URI:'img/ch4_0_1.png', caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/multimedia/imagegallery/ image_feature_1529.html"},
 			{URI:'img/ch4_03.jpg', caption: "The seasons"},
@@ -124,7 +122,7 @@ var lineData = [
 		maxHt: 400
 		}
 	);
-	var axes2 = new MakeAxes(svg2,{
+	svg2.Axes({
 		id: 2,
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
@@ -139,13 +137,13 @@ var lineData = [
 		yLabel: "Strata dividing line"
 	});
 	
-	var images2 = new MakeScalableImage(axes2,
+	svg2.ScalableImage(
 		{images: [
 			{URI:'img/strata.jpg', caption: "Earth's strata"}
 			]
 		}
 	);
-	var lines2 = new MakeLineGraph(axes2,{
+	svg2.LineGraph({
 		Data: [lineData],
 		type: "lines"
 	});
@@ -162,8 +160,7 @@ var lineData = [
 		maxHt: 300
 		}
 	);
-	var axes70 = new MakeAxes(svg70,{
-		id: 70,
+	svg70.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: .33, yPerc: 1,//full height and half width
 		xaxisType: "linear", yaxisType: "ordinal",
@@ -172,7 +169,7 @@ var lineData = [
 		xLabel: "population"
 	});
 
-	var images70 = new MakeScalableImage(axes70,
+	svg70.ScalableImage(
 		{images: [
 				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."}]
 		});
