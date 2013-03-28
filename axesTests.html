@@ -31,8 +31,8 @@
 				
 			</div>
 			<div class="span6 rightCol">
-				<div id="widgetTarget50"><p>x-y log scale x and linear y</p></div>
-				<div id="widgetTarget60"><p>x-y linear scale x and ordinal y</p></div>
+				<div id="widgetTarget50"><p>9. x-y log scale x and linear y</p></div>
+				<div id="widgetTarget60"><p>10. x-y linear scale x and ordinal y</p></div>
 			
 			</div>
 		</div>
@@ -42,7 +42,7 @@
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v2.min.js"></script>
-	<script src="js/assessment.js"></script>
+	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -155,6 +155,8 @@ var logData = [
 	}
 	]; // array of line data
 	
+//<div id="widgetTarget0"><p>0. SVG Container Created 400 wide by 100 high</p></div>
+
 	var svg0 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget0"),
 		maxWid: 400,
@@ -162,14 +164,15 @@ var logData = [
 		}
 	);
 	
+//<div id="widgetTarget1"><p>1. SVG Container with x axis only</p></div>
+
 	var svg1 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget1"),
 		maxWid: 400,
 		maxHt: 150
 		}
 	);
-	var axes1 = new MakeAxes(svg1,{
-		id: 1,
+	svg1.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [testData],
@@ -178,6 +181,8 @@ var logData = [
 		xOrient: "bottom",
 		xLabel: "an x axis on bottom"
 	});
+
+//<div id="widgetTarget2"><p>2. SVG Container with y axis only</p></div>
 	
 	var svg2 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget2"),
@@ -185,8 +190,7 @@ var logData = [
 		maxHt: 200
 		}
 	);
-	var axes2 = new MakeAxes(svg2,{
-		id: 2,
+	svg2.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [testData],
@@ -195,16 +199,15 @@ var logData = [
 		yOrient: "left",
 		yLabel: "a y axis on the left"
 	});
-	
-	//<div id="widgetTarget3"><p>3. x-y on the top and right sides</p></div>
-	var svg3 = new MakeSVGContainer(
+//<div id="widgetTarget3"><p>3. x-y on the top and right sides</p></div>
+
+var svg3 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget3"),
 		maxWid: 400,
 		maxHt: 200
 		}
 	);
-	var axes3 = new MakeAxes(svg3,{
-		id: 3,
+	svg3.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [testData],
@@ -224,8 +227,7 @@ var logData = [
 		maxHt: 200
 		}
 	);
-	var axes4 = new MakeAxes(svg4,{
-		id: 4,
+	svg4.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [testData],
@@ -243,8 +245,7 @@ var logData = [
 		maxHt: 200
 		}
 	);
-	var axes5 = new MakeAxes(svg5,{
-		id: 5,
+	svg5.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 0.5, yPerc: 0.5,//full height and width
 		Data: [testData],
@@ -255,8 +256,7 @@ var logData = [
 		yOrient: "left",
 	});
 	
-	var axes5a = new MakeAxes(svg5,{
-		id: 55,
+	svg5.Axes({
 		xPosPerc: .5, yPosPerc:.5, //top, left corner
 		xPerc: 0.5, yPerc: 0.5,//full height and width
 		Data: [testData],
@@ -273,7 +273,7 @@ var logData = [
 		maxHt: 200
 		}
 	);
-	var axes6 = new MakeAxes(svg6,{
+	svg6.Axes({
 		id: 6,
 		xPosPerc: .1, yPosPerc:.1, 
 		xPerc: 0.8, yPerc: 0.8,
@@ -291,8 +291,7 @@ var logData = [
 		maxHt: 200
 		}
 	);
-	var axes7 = new MakeAxes(svg7,{
-		id: 7,
+	svg7.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [testData],
@@ -309,11 +308,9 @@ var logData = [
 		maxHt: 200
 		}
 	);
-	var axes8 = new MakeAxes(svg8,{
-		id: 8,
+	svg8.Axes({
 		xPosPerc: 0, yPosPerc:0, 
 		xPerc: 1, yPerc: 1,
-
 		xaxisType: "linear", yaxisType: "linear",
 		xTicks:2,
 		xOrient: "bottom",
@@ -327,8 +324,7 @@ var logData = [
 		maxHt: 300
 		}
 	);
-	var axes50 = new MakeAxes(svg50,{
-		id: 10,
+	svg50.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [logData],
@@ -348,8 +344,7 @@ var logData = [
 		maxHt: 400
 		}
 	);
-	var axes60 = new MakeAxes(svg60,{
-		id: 60,
+	svg60.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [ordinalData],

@@ -37,7 +37,7 @@
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v2.min.js"></script>
-	<script src="js/assessment.js"></script>
+	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -176,8 +176,7 @@ var ordinalData2 = [
 		}
 	);
 	
-	var axes0 = new MakeAxes(svg0,{
-		id: 0,
+	svg0.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [ordinalData],
@@ -190,7 +189,7 @@ var ordinalData2 = [
 		yLabel: "bar category labels"
 	});
 	
-	var lines0 = new MakeBarGraph(axes0,{
+	svg0.BarChart({
 		Data: [ordinalData],
 		type: "linear" //ignored for anything but grouped
 	});
@@ -203,8 +202,7 @@ var ordinalData2 = [
 		maxHt: 300
 		}
 	);
-	var axes1 = new MakeAxes(svg1,{
-		id: 1,
+	svg1.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [ordinalData, ordinalData2],
@@ -216,7 +214,7 @@ var ordinalData2 = [
 		yOrient: "left",
 	});
 	
-	var lines1 = new MakeBarGraph(axes1,{
+	svg1.BarChart({
 		Data: [ordinalData, ordinalData2],
 		type: "lines"
 	});
@@ -229,8 +227,7 @@ var ordinalData2 = [
 		maxHt: 500
 		}
 	);
-	var axes2 = new MakeAxes(svg2,{
-		id: 2,
+	svg2.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [lowIncome,middleIncome,highIncome],
@@ -243,7 +240,7 @@ var ordinalData2 = [
 		yOrient: "left",
 	});
 	
-	var lines2 = new MakeBarGraph(axes2,{
+	svg2.BarChart({
 		Data: [lowIncome,middleIncome,highIncome],
 		type: "grouped"
 	});
@@ -256,8 +253,8 @@ var ordinalData2 = [
 		maxHt: 300
 		}
 	);
-	var axes50 = new MakeAxes(svg50,{
-		id: 50,
+	
+	svg50.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [growthMen,growthWomen],
@@ -269,7 +266,7 @@ var ordinalData2 = [
 		yLabel: "Age ranges"
 	});
 
-	var lines50 = new MakeBarGraph(axes50,{
+	svg50.BarChart({
 		Data: [growthMen,growthWomen],
 		type: "linear"
 	});
@@ -281,8 +278,7 @@ var ordinalData2 = [
 		maxHt: 300
 		}
 	);
-	var axes55 = new MakeAxes(svg55,{
-		id: 55,
+	svg55.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [growthMen,growthWomen],
@@ -295,7 +291,7 @@ var ordinalData2 = [
 		
 	});
 
-	var lines50 = new MakeBarGraph(axes55,{
+	svg55.BarChart({
 		Data: [growthMen,growthWomen],
 		type: "linear"
 	});
@@ -309,8 +305,7 @@ var ordinalData2 = [
 		maxHt: 300
 		}
 	);
-	var axes70 = new MakeAxes(svg70,{
-		id: 70,
+	svg70.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: .5, yPerc: 1,//full height and half width
 		Data: [shrinkWomen],
@@ -323,13 +318,12 @@ var ordinalData2 = [
 		yLabel: "age groups"
 
 	});
-	var lines70 = new MakeBarGraph(axes70,{
+	svg70.BarChart({
 		Data: [shrinkWomen],
 		type: "linear"
 	});
 	
-	var axes72 = new MakeAxes(svg70,{
-		id: 72,
+	svg70.Axes({
 		xPosPerc: .5, yPosPerc:0,
 		xPerc: .5, yPerc: 1,//full height 
 		Data: [shrinkMen],
@@ -342,7 +336,7 @@ var ordinalData2 = [
 	 
 
 	});
-	var lines72 = new MakeLineGraph(axes72,{
+	svg70.LineGraph({
 		Data: [shrinkMen],
 		type: "linear"
 	});
@@ -354,8 +348,7 @@ var ordinalData2 = [
 		maxHt: 500
 		}
 	);
-	var axes5 = new MakeAxes(svg5,{
-		id: 5,
+	svg5.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		Data: [lowIncome,middleIncome,highIncome],
@@ -368,12 +361,12 @@ var ordinalData2 = [
 		yOrient: "left",
 	});
 	
-	var lines2 = new MakeBarGraph(axes5,{
+	svg5.BarChart({
 		Data: [lowIncome,middleIncome,highIncome],
 		type: "grouped"
 	});
 	
-	axes5.Legend({
+	svg5.Legend({
 		xPos: "right", yPos: "top",
 		labels: ["low income", "middle income", "high income"],
 		type: "box"
