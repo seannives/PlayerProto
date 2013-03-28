@@ -202,6 +202,7 @@
     //<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
 
 	var lg1Config = {
+			id: "lg1",
 			Data: [lineData1],
 			type: "lines",
 			containerConfig: {
@@ -214,14 +215,14 @@
 					xPosPerc: 0, yPosPerc:0, //top, left corner
 					xPerc: 1, yPerc: 1, //full height and width
 					Data: [lineData1],
-					xaxisType: "linear",
-					xTicks: 5,
-					xOrient: "bottom",
-					xLabel: "one line with markup <span class='math'>y=x<sup>2</sup></span>",
-					yaxisType: "linear",
-					yTicks: 5,
-					yOrient: "right",
-					yLabel: "Labels can have extended chars (&mu;m)"
+					xAxisFormat: { type: "linear",
+								   ticks: 5,
+								   orientation: "bottom",
+								   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" },
+					yAxisFormat: { type: "linear",
+								   ticks: 5,
+								   orientation: "right",
+								   label: "Labels can have extended chars (&mu;m)" },
 				},
 		};
 		

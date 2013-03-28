@@ -71,6 +71,7 @@ function LineGraph(config)
 	 *  <li> "lines" for a line plot
 	 *  <li> "points" for a scatter plot
 	 *  <li> "lines+points" for interpolated plots
+	 * </ul>
 	 * @type {string}
 	 * TODO supply images as point glyphs
 	 */
