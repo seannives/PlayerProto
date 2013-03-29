@@ -1114,20 +1114,47 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 
 */
 
+
+/* **************************************************************************
+ * LineGraph                                                            *//**
+ *
+ * Method of MakeSVGContainer: 	Create a line or scatter plot (or both) for 
+ *								one or more series of x-y data
+ *
+ * @param config				an object containing the following names: 
+ *
+ * @param Data					array of arrays of objects with keys x: and y: 
+ *								real floating pt, one for each point, one 
+ *								array for each trace.
+ *
+ * @param type					string specifying "lines", "points", or
+ *								"lines+points" for traces.
+ * TODO: need to add custom symbols or images for scatter plots
+ *
+ * @param liteKey 				array of integers setting correspondance with
+ * 								other page elements in other widgets
+ * 
+ * NOTES: TODO willneed to make it possible to highlight lines/points to go 
+ * along with legend (for ADA and pedagogy) and make the data updateable/redraw
+ * in response to other changes.  So both emits and accepts events.
+ **************************************************************************/
 MakeSVGContainer.prototype.LineGraph = function(config,eventManager) { 
 //begin line graph object generator 
 
-	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
-	//one array for each trace.
+	
 	this.Data = config.Data;
-	//renderType is a string specifying "lines","points", or "lines+points" for line, scatter, or interpolated plots TODO supply images as point glyphs
 	this.type = config.type;
-	//highlitekey is an array of integers relating the traces to other selectable things on the page, optional
+	this.eventManager = eventManager;
+	
 	var liteKey = config.liteKey;
-	var myID = "lines" + this.id + "_";
-
+	var myID = "lines" + this.id + "_"; 
+	var that = this;
+	//to accomodate recall of the function to update data, check if a group of
+	//myID already exists.  If it doesn't, make a group to hold new line graph
+	//if it does, use it.
+	
 	if(d3.select("#"+myID)[0][0]==null){
-		var graph = this.group.append("g") //make a group to hold new bar chart
+		var graph = this.group.append("g") 
 		.attr("id", myID);//name it so it can be manipulated or highlighted later
 		console.log("graph group is made:", graph.attr("id"));
 	}
@@ -1136,17 +1163,20 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 		console.log("graph group is found: ", graph.attr("id"));	
 	}
 	
-	var that = this;
 
 	// make a clippath, which is used in the case that we zoom or pan the graph dynamically
 	graph.append("defs").append("clipPath").attr("id", "clip_" + myID)
 	.append("rect").attr("width", that.innerWid)
 	.attr("height", that.innerHt);
 
-	//draw the trace(s)
+	//draw the trace(s).  We have go generate the path data, then create the groups
+	//for them (this will be the sticking point on redraw), then fill them with either
+	//lines or points or both for the data.  
+	
 	if (this.type == "lines" || this.type == "lines+points") {
 		var line = d3.svg.line()
-		//d3 utility function for generating all the point to point paths using the scales set up above
+	//line() is a d3 utility function for generating all the point to point 
+	//paths using the scales set up above
 		.interpolate("basis").x(function(d, i) {
 			return that.xScale(d.x);
 		}).y(function(d, i) {
@@ -1157,24 +1187,28 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 		.data(this.Data)
 		.enter().append("g").attr("class", "traces");
 
-		//associate the clip path so it doesn't slop over the axes
+	//associate the clip path so data doesn't slop over the axes
 		this.traces.append("path").attr("clip-path", "url(#clip_" + this.id + ")")
-		//use the line function defined above to set the path data
+	//use the line function defined above to set the path data
 		.attr("d", function(d, i) {
 			return line(d);
 		})
-		//pick the colors sequentially off the list
+	//pick the colors sequentially off the list, both trace and stroke<i>
+	//are defined in the css file
 		.attr("class", function(d, i) {
 			return "trace stroke" + i;
 		});
-
+	//Highlighting the sequence of traces means that we need a key to associate
+	//them with other page elements.  This can be a one-to-one or one-to-many or
+	//many-to-one relationship.  So if a liteKey is specified to make the association
+	//write it out in an ID.  TODO: reconcile this with the overall new event model
 		if (liteKey) {
 			this.traces.attr("class", "traces liteable").attr("id", function(d, i) {
 				return myID + liteKey[i];
 			});
 		}
 
-	}
+	}//end the logic for drawing lines
 
 
 	if (this.type == "points" || this.type == "lines+points") {
@@ -1220,6 +1254,28 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 
 } //end line graph object generator function to go with container widgets
 
+/* **************************************************************************
+ * BarChart                                                             *//**
+ *
+ * Method of MakeSVGContainer: 	Create a bar chart, pyramid chart (two sided)
+ *								or grouped bar chart (several bars on the same 
+ *								label from different series - multivariate)
+ *
+ * @param config				an object containing the following names: 
+ *
+ * @param Data					array of arrays of objects with keys x: and y: 
+ *								real floating pt, one for each point, one 
+ *								array for each trace.
+ *
+ * @param type					string specifying "grouped", or anything else (ignored)
+ *
+ * @param liteKey 				array of integers setting correspondance with
+ * 								other page elements in other widgets
+ * 
+ * NOTES: There's a lot of logic in here to make sure that both positive and
+ * negative values are accomodated.  Negative values have to count right to x=0
+ * and positive must always count right from x=0.
+ **************************************************************************/
 
 MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin bar graph object generator
 	 
@@ -1314,7 +1370,7 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin b
 	.attr("id", function(d, i) {
 		return myID + i;
 	})
-	.attr("height", (this.type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
+	.attr("height", (type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
 	//divide height into uniform bar widths
 	.attr("width", function(d, i) {
 		return ((d.x < 0) ? (that.xScale(0) - that.xScale(d.x)) : 
@@ -1353,16 +1409,16 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	
 	var graph = this.group.append("g") //make a group to hold new line chart
 	.attr("class", "scalableImage");
-	graph.append("rect").attr("width",xDim).attr("height",yDim).attr("fill","#efefef");
+	graph.append("rect").attr("width",this.innerWid).attr("height",this.innerHt).attr("fill","#efefef");
 
 	graph.append("image").attr("xlink:href", this.images[0].URI)
 	.attr("id", this.id) //name it so it can be manipulated or highlighted later
-	.attr("width", xDim).attr("height", yDim)
+	.attr("width", this.innerWid).attr("height", this.innerHt)
 	.append("desc").text(this.images[0].caption);
 	
-	console.log("axesobj ",	axesCont.xaxis.select(".axisLabel"));
+	console.log("axesobj ",	this.xaxis.select(".axisLabel"));
 
-	this.captionCont.select(".axisLabel").html(this.images[0].caption);
+	this.xaxis.select(".axisLabel").html(this.images[0].caption);
 	console.log("image group is made:", d3.select("#" + this.id).attr("id"),
 	 ", number of images in container is ", numImg);
 
@@ -1370,18 +1426,20 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 		//if there are multiple images, calculate dimensions for thumbnails, and make the 
 		//svg box bigger to display them in a new group at the top.
 		var thumbScale = 0.85 / (numImg + 2);
-		this.xThumbDim = d3.round(xDim * thumbScale), this.yThumbDim = d3.round(yDim * thumbScale);
-		var maxWid = axesCont.container.maxWid;
-		var maxHt = axesCont.container.maxHt;
-		axesCont.margin.top = axesCont.margin.top + this.yThumbDim;
+		this.xThumbDim = d3.round(this.innerWid * thumbScale), this.yThumbDim = 
+			d3.round(this.innerHt * thumbScale);
+		var maxWid = this.maxWid;
+		var maxHt = this.maxHt;
+		this.margin.top = this.margin.top + this.yThumbDim;
 
-		axesCont.container.svgObj.append("g").attr("class", "thumbs")
+		this.group.append("g").attr("class", "thumbs")
 		.attr("id","thumbs"+this.id)
 		.selectAll("image.thumbs").data(this.images).enter()
-		.append("g").attr("id", function(d, i) { return (thumbid + i);})
+		.append("g").attr("id", function(d, i) { return (myID + i);})
 		.attr("class", "liteable thumbs")
 		.attr("transform", function(d, i) {
-			return "translate(" + (d3.round((i + 1) * xDim / (numImg + 2)) + axesCont.margin.left) 
+			return "translate(" + (d3.round((i + 1) * that.innerWid / (numImg + 2)) 
+				+ that.margin.left) 
 			+ "," + 5 + ")";})
 		.append("image").attr("xlink:href", function(d) {
 			return d.URI;
@@ -1392,8 +1450,8 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 		});
 		//required - we should never have an image inserted without a description for ARIA
 		//then move the main image down to make room for the thumbnails
-		axesCont.group.attr("transform", "translate(" + axesCont.margin.left + "," + axesCont.margin.top + ")");
-		axesCont.container.svgObj.attr("viewBox", "0 0 " + maxWid + " " + (maxHt + this.yThumbDim)).style("max-height", (maxHt + this.yThumbDim) + "px");
+		that.group.attr("transform", "translate(" + that.margin.left + "," + that.margin.top + ")");
+		that.rootEl.attr("viewBox", "0 0 " + that.maxWid + " " + (that.maxHt + this.yThumbDim)).style("max-height", (maxHt + this.yThumbDim) + "px");
 	}
 
 } //end MakeScalableImage object generator function
@@ -1468,57 +1526,6 @@ MakeLinks.prototype.setState = function(liteKey) {
 	}
 };
 
-
-function MakeContainer(config) {
-	this.ordinal = config.ordinal;
-	//ordinal:an integer>=0 that identifies which div to write it into, since there may be several
-	this.maxWid = config.maxWid;
-	this.maxHt = config.maxHt;
-	//maxWid, maxHt: the width and height of the graph region, without margins, integers
-	this.title = config.title;
-	//boolean specifying whether to put an icon and block swipes because container has interactive stuff in it
-	this.interact = config.interact;
-	this.containerName = "widget" + ordinal;
-	//contents specifies an array of images, graphs, questions, etc. that go in the container.  
-	//each element in the array is an object that calls its renderer
-	this.margin = {
-		top: 20,
-		bottom: 20,
-		left: 20,
-		right: 20
-	};
-	//this is a default margin set that is meant to be updated by the constituent objects if they require more space
-	//mostly happens with axes
-	//margin: an associative array with keys for top, bottom, left and right
-	//title: the title appearing above the graph - optional
-	//interact: boolean saying whether contents are interactive, and should be indicated with an icon
-	//select the div in the document where the graph will go
-	var container = d3.select("#widgetTarget" + ordinal);
-	//title it in a styled div, if it has one
-	//this puts the hand icon on the upper right corner and blocks clicks from being interpreted as swipes
-	if (interact) {
-		container.attr("class", "inter noSwipe");
-	}
-
-	if (title) {
-		container.append("div").attr("class", "graphTitle").text(title);
-	}
-
-	//container.style("max-height", maxHt+"px"); BADNESS: doing this slops the 
-	//svg over the bottom of the div.
-	//create an svg element of the appropriate size and scaling
-	this.svgObj = container.append("svg").attr("max-height", maxHt).attr("viewBox", "0 0 " + maxWid + " " + maxHt)
-	//makes it scale correctly in single-column or phone layouts
-	.attr("preserveAspectRatio", "xMinYMin meet") //ditto
-	//.attr("width",maxWid)
-	.attr("id", containerName).style("max-width", maxWid + "px")
-	//max width works to make it lay out to scale
-	.style("max-height", maxHt + "px");
-	//max height keeps it from forcing whitespace below 
-	//in most cases, but not on Safari or Android.  This is a documented
-	//webkit bug, which they claim they will fix eventually:
-	//https://bugs.webkit.org/show_bug.cgi?id=82489
-}
 
 /* ===================================================
 Events
