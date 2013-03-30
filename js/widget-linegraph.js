@@ -19,6 +19,7 @@
 function()
 {
 	var lg1Config = {
+			id: "lg1",
 			Data: [lineData1],
 			type: "lines",
 			containerConfig: {
@@ -28,17 +29,16 @@ function()
 				},
 			axesConfig: {
 					id: 0,
-					xPosPerc: 0, yPosPerc:0, //top, left corner
+					xPosPerc: 0, yPosPerc: 0, //top, left corner
 					xPerc: 1, yPerc: 1, //full height and width
-					Data: [lineData1],
-					xaxisType: "linear",
-					xTicks: 5,
-					xOrient: "bottom",
-					xLabel: "one line with markup <span class='math'>y=x<sup>2</sup></span>",
-					yaxisType: "linear",
-					yTicks: 5,
-					yOrient: "right",
-					yLabel: "Labels can have extended chars (&mu;m)"
+					xAxisFormat: { type: "linear",
+								   ticks: 5,
+								   orientation: "bottom",
+								   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" },
+					yAxisFormat: { type: "linear",
+								   ticks: 5,
+								   orientation: "right",
+								   label: "Labels can have extended chars (&mu;m)" },
 				},
 		};
 }
@@ -87,6 +87,10 @@ function LineGraph(config)
 	this.container = new SVGContainer(config.containerConfig);
 	
 	// Create the axes (svg canvas) in the container
+	var dataPts = d3.merge(this.Data);
+	config.axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
+	config.axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
+	
 	this.axes = new MakeAxes(this.container, config.axesConfig);
 
 	// alias for axes used by the old code below

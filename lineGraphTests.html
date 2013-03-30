@@ -214,7 +214,6 @@
 					id: 0,
 					xPosPerc: 0, yPosPerc:0, //top, left corner
 					xPerc: 1, yPerc: 1, //full height and width
-					Data: [lineData1],
 					xAxisFormat: { type: "linear",
 								   ticks: 5,
 								   orientation: "bottom",
@@ -256,10 +255,10 @@
 
 
 //  <div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
-    var svg1 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget1"),
-        maxWid: 400,
-        maxHt: 300
+    var svg1 = new MakeSVGContainer({
+			node: d3.select("#widgetTarget1"),
+			maxWid: 400,
+			maxHt: 300
         }
     );
 	svg1.Axes({
@@ -270,10 +269,10 @@
         xTicks: 5,
         xOrient: "bottom",
         xLabel: "an x axis on bottom",
-            yaxisType: "linear",
-            yTicks: 5,
-            yOrient: "left",
-            yLabel: "Population (Billions)"
+		yaxisType: "linear",
+		yTicks: 5,
+		yOrient: "left",
+		yLabel: "Population (Billions)"
     });
 
 	svg1.LineGraph({
@@ -283,12 +282,11 @@
 
     //  <div id="widgetTarget2"><p>2. Scatter graph</p></div>
 
-    var svg2 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget2"),
-        maxWid: 400,
-        maxHt: 300
-        }
-    );
+    var svg2 = new MakeSVGContainer({
+		node: d3.select("#widgetTarget2"),
+		maxWid: 400,
+		maxHt: 300
+    });
 	svg2.Axes({
         xPosPerc: 0, yPosPerc:0, //top, left corner
         xPerc: 1, yPerc: 1,//full height and width
@@ -313,16 +311,16 @@
         {node: d3.select("#widgetTarget3"),
         maxWid: 400,
         maxHt: 200
-        }
-    );
+    });
 	svg3.Axes({
         xPosPerc: 0, yPosPerc:0, //top, left corner
         xPerc: 1, yPerc: 1,//full height and width
         Data: [lineData1,specData],
-        xaxisType: "linear", yaxisType: "linear",
+        xaxisType: "linear",
         xTicks: [400,600,800,1000],
         xOrient: "top",
         xLabel: "x axis on the top",
+		yaxisType: "linear",
         yTicks: 5,
         yOrient: "right",
         yLabel: "a y axis on the right"
@@ -344,9 +342,10 @@
         xPosPerc: 0, yPosPerc:0,
         xPerc: 1, yPerc: 1,//full height and width
         Data: [specData],
-        xaxisType: "log", yaxisType: "linear",
+        xaxisType: "log",
         xTicks: 5,
         xOrient: "bottom",
+		yaxisType: "linear",
         yTicks: 5,
         yOrient: "left",
         xLabel: "log scale",
@@ -371,11 +370,12 @@
         xPosPerc: 0, yPosPerc:0,
         xPerc: 1, yPerc: 1,//full height and width
         Data: [ordinalData,ordinalData2],
-        xaxisType: "linear", yaxisType: "ordinal",
+        xaxisType: "linear",
         xTicks: [0,10],
         xOrient: "bottom",
-        yOrient: "left",
         xLabel: "linear scale",
+		yaxisType: "ordinal",
+        yOrient: "left",
         yLabel: "ordinal scale"
 
     });

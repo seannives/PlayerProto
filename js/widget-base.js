@@ -50,7 +50,10 @@ function SVGContainerConfig()
  * child of the given node. The svg elements properties are set based on
  * the given configuration values.
  *
- * @param {Object} config -The settings to configure this SVGContainer
+ * @param {Object}        config -The settings to configure this SVGContainer
+ * @param {!d3.selection} config.node -The parent node for the created svg element
+ * @param {number}        config.maxWid -The maximum width of the svg container (in pixels)
+ * @param {number}        config.maxHt -The maximum width of the svg container (in pixels)
  *
  ****************************************************************************/
 function SVGContainer(config)
@@ -184,6 +187,16 @@ function AxisFormat()
 	 * @type {number|Array.<*>}
 	 */
 	this.ticks = 5;
+	
+	/**
+	 * The minimum and maximum data values expected for the axis in an
+	 * array with the minimum as element 0 and the maximum as element 1.
+	 * If undefined, will default to [0, 1], or the [min, max] of the ticks
+	 * array if it is an array.
+	 * @type {Array.<number>|undefined}
+	 * TODO: find out why current behavior defaults a vertical axis to [0,1] and a horizontal axis to [1e-10,1] -mjl
+	 */
+	this.extent = [0, 1];
 
 	/**
 	 * There are 2 sets of orientation values, one for a horizontal (x) axis
@@ -214,16 +227,29 @@ function AxisFormat()
 } // end of AxisFormat
  
 /* **************************************************************************
- * SVGWidgetCanvas                                                      *//**
+ * Axes                                                                 *//**
  *
  * @constructor
  *
- * The SVGWidgetCanvas ...( was MakeAxes)
+ * The Axes ...( was MakeAxes)
  *
- * @param {Object} config -The settings to configure this SVGWidgetCanvas
+ * @param {SVGContainer} svgCont         -The svg container the axes should be constructed in.
+ * @param {Object}       config          -The settings to configure these Axes.
+ * @param {string}       config.id       -String to uniquely identify this Axes.
+ * @param {number}       config.xPosPerc -The amount to offset the axes from the left of the container
+ *                                        specified as a fraction (0.0 - 1.0) of the width of the container.
+ * @param {number}       config.yPosPerc -The amount to offset the axes from the top of the container
+ *                                        specified as a fraction (0.0 - 1.0) of the height of the container.
+ * @param {number}       config.xPerc    -The fraction (0.0 - 1.0) of the container's width to use for the Axes.
+ * @param {number}       config.yPerc    -The fraction (0.0 - 1.0) of the container's height to use for the Axes.
+ * @param {Array.<Array.<{x: number, y: number}>} [config.Data]
+ *                                       -Data points that are used to set the axes min/max. If not supplied,
+ *                                        a default [0,1] is set on both axes.
+ * @param {AxisFormat}   config.xAxisFormat -The formatting options for the horizontal (x) axis.
+ * @param {AxisFormat}   config.yAxisFormat -The formatting options for the vertical (y) axis.
  *
  ****************************************************************************/
-function SVGWidgetCanvas(svgCont, config)
+function Axes(svgCont, config)
 {
 	//Top left corner of axis box as percentage of the width/height of the svg box
 	//xPosPerc and yPosPerc are decimals telling how much of the container box to use, 
@@ -232,6 +258,17 @@ function SVGWidgetCanvas(svgCont, config)
 	this.container = svgCont;
 	this.xPos = d3.round(config.xPosPerc * svgCont.maxWid);
 	this.yPos = d3.round(config.yPosPerc * svgCont.maxHt);
+	
+	this.xFmt = config.xAxisFormat;
+	this.yFmt = config.yAxisFormat;
+	
+	// Set defaults for missing axis extents
+	if (!(extent in this.xFmt))
+		this.xFmt.extent = [1e-10, 1];
+		
+	if (!(extent in this.yFmt))
+		this.yFmt.extent = [0, 1];
+	
 	//default margin is set that is meant to be updated by the constituent 
 	//objects if they require more space - mostly happens with axes so we use axes as a container
 	//margin: an associative array/object with keys for top, bottom, left and right
@@ -243,23 +280,24 @@ function SVGWidgetCanvas(svgCont, config)
 	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
 	//one array for each trace. If only x key exists, only draw x axis, only y, then only vertical
 	this.Data = config.Data;
+	
 	//axisType is a string specifying "linear", "log", "ordinal" or "double positive" for axis that always count up from zero, 
 	//regardless of the sign of the data - log only hooked up on x and ordinal only on y at the moment.
 	//TODO this works for x axis only, if y is needed must be expanded
-	var xaxisType = config.xaxisType;
-	var yaxisType = config.yaxisType;
+	var xaxisType = config.xAxisFormat.type;
+	var yaxisType = config.yAxisFormat.type;
 	
 	//xTicks is either an integer number of ticks or an array of values to use as tickmarks
 	//xOrient is a string for orientation "bottom" or "top". Likewise for the yTicks and yOrient
-	var xTicks = config.xTicks;
-	var yTicks = config.yTicks;
+	var xTicks = config.xAxisFormat.ticks;
+	var yTicks = config.yAxisFormat.ticks;
 	//x and ylabel are text strings, optional
 	this.xLabel = config.xLabel;
 	this.yLabel = config.yLabel;
 
-	var format = d3.format(".1");
-	var xOrient = config.xOrient,
-		yOrient = config.yOrient;
+	var xOrient = config.xOrient;
+	var yOrient = config.yOrient;
+	
 	if ((xOrient === "top") && this.xLabel)
 	{
 		this.margin.top = this.margin.top + 40;
@@ -318,6 +356,7 @@ function SVGWidgetCanvas(svgCont, config)
 								 yData.push(o.y);
 							 });
 	}
+	
 	if (xaxisType)
 	{
 		if (yaxisType == "ordinal")
@@ -332,7 +371,7 @@ function SVGWidgetCanvas(svgCont, config)
 		if (xaxisType == "linear")
 		{
 			this.xScale = d3.scale.linear().domain(d3.extent(xRange)) //pulls min and max of x
-			.rangeRound([0, this.innerWid]); 
+				.rangeRound([0, this.innerWid]); 
 			//xScale is now a linear function mapping x-data to the width of the drawing space
 			//TODO put in logic to reverse the x axis if the axis is on the right,
 			//or maybe just add a "reverse" setting.
@@ -398,6 +437,9 @@ function SVGWidgetCanvas(svgCont, config)
 				.rangeRound([this.xScale(0), this.innerWid]);
 		}
 
+		// Format the ticks w/ the general format using a precision of 1 significant digit.
+		var format = d3.format(".1");
+		
 		//set up the functions that will generate the x axis
 		this.xAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 			.scale(this.xScale) //telling the axis to use the scale defined by the function x
