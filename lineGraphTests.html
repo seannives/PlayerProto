@@ -19,6 +19,7 @@
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
+				<div id="widgetTargetX"><p>X. Line Graph one line linear</p></div>
 				<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
 				<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
 				<div id="widgetTarget2"><p>2. Scatter graph</p></div>
@@ -39,6 +40,8 @@
 	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v2.min.js"></script>
 	<script src="js/widgets.js"></script>
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -206,7 +209,7 @@
 			Data: [lineData1],
 			type: "lines",
 			containerConfig: {
-					node: d3.select("#widgetTarget0"),
+					node: d3.select("#widgetTargetX"),
 					maxWid: 400,
 					maxHt: 300,
 				},
@@ -225,7 +228,7 @@
 				},
 		};
 		
-	//var lineGraph1 = new LineGraph(lg1Config);
+	var lineGraph1 = new LineGraph(lg1Config);
 	
 	
     var svg0 = new MakeSVGContainer({
@@ -405,7 +408,7 @@
         yLabel: "vertical"
 
     });
-	
+/*	
 	svg70.MakeLineGraph({
         Data: [testData],
         type: "lines"
@@ -447,9 +450,10 @@
         Data: [specData],
         type: "lines"
     });
+*/	
 
     //  <div id="widgetTarget80"><p>7. Lines with Legend</p></div>
-        var litekey = [0,1,2];
+    var litekey = [0,1,2];
     var svg80 = new MakeSVGContainer(
         {node: d3.select("#widgetTarget80"),
         maxWid: 500,

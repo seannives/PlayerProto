@@ -13,7 +13,49 @@
  *
  * **************************************************************************/
 
-/**
+
+/* **************************************************************************
+ * Utilities
+ * **********************************************************************//**
+ * @todo These need to be moved out of global scope! -mjl
+ * **************************************************************************/
+
+function measure(container)
+{
+	if (!container)
+		return { height: 0, width: 0 };
+
+	//container.append('text').attr({x: -1000, y: -1000}).text(text);
+	var bbox = container.node().getBBox();
+	//container.remove();
+	return { height: bbox.height,
+			 width:  bbox.width };
+}
+
+function logFormat(d)
+{
+	var x = (Math.log(d) / Math.log(10)) + 1e-6; //find the log base 10 (plus a little for zero padding)
+	//then see if the log has abscissa 1, and only return numbers for those, and even
+	return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ? d3.round(Math.log(d)/Math.log(10)) : "";
+}
+
+console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(Math.pow(10, -2)) == -2);
+console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
+console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.pow(10, 3)) == "");
+
+/** @todo this is not how compareLen is normally defined verify how it is being used. -mjl */
+function compareLen(a, b)
+{
+	return a.length - b.length;
+}
+console.log("compare string a to string b equal lengths ", compareLen("a","b") === 0);
+console.log("compare string a to string bbbb equal lengths ", compareLen("a","bbbb") === -3);
+
+
+
+
+
+ /**
  * Definition of the fields of the configuration object used by the
  * SVGContainer constructor.
  * documentation, not to be called/instantiated.
@@ -27,20 +69,20 @@ function SVGContainerConfig()
 	// Note: may need to change this to be a standard DOM node object -lb
 	 */
 	this.node = null;
-	
+
 	/**
 	 * The maximum width of the svg container (in pixels)
 	 * @type {number}
 	 */
 	this.maxWid = 0;
-	
+
 	/**
 	 * The maximum height of the svg container (in pixels)
 	 * @type {number}
 	 */
 	this.maxHt = 0;
 }
- 
+
 /* **************************************************************************
  * SVGContainer                                                         *//**
  *
@@ -63,19 +105,19 @@ function SVGContainer(config)
 	 * @type {d3.selection}
 	 */
 	this.node = config.node;
-	
+
 	/**
 	 * The maximum width of this svg container (in pixels)
 	 * @type {number}
 	 */
 	this.maxWid = config.maxWid;
-	
+
 	/**
 	 * The maximum height of this svg container (in pixels)
 	 * @type {number}
 	 */
 	this.maxHt = config.maxHt;
-	
+
 	// todo: why is the container talking about graphs? in the comment below -mjl
 	//maxWid, maxHt: the width and height of the graph region, without margins, integers
 
@@ -88,7 +130,7 @@ function SVGContainer(config)
 																	//  in most cases, but not on Safari or Android.  This is a documented
 																	//  webkit bug, which they claim they will fix eventually:
 																	//  https://bugs.webkit.org/show_bug.cgi?id=82489
-																	//  A horrible Jquery workaround is documented at 
+																	//  A horrible Jquery workaround is documented at
 																	//  http://www.brichards.co.uk/blog/webkit-svg-height-bug-workaround
 }
 
@@ -108,7 +150,7 @@ function SVGWidgetCanvasConfig()
 
 	/**
 	 * Top left corner of axis box as percentage of the width/height of the svg box
-	 * xPosPerc and yPosPerc are decimals telling how much of the container box to use, 
+	 * xPosPerc and yPosPerc are decimals telling how much of the container box to use,
 	 * typically between 0 and 1. Multiply the width and height of the hard-set svg box
 	 * @type {number}
 	 */
@@ -171,7 +213,7 @@ function AxisFormat()
 	 * <li> "log" - ...
 	 * <li> "ordinal" - The values along the axis are determined by a
 	 *                  discrete itemized list, calculated from the graphed data.
-	 * <li> "double positive" - axis that always counts up from zero, 
+	 * <li> "double positive" - axis that always counts up from zero,
 	 *                          regardless of the sign of the data
 	 * </ul>
 	 * @type {string}
@@ -187,7 +229,7 @@ function AxisFormat()
 	 * @type {number|Array.<*>}
 	 */
 	this.ticks = 5;
-	
+
 	/**
 	 * The minimum and maximum data values expected for the axis in an
 	 * array with the minimum as element 0 and the maximum as element 1.
@@ -225,13 +267,16 @@ function AxisFormat()
 	 */
 	this.label = "Labels can have extended chars (&mu;m)";
 } // end of AxisFormat
- 
+
 /* **************************************************************************
  * Axes                                                                 *//**
  *
  * @constructor
  *
- * The Axes ...( was MakeAxes)
+ * Axes draw x-y axes in an SVG Container and provide scaling methods
+ * to map data points into the area defined by the axes.
+ * The bounds of each axis is defined by either the tick values or by
+ * the data extents defined in that axis' AxisFormat.
  *
  * @param {SVGContainer} svgCont         -The svg container the axes should be constructed in.
  * @param {Object}       config          -The settings to configure these Axes.
@@ -242,9 +287,6 @@ function AxisFormat()
  *                                        specified as a fraction (0.0 - 1.0) of the height of the container.
  * @param {number}       config.xPerc    -The fraction (0.0 - 1.0) of the container's width to use for the Axes.
  * @param {number}       config.yPerc    -The fraction (0.0 - 1.0) of the container's height to use for the Axes.
- * @param {Array.<Array.<{x: number, y: number}>} [config.Data]
- *                                       -Data points that are used to set the axes min/max. If not supplied,
- *                                        a default [0,1] is set on both axes.
  * @param {AxisFormat}   config.xAxisFormat -The formatting options for the horizontal (x) axis.
  * @param {AxisFormat}   config.yAxisFormat -The formatting options for the vertical (y) axis.
  *
@@ -252,24 +294,24 @@ function AxisFormat()
 function Axes(svgCont, config)
 {
 	//Top left corner of axis box as percentage of the width/height of the svg box
-	//xPosPerc and yPosPerc are decimals telling how much of the container box to use, 
+	//xPosPerc and yPosPerc are decimals telling how much of the container box to use,
 	//typically between 0 and 1. Multiply the width and height of the hard-set svg box
 	this.id = "axes" + config.id;
 	this.container = svgCont;
 	this.xPos = d3.round(config.xPosPerc * svgCont.maxWid);
 	this.yPos = d3.round(config.yPosPerc * svgCont.maxHt);
-	
+
 	this.xFmt = config.xAxisFormat;
 	this.yFmt = config.yAxisFormat;
-	
+
 	// Set defaults for missing axis extents
-	if (!(extent in this.xFmt))
+	if (!('extent' in this.xFmt))
 		this.xFmt.extent = [1e-10, 1];
-		
-	if (!(extent in this.yFmt))
+
+	if (!('extent' in this.yFmt))
 		this.yFmt.extent = [0, 1];
-	
-	//default margin is set that is meant to be updated by the constituent 
+
+	//default margin is set that is meant to be updated by the constituent
 	//objects if they require more space - mostly happens with axes so we use axes as a container
 	//margin: an associative array/object with keys for top, bottom, left and right
 	this.margin = { top: 10,
@@ -277,137 +319,101 @@ function Axes(svgCont, config)
 					left: 10,
 					right: 20 };
 
-	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
-	//one array for each trace. If only x key exists, only draw x axis, only y, then only vertical
-	this.Data = config.Data;
-	
-	//axisType is a string specifying "linear", "log", "ordinal" or "double positive" for axis that always count up from zero, 
+	//axis format type is a string specifying "linear", "log", "ordinal" or "double positive" for axis that always count up from zero,
 	//regardless of the sign of the data - log only hooked up on x and ordinal only on y at the moment.
 	//TODO this works for x axis only, if y is needed must be expanded
-	var xaxisType = config.xAxisFormat.type;
-	var yaxisType = config.yAxisFormat.type;
-	
+
 	//xTicks is either an integer number of ticks or an array of values to use as tickmarks
 	//xOrient is a string for orientation "bottom" or "top". Likewise for the yTicks and yOrient
-	var xTicks = config.xAxisFormat.ticks;
-	var yTicks = config.yAxisFormat.ticks;
-	//x and ylabel are text strings, optional
-	this.xLabel = config.xLabel;
-	this.yLabel = config.yLabel;
+	var xTicks = this.xFmt.ticks;
+	var yTicks = this.xFmt.ticks;
 
-	var xOrient = config.xOrient;
-	var yOrient = config.yOrient;
-	
-	if ((xOrient === "top") && this.xLabel)
+	var xOrient = this.xFmt.orientation;
+	var yOrient = this.yFmt.orientation;
+
+	if ((xOrient === "top") && this.xFmt.label)
 	{
 		this.margin.top = this.margin.top + 40;
 		console.log("top margin increased for top label");
 		//catches the case where the whole graph renders to fit within the available SVG,
 		//but cuts off at the top because it doesn't get pushed down far enough
 	}
-	else if ((xOrient === "bottom") && this.xLabel)
+	else if ((xOrient === "bottom") && this.xFmt.label)
 	{
 		this.margin.bottom = this.margin.bottom + 50;
 	}
-	
-	if ((yOrient === "left") && this.yLabel)
+
+	if ((yOrient === "left") && this.yFmt.label)
 	{
 		this.margin.left = this.margin.left + 50;
 		console.log("left margin increased for y label");
 		//catches the case where the whole graph renders to fit within the available SVG,
-		//but cuts off at the right because it gets pushed over too far 
+		//but cuts off at the right because it gets pushed over too far
 	}
-	else if ((yOrient === "right") && this.yLabel)
+	else if ((yOrient === "right") && this.yFmt.label)
 	{
 		this.margin.right= this.margin.right + 40;
-		console.log("right margin increased for y label"); 
+		console.log("right margin increased for y label");
 	}
-	
-	//xPerc and yPerc are decimals telling how much of the container box to use, 
+
+	//xPerc and yPerc are decimals telling how much of the container box to use,
 	//typically between 0 and 1. Multiply the width and height of the hard-set svg box
 	//used to calculate the aspect ratio when sizing viewport up or down
 	this.innerWid = d3.round(config.xPerc * svgCont.maxWid) - this.margin.left - this.margin.right;
 	this.innerHt = d3.round(config.yPerc * svgCont.maxHt) - this.margin.top - this.margin.bottom;
-	
+
 	var tickheight = 10;
 
 	this.group = svgCont.svgObj.append("g") //make a group to hold new scaled widget with axes
-	//.attr("transform", "translate(" + margin.left + "," + margin.top + ")") 
-	// push everything down so text doesn't slop over the top - We'll do this later after measurement
-	.attr("id", this.id) //name it so it can be manipulated or highlighted later
-	;
+		//.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+		// push everything down so text doesn't slop over the top - We'll do this later after measurement
+		.attr("id", this.id) //name it so it can be manipulated or highlighted later
+		;
 
 
-	//build the x and y scales
-	//start by unwrapping all the data to make a single set of values for
-	//x and y
-	var xData = [];
-	var yData = [];
-	if (!this.Data)
+	if (this.xFmt.type)
 	{
-		this.Data = [[{x: 1e-10, y: 0}, {x: 1, y: 1}]];
-	}
-	
-	for (i = 0; i < this.Data.length; i++)
-	{
-		this.Data[i].forEach(function(o)
-							 {
-								 xData.push(o.x);
-								 yData.push(o.y);
-							 });
-	}
-	
-	if (xaxisType)
-	{
-		if (yaxisType == "ordinal")
+		if (this.yFmt.type == "ordinal")
 		{
-			xData.push(0); //if we're making ordinal bars, x must start from 0
+			//if we're making ordinal bars, x must start from 0
+			this.xFmt.extent = d3.extent(this.xFmt.extent.push(0));
 		}
-	
-		//Check if there explicit ticks specified, and if so, use them as the mapped range of the graph width
-		//ignore the actual data range
-		var xRange = ($.isArray(xTicks)) ? xTicks : xData;
 
-		if (xaxisType == "linear")
+		//Check if explicit ticks are specified, and if so, use them as the mapped range of the graph width
+		//ignore the actual data range
+		var xExtent = ($.isArray(xTicks)) ? d3.extent(xTicks) : this.xFmt.extent;
+
+		if (this.xFmt.type == "linear")
 		{
-			this.xScale = d3.scale.linear().domain(d3.extent(xRange)) //pulls min and max of x
-				.rangeRound([0, this.innerWid]); 
+			this.xScale = d3.scale.linear().domain(xExtent)
+				.rangeRound([0, this.innerWid]);
 			//xScale is now a linear function mapping x-data to the width of the drawing space
+
 			//TODO put in logic to reverse the x axis if the axis is on the right,
 			//or maybe just add a "reverse" setting.
 	     }
-	
-		if (xaxisType == "log")
+
+		if (this.xFmt.type == "log")
 		{
-			var vals = d3.extent(xRange);
 			//always start and end on even decades
-			var low = Math.floor(Math.log(vals[0]) / Math.log(10));
-			var high = Math.ceil(Math.log(vals[1]) / Math.log(10));
-		 
-			this.xScale = d3.scale.log().domain([0.99 * Math.pow(10, low), Math.pow(10, high)]) //pulls min and max of x
-				.rangeRound([0, this.innerWid])
-				; //xScale is now a log-scale function mapping x-data to the width of the drawing space
+			var low = Math.floor(Math.log(xExtent[0]) / Math.log(10));
+			var high = Math.ceil(Math.log(xExtent[1]) / Math.log(10));
+
+			this.xScale = d3.scale.log().domain([0.99 * Math.pow(10, low), Math.pow(10, high)])
+				.rangeRound([0, this.innerWid]);
+			//xScale is now a log-scale function mapping x-data to the width of the drawing space
 	    }
-	
-		//if the axis is double positive then create leftPositive and rightPositive 
+
+		//if the axis is double positive then create leftPositive and rightPositive
 		//scales that meet at 0. Still use xScale to plot the data.
-		if (xaxisType == "double positive")
+		if (this.xFmt.type == "double positive")
 		{
-			this.xScale = d3.scale.linear().domain(d3.extent(xRange)) //pulls min and max of x
-				.rangeRound([0, this.innerWid]); //xScale is now a function mapping x-data to the width of the drawing space
-			
-			var negatives = [];
+			this.xScale = d3.scale.linear().domain(xExtent)
+				.rangeRound([0, this.innerWid]);
+			//xScale is now a function mapping x-data to the width of the drawing space
+
 			var negTicks = [];
 			var posTicks = [];
-           //store all the negative points separately
-			xRange.forEach(function(o)
-						   {
-							   if (o < 0)
-							   {
-								   negatives.push(o);
-							   }
-						   });
-						   
            //store all the negative ticks separately
 			if ($.isArray(xTicks))
 			{
@@ -423,46 +429,45 @@ function Axes(svgCont, config)
 								   }
 							   });
 			}
-			
-			console.log("Minimum negative value converted to positive: ", d3.min(negatives));
+
             // create two scales from negative min to 0, then 0 to positive max
 			//map them to the calculated point for xScale(0) - this will need to get recalc'd if the
 			//graph gets resized.
 			var leftPositive = d3.scale.linear()
-				.domain([Math.abs(d3.min(xRange)), 0])
+				.domain([Math.abs(xExtent[0]), 0])
 				.rangeRound([0, this.xScale(0)]);
-			
+
 			var rightPositive = d3.scale.linear()
-				.domain([0, d3.max(xRange)])
+				.domain([0, xExtent[1]])
 				.rangeRound([this.xScale(0), this.innerWid]);
 		}
 
 		// Format the ticks w/ the general format using a precision of 1 significant digit.
 		var format = d3.format(".1");
-		
+
 		//set up the functions that will generate the x axis
 		this.xAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 			.scale(this.xScale) //telling the axis to use the scale defined by the function x
 			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
-		
-		if (xaxisType == "log")
+
+		if (this.xFmt.type == "log")
 		{
 			this.xAxis.tickFormat(logFormat);
 		}
-		
-		if (xaxisType == "double positive")
+
+		if (this.xFmt.type == "double positive")
 		{
-			this.leftXAxis = d3.svg.axis() 
+			this.leftXAxis = d3.svg.axis()
 				.scale(leftPositive) //do the faux positive left-hand axis
 				.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
 
-			this.xAxis = d3.svg.axis() 
+			this.xAxis = d3.svg.axis()
 				.scale(rightPositive) //do the real positive right-hand axis
 				.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
 		}
 
 		//next set the ticks to absolute values or just a number of ticks
-		if (xaxisType == "double positive")
+		if (this.xFmt.type == "double positive")
 		{
 			$.isArray(xTicks) ? (this.xAxis.tickValues(posTicks) && this.leftXAxis.tickValues(negTicks))
 							  : (this.xAxis.ticks(xTicks - 2) && this.leftXAxis.ticks(2));
@@ -471,7 +476,7 @@ function Axes(svgCont, config)
 		{
 			$.isArray(xTicks) ? (this.xAxis.tickValues(xTicks)) : (this.xAxis.ticks(xTicks));
 		}
-		
+
 		//now draw the horizontal axis
 		this.xaxis = this.group.append("g")
 			.call(this.xAxis)
@@ -480,7 +485,7 @@ function Axes(svgCont, config)
 			.attr("class", "x axis");
 
 		//if we want positive tick values radiating from 0, then make the negative half of the axis separately
-		if (xaxisType == "double positive")
+		if (this.xFmt.type == "double positive")
 		{
 			this.xaxis.append("g").call(this.leftXAxis)
 				.attr("transform", "translate(0," + ((xOrient == "bottom") ? this.innerHt : 0) + ")")
@@ -489,45 +494,53 @@ function Axes(svgCont, config)
 				// make the x-axis label, if it exists
 		}
 
-		if (this.xLabel)
+		if (this.xFmt.label)
 		{
 			var xaxisDims = this.xaxis.node().getBBox();
 			this.xLabelObj = this.xaxis.append("foreignObject")
 				.attr("x", 0)
 				.attr("y", ((xOrient == "top") ? (-1.5) : 1) * (xaxisDims.height + 2))
 				.attr("width", this.innerWid).attr("height", 40);
-				
-			this.xLabelObj.append("xhtml:body").style("margin", "0px") 
+
+			this.xLabelObj.append("xhtml:body").style("margin", "0px")
 				//this interior body shouldn't inherit margins from page body
-				.append("div").attr("class", "axisLabel").html(this.xLabel) //make the label  
+				.append("div").attr("class", "axisLabel").html(this.xFmt.label) //make the label
 				;
 		}
-		
+
 		var xHt = d3.round(this.group.select(".x.axis").node().getBBox().height);
 	}
 
-	if (yaxisType)
+	if (this.yFmt.type)
 	{
-		var yRange = ($.isArray(yTicks)) ? yTicks : ((d3.min(yData) > 0) ? yData.concat(0) : yData);
-		//check that the y range extends down to 0, because data graphs
-		// that don't include 0 for y are misleading
-	
-		if (yaxisType == "linear")
+		if (this.yFmt.type == "ordinal")
 		{
-			this.yScale = d3.scale.linear().domain(d3.extent(yRange)) //pulls min and max of y
-				.rangeRound([this.innerHt, 0]);
-	    }
-		
-		if (yaxisType == "ordinal")
-		{
-			this.yScale = d3.scale.ordinal().domain(yRange) //lists all ordinal y vals
-				.rangeRoundBands([this.innerHt, 0],.4);
-			
-			//width is broken into even spaces allowing for bar width and 
+			// @todo changed the domain from yRange to yTicks. The intention is to have the graph set the yTicks when the y axis is ordinal from the data. -mjl
+			this.yScale = d3.scale.ordinal().domain(yTicks) //lists all ordinal y vals
+				.rangeRoundBands([this.innerHt, 0], 0.4);
+
+			//width is broken into even spaces allowing for bar width and
 			//a uniform white space between each, in this case, 20% white space
 	    }
-		
-		// yScale is a function mapping y-data to height of drawing space. 
+		else
+		{
+			//check that the y range extends down to 0, because data graphs
+			// that don't include 0 for y are misleading
+			if (this.yFmt.extent[0] > 0)
+			{
+				this.yFmt.extent[0] = 0;
+			}
+
+			var yExtent = ($.isArray(yTicks)) ? d3.extent(yTicks) : this.yFmt.extent;
+
+			if (this.yFmt.type == "linear")
+			{
+				this.yScale = d3.scale.linear().domain(yExtent)
+					.rangeRound([this.innerHt, 0]);
+			}
+	    }
+
+		// yScale is a function mapping y-data to height of drawing space.
 		//Svg counts height down from the top, so we want the minimum drawn at height
 		this.yAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 			.scale(this.yScale) //telling the axis to use the scale defined earlier
@@ -546,25 +559,25 @@ function Axes(svgCont, config)
 			.call(this.yAxis).attr("class", "y axis");
 
 		// make the y-axis label, if it exists
-		if (this.yLabel)
+		if (this.yFmt.label)
 		{
 			var yaxisDims = this.yaxis.node().getBBox();
 			var yLabelObj = this.yaxis.append("foreignObject")
-				.attr("transform", "translate(" + (((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width) 
-				   + ((yOrient == "left") ? -20:0)) + "," 
+				.attr("transform", "translate(" + (((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width)
+				   + ((yOrient == "left") ? -20:0)) + ","
 				   + (this.innerHt) + ") rotate(-90)")
 				// move it out of the way of the ticks to left or right depending on axis orientation
 				.attr("width", this.innerHt).attr("height", 40);
-			
+
 			var yLabText = yLabelObj.append("xhtml:body").style("margin", "0px")
 				//this interior body shouldn't inherit margins from page body
 				.append("div").attr("class", "axisLabel").attr("id","label"+this.id)
-				.html(this.yLabel) //make the label  
+				.html(this.yFmt.label) //make the label
 				;
-			
+
 			console.log("label size ", $('#label'+this.id).height());//toDO use this to correctly move to the left of axis
 		}
-			
+
 		var yWid = d3.round(this.group.select(".y.axis").node().getBBox().width);
 	}
 
@@ -594,7 +607,7 @@ function Axes(svgCont, config)
 		{
 			this.yaxis.attr("transform", "translate(" + ((yOrient == "right") ? this.innerWid : 0) + ",0)");
 		}
-		
+
 		if (this.xLabelObj)
 		{
 			this.xLabelObj.attr("y", d3.round(((xOrient == "top") ? (-1.4) : 1) * (xaxisDims.height + 5)))
@@ -613,21 +626,21 @@ function Axes(svgCont, config)
 		{
 			this.margin.bottom = this.margin.bottom + addMargin;
 		}
-		
+
 		this.innerHt = this.innerHt - this.margin.top - this.margin.bottom;
 		//using the new dimensions, redo the scale and axes
-		if (yaxisType=="ordinal")
+		if (this.yFmt.type=="ordinal")
 		{
 			this.yScale.rangeRoundBands([this.innerHt, 0],.3);
 			console.log("ordinal bandsize ", this.yScale.rangeBand());
-			//width is broken into even spaces allowing for bar width and 
+			//width is broken into even spaces allowing for bar width and
 			//a uniform white space between each, in this case, 30% white space
 		}
 		else
 		{
 			this.yScale.rangeRound([this.innerHt, 0]);
 		}
-	
+
 		this.yAxis.scale(this.yScale);
 		console.log("y margins increased, new inner height is ", this.innerHt, " margin: ", this.margin.top, this.margin.bottom);
 		this.yaxis.call(this.yAxis);
@@ -635,11 +648,11 @@ function Axes(svgCont, config)
 		{
 			this.xaxis.attr("transform", "translate(0," + ((xOrient == "bottom") ? this.innerHt : 0) + ")");
 		}
-		
+
 		if (yLabelObj)
 		{
-			yLabelObj.attr("transform", "translate(" + d3.round(((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width) 
-				   + ((yOrient == "left") ? -19 : 0)) + "," 
+			yLabelObj.attr("transform", "translate(" + d3.round(((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width)
+				   + ((yOrient == "left") ? -19 : 0)) + ","
 				   + (this.innerHt) + ") rotate(-90)")
 				// move it out of the way of the ticks to left or right depending on axis orientation
 				.attr("width", this.innerHt);
@@ -648,7 +661,7 @@ function Axes(svgCont, config)
 
 	this.margin.left = this.margin.left + this.xPos;
 	this.margin.top = this.margin.top + this.yPos;
-	//and finally, with the margins all settled, move the group down to accomodate the 
+	//and finally, with the margins all settled, move the group down to accomodate the
 	//top and left margins and position
 	this.group.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 } // end makeAxis method

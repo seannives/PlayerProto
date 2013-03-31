@@ -16,7 +16,7 @@
  * **************************************************************************/
 
 // Sample LineGraph constructor configuration
-function()
+(function()
 {
 	var lg1Config = {
 			id: "lg1",
@@ -41,7 +41,7 @@ function()
 								   label: "Labels can have extended chars (&mu;m)" },
 				},
 		};
-}
+});
 	
 /* **************************************************************************
  * LineGraph                                                            *//**
@@ -51,7 +51,23 @@ function()
  * The LineGraph widget provides a line (or scatter) graph visualization
  * of sets of data points.
  *
- * @param {Object} config -The settings to configure this LineGraph
+ * @param {Object}		config			-The settings to configure this LineGraph
+ * @param {string}		config.id		-String to uniquely identify this LineGraph.
+ * @param {Array.<Array.<{x: number, y: number}>}
+ *						config.Data		-An array of traces (lines on the graph);
+ *										 each trace is an array of points defining that trace.
+ * @param {Array.<number>}
+ *						config.liteKey  -Array of integers to provide correspondance between traces
+ *										 on this LineGraph with elements in other widgets.
+ * @param {string		config.type		-String specifying "lines", "points", or
+ *										 "lines+points" for traces.
+ * @param {Object}		config.containerConfig
+ *										-see SVGContainer constructor
+ * @param {Object}		config.axesConfig
+ *										-see Axes constructor. The data extents for each
+ *										 axis will be determined by this LineGraph from the data.
+ *
+ * @todo: need to add custom symbols or images for scatter plots.
  *
  ****************************************************************************/
 function LineGraph(config)
@@ -83,7 +99,10 @@ function LineGraph(config)
 	 */
 	var liteKey = config.liteKey;
 	
-	// Create the svg canvas for the graph
+	/**
+	 * The svg canvas for the graph
+	 * @type {SVGContainer}
+	 */
 	this.container = new SVGContainer(config.containerConfig);
 	
 	// Create the axes (svg canvas) in the container
@@ -91,7 +110,7 @@ function LineGraph(config)
 	config.axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
 	config.axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
 	
-	this.axes = new MakeAxes(this.container, config.axesConfig);
+	this.axes = new Axes(this.container, config.axesConfig);
 
 	// alias for axes used by the old code below
 	var axesCont = this.axes;
@@ -192,15 +211,18 @@ function LineGraph(config)
 
 } //end line graph object generator function to go with container widgets
 
-MakeLineGraph.prototype.setState = function(liteKey) {
-	if (this.traces[liteKey]) {
+LineGraph.prototype.setState = function(liteKey)
+{
+	if (this.traces[liteKey])
+	{
 		//put all lines back to normal width (clear old state)
 		d3.selectAll("#"+this.id).transition().duration(100).style("stroke-width",2);
 		//emphasize the line selected
-		d3.select("#" + this.id + liteKey)
-		.style("stroke-width",4);
+		d3.select("#" + this.id + liteKey).style("stroke-width", 4);
 		return liteKey;
-	} else {
+	}
+	else
+	{
 		console.log("Invalid key. No trace " + liteKey);
 	}
 };
