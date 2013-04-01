@@ -104,7 +104,7 @@ function SVGContainer(config)
 	 * The parent node of the created svg element
 	 * @type {d3.selection}
 	 */
-	this.node = config.node;
+	this.parentNode = config.node;
 
 	/**
 	 * The maximum width of this svg container (in pixels)
@@ -133,6 +133,34 @@ function SVGContainer(config)
 																	//  A horrible Jquery workaround is documented at
 																	//  http://www.brichards.co.uk/blog/webkit-svg-height-bug-workaround
 }
+
+/* **************************************************************************
+ * SVGContainer.append                                                  *//**
+ *
+ * Append the given widget to the container at the specified location
+ * within it.
+ *
+ * @param {Object}	svgWidget		-The widget to draw in the container
+ * @param {Object}	location		-The location in the container where the widget should be placed.
+ * @param {number}	location.top	-Fraction offset of the top of the widget.
+ * @param {number}	location.left	-Fraction offset of the left of the widget.
+ * @param {number}	location.height	-Fraction of container height for the widget height.
+ * @param {number}	location.width	-Fraction of container width for the widget width.
+ *
+ ****************************************************************************/
+SVGContainer.prototype.append = function(svgWidget, location)
+{
+	// create a group for the widget to draw into that we can then position
+	var g = this.svgObj.append('g');
+	var h = d3.round(location.height * this.maxHt);
+	var w = d3.round(location.width * this.maxWid);
+	svgWidget.draw(g, {height: h, width: w});
+	
+	// position the widget
+	var top = d3.round(location.top * this.maxHt);
+	var left = d3.round(location.left * this.maxWid);
+	g.attr('transform', 'translate(' + left + ',' + top + ')');
+};
 
 /**
  * Definition of the fields of the configuration object used by the
@@ -281,25 +309,17 @@ function AxisFormat()
  * @param {SVGContainer} svgCont         -The svg container the axes should be constructed in.
  * @param {Object}       config          -The settings to configure these Axes.
  * @param {string}       config.id       -String to uniquely identify this Axes.
- * @param {number}       config.xPosPerc -The amount to offset the axes from the left of the container
- *                                        specified as a fraction (0.0 - 1.0) of the width of the container.
- * @param {number}       config.yPosPerc -The amount to offset the axes from the top of the container
- *                                        specified as a fraction (0.0 - 1.0) of the height of the container.
- * @param {number}       config.xPerc    -The fraction (0.0 - 1.0) of the container's width to use for the Axes.
- * @param {number}       config.yPerc    -The fraction (0.0 - 1.0) of the container's height to use for the Axes.
+ * @param {Object}       config.size	 -The height and width that the axes must fit within.
+ * @param {number}       config.size.width    -The fraction (0.0 - 1.0) of the container's width to use for the Axes.
+ * @param {number}       config.size.height   -The fraction (0.0 - 1.0) of the container's height to use for the Axes.
  * @param {AxisFormat}   config.xAxisFormat -The formatting options for the horizontal (x) axis.
  * @param {AxisFormat}   config.yAxisFormat -The formatting options for the vertical (y) axis.
  *
  ****************************************************************************/
 function Axes(svgCont, config)
 {
-	//Top left corner of axis box as percentage of the width/height of the svg box
-	//xPosPerc and yPosPerc are decimals telling how much of the container box to use,
-	//typically between 0 and 1. Multiply the width and height of the hard-set svg box
-	this.id = "axes" + config.id;
+	this.id = config.id;
 	this.container = svgCont;
-	this.xPos = d3.round(config.xPosPerc * svgCont.maxWid);
-	this.yPos = d3.round(config.yPosPerc * svgCont.maxHt);
 
 	this.xFmt = config.xAxisFormat;
 	this.yFmt = config.yAxisFormat;
@@ -359,8 +379,9 @@ function Axes(svgCont, config)
 	//xPerc and yPerc are decimals telling how much of the container box to use,
 	//typically between 0 and 1. Multiply the width and height of the hard-set svg box
 	//used to calculate the aspect ratio when sizing viewport up or down
-	this.innerWid = d3.round(config.xPerc * svgCont.maxWid) - this.margin.left - this.margin.right;
-	this.innerHt = d3.round(config.yPerc * svgCont.maxHt) - this.margin.top - this.margin.bottom;
+	// @todo fix this comment -mjl
+	this.innerWid = config.size.width - this.margin.left - this.margin.right;
+	this.innerHt = config.size.height - this.margin.top - this.margin.bottom;
 
 	var tickheight = 10;
 
@@ -571,11 +592,11 @@ function Axes(svgCont, config)
 
 			var yLabText = yLabelObj.append("xhtml:body").style("margin", "0px")
 				//this interior body shouldn't inherit margins from page body
-				.append("div").attr("class", "axisLabel").attr("id","label"+this.id)
+				.append("div").attr("class", "axisLabel").attr("id","label" + this.id)
 				.html(this.yFmt.label) //make the label
 				;
 
-			console.log("label size ", $('#label'+this.id).height());//toDO use this to correctly move to the left of axis
+			console.log("label size ", $('#label' + this.id).height());//toDO use this to correctly move to the left of axis
 		}
 
 		var yWid = d3.round(this.group.select(".y.axis").node().getBBox().width);
@@ -584,9 +605,9 @@ function Axes(svgCont, config)
 	var axesDims = this.group.node().getBBox();
 	//check that rendering is all inside available svg viewport.  If not, enlarge
 	//margins and calculate a new inner width, then update all scales and renderings
-	if (axesDims.width > config.xPerc*svgCont.maxWid)
+	if (axesDims.width > config.size.width)
 	{
-		var addMargin =  d3.round(axesDims.width - config.xPerc * svgCont.maxWid);
+		var addMargin =  d3.round(axesDims.width - config.size.width);
 		addMargin = addMargin > yWid ? addMargin:yWid;
 		if (yOrient === "right")
 		{
@@ -615,9 +636,9 @@ function Axes(svgCont, config)
 		}
 	}
 
-	if (axesDims.height > config.yPerc * svgCont.maxHt)
+	if (axesDims.height > config.size.height)
 	{
-		var addMargin = d3.round(axesDims.height - config.yPerc*svgCont.maxHt);
+		var addMargin = d3.round(axesDims.height - config.size.height);
 		if (xOrient === "top")
 		{
 			this.margin.top = this.margin.top + addMargin;
@@ -659,8 +680,6 @@ function Axes(svgCont, config)
 		}
 	}
 
-	this.margin.left = this.margin.left + this.xPos;
-	this.margin.top = this.margin.top + this.yPos;
 	//and finally, with the margins all settled, move the group down to accomodate the
 	//top and left margins and position
 	this.group.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");

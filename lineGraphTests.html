@@ -204,19 +204,21 @@
 
     //<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
 
+
+	var cntr1Config = {
+			node: d3.select("#widgetTargetX"),
+			maxWid: 400,
+			maxHt: 300
+		};
+	var cntr1 = new SVGContainer(cntr1Config);
+
 	var lg1Config = {
 			id: "lg1",
 			Data: [lineData1],
 			type: "lines",
-			containerConfig: {
-					node: d3.select("#widgetTargetX"),
-					maxWid: 400,
-					maxHt: 300,
-				},
 			axesConfig: {
 					id: 0,
-					xPosPerc: 0, yPosPerc:0, //top, left corner
-					xPerc: 1, yPerc: 1, //full height and width
+					size: cntr1.getSize(1, 1);
 					xAxisFormat: { type: "linear",
 								   ticks: 5,
 								   orientation: "bottom",
@@ -227,8 +229,9 @@
 								   label: "Labels can have extended chars (&mu;m)" },
 				},
 		};
-		
 	var lineGraph1 = new LineGraph(lg1Config);
+
+	cntr1.append(lineGraph1, 0, 0);
 	
 	
     var svg0 = new MakeSVGContainer({
