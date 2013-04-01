@@ -216,22 +216,18 @@
 			id: "lg1",
 			Data: [lineData1],
 			type: "lines",
-			axesConfig: {
-					id: 0,
-					size: cntr1.getSize(1, 1);
-					xAxisFormat: { type: "linear",
-								   ticks: 5,
-								   orientation: "bottom",
-								   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" },
-					yAxisFormat: { type: "linear",
-								   ticks: 5,
-								   orientation: "right",
-								   label: "Labels can have extended chars (&mu;m)" },
-				},
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "right",
+						   label: "Labels can have extended chars (&mu;m)" },
 		};
 	var lineGraph1 = new LineGraph(lg1Config);
 
-	cntr1.append(lineGraph1, 0, 0);
+	cntr1.append(lineGraph1, {top: 0, left: 0, height: 1, width: 1});
 	
 	
     var svg0 = new MakeSVGContainer({
