@@ -21,8 +21,9 @@
 			<div class="span6 leftCol">
 				<div id="widgetTarget0"><p>0. Single image with labels</p></div>
 				<div id="widgetTarget1"><p>1. Graph with labels</p></div>
-				<div id="widgetTarget2"><p>2. Carousel with callouts (events)</p></div>
-				
+				<div id="widgetTarget2"><p>2. Carousel with callouts (events)</p>
+                </div>
+				<div id="callOutHere"></div>
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50"><p>3. Label positions</p></div>
@@ -301,7 +302,7 @@ for(i=0;i<dataPts;i++){
 
 	svg2.Axes({
 		xPosPerc: 0, yPosPerc:0,
-		xPerc: 1, yPerc: .7,//full height and width
+		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear", yaxisType: "linear",
 		xTicks: 0,
 		xOrient: "bottom",
@@ -311,19 +312,10 @@ for(i=0;i<dataPts;i++){
 
 	});
 
-	svg2.Axes({
-		xPosPerc: 0, yPosPerc:.75,
-		xPerc: 1, yPerc: .3,
-		xaxisType: "linear", yaxisType: "linear",
-		xTicks: 0,
-		xOrient: "bottom",
-		yTicks: 0,
-		yOrient: "right",
-
-	});
 
 	var textchunks = new Callouts (
-		{labels: 	
+		{node: d3.select("#callOutHere"),
+		labels: 	
 		  [	
 			{content: "Chapter 2 LO: Describe Earth's orientation to and revolution around the Sun and explain how they cause seasons.",
 			xyPos: [0,1], width: svg1.innerWid
@@ -342,7 +334,8 @@ for(i=0;i<dataPts;i++){
 		}
 
 	);
-	var images2 = new MakeScalableImage(axes2,
+	
+	svg2.ScalableImage(
 		{images: [
 			{URI:'img/ch4_0_0.jpg', caption: "Earth's axis is tilted 23.5&deg; from perpendicular."},
 			{URI:'img/ch4_0_1.png', caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/ multimedia/imagegallery/ image_feature_1529.html"},
@@ -401,8 +394,7 @@ for(i=0;i<dataPts;i++){
 		maxHt:500
 		}
 	);
-	svg5 = new MakeAxes({
-		 
+	svg5.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc:.5, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -418,7 +410,7 @@ for(i=0;i<dataPts;i++){
 				{URI:'img/endocrineSystem.jpg', caption: "The Endocrine System"}
 				]});
 	
-	axes5.Labels(
+	svg5.Labels(
 		{labels: 	
 		  [
 		{content: "Adrenal gland (outer cortex)", xyPos: [0,.5], width: 100	},
@@ -439,8 +431,7 @@ for(i=0;i<dataPts;i++){
 	
 	
 	
-	var axes51 = new MakeAxes(svg5,{
-		id: 51,
+	svg5.Axes({
 		xPosPerc: .5, yPosPerc:0, //top, left corner
 		xPerc: .5, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -450,7 +441,7 @@ for(i=0;i<dataPts;i++){
 		yOrient: "left",
 	});
 	
-	var images51 = new MakeScalableImage(axes51,
+	svg5.ScalableImage(
 		{images: [
 				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."},
 				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."},

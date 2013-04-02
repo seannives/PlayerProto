@@ -101,7 +101,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 
 	svg70.Axes( 
 		{
-			id: 70,
+			
 			xPosPerc: 0, yPosPerc:0,
 			xPerc: 1, yPerc: 1,
 			xaxisType: "linear", yaxisType: "ordinal",
@@ -136,25 +136,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			{x: 50, y: .8},
 		];
 
-				//TODO Double y axis on the same axis set, linear and other together
-	svg70.Axes(
-		{
-			id: 10,
-			xPosPerc: 0, yPosPerc:0,
-			xPerc: 1, yPerc: 1,
-			xaxisType: "linear",
-			yaxisType: "linear",
-			Data:[lineData,[{x:100,y:1}]],
-			xTicks: [0,10,20,30,40,50,60,70,80,90,100],
-			xOrient: "bottom",
-			yOrient: "right",
-			yTicks: 0
-		});
-
-	svg70.LineGraph({
-		Data: [lineData],
-		type: "lines"
-	});
+	
 
 	// Modify the value of the data for the bar graph when the
 	//numerical input changes.  So, subscribe to the event emitted by inputLevo,

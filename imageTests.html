@@ -174,8 +174,7 @@ var lineData = [
 				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."}]
 		});
 		
-	var axes72 = new MakeAxes(svg70,{
-		id: 72,
+	svg70.Axes({
 		xPosPerc: .33, yPosPerc:0,
 		xPerc: .33, yPerc: 1,//full height 
 		xaxisType: "linear", yaxisType: "linear",
@@ -183,13 +182,12 @@ var lineData = [
 		yOrient: "left",
 		xLabel: "population"
 	});
-	var images72 = new MakeScalableImage(axes72,
+	svg70.ScalableImage( 
 		{images: [
 				{URI:'img/ch4_3.jpg', caption: "Withering Iowa corn."}]
 		});
 	
-		var axes74 = new MakeAxes(svg70,{
-			id: 74,
+	svg70.Axes({
 			xPosPerc: .66, yPosPerc:0,
 			xPerc: .33, yPerc: 1,//full height 
 			xaxisType: "linear", yaxisType: "linear",
@@ -197,7 +195,7 @@ var lineData = [
 			yOrient: "left",
 			xLabel: "population"
 		});
-		var images74 = new MakeScalableImage(axes74,
+	svg70.ScalableImage( 
 			{images: [
 					{URI:'img/ch4_4.jpg', caption: "Seaside, NJ, after Hurricane Sandy."}]
 			});
@@ -208,8 +206,7 @@ var lineData = [
 		maxHt:500
 		}
 	);
-	var axes5 = new MakeAxes(svg5,{
-		id: 5,
+	svg5.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -219,7 +216,7 @@ var lineData = [
 		yOrient: "left",
 	});
 	
-	var images5 = new MakeScalableImage(axes5,
+	svg5.ScalableImage( 
 		{images: [
 				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."},
 				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."},
@@ -229,7 +226,7 @@ var lineData = [
 		}
 	);
 	
-	axes5.Legend({
+	svg5.Legend({
 		xPos: "right", yPos: "top",
 		labels: ["wildfire", "tornado", "hurricane"],
 		type: "box",

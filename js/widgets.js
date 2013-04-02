@@ -248,18 +248,15 @@ function NumericInput(config, eventManager)
  * 								elements in other widgets
  *
  * NOTES: need to do the positioning and z-indexing and visibility on this
- * with event handlers. I don't *think* this widget emits events
+ * with event handlers. I don't *think* this widget emits events. Eventually, this
+ * needs to be created within an HTML widget container, which will have an id.
+ * At the moment, this.id is undefined and just shows that way.
  ****************************************************************************/
 	
 function Callouts(config,eventManager) { //begin callout generator
 	
 	this.node = config.node;
 	this.eventManager = eventManager;
-
-	//labels is an array of objects with keys content: string with HTML markup
-	//xyPos: an [x,y] array to orient the position on the axes grid, in local coordinates
-	//width: the width of the label
-	//and TODO: MAKE THIS INTO A REAL HTML WIDGET, NOT SVG
 	this.labels = config.labels;
 	var numLabels = this.labels.length;
 	var myID= "label" + this.id + "_";
@@ -267,17 +264,26 @@ function Callouts(config,eventManager) { //begin callout generator
 	 
 	var that = this;
 	//this.rootEl = <div>A bunch of text that swaps here and has visibility set</div>
-	this.rootEl = this.node.append("span");
-
-	//<div>some textthat swaps</div> 
 	//TODO make the class or the style so that these stack up and only one is visible
 	//use the event handlers
-	this.rootEl = this.node.append("span").attr("id", that.id).attr("class","labels").style("display","block");
-	var labels = this.rootEl.data(this.labels);
+	this.rootEl = this.node.append("div").attr("id", myID).style("display","block");
+	var labels = this.rootEl.selectAll("span.labels").data(this.labels);
 	
 	labels.enter()
-	.html(function(d, i) {
-				return d.content;}); //make the label 
+	.append("span")
+	.attr("class","labels")
+	.text(function(d, i) {
+				return d.content;})//make the callouts
+	.style("display","none") //all callouts start out hidden 
+	.attr("id",function(d,i) {
+			return myID + (liteKey?liteKey[i]:i);
+			}); 
+	
+	console.log("Callouts made");
+	
+	//show the first one by default
+	//TODO make this controllable by an event
+	d3.select("#" + myID + (liteKey?liteKey[0]:0)).style("display","block");
 
 } //end MakeCallouts object generator function
 
@@ -1053,6 +1059,114 @@ MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin
 };
 */
 
+
+/* **************************************************************************
+ * LineMarkers                                                          *//**
+ *
+ * Method of MakeSVGContainer: 	Create x or y oriented marker lines that 
+ *								report a text label or data for an 
+ *								intersected point
+ *			
+ * @param config				an object containing the following names: 
+ *
+ * @param xMarks, yMarks		array of 2-element arrays of reals which 
+ *								determine the leading and trailing edges of the 
+ *								area marker rectangles, and the orientation 
+ *								(vertical if x, horiz if y)
+ *
+ * @param liteKey 				integers setting correspondance with other page 
+ * 								elements in other widgets
+ * 
+ * NOTES: TODO will need to make the edges of these draggable
+ **************************************************************************/
+
+MakeSVGContainer.prototype.markers = function(config, eventMangager) { //begin marker generator
+	
+	this.xMarks = config.xMarks;
+	this.yMarks = config.yMarks;
+	this.eventManager = eventManager;
+	
+	var liteKey = config.liteKey;
+	var that = this;
+	var labelHt = 60,labelWid = 150;
+	//TODO: probably shouldn't hard set these, but I'm not sure how to set wrapping otherwise.
+	//These look marginally ok.
+	
+	var markers = this.group
+	.selectAll("g.marker") //this selects all marker groups (there aren't any yet)
+	.data(xMarks); //associate the data to create the right number of markers
+	
+	markers.enter() //this will create <g> elements for every marker 
+	//groups are good because we can have a marker line, and a label, and anything else 
+	//that requires the same relative coordinates.
+	.append("g").attr("class", "marker")
+	.attr("transform", function(d) {
+		
+		//Not entirely settled on marker data format.  It makes most sense to input
+		//an array of values, all x or all y.  But it would also be nice to be able to 
+		//pull one or more entries out of an existing data set.  So the following
+		//logic looks to see if there is an x: name or if it's just a standalone value
+		return "translate(" + that.xScale(d.x ? d.x : d) + ",0)";
+		//move each group to the data point specified for the marker
+	});
+	
+	if(liteKey) {
+		markers.attr("id", function(d, i) {
+		return "marker_" + liteKey[i];
+		});
+	}
+	
+	console.log("markers are made", markData);
+
+	markers.append("line") //vertical line
+	.attr("class", "markers").attr("y1", function(d, i) {
+		return i * labelHt + 30;
+	}).attr("y2", length) //top of line is on the bottom of the label box, bottom of
+	//line is at the bottom of the graph
+
+	;
+
+	//draw data labels on the markers		
+	this.markText = markers.append("foreignObject").attr("x", -labelWid / 2).attr("y", function(d, i) {
+		return (labelHt + 10) * (i);
+	}) //offset down on text box 
+	.attr("width", labelWid).attr("height", labelHt).append("xhtml:body").style("margin", "2px") //this interior body shouldn't inherit margins from page body
+	.append("div").attr("class", "markerLabel").html(function(d, i) {
+		return d.y ? d.y : d;
+	}) //make the label from value and category 
+	;
+//Drag updater
+function dragUpdate(xData, allData, range, scale) {
+	return d3.behavior.drag()
+	//.origin(Object)
+	.on("dragstart", function(d) {
+		var xval = snapTo(xData, range)(d3.mouse(this.parentNode)[0]);
+		//record the starting position as the nearest known data point corresponding
+		//to the current click. Must use parent container because click position in nested groups
+		//is wonky
+		d3.select(this).transition().duration(10).attr("transform", "translate(" + scale(xval) + ",-4)");
+		//jump the dragged object up a little so you know you've got what you intended
+	}).on("drag", function(d, i) {
+		xval = snapTo(xData, range)(d3.mouse(this.parentNode)[0]);
+		//update the position with the drag to the closest available data point
+		xindex = xData.indexOf(xval);
+		//grab the index of the data point and update the label
+		d3.select(this).select(".markerLabel").html(reportData(d3.values(allData[xindex]), " B"));
+		d3.select(this).transition().duration(30).attr("transform", "translate(" + scale(xval) + ",-4)")
+		//move the marker with the mouse or finger - these work on touch
+		//the 30 msec delay keeps it from being too bouncy
+		;
+	}).on("dragend", function(d, i) {
+		d3.select(this).transition().duration(30).attr("transform", "translate(" + scale(xval) + ",0)");
+		//dtrop it back down to normal position and pin it at the last location 
+		//and put the style back to normal
+	});
+} // end dragUpdate function
+
+} //end line marker method 
+
+
+
 MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area marker generator
 	
 	//make x and y scales from the axes container into variables so they can be 
@@ -1629,3 +1743,23 @@ var myData = [{
 	y: 1
 }];
 console.log("test slope line 1 dx, dy, slope: ", slope(myData), slope(myData) === [-1, -1, 1]);
+
+function snapTo(data, range) {
+	//range is a two element array with the start and end point of the canvas
+	//data is an array of any length with the data points/bins to snap to. 
+	//really on the cardinality of (number of points) data matters
+	return d3.scale.quantize().domain(range) //dimension of the graph box
+	.range(data); //converted into the nearest data to snap to data
+}
+
+console.log("Snap 50 to center of [0,5,10,15,20] with range [0,100]:", snapTo([0, 5, 10, 15, 20], [0, 100])(50)==10);
+console.log("Snap 0 to 0 with [0,5,10,15,20] with range [0,100]:", snapTo([0, 5, 10, 15, 20], [0, 100])(0)==0);
+
+function getClosest(a, x) {
+	var lo, hi;
+	for (var i = a.length; i--;) {
+		if (a[i] <= x && (lo === undefined || lo < a[i])) lo = a[i];
+		if (a[i] >= x && (hi === undefined || hi > a[i])) hi = a[i];
+	};
+	return [lo, hi];
+}
