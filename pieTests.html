@@ -19,14 +19,14 @@
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
-				<div id="widgetTarget0"><p>0. Pie chart</p></div>
-				<div id="widgetTarget1"><p>1. Pie chart one wedge</p></div>
-				<div id="widgetTarget2"><p>2. Pie with legend highlights (events)</p></div>
+				<div id="pie0"><p>0. Pie chart</p></div>
+				<div id="pie1"><p>1. Pie chart one wedge</p></div>
+				<div id="pie2"><p>2. Pie with legend highlights (events)</p></div>
 				
 			</div>
 			<div class="span6 rightCol">
-				<div id="widgetTarget10"><p>3. Pie and Bar</p></div>
-				<div id="widgetTarget11"><p>4. Pie with very small and large values</p></div>
+				<div id="pie10"><p>3. Pie and Bar</p></div>
+				<div id="pie11"><p>4. Pie with very small and large values</p></div>
 			</div>
 		</div>
 	</div>
@@ -94,39 +94,37 @@ var birth = [
 	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
 	
 	var svg0 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget0"),
+		{node: d3.select("#pie0"),
 		maxWid: 200,
 		maxHt: 200
 		}
 	);
 	
-	var axes0 = new MakeAxes(svg0,{
-		id: 0,
+	svg0.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
 		xOrient: "bottom",
-		xLabel: "caption",
+		xLabel: "percentage of stuff",
 		yaxisType: "linear",
 		yOrient: "left",
 	});
 	
-	axes0.Pie({
-		Data:[60,1,20]
+	svg0.Pie({
+		Data:[60,100,20]
 	}
 		);
 		
 	
 	
-//	<div id="widgetTarget1"><p>1.pie chart one wedge</p></div>
+//	<div id="pie1"><p>1.pie chart one wedge</p></div>
 	var svg1 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget1"),
+		{node: d3.select("#pie1"),
 		maxWid: 200,
 		maxHt: 200
 		}
 	);
-	var axes1 = new MakeAxes(svg1,{
-		id: 1,
+	svg1.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -137,9 +135,8 @@ var birth = [
 		yOrient: "left",
 	});
 		
-	
-			axes1.Pie({
-		Data:[60,20]
+	svg1.Pie({
+		Data:[1]
 	}
 		);
 		
@@ -147,13 +144,12 @@ var birth = [
 	//	<div id="widgetTarget2"><p>Pie with legend (events)</p></div>
 	
 	var svg2 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget2"),
-		maxWid: 200,
+		{node: d3.select("#pie2"),
+		maxWid: 400,
 		maxHt: 200
 		}
 	);
-	var axes2 = new MakeAxes(svg2,{
-		id: 2,
+	svg2.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -163,16 +159,23 @@ var birth = [
 		yOrient: "left",
 		yLabel: "legend and pie"
 	});
-	axes2.Pie({
-		Data:[60,20]
+	svg2.Pie({
+		Data:[1,20,60]
 	}
 		);
 
-	//	<div id="widgetTarget70"><p>pie and bar and labels</p></div>
+	svg2.Legend({
+		labels:["cotton candy","vanilla","chocolate"],
+		type: "box",
+		xPos: "right",
+		yPos: "top"
+	}
+		);
+	//	<div id="pie10"><p>pie and bar and labels</p></div>
 
 
 	var svg70 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget10"),
+		{node: d3.select("#pie10"),
 		maxWid: 500,
 		maxHt: 300
 		}
@@ -187,8 +190,7 @@ var birth = [
 				y: "Dextro"}
 				];
 				
-	var axes70 = new MakeAxes(svg70,{
-		id: 70,
+	svg70.Axes({
 		xPosPerc: 0, yPosPerc:0,
 		xPerc: .6, yPerc: 1,
 		xaxisType: "linear", yaxisType: "ordinal",
@@ -199,28 +201,14 @@ var birth = [
 		xLabel: "% enantiomers"
 	});
 	
-	var bars0 = new MakeBarGraph(axes70,{
+	svg70.BarChart({
 		Data: [ordinalData, ordinalData1],
 		type: "linear" //ignored for anything but grouped
 	});
 	
-	 var axes72 = new MakeAxes(svg70,{
-		id: 72,
-		xPosPerc: .6, yPosPerc:0, //top, left corner
-		xPerc: .4, yPerc: .4,//full height and width
-		xaxisType: "linear",
-		xOrient: "bottom",
-		xLabel: "caption",
-		yaxisType: "linear",
-		yOrient: "left",
-	});
 	
-	axes72.Pie({
-		Data:[60,30,10]
-	}
-		);
 		
-	axes70.Labels(
+	svg70.Labels(
 		{labels: 	
 		  [	
 			{content: "Rotation",	xyPos: [60,"Dextro"], width: 80	},
@@ -228,15 +216,29 @@ var birth = [
 			{content: "<input type='number' min='0' max='100' step='1' value='100' id='numInput_2' class='dataLabel'/>&deg;", xyPos:[80,"Levo"], width: 100}
 		  ],
 		});
-	//	<div id="widgetTarget80"><p>5. Carousel with Legend</p></div>
+		
+		 svg70.Axes({
+		xPosPerc: .6, yPosPerc:0, //top, left corner
+		xPerc: .4, yPerc: .4,//full height and width
+		xaxisType: "linear",
+		xOrient: "bottom",
+		xLabel: "alpha (&alpha;)",
+		yaxisType: "linear",
+		yOrient: "left",
+	});
+	
+	svg70.Pie({
+		Data:[60,30,10]
+	}
+		);
+	//	<div id="pie11"><p>5. Pie with large and small values</p></div>
 	var svg5 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget11"),
+		{node: d3.select("#pie11"),
 		maxWid: 600,
 		maxHt:500
 		}
 	);
-	var axes5 = new MakeAxes(svg5,{
-		id: 5,
+	svg5.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
 		xPerc: 1, yPerc: 1,//full height and width
 		xaxisType: "linear",
@@ -247,11 +249,8 @@ var birth = [
 	
 
 	
-	axes5.Legend({
-		xPos: "right", yPos: "top",
-		labels: ["wildfire", "tornado", "hurricane"],
-		type: "box",
-		liteKey: [0,1,2]
+	svg5.Pie({
+		Data: [1,200]
 	});
 
 	//var IDList = [images5, axes5];

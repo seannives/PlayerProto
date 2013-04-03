@@ -118,6 +118,12 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		type: "linear" //ignored for anything but grouped
 	});
 	
+	//This is the marker that will stick to the end of the shortest bar
+	svg70.LineMarkers({
+		xMarks: [levoData[0]] //start it on the end of the levoData bar, arbitrarily
+		//because they are of equal length to start
+	});
+	
 	// Create the ee readout widget
 	var eeReadout = new Readout({
 		node: d3.select("#ee"),
@@ -140,10 +146,9 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 
 	// Modify the value of the data for the bar graph when the
 	//numerical input changes.  So, subscribe to the event emitted by inputLevo,
+	//or inputDextro,
 	//and target whatever is identified by the handler in the second argument.
-	//TODO: make these methods of the target widget.  Data updates should
-	//be targets of axes, or maybe the chart type, display/value updates should
-	//be targets of inputs or readout values, etc.
+	//TODO: make these methods of the target widget?
 
 	// Handle changes of the levo and dextro input values
 	eventManager.subscribe(inputLevo.changedValueEventId,
@@ -176,7 +181,8 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	function handleInputValueChanged(otherInputWidget, newValue)
 	{
 		otherInputWidget.setValue(100 - newValue);
-		updateeeValue();
+		var diff = Math.abs(inputLevo.getValue() - inputDextro.getValue());
+		eeReadout.setValue(diff);
 		updateBarChart();
 	}
 
@@ -195,48 +201,16 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		svg70.BarChart({
 			Data: [levoData, dextroData],
 			type: "linear" //ignored for anything but grouped
-		});
-	}
-
-	/* **************************************************************************
-	 * updateeeValue                                                        *//**
-	 *
-	 * updateeeValue updates the ee value readout widget to match the current
-	 * values of the levo and dextro input widgets.
-	 *
-	 ****************************************************************************/
-	function updateeeValue()
-	{
-		console.log("TODO: fired updateeeValue log");
-		var diff = Math.abs(inputLevo.getValue() - inputDextro.getValue());
-		console.log($("#" + eeReadout.id)[0]);
-		$("#" + eeReadout.id)[0].value = diff;
-	}
+			});
+		var newMark = (levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0];
+		svg70.LineMarkers( {
+			xMarks: [newMark]
+			});
 		
-	//TODO Make Line Graph events work
-
-	/* **************************************************************************
-	 * updateLineData                                                       *//**
-	 *
-	 * The updateLineData...
-	 *
-	 * @param {Object} eventDetails	...
-	 *
-	 ****************************************************************************/
-		function updateLineData(eventDetails)
-	{
-		console.log("TODO: fired updateBarData log");
-		var minVal = $("#" + inputLevo.id)[0].value 
-				> $("#" + inputDextro.id)[0].value ?
-				$("#" + inputDextro.id)[0].value :
-				$("#" + inputLevo.id)[0].value ;
-		lineData[0].x = minVal;
-		lineData[1].x = minVal;
-		axes10.LineGraph({
-		Data: [lineData],
-		type: "lines" //ignored for anything but grouped
-		});
 	}
+
+		
+	
 	</script>
 </body>
 </html>
