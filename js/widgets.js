@@ -1391,9 +1391,10 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
  * and positive must always count right from x=0.
  **************************************************************************/
 
-MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin bar graph object generator
-	 
-	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
+MakeSVGContainer.prototype.BarChart = function (config,eventManager)
+{ //begin bar graph object generator
+
+	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point,
 	//one array for each trace.
 	this.Data = config.Data;
 	//type is a string setting whether it's a "grouped" chart or linear, optional
@@ -1402,24 +1403,27 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin b
 	var liteKey = config.liteKey;
 	var myID = "bars" + this.id + "_";
 	var that = this;
-	
+
 	console.log("ID", "#"+myID, d3.select("#"+myID)[0][0]);
 
-	if(d3.select("#"+myID)[0][0] === null){
+	if (d3.select("#"+myID)[0][0] === null)
+	{
 		var graph = this.group.append("g") //make a group to hold new bar chart
 		.attr("id", myID);//name it so it can be manipulated or highlighted later
 		console.log("graph group is made:", graph.attr("id"));
 	}
-	else {
-		var graph = d3.select("#"+this.id); 
+	else
+	{
+		var graph = d3.select("#"+this.id);
 		console.log("graph group is found: ", graph.attr("id"));	1
 	}
-	
-	var bandsize = that.yScale.rangeBand(); 
+
+	var bandsize = that.yScale.rangeBand();
 	//returns the size of the bands produced by ordinal scale
-	
-	
-	if (type == "grouped") {
+
+
+	if (type == "grouped")
+	{
 		//grouped bar charts find the common labels in each data set and draw non-overlapping
 		//bars in a group representing the value for that label for each data array.
 		//The effect of the following code is to calculate a "subspacing" that fans
@@ -1427,72 +1431,86 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin b
 		//label.
 		var indices = [];
 
-		for (i = 0; i < this.Data.length; i++) {
-		indices.push(i); //needed to space out grouped barcharts
+		for (i = 0; i < this.Data.length; i++)
+		{
+			indices.push(i); //needed to space out grouped barcharts
 		}
-	
+
 		var groupScale = d3.scale.ordinal()
-		.domain(indices) //creates an extra ordinal set that encloses the data label, 
-		//one for each group (element in data array)
-		.rangeRoundBands([bandsize, 0]);
-		console.log("Grouped barChart last bar mapped to 0 offset: ", 
-		groupScale(this.Data.length - 1) == 0);
+			.domain(indices) //creates an extra ordinal set that encloses the data label,
+			//one for each group (element in data array)
+			.rangeRoundBands([bandsize, 0]);
+		console.log("Grouped barChart last bar mapped to 0 offset: ",
+			groupScale(this.Data.length - 1) == 0);
 	};
 
-
+	// bind all the series data to a group element w/ a series class
+	// creating or removing group elements so that each series has its own group.
 	this.barSeries = graph.selectAll("g.series")
-	.data(that.Data);
-	
+		.data(that.Data);
+
 	this.barSeries.enter()
-	.append("g")
-	.attr("class", function(d, i) {
-		return "series fill" + i;
-	});
-	
+		.append("g")
+			.attr("class", function(d, i) {
+					return "series fill" + i;
+				});
+
 	this.barSeries.exit().remove();
+
 	//If it's a grouped barchart, shimmie out the bars by group
-	if (type == "grouped") {
+	if (type == "grouped")
+	{
 		this.barSeries.attr("transform", function(d, i) {
-			return "translate(0," + (groupScale(i)) + ")";
-		})
+				return "translate(0," + (groupScale(i)) + ")";
+			});
 	}
 	//If it's highliteable, add a key to the series
-	if (liteKey) {
+	if (liteKey)
+	{
 		series.attr("id", function(d, i) {
-			return "series_" + (liteKey[i]);
-		})
+				return "series_" + (liteKey[i]);
+			});
 	}
 
+	// The series data was an array of values for each bar of the series
+	// bind each series data to a child group element 1 for each bar in the
+	// series.
+	//
+	// Note: the x<0 logic allows us to draw pyramid charts, although normally bar charts
+	//  are bin counts and all positive
+	//  I enclose the bars in individual groups so you could choose to label the ends with data or label
+	//  and have it stick to the bar by putting it in the same group
+	var bars = this.barSeries.selectAll("g.bar")
+		.data(function(d) {return d;}); 	//drill down into the nested Data
 
-	this.bars = this.barSeries.selectAll("rect.bar") 
-	//this selects all <g> elements with class bar (there aren't any yet)
-	.data(function(d,i){return d;}); 	//drill down into the nested Data
-	this.bars.enter() 		//this will create <g> elements for every data element 
-	.append("rect") 	//create groups
-	.attr("class", "bar");
-	//move each group to the x=0 position horizontally if it's a positive bar, or 
-	// start at it's negative x value if it's reversed. 
-	this.bars.attr("transform", function(d, i) {
-		return "translate(" + ((d.x < 0) ? that.xScale(d.x) : that.xScale(0)) + "," 
-			+ (that.yScale(d.y)) + ")";
-	})
-	//the x<0 logic allows us to draw pyramid charts, although normally bar charts 
-	//are bin counts and all positive
-	//move the group to the y=ordinal position vertically
-	//I enclose the bars in individual groups so you could choose to label the ends with data or label
-	//and have it stick to the bar by putting it in the same group
-	.attr("id", function(d, i) {
-		return myID + i;
-	})
-	.attr("height", (type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
-	//divide height into uniform bar widths
-	.attr("width", function(d, i) {
-		return ((d.x < 0) ? (that.xScale(0) - that.xScale(d.x)) : 
-			(that.xScale(d.x) - that.xScale(0)));
-	}); 
-	//returns the value of the data associated with each slice as the width, 
-	//or expands to the y=0 line if it's negative
-	 this.bars.exit().remove();
+	bars.exit().remove();
+
+	bars.enter()
+		.append("g")
+			.attr("id", function(d, i) {return myID + i;})
+			.attr("class", "bar liteable")
+			.attr("transform",
+				  function(d)
+				  {
+					  // move each group to the x=0 position horizontally if it's a
+					  // positive bar, or start at it's negative x value if it's reversed.
+				      var x = (d.x < 0) ? that.xScale(d.x) : that.xScale(0);
+					  var y = that.yScale(d.y);
+				      return "translate(" + x + "," + y + ")";
+				  })
+			.append("rect")
+			;
+
+	// Update the height and width of the bar rects based on the data points bound above.
+	bars.select("rect")
+		.attr("height", (type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize)
+		//divide height into uniform bar widths
+		.attr("width",
+			  function(d)
+			  {
+				  return (d.x < 0) ? that.xScale(0) - that.xScale(d.x)
+								   : that.xScale(d.x) - that.xScale(0);
+			  });
 }; //end bar chart object generator function
 
 /*
