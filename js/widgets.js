@@ -137,6 +137,24 @@ function Readout(config, eventManager)
 		// Subscribe to own events, if appropriate
 		//eventManager.subscribe(that.changedValueId, changedValueHandler);
 	}//end Readout widget
+	
+	/* **************************************************************************
+	 * Readout.setValue                                                *//**
+	 *
+	 * The Readout setValue method sets the value of the Readout
+	 * widget. This does NOT fire the changedValue event.
+	 *
+	 * @param {number} newValue	-The new value for the widget
+	 *
+	 ****************************************************************************/
+	Readout.prototype.setValue = function (newValue)
+	{
+		console.log("TODO: called setReadoutValue log", this.id, newValue);
+		
+		// The value is kept in the input element which was given an id
+		$("#" + this.id)[0].value = newValue;
+	}
+	
 
 	/* **************************************************************************
 	 * NumericInput                                                         *//**
@@ -919,7 +937,7 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 		.attr("height", 200)
 		.append("xhtml:body").style("margin", "0px")
 			//this interior body shouldn't inherit margins from page body
-		.append("div").attr("class", "markerLabel")
+		.append("div").attr("class", "descLabel")
 		//.style("visibility",function(d,i) { return d.viz;})
 		//I punted on the show/hide thing, but it could come back
 			.html(function(d, i) {
@@ -1069,70 +1087,77 @@ MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin
  *
  * @param config				an object containing the following names:
  *
- * @param xMarks, yMarks		array of 2-element arrays of reals which
- *								determine the leading and trailing edges of the
- *								area marker rectangles, and the orientation
- *								(vertical if x, horiz if y)
+ * @param xMarks				array of objects {x: <val>, y: <val> or label: <val>}
+ *								specifies the x position, x and y for the label, or
+ *								just label in the label. Also gives the orientation
+ *								(vertical if x, horiz if y - not implemented TODO)
  *
  * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
  *
- * NOTES: TODO will need to make the edges of these draggable
+ * NOTES: TODO will need to make these draggable - TODO hook up y variant
+ * don't know if that should be a whole separate function or if
+ * conditionals are better
  **************************************************************************/
 
-MakeSVGContainer.prototype.markers = function(config, eventMangager) { //begin marker generator
+MakeSVGContainer.prototype.LineMarkers = function(config, eventMangager) { //begin marker generator
 
 	this.xMarks = config.xMarks;
 	this.yMarks = config.yMarks;
-	this.eventManager = eventManager;
+	//this.eventManager = eventManager;
 
+	var myID = "marker" + this.id + "_";
 	var liteKey = config.liteKey;
 	var that = this;
-	var labelHt = 60,labelWid = 150;
+	var labelHt = this.innerHt/4,labelWid = 100;
 	//TODO: probably shouldn't hard set these, but I'm not sure how to set wrapping otherwise.
 	//These look marginally ok.
 
 	var markers = this.group
 	.selectAll("g.marker") //this selects all marker groups (there aren't any yet)
-	.data(xMarks); //associate the data to create the right number of markers
+	.data(this.xMarks); //associate the data to create the right number of markers
 
 	markers.enter() //this will create <g> elements for every marker
 	//groups are good because we can have a marker line, and a label, and anything else
 	//that requires the same relative coordinates.
-	.append("g").attr("class", "marker")
-	.attr("transform", function(d) {
-
+	.append("g").attr("class", "marker");
+	markers.attr("transform", function(d) {
 		//Not entirely settled on marker data format.  It makes most sense to input
 		//an array of values, all x or all y.  But it would also be nice to be able to
 		//pull one or more entries out of an existing data set.  So the following
 		//logic looks to see if there is an x: name or if it's just a standalone value
-		return "translate(" + that.xScale(d.x ? d.x : d) + ",0)";
+		return "translate(" + d3.round(that.xScale(d.x ? d.x : d)) + ",0)";
 		//move each group to the data point specified for the marker
 	});
 
 	if(liteKey) {
 		markers.attr("id", function(d, i) {
-		return "marker_" + liteKey[i];
+		return myID + liteKey[i];
 		});
 	}
 
-	console.log("markers are made", markData);
+	console.log("markers are made", this.xMarks);
 
 	markers.append("line") //vertical line
 	.attr("class", "markers").attr("y1", function(d, i) {
-		return i * labelHt + 30;
-	}).attr("y2", length) //top of line is on the bottom of the label box, bottom of
+		return i * labelHt + 20;
+	//top of line is on the bottom of the label box, bottom of
 	//line is at the bottom of the graph
 
+	}).attr("y2", that.innerHt) 
 	;
 
 	//draw data labels on the markers
-	this.markText = markers.append("foreignObject").attr("x", -labelWid / 2).attr("y", function(d, i) {
+	markers.append("foreignObject").attr("x", -labelWid / 2).attr("y", function(d, i) {
 		return (labelHt + 10) * (i);
 	}) //offset down on text box
-	.attr("width", labelWid).attr("height", labelHt).append("xhtml:body").style("margin", "2px") //this interior body shouldn't inherit margins from page body
-	.append("div").attr("class", "markerLabel").html(function(d, i) {
-		return d.y ? d.y : d;
+	.attr("width", labelWid)
+	.attr("height", labelHt)
+	.append("xhtml:body")
+	.style("margin", "2px") //this interior body shouldn't inherit margins from page body
+	.append("div").attr("class", "markerLabel")
+	.html(function(d, i) {
+		return d.y ? ("x: " + d.x + "<br> y: " + d.y) : d.label;
 	}) //make the label from value and category
 	;
 //Drag updater
@@ -1167,12 +1192,28 @@ function dragUpdate(xData, allData, range, scale) {
 
 
 
+/* **************************************************************************
+ * Pie                                                                  *//**
+ *
+ * Method of MakeSVGContainer: 	Make a pie chart with percentages
+ *
+ * @param config				an object containing the following names:
+ *
+ * @param Data					array of objects {x: <val>, y: "label"}
+ *								specifies the percent. Same format as for bar charts.
+ *
+ * @param liteKey 				integers setting correspondance with other page
+ * 								elements in other widgets
+ *
+ * NOTES: if the percentages don't add up to 100, blank space will be left
+ * on the chart.  If the percentages add up to more than 100, they will be
+ * rescaled so they do in the same proportions.
+ **************************************************************************/
 MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area marker generator
 
 	//make x and y scales from the axes container into variables so they can be
 	//used inside functions
-	var xScale = this.xScale;
-	var yScale = this.yScale;
+
 	var myID  = "pie" + this.id + "_";
 	this.pieChart = {
 		id: myID,
@@ -1180,26 +1221,47 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 				};
 	//Data is an array of real, positive values, one for each slice of pie
 	this.Data = config.Data;
+	var that = this;
 	var liteKey = config.liteKey;
-	var r = this.innerHt/3;//use one dimension of the axes box for a radius
+	var r = this.innerHt>this.innerWid ? this.innerWid/4 : this.innerHt/4;
+	//use 1/4 of smallest dimension of the axes box for a radius
+	var offset = 10+r; //padding from the axes
+	//My thought was to put the pie in the upper left corner of a set of axes,
+	//occupying not more than half the width so that there was still room for a
+	//legend.  The legend is pretty much always necessary I think.
 
-	var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
+	var xData = [],
+		yData = [],
+		sumData = 0;
+
+	this.Data.forEach(
+			function(o) {
+				xData.push(o.x);
+				sumData=sumData + o.x;
+				yData.push(o.y);
+			});
+
+	if(sumData<100){
+		this.Data.push({x: 100-sumData, y: thingy})
+	}
+
+	var arc = d3.svg.arc()  //this will create <path> elements for us using arc data
 	        .outerRadius(r);//use one dimension of the axes box for a radius
 
 	//make a group to hold the pie
 	var pieGroup = this.group.append("g").attr("class", "pie")
-	.attr("transform", "translate(" + this.innerWid/2 + "," + this.innerHt/2 + ")"); //center it
+	.attr("transform", "translate(" + offset + "," + r + ")"); //center it
 
 	var pieArcs = d3.layout.pie()           //this will create arc data for us given a list of values
-	        .value(function(d) { return d; });
+	        .value(function(d) { return d.x; });
 
-	var arcs = pieGroup.selectAll("g.slice")
-	        .data(pieArcs(this.Data))
+	var arcs = pieGroup.selectAll("g.slice") 
+	        .data(pieArcs(this.Data));           
 	//associate the generated pie data (an array of arcs w/startAngle, endAngle and value props)
-	        .enter()
-	        .append("g")
-	        .attr("class", function(d, i) {
-				return "fill" + i;
+	arcs.enter()
+	    .append("g")
+	    .attr("class", function(d, i) {
+				return "slice fill" + i;
 			});    //color with predefined sequential colors
 
 	arcs.append("path")
