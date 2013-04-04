@@ -7,7 +7,7 @@
  * The widgets will render graphs, images, and other data-driven learning
  * objects inside of the Santiago and Vancouver publishing projects.  They
  * will eventually integrate with the Pearson Activity Framework (PAF)
- * according to the documentation at 
+ * according to the documentation at
  * https://hub.pearson.com/confluence/display/AF/PAF+Widget+API
  *
  * Created on		March 27, 2013
@@ -29,7 +29,7 @@
  * Containers
  ****************************************************************************/
 
- 
+
 /* **************************************************************************
  * renderInteractive                                                    *//**
  *
@@ -62,7 +62,7 @@ function renderInteractive(interactiveElement, interactiveNode) {
 }
 
 
-/* HTML widgets 
+/* HTML widgets
 /* these are widgets that will just write as HTML fields, not SVG, although they can be used
 /* inside foreign object containers to the extent that browsers will render them
 ********************************************/
@@ -77,7 +77,7 @@ function Readout(config, eventManager)
 		this.startVal = config.startVal;
 		//Whatever the readout displays at page load. String value
 		this.eventManager = eventManager;
-		
+
 		this.unit = config.unit;
 		//if the readout requires a unit to be appended, do so. String value.
 		this.label = config.label;
@@ -101,31 +101,31 @@ function Readout(config, eventManager)
 		.attr("id",that.id)
 		.attr("class","dataLabel")
 		;
-		
+
 		if(this.startVal){
 			readout.attr("value",startVal);
 		} else if (placeHolder)
 		{
 			readout.attr("placeholder",placeHolder);
 		}
-		
+
 		if(readOnly){
 			readout.property("readonly");
 		}
-	
+
 		this.rootEl.append("span").html(this.unit?this.unit:"");
-		
+
 		this.rootEl.on('change', function()
-										{ 
+										{
 										//this publishes the onChange event to the eventManager
 										//passing along the updated value in the numeric field.
 										//note that jQuery returns an array for selections, the
-										//first element of which is the actual pointer to the 
+										//first element of which is the actual pointer to the
 										//tag in the DOM
-											that.eventManager.publish(that.changedValueId, 
+											that.eventManager.publish(that.changedValueId,
 												{value: $("#" + that.id)[0].value});
 										} );
-		
+
 		// Define private handlers for subscribed events
 		//This doesn't do anything - it's broken, but the numeric input
 		//works just fine on it's own in the browser
@@ -133,7 +133,7 @@ function Readout(config, eventManager)
 		{
 			$("#" + that.id)[0].value = eventDetails.value;
 		}
-		
+
 		// Subscribe to own events, if appropriate
 		//eventManager.subscribe(that.changedValueId, changedValueHandler);
 	}//end Readout widget
@@ -244,25 +244,25 @@ function NumericInput(config, eventManager)
 	NumericInput.prototype.setValue = function(newValue)
 	{
 		console.log("TODO: called setNumericInputValue log", this.id, newValue);
-		
+
 		// The value is kept in the input element which was given an id
 		$("#" + this.id)[0].value = newValue;
 	}
-	
+
 /* **************************************************************************
  * Callouts                                                             *//**
  *
- * Create a div with a series of text blocks in it, but only show one at a 
+ * Create a div with a series of text blocks in it, but only show one at a
  * time: event driven and typically used with other widgets like a carousel
  *
- * @param config				an object containing the following names: 
- *								 
+ * @param config				an object containing the following names:
+ *
  * @param node					the container node in the document
  * TODO: should make this a jQuery style node, right now it's d3 selection
  *
  * @param labels				array of strings
- * 							
- * @param liteKey 				integers setting correspondance with other page 
+ *
+ * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
  *
  * NOTES: need to do the positioning and z-indexing and visibility on this
@@ -270,35 +270,35 @@ function NumericInput(config, eventManager)
  * needs to be created within an HTML widget container, which will have an id.
  * At the moment, this.id is undefined and just shows that way.
  ****************************************************************************/
-	
+
 function Callouts(config,eventManager) { //begin callout generator
-	
+
 	this.node = config.node;
 	this.eventManager = eventManager;
 	this.labels = config.labels;
 	var numLabels = this.labels.length;
 	var myID= "label" + this.id + "_";
 	var liteKey = config.liteKey;
-	 
+
 	var that = this;
 	//this.rootEl = <div>A bunch of text that swaps here and has visibility set</div>
 	//TODO make the class or the style so that these stack up and only one is visible
 	//use the event handlers
 	this.rootEl = this.node.append("div").attr("id", myID).style("display","block");
 	var labels = this.rootEl.selectAll("span.labels").data(this.labels);
-	
+
 	labels.enter()
 	.append("span")
 	.attr("class","labels")
 	.text(function(d, i) {
 				return d.content;})//make the callouts
-	.style("display","none") //all callouts start out hidden 
+	.style("display","none") //all callouts start out hidden
 	.attr("id",function(d,i) {
 			return myID + (liteKey?liteKey[i]:i);
-			}); 
-	
+			});
+
 	console.log("Callouts made");
-	
+
 	//show the first one by default
 	//TODO make this controllable by an event
 	d3.select("#" + myID + (liteKey?liteKey[0]:0)).style("display","block");
@@ -311,23 +311,23 @@ function Callouts(config,eventManager) { //begin callout generator
  *
  * Create an svg tag and write it to the given node.
  *
- * @param config				an object containing the following names: 
- *								 
+ * @param config				an object containing the following names:
+ *
  * @param node					the container node in the document
  * TODO: should make this a jQuery style node, right now it's d3 selection
  *
- * @param maxWid,maxHt			integers which set the maximum width/height 
- *								of the svg region, and the aspect ratio for 
+ * @param maxWid,maxHt			integers which set the maximum width/height
+ *								of the svg region, and the aspect ratio for
  *								scaling
  *
  * Notes:
- * TODO: Eventually this might need to be a method of RenderInteractive 
+ * TODO: Eventually this might need to be a method of RenderInteractive
  * The interactiveElement can be SVG-based.
- //max height keeps it from forcing whitespace below 
+ //max height keeps it from forcing whitespace below
 	//in most cases, but not on Safari or Android.  This is a documented
 	//webkit bug, which they claim they will fix eventually:
 	//https://bugs.webkit.org/show_bug.cgi?id=82489
-	//A horrible Jquery workaround is documented at 
+	//A horrible Jquery workaround is documented at
 	//http://www.brichards.co.uk/blog/webkit-svg-height-bug-workaround
  ****************************************************************************/
 
@@ -336,7 +336,7 @@ function MakeSVGContainer(config) {
 	this.maxWid = config.maxWid;
 	this.maxHt = config.maxHt;
 	this.id = this.node.attr("id");
-	
+
 	//create an svg element of the appropriate size and scaling
 	this.rootEl = this.node.append("svg").attr("viewBox", "0 0 " + this.maxWid + " " + this.maxHt)
 	//makes it scale correctly in narrow-window, single-column or phone layouts
@@ -344,7 +344,7 @@ function MakeSVGContainer(config) {
 	.attr("id", this.id).style("max-width", this.maxWid + "px")
 	//max width works to make it lay out to scale
 	.style("max-height", this.maxHt + "px");
-	
+
 } //end MakeSVGContainer constructor
 
 
@@ -353,11 +353,11 @@ function MakeSVGContainer(config) {
  *
  * Method of MakeSVGContainer: 	Create x-y axes in an SVG Container
  *
- * @param config				an object containing the following names: 
- *								 
+ * @param config				an object containing the following names:
+ *
  * @param xPerc,yPerc			real numbers specifying the left, top corner
  * 								of the axes box as a percentage of the width
- *								and height. This allows the axes to be 
+ *								and height. This allows the axes to be
  *								positioned in the svg canvas, allowing for several
  *
  * @param xPosPerc,yPosPerc		reals specifying how much of the container width and
@@ -372,7 +372,7 @@ function MakeSVGContainer(config) {
  * @param xaxisType, yaxisType	strings specifying "linear", "log", "ordinal" or "double positive" (x)
  * 								linear and ordinal only on y at the moment.
  *
- * @param xTicks, yTicks		Either an integer number of ticks, or an array 
+ * @param xTicks, yTicks		Either an integer number of ticks, or an array
  * 								of explicit ticks, which will override autoscaling.
  *
  * @param xOrient, yOrient 		Strings for orientation "bottom" or "top" and "left"/"right"
@@ -380,7 +380,7 @@ function MakeSVGContainer(config) {
  * @param xLabel, yLabel		Strings, optional - may contain markup and extended chars
  *
  * Notes:
- 
+
  ****************************************************************************/
 MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 
@@ -388,9 +388,9 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 	this.xPos = d3.round(config.xPosPerc * this.maxWid);
 	this.yPos = d3.round(config.yPosPerc * this.maxHt);
 	this.eventManager = eventManager;
-	
-	//default margin is set that is meant to be updated by the constituent 
-	//objects if they require more space - mostly happens with axes so we 
+
+	//default margin is set that is meant to be updated by the constituent
+	//objects if they require more space - mostly happens with axes so we
 	//use axes as a container
 	this.margin = {
 		top: 10,
@@ -419,39 +419,39 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 	else if ((xOrient === "bottom") && this.xLabel) {
 		this.margin.bottom = this.margin.bottom+50;
 		}
-	
+
 	if ((yOrient === "left") && this.yLabel) {
 		this.margin.left = this.margin.left + 50;
 		console.log("left margin increased for y label");
 		//catches the case where the whole graph renders to fit within the available SVG,
-		//but cuts off at the right because it gets pushed over too far 
+		//but cuts off at the right because it gets pushed over too far
 			}
 	else if ((yOrient === "right") && this.yLabel) {
 		this.margin.right= this.margin.right + 40;
-		console.log("right margin increased for y label"); 
+		console.log("right margin increased for y label");
 					}
-	this.innerWid = d3.round(config.xPerc * this.maxWid) 
+	this.innerWid = d3.round(config.xPerc * this.maxWid)
 						- this.margin.left - this.margin.right;
-	this.innerHt = d3.round(config.yPerc * this.maxHt) 
+	this.innerHt = d3.round(config.yPerc * this.maxHt)
 						- this.margin.top - this.margin.bottom;
-	
+
 	var tickheight = 10;
 
-	this.group = this.rootEl.append("g") 
+	this.group = this.rootEl.append("g")
 	//make a group to hold new scaled widget with axes
 	.attr("id", myID) //name it so it can be manipulated later
 	;
 
 
 	//build the x and y scales
-	//start by unwrapping all the data to make a single set of values 
+	//start by unwrapping all the data to make a single set of values
 	//for x and y
 	var xData = [],
 		yData = [];
 	if(!this.Data){
 		this.Data=[[{x:1e-10,y:0},{x:1,y:1}]];
 	}
-	
+
 	for (i = 0; i < this.Data.length; i++) {
 		this.Data[i].forEach(
 
@@ -461,12 +461,12 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		});
 	}
 	if (xaxisType) {
-		
+
 		if(yaxisType == "ordinal"){
 		xData.push(0); //if we're making ordinal bars, x must start from 0
 		}
-	
-		//Check if there explicit ticks specified, and if so, use them 
+
+		//Check if there explicit ticks specified, and if so, use them
 		//as the mapped range of the graph width
 		//ignore the actual data range
 		var xRange = ($.isArray(xTicks)) ? xTicks : xData;
@@ -474,38 +474,38 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		if (xaxisType == "linear") {
 		this.xScale = d3.scale.linear()
 		.domain(d3.extent(xRange)) //pulls min and max of x
-		.rangeRound([0, this.innerWid]); 
+		.rangeRound([0, this.innerWid]);
 		//xScale is now a linear function mapping x-data to the width of the drawing space
 		//TODO put in logic to reverse the x axis if the axis is on the right,
 		//or maybe just add a "reverse" setting.
 	     }
-		 
+
 		 if (xaxisType == "ordinal") {
 			this.xScale = d3.scale.ordinal().domain(xRange) //lists all ordinal x vals
 			.rangeRoundBands([this.innerHt, 0],.2);
-		//width is broken into even spaces allowing for bar width and 
+		//width is broken into even spaces allowing for bar width and
 		//a uniform white space between each, in this case, 20% white space
 	     }
-		
-	
+
+
 		if (xaxisType == "log") {
 			var vals = d3.extent(xRange);
 			//always start and end on even decades
 			var low = Math.floor(Math.log(vals[0])/Math.log(10));
 			var high = Math.ceil(Math.log(vals[1])/Math.log(10));
-		 
+
 		this.xScale = d3.scale.log()
 		.domain([0.99*Math.pow(10,low),Math.pow(10,high)]) //pulls min and max of x
 		.rangeRound([0, this.innerWid]);
 		//xScale is now a log-scale function mapping x-data to the width of the drawing space
 	     }
-	
-		//if the axis is double positive then create leftPositive and rightPositive 
+
+		//if the axis is double positive then create leftPositive and rightPositive
 		//scales that meet at 0. Still use xScale to plot the data.
 		if (xaxisType == "double positive") {
 			this.xScale = d3.scale.linear().domain(d3.extent(xRange)) //pulls min and max of x
 			.rangeRound([0, this.innerWid]);
-			
+
 			var negatives = [],
 				negTicks = [],
 				posTicks = [];
@@ -543,29 +543,29 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		this.xAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 		.scale(this.xScale) //telling the axis to use the scale defined by the function x
 		.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
-		
+
 		if (xaxisType == "log"){
 			this.xAxis.tickFormat(logFormat);
 		}
-		
+
 		if (xaxisType == "double positive") {
-			this.leftXAxis = d3.svg.axis() 
+			this.leftXAxis = d3.svg.axis()
 			.scale(leftPositive) //do the faux positive left-hand axis
 			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
 
-			this.xAxis = d3.svg.axis() 
+			this.xAxis = d3.svg.axis()
 			.scale(rightPositive) //do the real positive right-hand axis
 			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
 		}
 
 		//next set the ticks to absolute values or just a number of ticks
 		if (xaxisType == "double positive") {
-			$.isArray(xTicks) ? (this.xAxis.tickValues(posTicks) && this.leftXAxis.tickValues(negTicks)) : 
+			$.isArray(xTicks) ? (this.xAxis.tickValues(posTicks) && this.leftXAxis.tickValues(negTicks)) :
 			   (this.xAxis.ticks(xTicks - 2) && this.leftXAxis.ticks(2));
 		} else {
 			$.isArray(xTicks) ? (this.xAxis.tickValues(xTicks)) : (this.xAxis.ticks(xTicks));
 		}
-		
+
 		//now draw the horizontal axis
 		this.xaxis = this.group.append("g")
 		.call(this.xAxis)
@@ -573,7 +573,7 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		//move it down if the axis is at the bottom of the graph
 		.attr("class", "x axis");
 
-		//if we want positive tick values radiating from 0, 
+		//if we want positive tick values radiating from 0,
 		//then make the negative half of the axis separately
 		if (xaxisType == "double positive") {
 			this.xaxis.append("g").call(this.leftXAxis)
@@ -589,13 +589,13 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 			.attr("x", 0)
 			.attr("y", ((xOrient == "top") ? (-1.5) : 1) * (xaxisDims.height + 2))
 			.attr("width", this.innerWid).attr("height", 40);
-			this.xLabelObj.append("xhtml:body").style("margin", "0px") 
+			this.xLabelObj.append("xhtml:body").style("margin", "0px")
 			//this interior body shouldn't inherit margins from page body
-			.append("div").attr("class", "axisLabel").html(this.xLabel) //make the label  
+			.append("div").attr("class", "axisLabel").html(this.xLabel) //make the label
 			;
 		}
 		var xHt = d3.round(this.group.select(".x.axis").node().getBBox().height);
-		
+
 	}
 
 	if (yaxisType) {
@@ -603,21 +603,21 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		var yRange = ($.isArray(yTicks)) ? yTicks : ((d3.min(yData) > 0) ? yData.concat(0) : yData);
 		//check that the y range extends down to 0, because data graphs
 		// that don't include 0 for y are misleading
-	
+
 		if (yaxisType == "linear") {
 			this.yScale = d3.scale.linear().domain(d3.extent(yRange)) //pulls min and max of y
 			.rangeRound([this.innerHt, 0]);
 	    }
-		
+
 		if (yaxisType == "ordinal") {
 			this.yScale = d3.scale.ordinal().domain(yRange) //lists all ordinal y vals
 			.rangeRoundBands([this.innerHt, 0],.4);
-			
-			//width is broken into even spaces allowing for bar width and 
+
+			//width is broken into even spaces allowing for bar width and
 			//a uniform white space between each, in this case, 40% white space
 	    }
-		
-		// yScale is a function mapping y-data to height of drawing space. 
+
+		// yScale is a function mapping y-data to height of drawing space.
 		//Svg counts height down from the top, so we want the minimum drawn at height
 		this.yAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 		.scale(this.yScale) //telling the axis to use the scale defined earlier
@@ -638,22 +638,22 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		if (this.yLabel) {
 			var yaxisDims = this.yaxis.node().getBBox();
 			var yLabelObj = this.yaxis.append("foreignObject")
-			.attr("transform", "translate(" + (((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width) 
-			   +((yOrient == "left") ? -20:0)) + "," 
+			.attr("transform", "translate(" + (((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width)
+			   +((yOrient == "left") ? -20:0)) + ","
 			   + (this.innerHt) + ") rotate(-90)")
 			// move it out of the way of the ticks to left or right depending on axis orientation
 			.attr("width", this.innerHt).attr("height", 40);
 			var yLabText = yLabelObj.append("xhtml:body").style("margin", "0px")
 			//this interior body shouldn't inherit margins from page body
 			.append("div").attr("class", "axisLabel").attr("id","label"+this.id)
-			.html(this.yLabel) //make the label  
+			.html(this.yLabel) //make the label
 			;
 			console.log("label size ", $('#label'+this.id).height());//toDO use this to correctly move to the left of axis
 		}
-			
+
 		var yWid = d3.round(this.group.select(".y.axis").node().getBBox().width);
 	}
-	
+
 
 	var axesDims = this.group.node().getBBox();
 	//check that rendering is all inside available svg viewport.  If not, enlarge
@@ -694,13 +694,13 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 		if(yaxisType=="ordinal"){
 				this.yScale.rangeRoundBands([this.innerHt, 0],.3);
 				console.log("ordinal bandsize ", this.yScale.rangeBand());
-				//width is broken into even spaces allowing for bar width and 
+				//width is broken into even spaces allowing for bar width and
 				//a uniform white space between each, in this case, 30% white space
 		} else
 		{
 				this.yScale.rangeRound([this.innerHt, 0]);
 		}
-	
+
 		this.yAxis.scale(this.yScale);
 		console.log("y margins increased, new inner height is ", this.innerHt, " margin: ", this.margin.top, this.margin.bottom);
 		this.yaxis.call(this.yAxis);
@@ -708,8 +708,8 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 			this.xaxis.attr("transform", "translate(0," + ((xOrient == "bottom") ? this.innerHt : 0) + ")");
 		}
 		if (yLabelObj) {
-			yLabelObj.attr("transform", "translate(" + d3.round(((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width) 
-				   +((yOrient == "left") ? -19:0)) + "," 
+			yLabelObj.attr("transform", "translate(" + d3.round(((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width)
+				   +((yOrient == "left") ? -19:0)) + ","
 				   + (this.innerHt) + ") rotate(-90)")
 			// move it out of the way of the ticks to left or right depending on axis orientation
 			.attr("width", this.innerHt);
@@ -718,9 +718,9 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
 
 	this.margin.left = this.margin.left + this.xPos;
 	this.margin.top = this.margin.top + this.yPos;
-	//and finally, with the margins all settled, move the group down to accomodate the 
+	//and finally, with the margins all settled, move the group down to accomodate the
 	//top and left margins and position
-	
+
 	this.group.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 } // end makeAxis method
 
@@ -730,50 +730,50 @@ MakeSVGContainer.prototype.Axes = function (config,eventManager) {
  *
  * Method of MakeSVGContainer: 	Create legend in x-y axes
  *
- * @param config				an object containing the following names: 
+ * @param config				an object containing the following names:
  *
  * @param type					string specifying "box" or "line" for markers.
  * TODO: need to add symbols for scatter plots, including custom images
- * @param xPos, yPos			Strings for orientation "left"/"right" and "bottom"/"top" 
+ * @param xPos, yPos			Strings for orientation "left"/"right" and "bottom"/"top"
  *
  * @param labels				Strings to print next to each entry
  *
- * @param liteKey 				integers setting correspondance with other page 
+ * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
- * 
- * NOTES: Should probably actually get the data labels from the Data in the axes or at least 
- * any component graph. It is convenient though to be able to specify these separately, so 
+ *
+ * NOTES: Should probably actually get the data labels from the Data in the axes or at least
+ * any component graph. It is convenient though to be able to specify these separately, so
  * they can be used as a key for images, etc., which wouldn't necessarily have labels?
  ****************************************************************************/
-MakeSVGContainer.prototype.Legend = function (config, eventManager) 
+MakeSVGContainer.prototype.Legend = function (config, eventManager)
 	{ //begin legend method to go with axes object
-	
+
 	var myID = "legend" + this.id + "_";
 	this.legend = {id: myID};
 	this.eventManager = eventManager;
 	var that = this;
-	
+
 	var xPos = config.xPos;
 	var yPos = config.yPos;
 	//labels is an array of strings containing the data labels to be printed on the legend
 	this.labels = config.labels;
-	//type is a string specifying box or line legend 
+	//type is a string specifying box or line legend
 	var type = config.type;
 	var liteKey = config.liteKey;
 	var boxLength = 15, //attractive length for the colored lines or boxes
 		inset = 10, //attractive spacing from edge of axes boxes (innerWid/Ht)
-		//also used to space the enclosing legend box from the text 
+		//also used to space the enclosing legend box from the text
 	//take the number of rows from the number of labels
 		rowCt = this.labels.length;
 	var boxHeight = (boxLength + 6) * rowCt;
 	var longest = d3.last(this.labels, compareLen);
 	console.log("Longest legend label: ", longest);
-	//to calculate the width of the box big enough for the longest text string, we have to 
+	//to calculate the width of the box big enough for the longest text string, we have to
 	//render the string, get its bounding box, then remove it.
 	var longBox = this.group.append("g");
 	longBox.append("text").text(longest);
 	this.boxWid = longBox.node().getBBox().width + inset/2 + boxLength;
-	//the box around the legend should be the width of the 
+	//the box around the legend should be the width of the
 	//longest piece of text + inset + the marker length
 	//so it's always outside the text and markers, plus a little padding
 	longBox.remove();
@@ -799,8 +799,8 @@ MakeSVGContainer.prototype.Legend = function (config, eventManager)
  	var merge = filter.append("feMerge");
 	merge.append("feMergeNode").attr("in","offsetBlur");
 	merge.append("feMergeNode").attr("in","SourceGraphic");
-	
-	
+
+
 	legendBox.append("rect").attr("x", -5).attr("y", -5)
 	//create small padding around the contents at leading edge
 	.attr("width", this.boxWid).attr("height", boxHeight) //lineheight+padding x rows
@@ -808,12 +808,12 @@ MakeSVGContainer.prototype.Legend = function (config, eventManager)
 
 	this.legendRows = legendBox.selectAll("g.slice")
 	//this selects all <g> elements with class slice (there aren't any yet)
-	.data(this.labels) //associate the data to create stacked slices 
-	.enter() //this will create <g> elements for every data element 
+	.data(this.labels) //associate the data to create stacked slices
+	.enter() //this will create <g> elements for every data element
 	.append("svg:g") //create groups
 	.attr("transform", function(d, i) {
 		return "translate(0," + (rowCt - i - 1) * (boxLength+4) + ")";
-		//each row contains a colored marker and a label.  They are spaced according to the 
+		//each row contains a colored marker and a label.  They are spaced according to the
 		//vertical size of the markers plus a little padding, 3px in this case
 		//counting up from the bottom, make a group for each series and move to stacked position
 	});
@@ -827,10 +827,10 @@ MakeSVGContainer.prototype.Legend = function (config, eventManager)
 	}
 
 	if (type == "box") {
-		this.legendRows.append("rect") 
-		.attr("x", 0).attr("y", 0) 
+		this.legendRows.append("rect")
+		.attr("x", 0).attr("y", 0)
 		//make the rectangle a square with width and height set to boxLength
-		.attr("width", boxLength) 
+		.attr("width", boxLength)
 		.attr("height", boxLength)
 		.attr("class", function(d, i) {
 			return "fill" + i;
@@ -845,20 +845,20 @@ MakeSVGContainer.prototype.Legend = function (config, eventManager)
 	}
 
 	this.legendRows.append("text") //this is native svg text, it doesn't wrap
-	.attr("text-anchor", "start") //left align text 
+	.attr("text-anchor", "start") //left align text
 	.attr("class", "legendLabel").attr("dx", boxLength + 4)
 	//offset text to the right beyond marker by 4 px
 	.attr("dy", boxLength/2 ) //offset text down so it winds up in the middle of the marker
 	.attr("alignment-baseline","central")//and put the vertical center of the text on that midline
 	.text(function(d, i) {
 		return d; //get the label from legend array
-	}); 
+	});
 } //end of Legend method for Axes
 
 /***************
 MakeAxes.prototype.setState = function(liteKey) {
 	console.log("TODO: Log highlight event on ", this.legend.id);
-	
+
 	if (this.legendRows.selectAll(".liteable")) {
 		//TODO/put all rows back to normal width (clear old state)
 		this.legendRows.attr("filter",null);
@@ -879,27 +879,27 @@ MakeAxes.prototype.setState = function(liteKey) {
  *
  * Method of MakeSVGContainer: 	Create labels on local axes scale
  *
- * @param config				an object containing the following names: 
+ * @param config				an object containing the following names:
  *
  * @param xyPos					string specifying "box" or "line" for markers.
  * TODO: need to add symbols for scatter plots, including custom images
- * @param xPos, yPos			Strings for orientation "left"/"right" and "bottom"/"top" 
+ * @param xPos, yPos			Strings for orientation "left"/"right" and "bottom"/"top"
  *
  * @param labels				array of objects with keys content: string with HTML markup,
- *								xyPos: an [x,y] array to orient the position on the axes grid, 
+ *								xyPos: an [x,y] array to orient the position on the axes grid,
  * 								in local coordinates and width: the width of the label
  *
- * @param liteKey 				integers setting correspondance with other page 
+ * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
- * 
+ *
  * NOTES: TODO role: a string which is one of "label", "distractor".
  * TODO: we need some sort of autowidth intelligence on these, but I don't
  * know how to reconcile that with giving user control over wrapping
  ****************************************************************************/
 MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image object generator
-	
-	
-	
+
+
+
 	var myID  = "label" + this.id + "_";
 	this.labels = {id: myID,
 				  labels: config.labels,
@@ -908,7 +908,7 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 				};
 	var numLabels = this.labels.labels.length;
 	var liteKey = config.liteKey;
-	
+
 	var xScale = this.xScale, yScale = this.yScale;
 
 	var graph = this.group.append("g") //make a group to hold labels
@@ -922,20 +922,20 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
  	var merge = filter.append("feMerge");
 	merge.append("feMergeNode").attr("in","offsetBlur");
 	merge.append("feMergeNode").attr("in","SourceGraphic");
-	
+
 	this.labelCollection = graph.selectAll("g.label")
 		.data(this.labels.labels).enter()
 		.append("g")
 		.attr("transform", function(d, i) {
 			return "translate(" + xScale(d.xyPos[0]) + "," + yScale(d.xyPos[1]) + ")";
 		});
-	
+
 	this.labelCollection.append("foreignObject")
 		.attr("x", 0)
 		.attr("y", 0)
 		.attr("width", function(d,i) { return d.width;})
 		.attr("height", 200)
-		.append("xhtml:body").style("margin", "0px") 
+		.append("xhtml:body").style("margin", "0px")
 			//this interior body shouldn't inherit margins from page body
 		.append("div").attr("class", "descLabel")
 		//.style("visibility",function(d,i) { return d.viz;})
@@ -943,16 +943,16 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 			.html(function(d, i) {
 				return d.content;
 				}
-				); //make the label 
-				
-	if(this.labels.type == "bullets"){			
+				); //make the label
+
+	if(this.labels.type == "bullets"){
 		this.labelCollection.append("circle")
 		.attr("cx",0).attr("cy",0).attr("r",10)
 		.attr("class",function(d, i) {
 				return "fill"+i;
 				});
 	}
-				
+
 		if (liteKey) {
 			this.labelCollection.attr("id", function(d, i) {
 				return myID + liteKey[i];
@@ -973,7 +973,7 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 		.style("font-weight",null)
 	//	.style("background-color","")
 	;
-		
+
 		//highlight the selected label(s)
 		//d3.selectAll("#" + this.labels.id + liteKey).attr("filter", "url(#drop-shadow)");
 		//this won't render - browser bug
@@ -982,7 +982,7 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 		set.transition().duration(200)
 		.style("color", "#1d95ae")
 		.style("font-weight", "600");
-	
+
 	//	.style("background-color", "#e3effe");
 	// this renders badly from Chrome refresh bug
 		return liteKey;
@@ -999,22 +999,22 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
  * Method of MakeSVGContainer: 	Create x or y oriented bands of grey fill
  *								extending from top to bottom or side to side
  *
- * @param config				an object containing the following names: 
+ * @param config				an object containing the following names:
  *
- * @param xBands, yBands		array of 2-element arrays of reals which 
- *								determine the leading and trailing edges of the 
- *								area marker rectangles, and the orientation 
+ * @param xBands, yBands		array of 2-element arrays of reals which
+ *								determine the leading and trailing edges of the
+ *								area marker rectangles, and the orientation
  *								(vertical if x, horiz if y)
  *
- * @param liteKey 				integers setting correspondance with other page 
+ * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
- * 
+ *
  * NOTES: TODO will need to make the edges of these draggable
  **************************************************************************/
 
 MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin area marker generator
-	
-	//make x and y scales from the axes container into variables so they can be 
+
+	//make x and y scales from the axes container into variables so they can be
 	//used inside functions
 	var xScale = this.xScale;
 	var yScale = this.yScale;
@@ -1023,12 +1023,12 @@ MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin
 		id: myID,
 		eventFunc: this.setMarkerLite
 				};
-	
+
 	this.xBands = config.xBands;
 	this.yBands = config.yBands;
 	this.eventManager = eventManager;
 	var liteKey = config.liteKey;
-	//make a group to hold the area markers  
+	//make a group to hold the area markers
 	var bandMarks = this.group.append("g").attr("class", "areaMarker");
 
 	//these tests pull the sets of markers for each band and then report whether the bands are all in the shown range of the graph which calls them
@@ -1042,8 +1042,8 @@ MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin
 	//	.attr("class", function(d,i){ return "fill"+i;})
 	//TODO figure out a coloring scheme for when they overlap
 		;
-		
-	
+
+
 	}
 
 	if (this.yBands) {
@@ -1059,7 +1059,7 @@ MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin
 		bandMarks.attr("id", function(d, i) {
 			return this.areaMarkers.id + liteKey[i];
 		})
-	} //name it 
+	} //name it
 } //end area marker object generator function
 
 /* MakeAxes.prototype.markerHighLite = function(liteKey) {
@@ -1081,61 +1081,61 @@ MakeSVGContainer.prototype.AreaMarkers = function(config,eventManager) { //begin
 /* **************************************************************************
  * LineMarkers                                                          *//**
  *
- * Method of MakeSVGContainer: 	Create x or y oriented marker lines that 
- *								report a text label or data for an 
+ * Method of MakeSVGContainer: 	Create x or y oriented marker lines that
+ *								report a text label or data for an
  *								intersected point
- *			
- * @param config				an object containing the following names: 
+ *
+ * @param config				an object containing the following names:
  *
  * @param xMarks				array of objects {x: <val>, y: <val> or label: <val>}
  *								specifies the x position, x and y for the label, or
- *								just label in the label. Also gives the orientation 
- *								(vertical if x, horiz if y - not implemented TODO) 
+ *								just label in the label. Also gives the orientation
+ *								(vertical if x, horiz if y - not implemented TODO)
  *
- * @param liteKey 				integers setting correspondance with other page 
+ * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
- * 
+ *
  * NOTES: TODO will need to make these draggable - TODO hook up y variant
- * don't know if that should be a whole separate function or if 
+ * don't know if that should be a whole separate function or if
  * conditionals are better
  **************************************************************************/
 
 MakeSVGContainer.prototype.LineMarkers = function(config, eventMangager) { //begin marker generator
-	
+
 	this.xMarks = config.xMarks;
 	this.yMarks = config.yMarks;
 	//this.eventManager = eventManager;
-	
+
 	var myID = "marker" + this.id + "_";
 	var liteKey = config.liteKey;
 	var that = this;
 	var labelHt = this.innerHt/4,labelWid = 100;
 	//TODO: probably shouldn't hard set these, but I'm not sure how to set wrapping otherwise.
 	//These look marginally ok.
-	
+
 	var markers = this.group
 	.selectAll("g.marker") //this selects all marker groups (there aren't any yet)
 	.data(this.xMarks); //associate the data to create the right number of markers
-	
-	markers.enter() //this will create <g> elements for every marker 
-	//groups are good because we can have a marker line, and a label, and anything else 
+
+	markers.enter() //this will create <g> elements for every marker
+	//groups are good because we can have a marker line, and a label, and anything else
 	//that requires the same relative coordinates.
 	.append("g").attr("class", "marker");
 	markers.attr("transform", function(d) {
 		//Not entirely settled on marker data format.  It makes most sense to input
-		//an array of values, all x or all y.  But it would also be nice to be able to 
+		//an array of values, all x or all y.  But it would also be nice to be able to
 		//pull one or more entries out of an existing data set.  So the following
 		//logic looks to see if there is an x: name or if it's just a standalone value
 		return "translate(" + d3.round(that.xScale(d.x ? d.x : d)) + ",0)";
 		//move each group to the data point specified for the marker
 	});
-	
+
 	if(liteKey) {
 		markers.attr("id", function(d, i) {
 		return myID + liteKey[i];
 		});
 	}
-	
+
 	console.log("markers are made", this.xMarks);
 
 	markers.append("line") //vertical line
@@ -1147,10 +1147,10 @@ MakeSVGContainer.prototype.LineMarkers = function(config, eventMangager) { //beg
 	}).attr("y2", that.innerHt) 
 	;
 
-	//draw data labels on the markers		
+	//draw data labels on the markers
 	markers.append("foreignObject").attr("x", -labelWid / 2).attr("y", function(d, i) {
 		return (labelHt + 10) * (i);
-	}) //offset down on text box 
+	}) //offset down on text box
 	.attr("width", labelWid)
 	.attr("height", labelHt)
 	.append("xhtml:body")
@@ -1158,7 +1158,7 @@ MakeSVGContainer.prototype.LineMarkers = function(config, eventMangager) { //beg
 	.append("div").attr("class", "markerLabel")
 	.html(function(d, i) {
 		return d.y ? ("x: " + d.x + "<br> y: " + d.y) : d.label;
-	}) //make the label from value and category 
+	}) //make the label from value and category
 	;
 //Drag updater
 function dragUpdate(xData, allData, range, scale) {
@@ -1183,37 +1183,37 @@ function dragUpdate(xData, allData, range, scale) {
 		;
 	}).on("dragend", function(d, i) {
 		d3.select(this).transition().duration(30).attr("transform", "translate(" + scale(xval) + ",0)");
-		//dtrop it back down to normal position and pin it at the last location 
+		//dtrop it back down to normal position and pin it at the last location
 		//and put the style back to normal
 	});
 } // end dragUpdate function
 
-} //end line marker method 
+} //end line marker method
 
 
 
 /* **************************************************************************
- * Pie		                                                          *//**
+ * Pie                                                                  *//**
  *
  * Method of MakeSVGContainer: 	Make a pie chart with percentages
- *			
- * @param config				an object containing the following names: 
+ *
+ * @param config				an object containing the following names:
  *
  * @param Data					array of objects {x: <val>, y: "label"}
  *								specifies the percent. Same format as for bar charts.
  *
- * @param liteKey 				integers setting correspondance with other page 
+ * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
- * 
- * NOTES: if the percentages don't add up to 100, blank space will be left 
- * on the chart.  If the percentages add up to more than 100, they will be 
+ *
+ * NOTES: if the percentages don't add up to 100, blank space will be left
+ * on the chart.  If the percentages add up to more than 100, they will be
  * rescaled so they do in the same proportions.
  **************************************************************************/
 MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area marker generator
-	
-	//make x and y scales from the axes container into variables so they can be 
+
+	//make x and y scales from the axes container into variables so they can be
 	//used inside functions
-	 
+
 	var myID  = "pie" + this.id + "_";
 	this.pieChart = {
 		id: myID,
@@ -1226,40 +1226,40 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	var r = this.innerHt>this.innerWid ? this.innerWid/4 : this.innerHt/4;
 	//use 1/4 of smallest dimension of the axes box for a radius
 	var offset = 10+r; //padding from the axes
-	//My thought was to put the pie in the upper left corner of a set of axes, 
+	//My thought was to put the pie in the upper left corner of a set of axes,
 	//occupying not more than half the width so that there was still room for a
 	//legend.  The legend is pretty much always necessary I think.
-	
+
 	var xData = [],
 		yData = [],
 		sumData = 0;
-	
+
 	this.Data.forEach(
 			function(o) {
 				xData.push(o.x);
 				sumData=sumData + o.x;
 				yData.push(o.y);
 			});
-			
+
 	if(sumData<100){
 		this.Data.push({x: 100-sumData, y: thingy})
 	}
-	
+
 	var arc = d3.svg.arc()  //this will create <path> elements for us using arc data
 	        .outerRadius(r);//use one dimension of the axes box for a radius
-	
-	//make a group to hold the pie 
+
+	//make a group to hold the pie
 	var pieGroup = this.group.append("g").attr("class", "pie")
 	.attr("transform", "translate(" + offset + "," + r + ")"); //center it
 
 	var pieArcs = d3.layout.pie()           //this will create arc data for us given a list of values
-	        .value(function(d) { return d.x; });    
+	        .value(function(d) { return d.x; });
 
-	var arcs = pieGroup.selectAll("g.slice")     
-	        .data(pieArcs(this.Data));                 
-	//associate the generated pie data (an array of arcs w/startAngle, endAngle and value props) 
-	arcs.enter()                            
-	    .append("g")       
+	var arcs = pieGroup.selectAll("g.slice") 
+	        .data(pieArcs(this.Data));           
+	//associate the generated pie data (an array of arcs w/startAngle, endAngle and value props)
+	arcs.enter()
+	    .append("g")
 	    .attr("class", function(d, i) {
 				return "slice fill" + i;
 			});    //color with predefined sequential colors
@@ -1294,13 +1294,13 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 /* **************************************************************************
  * LineGraph                                                            *//**
  *
- * Method of MakeSVGContainer: 	Create a line or scatter plot (or both) for 
+ * Method of MakeSVGContainer: 	Create a line or scatter plot (or both) for
  *								one or more series of x-y data
  *
- * @param config				an object containing the following names: 
+ * @param config				an object containing the following names:
  *
- * @param Data					array of arrays of objects with keys x: and y: 
- *								real floating pt, one for each point, one 
+ * @param Data					array of arrays of objects with keys x: and y:
+ *								real floating pt, one for each point, one
  *								array for each trace.
  *
  * @param type					string specifying "lines", "points", or
@@ -1309,36 +1309,36 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
  *
  * @param liteKey 				array of integers setting correspondance with
  * 								other page elements in other widgets
- * 
- * NOTES: TODO willneed to make it possible to highlight lines/points to go 
+ *
+ * NOTES: TODO willneed to make it possible to highlight lines/points to go
  * along with legend (for ADA and pedagogy) and make the data updateable/redraw
  * in response to other changes.  So both emits and accepts events.
  **************************************************************************/
-MakeSVGContainer.prototype.LineGraph = function(config,eventManager) { 
-//begin line graph object generator 
+MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
+//begin line graph object generator
 
-	
+
 	this.Data = config.Data;
 	this.type = config.type;
 	this.eventManager = eventManager;
-	
+
 	var liteKey = config.liteKey;
-	var myID = "lines" + this.id + "_"; 
+	var myID = "lines" + this.id + "_";
 	var that = this;
 	//to accomodate recall of the function to update data, check if a group of
 	//myID already exists.  If it doesn't, make a group to hold new line graph
 	//if it does, use it.
-	
+
 	if(d3.select("#"+myID)[0][0]==null){
-		var graph = this.group.append("g") 
+		var graph = this.group.append("g")
 		.attr("id", myID);//name it so it can be manipulated or highlighted later
 		console.log("graph group is made:", graph.attr("id"));
 	}
 	else {
-		var graph = d3.select("#"+this.id); 
-		console.log("graph group is found: ", graph.attr("id"));	
+		var graph = d3.select("#"+this.id);
+		console.log("graph group is found: ", graph.attr("id"));
 	}
-	
+
 
 	// make a clippath, which is used in the case that we zoom or pan the graph dynamically
 	graph.append("defs").append("clipPath").attr("id", "clip_" + myID)
@@ -1347,11 +1347,11 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 
 	//draw the trace(s).  We have go generate the path data, then create the groups
 	//for them (this will be the sticking point on redraw), then fill them with either
-	//lines or points or both for the data.  
-	
+	//lines or points or both for the data.
+
 	if (this.type == "lines" || this.type == "lines+points") {
 		var line = d3.svg.line()
-	//line() is a d3 utility function for generating all the point to point 
+	//line() is a d3 utility function for generating all the point to point
 	//paths using the scales set up above
 		.interpolate("basis").x(function(d, i) {
 			return that.xScale(d.x);
@@ -1405,10 +1405,10 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 				return "liteable series fill" + i;});
 		}
 
-		this.points = this.series.selectAll("g.points") 
-		//this selects all <g> elements with class points (there aren't any yet) 
+		this.points = this.series.selectAll("g.points")
+		//this selects all <g> elements with class points (there aren't any yet)
 		//within the selection series.  Note that series has the nested point
-		//Data associated with it.  So the data for the points is each array 
+		//Data associated with it.  So the data for the points is each array
 		//in the data series.  This can also be done by using the keyword Object
 		//as the .data for points, but it's a little obscure why that works.
 		.data(function(d,i){return d;}) //drill down into the nested Data
@@ -1419,7 +1419,7 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
 										})
 		//move each symbol to the x,y coordinates
 		.append("path")
-		.attr("d", 
+		.attr("d",
 		//j is the index of the series, i of the data points in the series
 		function(d,i,j){
 		   return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
@@ -1434,28 +1434,29 @@ MakeSVGContainer.prototype.LineGraph = function(config,eventManager) {
  * BarChart                                                             *//**
  *
  * Method of MakeSVGContainer: 	Create a bar chart, pyramid chart (two sided)
- *								or grouped bar chart (several bars on the same 
+ *								or grouped bar chart (several bars on the same
  *								label from different series - multivariate)
  *
- * @param config				an object containing the following names: 
+ * @param config				an object containing the following names:
  *
- * @param Data					array of arrays of objects with keys x: and y: 
- *								real floating pt, one for each point, one 
+ * @param Data					array of arrays of objects with keys x: and y:
+ *								real floating pt, one for each point, one
  *								array for each trace.
  *
  * @param type					string specifying "grouped", or anything else (ignored)
  *
  * @param liteKey 				array of integers setting correspondance with
  * 								other page elements in other widgets
- * 
+ *
  * NOTES: There's a lot of logic in here to make sure that both positive and
  * negative values are accomodated.  Negative values have to count right to x=0
  * and positive must always count right from x=0.
  **************************************************************************/
 
-MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin bar graph object generator
-	 
-	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point, 
+MakeSVGContainer.prototype.BarChart = function (config,eventManager)
+{ //begin bar graph object generator
+
+	//Data: array of arrays of objects with keys x: and y: , real floating pt, one for each point,
 	//one array for each trace.
 	this.Data = config.Data;
 	//type is a string setting whether it's a "grouped" chart or linear, optional
@@ -1464,24 +1465,27 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin b
 	var liteKey = config.liteKey;
 	var myID = "bars" + this.id + "_";
 	var that = this;
-	
+
 	console.log("ID", "#"+myID, d3.select("#"+myID)[0][0]);
 
-	if(d3.select("#"+myID)[0][0] === null){
+	if (d3.select("#"+myID)[0][0] === null)
+	{
 		var graph = this.group.append("g") //make a group to hold new bar chart
 		.attr("id", myID);//name it so it can be manipulated or highlighted later
 		console.log("graph group is made:", graph.attr("id"));
 	}
-	else {
-		var graph = d3.select("#"+this.id); 
+	else
+	{
+		var graph = d3.select("#"+this.id);
 		console.log("graph group is found: ", graph.attr("id"));	1
 	}
-	
-	var bandsize = that.yScale.rangeBand(); 
+
+	var bandsize = that.yScale.rangeBand();
 	//returns the size of the bands produced by ordinal scale
-	
-	
-	if (type == "grouped") {
+
+
+	if (type == "grouped")
+	{
 		//grouped bar charts find the common labels in each data set and draw non-overlapping
 		//bars in a group representing the value for that label for each data array.
 		//The effect of the following code is to calculate a "subspacing" that fans
@@ -1489,73 +1493,87 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager) { //begin b
 		//label.
 		var indices = [];
 
-		for (i = 0; i < this.Data.length; i++) {
-		indices.push(i); //needed to space out grouped barcharts
+		for (i = 0; i < this.Data.length; i++)
+		{
+			indices.push(i); //needed to space out grouped barcharts
 		}
-	
+
 		var groupScale = d3.scale.ordinal()
-		.domain(indices) //creates an extra ordinal set that encloses the data label, 
-		//one for each group (element in data array)
-		.rangeRoundBands([bandsize, 0]);
-		console.log("Grouped barChart last bar mapped to 0 offset: ", 
-		groupScale(this.Data.length - 1) == 0);
+			.domain(indices) //creates an extra ordinal set that encloses the data label,
+			//one for each group (element in data array)
+			.rangeRoundBands([bandsize, 0]);
+		console.log("Grouped barChart last bar mapped to 0 offset: ",
+			groupScale(this.Data.length - 1) == 0);
 	};
 
-
+	// bind all the series data to a group element w/ a series class
+	// creating or removing group elements so that each series has its own group.
 	this.barSeries = graph.selectAll("g.series")
-	.data(that.Data);
-	
+		.data(that.Data);
+
 	this.barSeries.enter()
-	.append("g")
-	.attr("class", function(d, i) {
-		return "series fill" + i;
-	});
-	
+		.append("g")
+			.attr("class", function(d, i) {
+					return "series fill" + i;
+				});
+
 	this.barSeries.exit().remove();
+
 	//If it's a grouped barchart, shimmie out the bars by group
-	if (type == "grouped") {
+	if (type == "grouped")
+	{
 		this.barSeries.attr("transform", function(d, i) {
-			return "translate(0," + (groupScale(i)) + ")";
-		})
+				return "translate(0," + (groupScale(i)) + ")";
+			});
 	}
 	//If it's highliteable, add a key to the series
-	if (liteKey) {
+	if (liteKey)
+	{
 		series.attr("id", function(d, i) {
-			return "series_" + (liteKey[i]);
-		})
+				return "series_" + (liteKey[i]);
+			});
 	}
 
+	// The series data was an array of values for each bar of the series
+	// bind each series data to a child group element 1 for each bar in the
+	// series.
+	//
+	// Note: the x<0 logic allows us to draw pyramid charts, although normally bar charts
+	//  are bin counts and all positive
+	//  I enclose the bars in individual groups so you could choose to label the ends with data or label
+	//  and have it stick to the bar by putting it in the same group
+	var bars = this.barSeries.selectAll("g.bar")
+		.data(function(d) {return d;}); 	//drill down into the nested Data
 
-	this.bars = this.barSeries.selectAll("rect.bar") 
-	//this selects all <g> elements with class bar (there aren't any yet)
-	.data(function(d,i){return d;}); 	//drill down into the nested Data
-	this.bars.enter() 		//this will create <g> elements for every data element 
-	.append("rect") 	//create groups
-	.attr("class", "bar");
-	//move each group to the x=0 position horizontally if it's a positive bar, or 
-	// start at it's negative x value if it's reversed. 
-	this.bars.attr("transform", function(d, i) {
-		return "translate(" + ((d.x < 0) ? that.xScale(d.x) : that.xScale(0)) + "," 
-			+ (that.yScale(d.y)) + ")";
-	})
-	//the x<0 logic allows us to draw pyramid charts, although normally bar charts 
-	//are bin counts and all positive
-	//move the group to the y=ordinal position vertically
-	//I enclose the bars in individual groups so you could choose to label the ends with data or label
-	//and have it stick to the bar by putting it in the same group
-	.attr("id", function(d, i) {
-		return myID + i;
-	})
-	.attr("height", (type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize) 
-	//divide height into uniform bar widths
-	.attr("width", function(d, i) {
-		return ((d.x < 0) ? (that.xScale(0) - that.xScale(d.x)) : 
-			(that.xScale(d.x) - that.xScale(0)));
-	}); 
-	//returns the value of the data associated with each slice as the width, 
-	//or expands to the y=0 line if it's negative
-	 this.bars.exit().remove();
-} //end bar chart object generator function
+	bars.exit().remove();
+
+	bars.enter()
+		.append("g")
+			.attr("id", function(d, i) {return myID + i;})
+			.attr("class", "bar liteable")
+			.attr("transform",
+				  function(d)
+				  {
+					  // move each group to the x=0 position horizontally if it's a
+					  // positive bar, or start at it's negative x value if it's reversed.
+				      var x = (d.x < 0) ? that.xScale(d.x) : that.xScale(0);
+					  var y = that.yScale(d.y);
+				      return "translate(" + x + "," + y + ")";
+				  })
+			.append("rect")
+			;
+
+	// Update the height and width of the bar rects based on the data points bound above.
+	bars.select("rect")
+		.attr("height", (type == "grouped") ? (bandsize / (this.Data.length + 1)) : bandsize)
+		//divide height into uniform bar widths
+		.attr("width",
+			  function(d)
+			  {
+				  return (d.x < 0) ? that.xScale(0) - that.xScale(d.x)
+								   : that.xScale(d.x) - that.xScale(0);
+			  });
+}; //end bar chart object generator function
 
 /*
 MakeLineGraph.prototype.setState = function(liteKey) {
@@ -1573,16 +1591,16 @@ MakeLineGraph.prototype.setState = function(liteKey) {
 */
 
 
-MakeSVGContainer.prototype.ScalableImage = function (config,eventManager) 
+MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	{ //begin scalable image object generator
-	
-	//images is an array of objects with keys URI: string with the location of the image file 
+
+	//images is an array of objects with keys URI: string with the location of the image file
 	//jpg, png, svg supported, and caption: string with caption or source text.
 	this.images = config.images;
 	var numImg = this.images.length;
 	var myID = "img" + this.id + "_";
 	var that = this;
-	
+
 	var graph = this.group.append("g") //make a group to hold new line chart
 	.attr("class", "scalableImage");
 	graph.append("rect").attr("width",this.innerWid).attr("height",this.innerHt).attr("fill","#efefef");
@@ -1591,7 +1609,7 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	.attr("id", this.id) //name it so it can be manipulated or highlighted later
 	.attr("width", this.innerWid).attr("height", this.innerHt)
 	.append("desc").text(this.images[0].caption);
-	
+
 	console.log("axesobj ",	this.xaxis.select(".axisLabel"));
 
 	this.xaxis.select(".axisLabel").html(this.images[0].caption);
@@ -1599,10 +1617,10 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	 ", number of images in container is ", numImg);
 
 	if (numImg > 1) {
-		//if there are multiple images, calculate dimensions for thumbnails, and make the 
+		//if there are multiple images, calculate dimensions for thumbnails, and make the
 		//svg box bigger to display them in a new group at the top.
 		var thumbScale = 0.85 / (numImg + 2);
-		this.xThumbDim = d3.round(this.innerWid * thumbScale), this.yThumbDim = 
+		this.xThumbDim = d3.round(this.innerWid * thumbScale), this.yThumbDim =
 			d3.round(this.innerHt * thumbScale);
 		var maxWid = this.maxWid;
 		var maxHt = this.maxHt;
@@ -1614,8 +1632,8 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 		.append("g").attr("id", function(d, i) { return (myID + i);})
 		.attr("class", "liteable thumbs")
 		.attr("transform", function(d, i) {
-			return "translate(" + (d3.round((i + 1) * that.innerWid / (numImg + 2)) 
-				+ that.margin.left) 
+			return "translate(" + (d3.round((i + 1) * that.innerWid / (numImg + 2))
+				+ that.margin.left)
 			+ "," + 5 + ")";})
 		.append("image").attr("xlink:href", function(d) {
 			return d.URI;
@@ -1663,7 +1681,7 @@ MakeLabels.prototype.setState = function(liteKey) {
 		.style("font-weight","")
 		.style("background-color","")
 	;
-		
+
 		//highlight the selected label(s)
 		var set = d3.selectAll("#" + this.id + liteKey).select(".markerLabel");
 		console.log("Setting label lites", set);
@@ -1682,9 +1700,9 @@ MakeLabels.prototype.setState = function(liteKey) {
 function MakeLinks(options) { //begin labeled image object generator
 	var liteKey = options.liteKey;
 	this.liteLinks = d3.selectAll("a.liteable");
-	
+
 	this.liteLinks
-		.attr("id", function(d, i) { 
+		.attr("id", function(d, i) {
 			return "link_" + (liteKey?liteKey[i]:i);})
 	; //add an id to the link that lets it drive the page-wide events
 
@@ -1693,9 +1711,9 @@ MakeLinks.prototype.setState = function(liteKey) {
 	if (this.liteLinks[liteKey]) {
 		//return all styles to normal on the link
 		this.liteLinks.attr("class","liteable");
-		
+
 		this.liteLinks[liteKey].attr("class", "liteable lit");
-				
+
 		return liteKey;
 	} else {
 		console.log("Invalid key. No link " + liteKey);
@@ -1708,7 +1726,7 @@ Events
 ===================================================*/
 
 function stateCycle(currentObj, linkedObjList) {
-	//IDlist is an array of strings representing ID names for 
+	//IDlist is an array of strings representing ID names for
 	//objects on which to set or synch state
 	//this version assumes that each state function clears it's own stale state
 	var regID = currentObj.id;
@@ -1747,7 +1765,7 @@ function stateCycle(currentObj, linkedObjList) {
  *
  * @method
  *
- * The logFormat method is used to limit the number of ticks produced on 
+ * The logFormat method is used to limit the number of ticks produced on
  * a log-scale axis, so it doesn't get too crowded.  It's currently hard
  * set to produce only even-numbered full-decade marks, which will probably
  * need to be adjusted as requirements become clearer.
@@ -1755,13 +1773,13 @@ function stateCycle(currentObj, linkedObjList) {
  * *************************************************************************/
 
 function logFormat(d) {
-	
+
 	//find the log base 10 (plus a little for zero padding)
 
-    var x = (Math.log(d) / Math.log(10)) + 1e-6; 
-	
+    var x = (Math.log(d) / Math.log(10)) + 1e-6;
+
     //then see if the log has abscissa 1, and only return numbers for those, and even
-    return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ? 
+    return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ?
 		     d3.round(Math.log(d)/Math.log(10)) : "";
   }
 
@@ -1776,8 +1794,8 @@ console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.p
  *
  * @method
  *
- * The compareLen method compares the length of two strings or arrays.  
- * It is used in constructors such as Legend to determine the maximum 
+ * The compareLen method compares the length of two strings or arrays.
+ * It is used in constructors such as Legend to determine the maximum
  * label length, which is then used to determine the size of the surrounding
  * margins and rules.
  *
@@ -1808,7 +1826,7 @@ console.log("test slope line 1 dx, dy, slope: ", slope(myData), slope(myData) ==
 
 function snapTo(data, range) {
 	//range is a two element array with the start and end point of the canvas
-	//data is an array of any length with the data points/bins to snap to. 
+	//data is an array of any length with the data points/bins to snap to.
 	//really on the cardinality of (number of points) data matters
 	return d3.scale.quantize().domain(range) //dimension of the graph box
 	.range(data); //converted into the nearest data to snap to data
