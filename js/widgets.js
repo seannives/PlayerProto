@@ -1192,12 +1192,28 @@ function dragUpdate(xData, allData, range, scale) {
 
 
 
+/* **************************************************************************
+ * Pie		                                                          *//**
+ *
+ * Method of MakeSVGContainer: 	Make a pie chart with percentages
+ *			
+ * @param config				an object containing the following names: 
+ *
+ * @param Data					array of objects {x: <val>, y: "label"}
+ *								specifies the percent. Same format as for bar charts.
+ *
+ * @param liteKey 				integers setting correspondance with other page 
+ * 								elements in other widgets
+ * 
+ * NOTES: if the percentages don't add up to 100, blank space will be left 
+ * on the chart.  If the percentages add up to more than 100, they will be 
+ * rescaled so they do in the same proportions.
+ **************************************************************************/
 MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area marker generator
 	
 	//make x and y scales from the axes container into variables so they can be 
 	//used inside functions
-	var xScale = this.xScale;
-	var yScale = this.yScale;
+	 
 	var myID  = "pie" + this.id + "_";
 	this.pieChart = {
 		id: myID,
@@ -1205,26 +1221,47 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 				};
 	//Data is an array of real, positive values, one for each slice of pie
 	this.Data = config.Data;
+	var that = this;
 	var liteKey = config.liteKey;
-	var r = this.innerHt/3;//use one dimension of the axes box for a radius
+	var r = this.innerHt>this.innerWid ? this.innerWid/4 : this.innerHt/4;
+	//use 1/4 of smallest dimension of the axes box for a radius
+	var offset = 10+r; //padding from the axes
+	//My thought was to put the pie in the upper left corner of a set of axes, 
+	//occupying not more than half the width so that there was still room for a
+	//legend.  The legend is pretty much always necessary I think.
 	
-	var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
+	var xData = [],
+		yData = [],
+		sumData = 0;
+	
+	this.Data.forEach(
+			function(o) {
+				xData.push(o.x);
+				sumData=sumData + o.x;
+				yData.push(o.y);
+			});
+			
+	if(sumData<100){
+		this.Data.push({x: 100-sumData, y: thingy})
+	}
+	
+	var arc = d3.svg.arc()  //this will create <path> elements for us using arc data
 	        .outerRadius(r);//use one dimension of the axes box for a radius
 	
 	//make a group to hold the pie 
 	var pieGroup = this.group.append("g").attr("class", "pie")
-	.attr("transform", "translate(" + this.innerWid/2 + "," + this.innerHt/2 + ")"); //center it
+	.attr("transform", "translate(" + offset + "," + r + ")"); //center it
 
 	var pieArcs = d3.layout.pie()           //this will create arc data for us given a list of values
-	        .value(function(d) { return d; });    
+	        .value(function(d) { return d.x; });    
 
 	var arcs = pieGroup.selectAll("g.slice")     
-	        .data(pieArcs(this.Data))                     
+	        .data(pieArcs(this.Data));                 
 	//associate the generated pie data (an array of arcs w/startAngle, endAngle and value props) 
-	        .enter()                            
-	        .append("g")       
-	        .attr("class", function(d, i) {
-				return "fill" + i;
+	arcs.enter()                            
+	    .append("g")       
+	    .attr("class", function(d, i) {
+				return "slice fill" + i;
 			});    //color with predefined sequential colors
 
 	arcs.append("path")

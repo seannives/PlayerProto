@@ -89,7 +89,9 @@ var birth = [
 		 { x: 46, y: 0.32 },
 		 { x: 47, y: 0.33 }];
  
-
+var cheeses = [{x: 60, y: "brie"},
+			  {x: 100, y: "roquefort"},
+			  {x: 20, y: "venezuelan beaver cheese"}];
 	
 	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
 	
@@ -111,8 +113,8 @@ var birth = [
 	});
 	
 	svg0.Pie({
-		Data:[60,100,20]
-	}
+		Data:cheeses,
+		}
 		);
 		
 	
@@ -136,7 +138,7 @@ var birth = [
 	});
 		
 	svg1.Pie({
-		Data:[1]
+		Data:[{x:100}]
 	}
 		);
 		
@@ -160,7 +162,9 @@ var birth = [
 		yLabel: "legend and pie"
 	});
 	svg2.Pie({
-		Data:[1,20,60]
+		Data:[{x: 1, y: "pork"},
+			  {x: 20, y: "banana"},
+			  {x: 60, y: "chocolate"}]
 	}
 		);
 
@@ -205,19 +209,8 @@ var birth = [
 		Data: [ordinalData, ordinalData1],
 		type: "linear" //ignored for anything but grouped
 	});
-	
-	
-		
-	svg70.Labels(
-		{labels: 	
-		  [	
-			{content: "Rotation",	xyPos: [60,"Dextro"], width: 80	},
-			{content: "&alpha;",	xyPos:[60,"Levo"], width: 20},
-			{content: "<input type='number' min='0' max='100' step='1' value='100' id='numInput_2' class='dataLabel'/>&deg;", xyPos:[80,"Levo"], width: 100}
-		  ],
-		});
-		
-		 svg70.Axes({
+
+	svg70.Axes({
 		xPosPerc: .6, yPosPerc:0, //top, left corner
 		xPerc: .4, yPerc: .4,//full height and width
 		xaxisType: "linear",
@@ -228,14 +221,15 @@ var birth = [
 	});
 	
 	svg70.Pie({
-		Data:[60,30,10]
+		Data:ordinalData.concat(ordinalData1)
 	}
 		);
+		
 	//	<div id="pie11"><p>5. Pie with large and small values</p></div>
 	var svg5 = new MakeSVGContainer(
 		{node: d3.select("#pie11"),
-		maxWid: 600,
-		maxHt:500
+		maxWid: 300,
+		maxHt:300
 		}
 	);
 	svg5.Axes({
@@ -250,7 +244,7 @@ var birth = [
 
 	
 	svg5.Pie({
-		Data: [1,200]
+		Data: [{x: 1},{x: 200}]
 	});
 
 	//var IDList = [images5, axes5];
