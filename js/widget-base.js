@@ -122,7 +122,11 @@ function SVGContainer(config)
 	//maxWid, maxHt: the width and height of the graph region, without margins, integers
 
 	// create the svg element for this container of the appropriate size and scaling
-	this.svgObj = this.node.append("svg")							// append the new svg element to the parent node
+	/**
+	 * The svg element representing the container in the document
+	 * @type {d3.selection}
+	 */
+	this.svgObj = this.parentNode.append("svg")						// append the new svg element to the parent node
 		.attr("viewBox", "0 0 " + this.maxWid + " " + this.maxHt)	// set its size
 		.attr("preserveAspectRatio", "xMinYMin meet")				// make it scale correctly in single-column or phone layouts
 		.style("max-width", this.maxWid + "px")						// max width works to make it lay out to scale
@@ -142,94 +146,33 @@ function SVGContainer(config)
  *
  * @param {Object}	svgWidget		-The widget to draw in the container
  * @param {Object}	location		-The location in the container where the widget should be placed.
- * @param {number}	location.top	-Fraction offset of the top of the widget.
- * @param {number}	location.left	-Fraction offset of the left of the widget.
- * @param {number}	location.height	-Fraction of container height for the widget height.
- * @param {number}	location.width	-Fraction of container width for the widget width.
+ * @param {number}	location.topPercentOffset
+ *									 -Fraction offset of the top of the widget.
+ * @param {number}	location.leftPercentOffset
+ *									 -Fraction offset of the left of the widget.
+ * @param {number}	location.heightPercent
+ *									 -Fraction of container height for the widget height.
+ * @param {number}	location.widthPercent
+ *									 -Fraction of container width for the widget width.
  *
  ****************************************************************************/
 SVGContainer.prototype.append = function(svgWidget, location)
 {
 	// create a group for the widget to draw into that we can then position
 	var g = this.svgObj.append('g');
-	var h = d3.round(location.height * this.maxHt);
-	var w = d3.round(location.width * this.maxWid);
+	var h = d3.round(location.heightPercent * this.maxHt);
+	var w = d3.round(location.widthPercent * this.maxWid);
 	svgWidget.draw(g, {height: h, width: w});
 	
 	// position the widget
-	var top = d3.round(location.top * this.maxHt);
-	var left = d3.round(location.left * this.maxWid);
+	var top = d3.round(location.topPercentOffset * this.maxHt);
+	var left = d3.round(location.leftPercentOffset * this.maxWid);
 	g.attr('transform', 'translate(' + left + ',' + top + ')');
 };
 
 /**
- * Definition of the fields of the configuration object used by the
- * SVGWidgetCanvas constructor.
- * documentation, not to be called/instantiated.
- * @constructor
- */
-function SVGWidgetCanvasConfig()
-{
-	/**
-	 * String to uniquely identify this SVGWidgetCanvas
-	 * @type {string}
-	 */
-	this.id = "0";
-
-	/**
-	 * Top left corner of axis box as percentage of the width/height of the svg box
-	 * xPosPerc and yPosPerc are decimals telling how much of the container box to use,
-	 * typically between 0 and 1. Multiply the width and height of the hard-set svg box
-	 * @type {number}
-	 */
-	this.xPosPerc = 0;
-
-	/**
-	 * ...
-	 * @type {number}
-	 */
-	this.yPosPerc = 0;
-
-	/**
-	 * ...
-	 * @type {number}
-	 */
-	this.xPerc = 1;
-
-	/**
-	 * ...
-	 * @type {number}
-	 */
-	this.yPerc = 1; //full height and width
-
-	/**
-	 * ...
-	 * @type {*}
-	 */
-	this.Data = [lineData1];
-
-	/**
-	 * ...
-	 * @type {AxisFormat}
-	 */
-	this.xAxis = { type: "linear",
-				   ticks: 5,
-				   orientation: "bottom",
-				   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" };
-
-	/**
-	 * ...
-	 * @type {AxisFormat}
-	 */
-	this.yAxis = { type: "linear",
-				   ticks: 5,
-				   orientation: "right",
-				   label: "Labels can have extended chars (&mu;m)" };
-} // end of SVGWidgetCanvasConfig
-
-/**
- * Definition of the fields of the sub-configuration object used by the
- * axis format fields of the SVGWidgetCanvas constructor.
+ * An AxisFormat describes how to format the axis of a graph.
+ * objects w/ these fields are arguments to the Axes contructor.
  * @constructor
  */
 function AxisFormat()
@@ -306,20 +249,21 @@ function AxisFormat()
  * The bounds of each axis is defined by either the tick values or by
  * the data extents defined in that axis' AxisFormat.
  *
- * @param {SVGContainer} svgCont         -The svg container the axes should be constructed in.
- * @param {Object}       config          -The settings to configure these Axes.
- * @param {string}       config.id       -String to uniquely identify this Axes.
- * @param {Object}       config.size	 -The height and width that the axes must fit within.
- * @param {number}       config.size.width    -The fraction (0.0 - 1.0) of the container's width to use for the Axes.
- * @param {number}       config.size.height   -The fraction (0.0 - 1.0) of the container's height to use for the Axes.
- * @param {AxisFormat}   config.xAxisFormat -The formatting options for the horizontal (x) axis.
- * @param {AxisFormat}   config.yAxisFormat -The formatting options for the vertical (y) axis.
+ * @param {!d3.selection}
+ *						container			-The container svg element to append the axes element tree to.
+ * @param {Object}		config				-The settings to configure these Axes.
+ * @param {string}		config.id			-String to uniquely identify this Axes.
+ * @param {Object}		config.size			-The height and width that the axes must fit within.
+ * @param {number}		config.size.width	-The width (in pixels) to use for the Axes.
+ * @param {number}		config.size.height	-The height (in pixels) to use for the Axes.
+ * @param {AxisFormat}	config.xAxisFormat	-The formatting options for the horizontal (x) axis.
+ * @param {AxisFormat}	config.yAxisFormat	-The formatting options for the vertical (y) axis.
  *
  ****************************************************************************/
-function Axes(svgCont, config)
+function Axes(container, config)
 {
 	this.id = config.id;
-	this.container = svgCont;
+	this.container = container;
 
 	this.xFmt = config.xAxisFormat;
 	this.yFmt = config.yAxisFormat;
@@ -385,7 +329,7 @@ function Axes(svgCont, config)
 
 	var tickheight = 10;
 
-	this.group = svgCont.svgObj.append("g") //make a group to hold new scaled widget with axes
+	this.group = this.container.append("g") //make a group to hold new scaled widget with axes
 		//.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 		// push everything down so text doesn't slop over the top - We'll do this later after measurement
 		.attr("id", this.id) //name it so it can be manipulated or highlighted later

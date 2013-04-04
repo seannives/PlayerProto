@@ -118,7 +118,8 @@ function LineGraph(config)
  * The LineGraph widget provides a line (or scatter) graph visualization
  * of sets of data points.
  *
- * @param {Object}	container	-The container svg element to append the graph element tree to.
+ * @param {!d3.selection}
+ *					container	-The container svg element to append the graph element tree to.
  * @param {Object}	size		-The size in pixels for the graph
  * @param {number}	size.height	-The height for the graph.
  * @param {number}	size.width	-The width for the graph.
@@ -130,17 +131,18 @@ LineGraph.prototype.draw = function(container, size)
 	this.lastdrawn.size = size;
 	
 	// Create the axes (svg canvas) in the container
-	var dataPts = d3.merge(this.Data);
-	config.axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
-	config.axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
-	
 	var axesConfig = {
 			id: this.id + '_axes',
-			size: size,
+			size: this.lastdrawn.size,
 			xAxisFormat: this.xAxisFormat,
 			yAxisFormat: this.yAxisFormat,
 		};
-	this.lastdrawn.axes = new Axes(this.container, axesConfig);
+		
+	var dataPts = d3.merge(this.data);
+	axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
+	axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
+	
+	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
 
 	// alias for axes used by the old code below
 	var axesCont = this.lastdrawn.axes;
@@ -149,7 +151,7 @@ LineGraph.prototype.draw = function(container, size)
 	this.lastdrawn.xScale = axesCont.xScale;
 	this.lastdrawn.yScale = axesCont.yScale;
 
-	this.lastdrawn.linesId = "lines" + axesCont.id;
+	this.lastdrawn.linesId = this.id + '_lines';
 	var linesId = this.lastdrawn.linesId;
 	var prefix = this.lastdrawn.linesId;
 
@@ -168,34 +170,29 @@ LineGraph.prototype.draw = function(container, size)
 	{
 		var line = d3.svg.line()
 			//d3 utility function for generating all the point to point paths using the scales set up above
-			.interpolate("basis").x(function(d, i) {
-					return axesCont.xScale(d.x);
-				})
-			.y(function(d, i) {
-					return axesCont.yScale(d.y);
-				});
+			.interpolate("basis")
+				.x(function(d) {return axesCont.xScale(d.x);})
+				.y(function(d) {return axesCont.yScale(d.y);});
 
-		var traces = graph.selectAll("g.traces")
-			.data(this.Data)
+		var traces = graph.selectAll("g.traces");
+		traces = traces
+			.data(this.data);
+		traces = traces
 			.enter().append("g").attr("class", "traces");
 
 		//associate the clip path so it doesn't slop over the axes
 		traces.append("path").attr("clip-path", "url(#clip_" + linesId + ")")
 			//use the line function defined above to set the path data
-			.attr("d", function(d, i) {
-				return line(d);
-			})
+			.attr("d", function(d) {return line(d);})
 			//pick the colors sequentially off the list
-			.attr("class", function(d, i) {
-				return "trace stroke" + i;
-			});
+			.attr("class", function(d, i) {return "trace stroke" + i;});
 			
 		this.lastdrawn.traces = traces;
 
-		if (liteKey)
+		if (this.liteKey)
 		{
 			traces.attr("class", "traces liteable").attr("id", function(d, i) {
-					return prefix + "_" + liteKey[i];
+					return prefix + "_" + this.liteKey[i];
 				});
 		}
 
