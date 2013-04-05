@@ -103,7 +103,7 @@ function Readout(config, eventManager)
 		;
 
 		if(this.startVal){
-			readout.attr("value",startVal);
+			readout.attr("value",this.startVal);
 		} else if (placeHolder)
 		{
 			readout.attr("placeholder",placeHolder);
@@ -156,6 +156,21 @@ function Readout(config, eventManager)
 	}
 	
 
+	/* **************************************************************************
+	 * Readout.getValue                                                     *//**
+	 *
+	 * The Readout getValue method gets the value of the Readout
+	 * widget. This does NOT fire the changedValue event.
+	 *
+	 * @param {number} newValue	-The new value for the widget
+	 *
+	 ****************************************************************************/
+	Readout.prototype.getValue = function ()
+	{
+		// The value is kept in the input element which was given an id
+		return $("#" + this.id)[0].value;
+	}
+	
 	/* **************************************************************************
 	 * NumericInput                                                         *//**
 	 *
@@ -1225,24 +1240,24 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	var liteKey = config.liteKey;
 	var r = this.innerHt>this.innerWid ? this.innerWid/4 : this.innerHt/4;
 	//use 1/4 of smallest dimension of the axes box for a radius
-	var offset = 10+r; //padding from the axes
+	var offset = 20+r; //padding from the axes
 	//My thought was to put the pie in the upper left corner of a set of axes,
 	//occupying not more than half the width so that there was still room for a
 	//legend.  The legend is pretty much always necessary I think.
 
-	var xData = [],
-		yData = [],
-		sumData = 0;
+	var sumData = 0, last = this.Data.length;
 
 	this.Data.forEach(
 			function(o) {
-				xData.push(o.x);
 				sumData=sumData + o.x;
-				yData.push(o.y);
 			});
 
 	if(sumData<100){
-		this.Data.push({x: 100-sumData, y: thingy})
+	//if the sum of all the data points does not add up to 100%, then
+	//append a new data point to bring the total up to 100.
+	//When this is drawn, the "last" point will be detected as
+	//having extended the data range, and we'll color it white (blank).
+		this.Data.push({x: 100-sumData});
 	}
 
 	var arc = d3.svg.arc()  //this will create <path> elements for us using arc data
@@ -1250,10 +1265,17 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 
 	//make a group to hold the pie
 	var pieGroup = this.group.append("g").attr("class", "pie")
-	.attr("transform", "translate(" + offset + "," + r + ")"); //center it
+	.attr("transform", "translate(" + offset + "," + offset + ")"); //center it
 
-	var pieArcs = d3.layout.pie()           //this will create arc data for us given a list of values
-	        .value(function(d) { return d.x; });
+	pieGroup.append("circle")
+		.attr("cx",0).attr("cy",0).attr("r",r)
+		.style("stroke","#ddd").style("stroke-width",1);
+		
+	var pieArcs = d3.layout.pie()           
+	//pie function creates arc data for us given a list of values
+	        .value(function(d) { return d.x; })
+			.sort(null);
+	//null sort maintains order of input - critical for single value angles
 
 	var arcs = pieGroup.selectAll("g.slice") 
 	        .data(pieArcs(this.Data));           
@@ -1261,7 +1283,7 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	arcs.enter()
 	    .append("g")
 	    .attr("class", function(d, i) {
-				return "slice fill" + i;
+				return "slice fill" + ((i==last) ? "White" : i);
 			});    //color with predefined sequential colors
 
 	arcs.append("path")

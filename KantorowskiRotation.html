@@ -35,15 +35,19 @@
 				<p>For both equations, the numerator of the term in parentheses relates to the optically inactive portion of the sample. Halving this value provides the percentage of the enantiomer present in lesser amount. This same value needs to be added to the %ee to provide the percentage of the dominant enantiomer.
 </p>
 <p>
-The % ee can also be calculated if the composition of the mixture is known. The enantiomer present in smaller number is subtracted from the dominant enantiomer. Consider a sample that contains 35% of the dextrorotatory enantiomer and 65% of the levorotatory component. The % ee is then (65% – 35%) = 30%.
+The % ee can also be calculated if the composition of the mixture is known. The enantiomer present in smaller number is subtracted from the dominant enantiomer. Consider a sample that contains 35% of the dextrorotatory enantiomer and 65% of the levorotatory component. The % ee is given by
+<div>&#124;<span id="Levo"></span> &minus; <span id="Dextro"></span>&#124;
+                	= <span id="ee"></span> 
+                </div>
 				</p>
 			</div>
 			<div class="span6 rightCol">
-            	<div id="roto">rotational chart here</div>
+            	<div id="roto">
+                	<p> <span id="alpha"></span>  <span id="Rotate"></span>
+                	</p>
+                </div>
 				<div id="barChart0"></div>
-				<p>&#124;<span id="Levo"></span> &minus; <span id="Dextro"></span>&#124;
-                	= <span id="ee"></span> 
-                </p>
+				
 			</div>
 		</div>
 	</div>
@@ -64,33 +68,31 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	//is created for every page, and then passed to the widgets in that page
 	//that must talk to it.
 	var eventManager = new EventManager();
+	
+	var levoData =   [ { x: 65, y: "Levo" } ];
+	var dextroData = [ { x: 35, y: "Dextro" } ];
 
-	// Create the Levo numeric input widget
+// Create the Levo numeric input widget
 	var inputLevo = new NumericInput({
 			node: d3.select("#Levo"),
 			id: 'levo',
-			startVal: 50,
+			startVal: 65,
 			minVal:0,
 			maxVal: 100,
 			unit: "%",
 			label: "Levo"
 		}, eventManager);
 
-	// Create the Dextro numeric input widget
+// Create the Dextro numeric input widget
 	var inputDextro = new NumericInput({
 			node: d3.select("#Dextro"),
 			id: 'dextro',
-			startVal: 50,
+			startVal: 35,
 			minVal:0,
 			maxVal: 100,
 			unit: "%",
 			label: "Dextro"
 		}, eventManager);
-
-
-	var levoData =   [ { x: 50, y: "Levo" } ];
-	var dextroData = [ { x: 50, y: "Dextro" } ];
-
 
 	var svg70 = new MakeSVGContainer(
 		{
@@ -124,25 +126,70 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		//because they are of equal length to start
 	});
 	
+	var diff = Math.abs(inputDextro.startVal-inputLevo.startVal);
+	
 	// Create the ee readout widget
 	var eeReadout = new Readout({
 		node: d3.select("#ee"),
         id: 'eeRead',
-		startVal: Math.abs(inputDextro.startVal-inputLevo.startVal),
+		startVal: diff,
 		readOnly: true,
 		size: 4,
 		unit: "%", 
 		label: "ee"
 	}, eventManager);
 	
-	
+		// Create the alpha numeric input widget
+	var alpha = new NumericInput({
+			node: d3.select("#alpha"),
+			id: 'alpha',
+			startVal: 40,
+			minVal:0,
+			maxVal: 100,
+			unit: "%",
+			label: "Specific rotation (&alpha;)"
+		}, eventManager);
 
-	var lineData = [
-			{x: 50, y: .2},
-			{x: 50, y: .8},
-		];
+	// Create the rotation readout widget
+	var rot = new Readout({
+			node: d3.select("#Rotate"),
+			id: 'rotate',
+			startVal: alpha.startVal * diff/100,
+			readOnly: true,
+			size: 4,
+			unit:"&deg;", 
+			label: "Rotation"
+		}, eventManager);
+
+
+
+	var pieDish = new MakeSVGContainer(
+		{
+			node: d3.select("#roto"),
+			maxWid: 200,
+			maxHt: 200
+		});
+
+	pieDish.Axes( 
+		{
+			
+			xPosPerc: 0, yPosPerc:0,
+			xPerc: 1, yPerc: 1,
+			xaxisType: "linear",  yaxisType: "linear",
+			xTicks: 0, yTicks: 0,
+			xOrient: "top", yOrient: "right",
+			xLabel: "Rotation (&deg;)"
+		});
 
 	
+	pieDish.Pie({
+		Data: [{x:rot.getValue()/3.60}]
+	});
+	
+	//This is the marker that shows the 0/180 rotation line
+	pieDish.LineMarkers({
+		xMarks: [{x:(1/3), label: "&minus; 0&deg +"}] 
+	});
 
 	// Modify the value of the data for the bar graph when the
 	//numerical input changes.  So, subscribe to the event emitted by inputLevo,
@@ -156,13 +203,6 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	eventManager.subscribe(inputDextro.changedValueEventId,
 						   function(ed) { handleInputValueChanged(inputLevo, ed.value); });
 	
-	//eventManager.subscribe(inputLevo.changedValueId, updateeeValue);
-	//eventManager.subscribe(inputLevo.changedValueId, updateLineData);
-
-	//eventManager.subscribe(inputDextro.changedValueId, updateeeValue);
-	//eventManager.subscribe(inputDextro.changedValueId, updateLineData);
-
-
 
 	/* **************************************************************************
 	 * handleInputValueChanged                                              *//**
@@ -184,6 +224,8 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		var diff = Math.abs(inputLevo.getValue() - inputDextro.getValue());
 		eeReadout.setValue(diff);
 		updateBarChart();
+		updatePieChart();
+		rot.setValue(alpha.getValue() * diff/100);
 	}
 
 	/* **************************************************************************
@@ -209,6 +251,18 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		
 	}
 
+	function updatePieChart()
+	{
+		console.log("TODO: fired updatePieChart log");
+		pieDish.Pie({
+			Data: [{x:rot.getValue()/3.60}],
+			});
+		var newMark = (levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0];
+		svg70.LineMarkers( {
+			xMarks: [newMark]
+			});
+		
+	}
 		
 	
 	</script>
