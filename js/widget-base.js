@@ -292,40 +292,51 @@ function Axes(container, config)
 	var xTicks = this.xFmt.ticks;
 	var yTicks = this.xFmt.ticks;
 
+	// Add to the margin area for drawing the axis labels depending on their placement and existence
 	var xOrient = this.xFmt.orientation;
 	var yOrient = this.yFmt.orientation;
+	var hasXAxisLabel = 'label' in this.xFmt;
+	var hasYAxisLabel = 'label' in this.yFmt;
 
-	if ((xOrient === "top") && this.xFmt.label)
+	if (hasXAxisLabel))
 	{
-		this.margin.top = this.margin.top + 40;
-		console.log("top margin increased for top label");
-		//catches the case where the whole graph renders to fit within the available SVG,
-		//but cuts off at the top because it doesn't get pushed down far enough
-	}
-	else if ((xOrient === "bottom") && this.xFmt.label)
-	{
-		this.margin.bottom = this.margin.bottom + 50;
+		if (xOrient == 'top')
+		{
+			this.margin.top = this.margin.top + 40;
+			console.log("top margin increased for top label");
+			//catches the case where the whole graph renders to fit within the available SVG,
+			//but cuts off at the top because it doesn't get pushed down far enough
+		}
+		else // xOrient === "bottom" (only other valid value)
+		{
+			this.margin.bottom = this.margin.bottom + 50;
+		}
 	}
 
-	if ((yOrient === "left") && this.yFmt.label)
+	if (hasYAxisLabel))
 	{
-		this.margin.left = this.margin.left + 50;
-		console.log("left margin increased for y label");
-		//catches the case where the whole graph renders to fit within the available SVG,
-		//but cuts off at the right because it gets pushed over too far
-	}
-	else if ((yOrient === "right") && this.yFmt.label)
-	{
-		this.margin.right= this.margin.right + 40;
-		console.log("right margin increased for y label");
+		if (yOrient === 'left')
+		{
+			this.margin.left = this.margin.left + 50;
+			console.log("left margin increased for y label");
+			//catches the case where the whole graph renders to fit within the available SVG,
+			//but cuts off at the right because it gets pushed over too far
+		}
+		else // yOrient === "right" (only other valid value)
+		{
+			this.margin.right= this.margin.right + 40;
+			console.log("right margin increased for y label");
+		}
 	}
 
 	//xPerc and yPerc are decimals telling how much of the container box to use,
 	//typically between 0 and 1. Multiply the width and height of the hard-set svg box
 	//used to calculate the aspect ratio when sizing viewport up or down
 	// @todo fix this comment -mjl
-	this.innerWid = config.size.width - this.margin.left - this.margin.right;
-	this.innerHt = config.size.height - this.margin.top - this.margin.bottom;
+	
+	// The data area is the area that data points will be drawn in.
+	var dataAreaWidth = config.size.width - this.margin.left - this.margin.right;
+	var dataAreaHeight = config.size.height - this.margin.top - this.margin.bottom;
 
 	var tickheight = 10;
 
@@ -351,7 +362,7 @@ function Axes(container, config)
 		if (this.xFmt.type == "linear")
 		{
 			this.xScale = d3.scale.linear().domain(xExtent)
-				.rangeRound([0, this.innerWid]);
+				.rangeRound([0, dataAreaWidth]);
 			//xScale is now a linear function mapping x-data to the width of the drawing space
 
 			//TODO put in logic to reverse the x axis if the axis is on the right,
@@ -365,7 +376,7 @@ function Axes(container, config)
 			var high = Math.ceil(Math.log(xExtent[1]) / Math.log(10));
 
 			this.xScale = d3.scale.log().domain([0.99 * Math.pow(10, low), Math.pow(10, high)])
-				.rangeRound([0, this.innerWid]);
+				.rangeRound([0, dataAreaWidth]);
 			//xScale is now a log-scale function mapping x-data to the width of the drawing space
 	    }
 
@@ -374,7 +385,7 @@ function Axes(container, config)
 		if (this.xFmt.type == "double positive")
 		{
 			this.xScale = d3.scale.linear().domain(xExtent)
-				.rangeRound([0, this.innerWid]);
+				.rangeRound([0, dataAreaWidth]);
 			//xScale is now a function mapping x-data to the width of the drawing space
 
 			var negTicks = [];
@@ -404,7 +415,7 @@ function Axes(container, config)
 
 			var rightPositive = d3.scale.linear()
 				.domain([0, xExtent[1]])
-				.rangeRound([this.xScale(0), this.innerWid]);
+				.rangeRound([this.xScale(0), dataAreaWidth]);
 		}
 
 		// Format the ticks w/ the general format using a precision of 1 significant digit.
@@ -445,7 +456,7 @@ function Axes(container, config)
 		//now draw the horizontal axis
 		this.xaxis = this.group.append("g")
 			.call(this.xAxis)
-			.attr("transform", "translate(0," + ((xOrient == "bottom") ? this.innerHt : 0) + ")")
+			.attr("transform", "translate(0," + ((xOrient == "bottom") ? dataAreaHeight : 0) + ")")
 			//move it down if the axis is at the bottom of the graph
 			.attr("class", "x axis");
 
@@ -453,7 +464,7 @@ function Axes(container, config)
 		if (this.xFmt.type == "double positive")
 		{
 			this.xaxis.append("g").call(this.leftXAxis)
-				.attr("transform", "translate(0," + ((xOrient == "bottom") ? this.innerHt : 0) + ")")
+				.attr("transform", "translate(0," + ((xOrient == "bottom") ? dataAreaHeight : 0) + ")")
 				//move it down if the axis is at the bottom of the graph
 				.attr("class", "x axis");
 				// make the x-axis label, if it exists
@@ -465,7 +476,7 @@ function Axes(container, config)
 			this.xLabelObj = this.xaxis.append("foreignObject")
 				.attr("x", 0)
 				.attr("y", ((xOrient == "top") ? (-1.5) : 1) * (xaxisDims.height + 2))
-				.attr("width", this.innerWid).attr("height", 40);
+				.attr("width", dataAreaWidth).attr("height", 40);
 
 			this.xLabelObj.append("xhtml:body").style("margin", "0px")
 				//this interior body shouldn't inherit margins from page body
@@ -482,7 +493,7 @@ function Axes(container, config)
 		{
 			// @todo changed the domain from yRange to yTicks. The intention is to have the graph set the yTicks when the y axis is ordinal from the data. -mjl
 			this.yScale = d3.scale.ordinal().domain(yTicks) //lists all ordinal y vals
-				.rangeRoundBands([this.innerHt, 0], 0.4);
+				.rangeRoundBands([dataAreaHeight, 0], 0.4);
 
 			//width is broken into even spaces allowing for bar width and
 			//a uniform white space between each, in this case, 20% white space
@@ -501,7 +512,7 @@ function Axes(container, config)
 			if (this.yFmt.type == "linear")
 			{
 				this.yScale = d3.scale.linear().domain(yExtent)
-					.rangeRound([this.innerHt, 0]);
+					.rangeRound([dataAreaHeight, 0]);
 			}
 	    }
 
@@ -519,7 +530,7 @@ function Axes(container, config)
 		console.log("ytick specified explicitly?", yTicks, $.isArray(yTicks), this.yAxis.ticks());
 
 		this.yaxis = this.group.append("g")
-			.attr("transform", "translate(" + ((yOrient == "right") ? this.innerWid : 0) + ",0)")
+			.attr("transform", "translate(" + ((yOrient == "right") ? dataAreaWidth : 0) + ",0)")
 			//move it over if the axis is at the bottom of the graph
 			.call(this.yAxis).attr("class", "y axis");
 
@@ -529,15 +540,17 @@ function Axes(container, config)
 			var yaxisDims = this.yaxis.node().getBBox();
 			var yLabelObj = this.yaxis.append("foreignObject")
 				.attr("transform", "translate(" + (((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width)
-				   + ((yOrient == "left") ? -20:0)) + ","
-				   + (this.innerHt) + ") rotate(-90)")
+				   + ((yOrient == "left") ? -20 : 0)) + ","
+				   + (dataAreaHeight) + ") rotate(-90)")
 				// move it out of the way of the ticks to left or right depending on axis orientation
-				.attr("width", this.innerHt).attr("height", 40);
+				.attr("width", dataAreaHeight).attr("height", 40);
 
 			var yLabText = yLabelObj.append("xhtml:body").style("margin", "0px")
 				//this interior body shouldn't inherit margins from page body
-				.append("div").attr("class", "axisLabel").attr("id","label" + this.id)
-				.html(this.yFmt.label) //make the label
+				.append("div")
+					.attr("id","label" + this.id)
+					.attr("class", "axisLabel")
+					.html(this.yFmt.label) //make the label
 				;
 
 			console.log("label size ", $('#label' + this.id).height());//toDO use this to correctly move to the left of axis
@@ -562,21 +575,21 @@ function Axes(container, config)
 			this.margin.left = this.margin.left + addMargin ;
 		}
 
-		this.innerWid = this.innerWid - this.margin.right - this.margin.left;
+		dataAreaWidth = dataAreaWidth - this.margin.right - this.margin.left;
 		//using the new dimensions, redo the scale and axes
-		this.xScale.rangeRound([0, this.innerWid]);
+		this.xScale.rangeRound([0, dataAreaWidth]);
 		this.xAxis.scale(this.xScale);
-		console.log("x margins increased, new inner width is ", this.innerWid, " margin ", this.margin.left, this.margin.right);
+		console.log("x margins increased, new inner width is ", dataAreaWidth, " margin ", this.margin.left, this.margin.right);
 		this.xaxis.call(this.xAxis);
 		if (this.yaxis)
 		{
-			this.yaxis.attr("transform", "translate(" + ((yOrient == "right") ? this.innerWid : 0) + ",0)");
+			this.yaxis.attr("transform", "translate(" + ((yOrient == "right") ? dataAreaWidth : 0) + ",0)");
 		}
 
 		if (this.xLabelObj)
 		{
 			this.xLabelObj.attr("y", d3.round(((xOrient == "top") ? (-1.4) : 1) * (xaxisDims.height + 5)))
-				.attr("width", this.innerWid).attr("height", 50);
+				.attr("width", dataAreaWidth).attr("height", 50);
 		}
 	}
 
@@ -592,39 +605,39 @@ function Axes(container, config)
 			this.margin.bottom = this.margin.bottom + addMargin;
 		}
 
-		this.innerHt = this.innerHt - this.margin.top - this.margin.bottom;
+		dataAreaHeight = dataAreaHeight - this.margin.top - this.margin.bottom;
 		//using the new dimensions, redo the scale and axes
 		if (this.yFmt.type=="ordinal")
 		{
-			this.yScale.rangeRoundBands([this.innerHt, 0],.3);
+			this.yScale.rangeRoundBands([dataAreaHeight, 0],.3);
 			console.log("ordinal bandsize ", this.yScale.rangeBand());
 			//width is broken into even spaces allowing for bar width and
 			//a uniform white space between each, in this case, 30% white space
 		}
 		else
 		{
-			this.yScale.rangeRound([this.innerHt, 0]);
+			this.yScale.rangeRound([dataAreaHeight, 0]);
 		}
 
 		this.yAxis.scale(this.yScale);
-		console.log("y margins increased, new inner height is ", this.innerHt, " margin: ", this.margin.top, this.margin.bottom);
+		console.log("y margins increased, new inner height is ", dataAreaHeight, " margin: ", this.margin.top, this.margin.bottom);
 		this.yaxis.call(this.yAxis);
 		if (this.xaxis)
 		{
-			this.xaxis.attr("transform", "translate(0," + ((xOrient == "bottom") ? this.innerHt : 0) + ")");
+			this.xaxis.attr("transform", "translate(0," + ((xOrient == "bottom") ? dataAreaHeight : 0) + ")");
 		}
 
 		if (yLabelObj)
 		{
 			yLabelObj.attr("transform", "translate(" + d3.round(((yOrient == "left") ? (-1.1) : 1.1) * (yaxisDims.width)
 				   + ((yOrient == "left") ? -19 : 0)) + ","
-				   + (this.innerHt) + ") rotate(-90)")
+				   + (dataAreaHeight) + ") rotate(-90)")
 				// move it out of the way of the ticks to left or right depending on axis orientation
-				.attr("width", this.innerHt);
+				.attr("width", dataAreaHeight);
 		}
 	}
 
 	//and finally, with the margins all settled, move the group down to accomodate the
 	//top and left margins and position
 	this.group.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-} // end makeAxis method
+} // end Axes constructor
