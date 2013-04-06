@@ -223,6 +223,10 @@ opacity: 0.8;
 .fill6{
 	fill: #666666;
 	}
+
+.fillWhite {
+	fill: #fff;
+	}
 	
 .stroke0{
 	stroke: #2C6CB8;
