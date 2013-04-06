@@ -186,7 +186,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 
 	
 	pieDish.Pie({
-		Data: [{x:rot.getValue()/3.60}],
+		Data: [{x:inputAlpha.startVal * diff/360}],
 		xYPos: [.5,.5]
 	});
 	
@@ -232,10 +232,9 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		var diff = inputDextro.getValue() - inputLevo.getValue(),
 		    absDiff = Math.abs(diff);
 		eeReadout.setValue(absDiff);
+		rot.setValue(inputAlpha.getValue() * diff/100);
 		updateBarChart();
 		updatePieChart();
-		console.log("alpha: ", inputAlpha.getValue(), inputLevo.getValue());
-		rot.setValue(inputAlpha.getValue() * diff/100);
 	}
 	
 	
@@ -288,7 +287,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	{
 		console.log("TODO: fired updatePieChart log");
 		pieDish.Pie({
-			Data: [{x:rot.getValue()/3.60}],
+			Data: [{x:rot.getValue()/3.6}],
 			xYPos: [0.5,0.5]
 			});
 		var newMark = {x:(1/2), label: d3.format("+0r2")(rot.getValue()) + "&deg;"};
