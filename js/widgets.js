@@ -1217,6 +1217,9 @@ function dragUpdate(xData, allData, range, scale) {
  * @param Data					array of objects {x: <val>, y: "label"}
  *								specifies the percent. Same format as for bar charts.
  *
+ * @param xYPos					two-element array specifying xy position
+ *								of center wrt the local coordinate system
+ *
  * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
  *
@@ -1238,7 +1241,8 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	this.Data = config.Data;
 	var that = this;
 	var liteKey = config.liteKey;
-	var r = this.innerHt>this.innerWid ? this.innerWid/4 : this.innerHt/4;
+	var xYPos = config.xYPos;
+	var r = this.innerHt>this.innerWid ? this.innerWid/3 : this.innerHt/3;
 	//use 1/4 of smallest dimension of the axes box for a radius
 	var offset = 20+r; //padding from the axes
 	//My thought was to put the pie in the upper left corner of a set of axes,
@@ -1249,7 +1253,7 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 
 	this.Data.forEach(
 			function(o) {
-				sumData=sumData + o.x;
+				sumData=sumData + Math.abs(o.x);
 			});
 
 	if(sumData<100){
@@ -1259,15 +1263,26 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	//having extended the data range, and we'll color it white (blank).
 		this.Data.push({x: 100-sumData});
 	}
+	
+	
+	if(this.Data[0].x < 0){
+		this.Data[0].x = - this.Data[0].x;
+		//this only works if we assume that for angles, which can be 
+		//negative, that there is only one in the data series.
+		this.Data.reverse();	
+		last = 0;
+	}
 
 	var arc = d3.svg.arc()  //this will create <path> elements for us using arc data
 	        .outerRadius(r);//use one dimension of the axes box for a radius
 
 	//make a group to hold the pie
 	var pieGroup = this.group.append("g").attr("class", "pie")
-	.attr("transform", "translate(" + offset + "," + offset + ")"); //center it
+	.attr("transform", "translate(" + that.xScale(xYPos[0]) + "," + that.yScale(xYPos[1]) + ")"); 			    //center it on supplied xy position
 
 	pieGroup.append("circle")
+	//draw a gray circle defining 100% of pie, for case where it's not 
+	//all filled
 		.attr("cx",0).attr("cy",0).attr("r",r)
 		.style("stroke","#ddd").style("stroke-width",1);
 		

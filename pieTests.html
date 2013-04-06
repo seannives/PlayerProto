@@ -67,6 +67,7 @@ var cheeses = [{x: 50, y: "brie"},
 	
 	svg0.Pie({
 		Data:cheeses,
+		xYPos: [.5,.5]
 		}
 		);
 		
@@ -91,7 +92,8 @@ var cheeses = [{x: 50, y: "brie"},
 	});
 		
 	svg1.Pie({
-		Data:[{x:100}]
+		Data:[{x:100}],
+		xYPos: [.5,.5]
 	}
 		);
 		
@@ -117,8 +119,10 @@ var cheeses = [{x: 50, y: "brie"},
 	svg2.Pie({
 		Data:[{x: 5, y: "pork"},
 			  {x: 50, y: "banana"},
-			  {x: 90, y: "chocolate"}]
-	}
+			  {x: 90, y: "chocolate"}],
+		xYPos: [1/3,.5]
+			  
+		}
 		);
 
 	svg2.Legend({
@@ -174,7 +178,8 @@ var cheeses = [{x: 50, y: "brie"},
 	});
 	
 	svg70.Pie({
-		Data:ordinalData.concat(ordinalData1)
+		Data:ordinalData.concat(ordinalData1),
+		xYPos: [.5,.5]
 	}
 		);
 		
@@ -197,7 +202,8 @@ var cheeses = [{x: 50, y: "brie"},
 
 	
 	svg5.Pie({
-		Data: [{x: 20},{x: 10}]
+		Data: [{x: 20},{x: 10}],
+		xYPos: [2/3,.5]
 	});
 
 //	<div id="pie11"><p>6. Pie with values <100 10</p></div>
@@ -217,7 +223,8 @@ var cheeses = [{x: 50, y: "brie"},
 	});
 	
 	svg6.Pie({
-		Data: [{x: 10}]
+		Data: [{x: 10}],
+		xYPos: [.5,.5]
 	});
 	
 	
@@ -238,7 +245,8 @@ var cheeses = [{x: 50, y: "brie"},
 	});
 	
 	svg7.Pie({
-		Data: [{x: 80}]
+		Data: [{x: 80}],
+		xYPos: [.5,.5]
 	});
 	//var IDList = [images5, axes5];
 	
