@@ -317,20 +317,15 @@ for(i=0;i<dataPts;i++){
 
 	var textchunks = new Callouts (
 		{node: d3.select("#callOutHere"),
-		labels: 	
+		textBits: 	
 		  [	
-			{content: "Chapter 2 LO: Describe Earth's orientation to and revolution around the Sun and explain how they cause seasons.",
-			xyPos: [0,1], width: svg1.innerWid
+			{content: "Chapter 2 LO: Describe Earth's orientation to and revolution around the Sun and explain how they cause seasons."
 		},
 			{content: "The thin veil of atmosphere includes relatively small percentages of gases such as carbon dioxide, methane, and water vapor absorb radiation emitted by Earth creating a greenhouse effect.",
-			xyPos:[0,1], width: svg1.innerWid
 			},
 			{content: "The constant tilt and parallelism of Earth's axis as it revolves around the Sun creates the annual variation in day length and Earth's seasons.",
-			xyPos:[0,1], width: svg1.innerWid
 			},
-			{content:"Heat is transferred by radiation, in the form of electromagnetic waves, conduction, which is caused by molecular collision, and convection, or molecular circulation. ",
-			xyPos:[0,1], width: svg1.innerWid
-			}
+			{content:"Heat is transferred by radiation, in the form of electromagnetic waves, conduction, which is caused by molecular collision, and convection, or molecular circulation. "	}
 		  ],
 		liteKey: [0,1,2,3]
 		}
@@ -368,7 +363,7 @@ for(i=0;i<dataPts;i++){
 	});
 
 	svg70.Labels(
-		{type: "bullets",
+		{type: "numbered",
 		labels: 	
 		  [
 		{content: "TOP left", xyPos: [0,1], width: 100	},

@@ -109,13 +109,13 @@ var bookConfig = {
                 type: "objective",
                 url: "KantorowskiRotation.html",
                 id: "n.3.1",
-                title: "Kantorowski"
+                title: "Kantorowski Enantiomers Event Bars and Rotation"
             },
             {
                 type: "objective",
-                url: "NeffPop.html",
+                url: "NeffReactor.html",
                 id: "n.3.2",
-                title: "Neff Population Dynamics"
+                title: "Neff Reactor Stepped Image"
             },
             {
                 type: "objective",
