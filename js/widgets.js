@@ -116,14 +116,14 @@ function Readout(config, eventManager)
 		this.rootEl.append("span").html(this.unit?this.unit:"");
 
 		this.rootEl.on('change', function()
-										{
-										//this publishes the onChange event to the eventManager
-										//passing along the updated value in the numeric field.
-										//note that jQuery returns an array for selections, the
-										//first element of which is the actual pointer to the
-										//tag in the DOM
-											that.eventManager.publish(that.changedValueId,
-												{value: $("#" + that.id)[0].value});
+				{
+			//this publishes the onChange event to the eventManager
+			//passing along the updated value in the numeric field.
+			//note that jQuery returns an array for selections, the
+			//first element of which is the actual pointer to the
+			//tag in the DOM
+			that.eventManager.publish(that.changedValueId,
+							{value: $("#" + that.id)[0].value});
 										} );
 
 		// Define private handlers for subscribed events
@@ -215,14 +215,14 @@ function NumericInput(config, eventManager)
 		this.rootEl.append("span").html(this.unit ? this.unit : "");
 
 		this.rootEl.on('change', function()
-									{
-										//this publishes the onChange event to the eventManager
-										//passing along the updated value in the numeric field.
-										//note that jQuery returns an array for selections, the
-										//first element of which is the actual pointer to the
-										//tag in the DOM
-										that.eventManager.publish(that.changedValueEventId,
-											{value: $("#" + that.id)[0].value});
+				{
+			//this publishes the onChange event to the eventManager
+			//passing along the updated value in the numeric field.
+			//note that jQuery returns an array for selections, the
+			//first element of which is the actual pointer to the
+			//tag in the DOM
+				that.eventManager.publish(that.changedValueEventId,
+								{value: $("#" + that.id)[0].value});
 									} );
 
 		// Define private handlers for subscribed events
@@ -275,7 +275,8 @@ function NumericInput(config, eventManager)
  * @param node					the container node in the document
  * TODO: should make this a jQuery style node, right now it's d3 selection
  *
- * @param labels				array of strings
+ * @param textBits				array of objects with names content: strings
+ *								and tag:
  *
  * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
@@ -290,8 +291,8 @@ function Callouts(config,eventManager) { //begin callout generator
 
 	this.node = config.node;
 	this.eventManager = eventManager;
-	this.labels = config.labels;
-	var numLabels = this.labels.length;
+	var textBits = config.textBits;
+	var numLabels = textBits.length;
 	var myID= "label" + this.id + "_";
 	var liteKey = config.liteKey;
 
@@ -300,7 +301,7 @@ function Callouts(config,eventManager) { //begin callout generator
 	//TODO make the class or the style so that these stack up and only one is visible
 	//use the event handlers
 	this.rootEl = this.node.append("div").attr("id", myID).style("display","block");
-	var labels = this.rootEl.selectAll("span.labels").data(this.labels);
+	var labels = this.rootEl.selectAll("span.labels").data(textBits);
 
 	labels.enter()
 	.append("span")
@@ -318,6 +319,12 @@ function Callouts(config,eventManager) { //begin callout generator
 	//TODO make this controllable by an event
 	d3.select("#" + myID + (liteKey?liteKey[0]:0)).style("display","block");
 
+
+ // Define private handlers for subscribed events
+	function displayCallout(eventDetails)
+		{
+			d3.select("#" + myID+eventDetails).style("display","block");
+		}
 } //end MakeCallouts object generator function
 
 
@@ -896,13 +903,13 @@ MakeAxes.prototype.setState = function(liteKey) {
  *
  * @param config				an object containing the following names:
  *
- * @param xyPos					string specifying "box" or "line" for markers.
- * TODO: need to add symbols for scatter plots, including custom images
- * @param xPos, yPos			Strings for orientation "left"/"right" and "bottom"/"top"
- *
  * @param labels				array of objects with keys content: string with HTML markup,
  *								xyPos: an [x,y] array to orient the position on the axes grid,
  * 								in local coordinates and width: the width of the label
+ *								TODO: need a better answer than hard-set width
+ *
+ * @param type					string specifying bullets for dots, numbered
+ * 								for dots and #, or anything else for just labels
  *
  * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
@@ -911,20 +918,20 @@ MakeAxes.prototype.setState = function(liteKey) {
  * TODO: we need some sort of autowidth intelligence on these, but I don't
  * know how to reconcile that with giving user control over wrapping
  ****************************************************************************/
-MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image object generator
-
-
+MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labeled image object generator
 
 	var myID  = "label" + this.id + "_";
 	this.labels = {id: myID,
-				  labels: config.labels,
-				  eventFunc: this.setLabelLite,
-				  type: config.type
+				  labels: config.labels
 				};
+	this.selectedEventId = myID + 'Number';
+	
+	this.eventManager = eventManager;
+	
+	var that=this;
+	var type = config.type;
 	var numLabels = this.labels.labels.length;
 	var liteKey = config.liteKey;
-
-	var xScale = this.xScale, yScale = this.yScale;
 
 	var graph = this.group.append("g") //make a group to hold labels
 	.attr("class", "labels")
@@ -939,10 +946,11 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 	merge.append("feMergeNode").attr("in","SourceGraphic");
 
 	this.labelCollection = graph.selectAll("g.label")
-		.data(this.labels.labels).enter()
+		.data(this.labels.labels);
+	this.labelCollection.enter()
 		.append("g")
 		.attr("transform", function(d, i) {
-			return "translate(" + xScale(d.xyPos[0]) + "," + yScale(d.xyPos[1]) + ")";
+			return "translate(" + that.xScale(d.xyPos[0]) + "," + that.yScale(d.xyPos[1]) + ")";
 		});
 
 	this.labelCollection.append("foreignObject")
@@ -960,14 +968,23 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 				}
 				); //make the label
 
-	if(this.labels.type == "bullets"){
+	if(type == "bullets" || type == "numbered"){
 		this.labelCollection.append("circle")
-		.attr("cx",0).attr("cy",0).attr("r",10)
-		.attr("class",function(d, i) {
-				return "fill"+i;
-				});
+		.attr("cx",0).attr("cy",0).attr("r",14)
+		.style("fill","black").style("stroke","white")
+		.style("stroke-width",2);
 	}
 
+	if(type == "numbered"){
+		this.labelCollection.append("text")
+		.style("fill","white")
+		.attr("text-anchor","middle")
+		.attr("alignment-baseline","middle")
+		.text(function(d, i) {
+				return i+1;
+				});
+	}
+	
 		if (liteKey) {
 			this.labelCollection.attr("id", function(d, i) {
 				return myID + liteKey[i];
@@ -975,6 +992,32 @@ MakeSVGContainer.prototype.Labels = function(config) { //begin labeled image obj
 			//name it so it can be manipulated or highlighted later
 			.attr("class", "liteable");
 		}
+		
+	
+	this.labelCollection.on('click', function()
+		{
+		//this publishes the onClick on a label to the eventManager
+		//passing along the number in the enumeration.
+	
+		that.eventManager.publish(that.changedValueEventId,
+					{value: function(d,i){
+								return i;}
+					});
+		});
+	// Define private handlers for subscribed events
+	function selectedLabelHandler(eventDetails)
+		{
+		
+		var set= d3.select(this);
+		set.select(".markerLabel")
+		.transition().duration(200)
+		.style("color", "#1d95ae")
+		.style("font-weight", "600");
+		console.log("Setting label lites", set);
+		}
+
+		// Subscribe to own events, if appropriate
+		eventManager.subscribe(that.selectedEventId, selectedLabelHandler);
 } //end MakeLabels object generator function
 
 /*  MakeAxes.prototype.setLabelLite = function(liteKey) {
@@ -1217,6 +1260,9 @@ function dragUpdate(xData, allData, range, scale) {
  * @param Data					array of objects {x: <val>, y: "label"}
  *								specifies the percent. Same format as for bar charts.
  *
+ * @param xYPos					two-element array specifying xy position
+ *								of center wrt the local coordinate system
+ *
  * @param liteKey 				integers setting correspondance with other page
  * 								elements in other widgets
  *
@@ -1238,7 +1284,8 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	this.Data = config.Data;
 	var that = this;
 	var liteKey = config.liteKey;
-	var r = this.innerHt>this.innerWid ? this.innerWid/4 : this.innerHt/4;
+	var xYPos = config.xYPos;
+	var r = this.innerHt>this.innerWid ? this.innerWid/3 : this.innerHt/3;
 	//use 1/4 of smallest dimension of the axes box for a radius
 	var offset = 20+r; //padding from the axes
 	//My thought was to put the pie in the upper left corner of a set of axes,
@@ -1249,7 +1296,7 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 
 	this.Data.forEach(
 			function(o) {
-				sumData=sumData + o.x;
+				sumData=sumData + Math.abs(o.x);
 			});
 
 	if(sumData<100){
@@ -1259,15 +1306,26 @@ MakeSVGContainer.prototype.Pie = function(config,eventManager) { //begin area ma
 	//having extended the data range, and we'll color it white (blank).
 		this.Data.push({x: 100-sumData});
 	}
+	
+	
+	if(this.Data[0].x < 0){
+		this.Data[0].x = - this.Data[0].x;
+		//this only works if we assume that for angles, which can be 
+		//negative, that there is only one in the data series.
+		this.Data.reverse();	
+		last = 0;
+	}
 
 	var arc = d3.svg.arc()  //this will create <path> elements for us using arc data
 	        .outerRadius(r);//use one dimension of the axes box for a radius
 
 	//make a group to hold the pie
 	var pieGroup = this.group.append("g").attr("class", "pie")
-	.attr("transform", "translate(" + offset + "," + offset + ")"); //center it
+	.attr("transform", "translate(" + that.xScale(xYPos[0]) + "," + that.yScale(xYPos[1]) + ")"); 			    //center it on supplied xy position
 
 	pieGroup.append("circle")
+	//draw a gray circle defining 100% of pie, for case where it's not 
+	//all filled
 		.attr("cx",0).attr("cy",0).attr("r",r)
 		.style("stroke","#ddd").style("stroke-width",1);
 		
@@ -1612,6 +1670,24 @@ MakeLineGraph.prototype.setState = function(liteKey) {
 };
 */
 
+/* **************************************************************************
+ * ScalableImage                                                        *//**
+ *
+ * Method of MakeSVGContainer: 	Create a single scalable image or a carousel
+ *								if there are multiple images
+ *
+ * @param config				an object containing the following names:
+ *
+ * @param images				array of objects with keys URI: and caption:
+ *								both strings giving location and description.
+ *
+ * @param liteKey 				array of integers setting correspondance with
+ * 								other page elements in other widgets
+ *
+ * NOTES: this will resize the whole SVG box taller if there is a carousel so that 
+ * the image retains it's specified size but thumbnails can be created that 
+ * evenly distribute across the top of the available width.
+ **************************************************************************/
 
 MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	{ //begin scalable image object generator
@@ -1632,7 +1708,7 @@ MakeSVGContainer.prototype.ScalableImage = function (config,eventManager)
 	.attr("width", this.innerWid).attr("height", this.innerHt)
 	.append("desc").text(this.images[0].caption);
 
-	console.log("axesobj ",	this.xaxis.select(".axisLabel"));
+	console.log("Target for caption exists: ",	this.xaxis.select(".axisLabel"));
 
 	this.xaxis.select(".axisLabel").html(this.images[0].caption);
 	console.log("image group is made:", d3.select("#" + this.id).attr("id"),
