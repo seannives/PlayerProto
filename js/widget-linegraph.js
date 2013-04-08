@@ -142,6 +142,18 @@ LineGraph.prototype.draw = function(container, size)
 	axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
 	axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
 	
+	if (axesConfig.xAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.xAxisFormat.ticks))
+	{
+		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.x;}));
+		axesConfig.xAxisFormat.ticks = ordinalValueMap.values();
+	}
+	
+	if (axesConfig.yAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.yAxisFormat.ticks))
+	{
+		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.y;}));
+		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
+	}
+	
 	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
 
 	// alias for axes used by the old code below
@@ -178,10 +190,8 @@ LineGraph.prototype.draw = function(container, size)
 				.x(function(d) {return axesCont.xScale(d.x);})
 				.y(function(d) {return axesCont.yScale(d.y);});
 
-		var traces = graph.selectAll("g.traces");
-		traces = traces
-			.data(this.data);
-		traces = traces
+		var traces = graph.selectAll("g.traces")
+			.data(this.data)
 			.enter().append("g").attr("class", "traces");
 
 		//associate the clip path so it doesn't slop over the axes
@@ -207,12 +217,12 @@ LineGraph.prototype.draw = function(container, size)
 	{
 
 		var series = graph.selectAll("g.series")
-			.data(this.Data).enter()
-			.append("g")
-			.attr("clip-path", "url(#" + clipId + ")")
-			.attr("class", function(d, i) {
-					return "series fill" + i;
-				});
+			.data(this.data)
+			.enter()
+				.append("g")
+					.attr("clip-path", "url(#" + clipId + ")")
+					.attr("class",
+						  function (d, i) {return "series fill" + i;});
 
 		if (this.liteKey)
 		{

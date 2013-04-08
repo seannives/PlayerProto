@@ -297,7 +297,7 @@ function Axes(container, config)
 	//xTicks is either an integer number of ticks or an array of values to use as tickmarks
 	//xOrient is a string for orientation "bottom" or "top". Likewise for the yTicks and yOrient
 	var xTicks = this.xFmt.ticks;
-	var yTicks = this.xFmt.ticks;
+	var yTicks = this.yFmt.ticks;
 
 	// Add to the margin area for drawing the axis labels depending on their placement and existence
 	var xOrient = this.xFmt.orientation;

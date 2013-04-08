@@ -30,10 +30,14 @@
 
 			</div>
 			<div class="span6 rightCol">
-				<div id="widgetTarget50"><p>4. Several traces log scale</p></div>
-				<div id="widgetTarget60"><p>5. Several traces Ordinal</p></div>
-				<div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
-				<div id="widgetTarget80"><p>7. Lines with Legend</p></div>
+				<div id="widgetTarget50n"><p>50n. Several traces log scale</p></div>
+				<div id="widgetTarget50"><p>50. Several traces log scale</p></div>
+				<div id="widgetTarget60n"><p>60n. Several traces Ordinal</p></div>
+				<div id="widgetTarget60"><p>60. Several traces Ordinal</p></div>
+				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container)</p></div>
+				<div id="widgetTarget70"><p>70. Small multiples (several line graphs in container)</p></div>
+				<div id="widgetTarget80n"><p>80n. Lines with Legend</p></div>
+				<div id="widgetTarget80"><p>80. Lines with Legend</p></div>
 			</div>
 		</div>
 	</div>
@@ -41,7 +45,7 @@
 	<script src="js/jquery-latest.js"></script>
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
-	<script src="js/d3.v2.min.js"></script>
+	<script src="js/d3.v3.min.js"></script>
 
 	<!--script src="js/goog.base.js"></script>
 	<script src="js/widget-axes.js"></script-->
@@ -211,17 +215,19 @@
 
 
     //<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
-
-
-	var cntr1Config = {
+	var n = 0;			// test case index we're graphing
+	var config = [];	// array of config objects for creating containers and line graph widgets
+	var cntr = [];		// array of containers
+	var lineGraph = []; // array of line graph widgets
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
 			node: d3.select("#widgetTarget0n"),
 			maxWid: 400,
 			maxHt: 300
 		};
-	var cntr1 = new SVGContainer(cntr1Config);
 
-	var lg1Config = {
-			id: "lg1",
+	config[n].lg = {
+			id: "lg" + n,
 			Data: [lineData1],
 			type: "lines",
 			xAxisFormat: { type: "linear",
@@ -233,9 +239,10 @@
 						   orientation: "right",
 						   label: "Labels can have extended chars (&mu;m)" },
 		};
-	var lineGraph1 = new LineGraph(lg1Config);
 
-	cntr1.append(lineGraph1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 	
     var svg0 = new MakeSVGContainer({
@@ -265,6 +272,31 @@
 
 
 //  <div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget1n"),
+			maxWid: 400,
+			maxHt: 300
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [lineData1, lineData2],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "an x axis on bottom" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "left",
+						   label: "Population (Billions)" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
     var svg1 = new MakeSVGContainer({
 			node: d3.select("#widgetTarget1"),
 			maxWid: 400,
@@ -291,6 +323,30 @@
     });
 
     //  <div id="widgetTarget2"><p>2. Scatter graph</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget2n"),
+			maxWid: 400,
+			maxHt: 300
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [lineData1],
+			type: "points",
+			xAxisFormat: { type: "linear",
+						   ticks: [1200, 1500, 1900, 2050],
+						   orientation: "bottom",
+						   label: "Year (explicit ticks)" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "left",
+						   label: "Population (Billions)" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
     var svg2 = new MakeSVGContainer({
 		node: d3.select("#widgetTarget2"),
@@ -317,6 +373,31 @@
     });
 
 //  <div id="widgetTarget3"><p>3. Lines and points several traces linear</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget3n"),
+			maxWid: 400,
+			maxHt: 300
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [lineData2, specData],
+			type: "lines+points",
+			xAxisFormat: { type: "linear",
+						   ticks: [400, 600, 800, 1000],
+						   orientation: "top",
+						   label: "x axis on the top" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "right",
+						   label: "a y axis on the right" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
     var svg3 = new MakeSVGContainer(
         {node: d3.select("#widgetTarget3"),
         maxWid: 400,
@@ -342,6 +423,31 @@
     });
 
     //  <div id="widgetTarget50"><p>4. Several traces log scale</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget50n"),
+			maxWid: 400,
+			maxHt: 300
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [specData],
+			type: "lines",
+			xAxisFormat: { type: "log",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "log scale" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "left",
+						   label: "linear scale" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
     var svg50 = new MakeSVGContainer(
         {node: d3.select("#widgetTarget50"),
         maxWid: 400,
@@ -369,6 +475,29 @@
     });
 
     //  <div id="widgetTarget60"><p>5. traces Ordinal</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget60n"),
+			maxWid: 400,
+			maxHt: 400
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [ordinalData, ordinalData2],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: [0, 10],
+						   orientation: "bottom",
+						   label: "linear scale" },
+			yAxisFormat: { type: "ordinal",
+						   orientation: "left",
+						   label: "ordinal scale" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
     var svg60 = new MakeSVGContainer(
         {node: d3.select("#widgetTarget60"),
