@@ -161,9 +161,13 @@ LineGraph.prototype.draw = function(container, size)
 	console.log("graph group is made:", graph.attr("id"));
 
 	// make a clippath, which is used in the case that we zoom or pan the graph dynamically
-	graph.append("defs").append("clipPath").attr("id", "clip_" + linesId)
-		.append("rect").attr("width", axesCont.innerWid)
-		.attr("height", axesCont.innerHt);
+	var clipId = linesId + "_clip";
+	graph.append("defs")
+			.append("clipPath")
+				.attr("id", clipId)
+				.append("rect")
+					.attr("width", axesCont.dataArea.width)
+					.attr("height", axesCont.dataArea.height);
 
 	//draw the trace(s)
 	if (this.type == "lines" || this.type == "lines+points")
@@ -181,7 +185,7 @@ LineGraph.prototype.draw = function(container, size)
 			.enter().append("g").attr("class", "traces");
 
 		//associate the clip path so it doesn't slop over the axes
-		traces.append("path").attr("clip-path", "url(#clip_" + linesId + ")")
+		traces.append("path").attr("clip-path", "url(#" + clipId + ")")
 			//use the line function defined above to set the path data
 			.attr("d", function(d) {return line(d);})
 			//pick the colors sequentially off the list
@@ -205,7 +209,7 @@ LineGraph.prototype.draw = function(container, size)
 		var series = graph.selectAll("g.series")
 			.data(this.Data).enter()
 			.append("g")
-			.attr("clip-path", "url(#clip_" + linesId + ")")
+			.attr("clip-path", "url(#" + clipId + ")")
 			.attr("class", function(d, i) {
 					return "series fill" + i;
 				});

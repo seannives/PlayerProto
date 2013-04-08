@@ -118,6 +118,13 @@ function SVGContainer(config)
 	 */
 	this.maxHt = config.maxHt;
 
+	// It's easy to specify the node incorrectly, lets call that out right away!
+	if (this.parentNode.empty())
+	{
+		alert("SVGContainer parent node doesn't exist.");
+		return null;
+	}
+
 	// todo: why is the container talking about graphs? in the comment below -mjl
 	//maxWid, maxHt: the width and height of the graph region, without margins, integers
 
@@ -298,7 +305,7 @@ function Axes(container, config)
 	var hasXAxisLabel = 'label' in this.xFmt;
 	var hasYAxisLabel = 'label' in this.yFmt;
 
-	if (hasXAxisLabel))
+	if (hasXAxisLabel)
 	{
 		if (xOrient == 'top')
 		{
@@ -313,7 +320,7 @@ function Axes(container, config)
 		}
 	}
 
-	if (hasYAxisLabel))
+	if (hasYAxisLabel)
 	{
 		if (yOrient === 'left')
 		{
@@ -609,7 +616,7 @@ function Axes(container, config)
 		//using the new dimensions, redo the scale and axes
 		if (this.yFmt.type=="ordinal")
 		{
-			this.yScale.rangeRoundBands([dataAreaHeight, 0],.3);
+			this.yScale.rangeRoundBands([dataAreaHeight, 0], .3);
 			console.log("ordinal bandsize ", this.yScale.rangeBand());
 			//width is broken into even spaces allowing for bar width and
 			//a uniform white space between each, in this case, 30% white space
@@ -637,6 +644,8 @@ function Axes(container, config)
 		}
 	}
 
+	this.dataArea = { height: dataAreaHeight, width: dataAreaWidth };
+	
 	//and finally, with the margins all settled, move the group down to accomodate the
 	//top and left margins and position
 	this.group.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");

@@ -19,10 +19,13 @@
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
-				<div id="widgetTargetX"><p>X. Line Graph one line linear</p></div>
+				<div id="widgetTarget0n"><p>0n. Line Graph one line linear</p></div>
 				<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
+				<div id="widgetTarget1n"><p>1n. Line graph several traces linear</p></div>
 				<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
+				<div id="widgetTarget2n"><p>2n. Scatter graph</p></div>
 				<div id="widgetTarget2"><p>2. Scatter graph</p></div>
+				<div id="widgetTarget3n"><p>3n. Lines and points several traces linear</p></div>
 				<div id="widgetTarget3"><p>3. Lines and points several traces linear</p></div>
 
 			</div>
@@ -39,9 +42,14 @@
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v2.min.js"></script>
-	<script src="js/widgets.js"></script>
+
+	<!--script src="js/goog.base.js"></script>
+	<script src="js/widget-axes.js"></script-->
+
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
+	
+	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -206,7 +214,7 @@
 
 
 	var cntr1Config = {
-			node: d3.select("#widgetTargetX"),
+			node: d3.select("#widgetTarget0n"),
 			maxWid: 400,
 			maxHt: 300
 		};
