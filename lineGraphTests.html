@@ -524,10 +524,68 @@
     });
 
     //  <div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget70n"),
+			maxWid: 900,
+			maxHt: 300
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [testData],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 3,
+						   orientation: "bottom",
+						   label: "x vals" },
+			yAxisFormat: { type: "linear",
+						   ticks: 3,
+						   orientation: "left",
+						   label: "vertical" },
+		};
+
+	config[n].lg2 = {
+			id: "lg2_" + n,
+			Data: [lineData1],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 3,
+						   orientation: "bottom",
+						   label: "x vals" },
+			yAxisFormat: { type: "linear",
+						   ticks: 3,
+						   orientation: "left",
+						   label: "vertical" },
+		};
+
+	config[n].lg3 = {
+			id: "lg2_" + n,
+			Data: [specData],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 3,
+						   orientation: "bottom",
+						   label: "x vals" },
+			yAxisFormat: { type: "linear",
+						   ticks: 3,
+						   orientation: "left",
+						   label: "vertical" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1/3});
+
+	lineGraph2 = new LineGraph(config[n].lg2);
+	cntr[n].append(lineGraph2, {topPercentOffset: 0, leftPercentOffset: 1/3, heightPercent: 1, widthPercent: 1/3});
+
+	lineGraph3 = new LineGraph(config[n].lg3);
+	cntr[n].append(lineGraph3, {topPercentOffset: 0, leftPercentOffset: 2/3, heightPercent: 1, widthPercent: 1/3});
 
     var svg70 = new MakeSVGContainer(
         {node: d3.select("#widgetTarget70"),
-        maxWid: 600,
+        maxWid: 900,
         maxHt: 300
         }
     );
@@ -544,12 +602,12 @@
         yLabel: "vertical"
 
     });
-/*	
-	svg70.MakeLineGraph({
+	svg70.LineGraph({
         Data: [testData],
         type: "lines"
     });
 
+/*	
 	svg70.MakeAxes({
         xPosPerc: .33, yPosPerc:0,
         xPerc: .33, yPerc: 1,//full height and width
@@ -589,6 +647,31 @@
 */	
 
     //  <div id="widgetTarget80"><p>7. Lines with Legend</p></div>
+	n = config.push({cntr: null, lg: null}) - 1;
+	config[n].cntr = {
+			node: d3.select("#widgetTarget80n"),
+			maxWid: 500,
+			maxHt: 400
+		};
+
+	config[n].lg = {
+			id: "lg" + n,
+			Data: [lineData, projected, nineB],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: [1900, 1950, 1990, 2010, 2030, 2050],
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   ticks: 8,
+						   orientation: "left",
+						   label: "Human Population (Billions)" },
+		};
+
+	cntr[n] = new SVGContainer(config[n].cntr);
+	lineGraph[n] = new LineGraph(config[n].lg);
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
     var litekey = [0,1,2];
     var svg80 = new MakeSVGContainer(
         {node: d3.select("#widgetTarget80"),
