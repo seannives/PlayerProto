@@ -79,7 +79,7 @@ EventManager.prototype.subscribe = function(eventId, handler)
 	
 	// Add the handler to the list of handlers of the eventId
 	event.handlers.push(handler);
-}
+};
 
 /* **************************************************************************
  * EventManager.publish                                                 *//**
@@ -110,4 +110,4 @@ EventManager.prototype.publish = function(eventId, eventDetails)
 		var handler = event.handlers[i];
 		handler(eventDetails);
 	}
-}
+};
