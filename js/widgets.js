@@ -999,21 +999,23 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 		//this publishes the onClick on a label to the eventManager
 		//passing along the number in the enumeration.
 	
-		that.eventManager.publish(that.changedValueEventId,
+		that.eventManager.publish(that.selectedEventId,
 					{value: function(d,i){
-								return i;}
+						console.log("selected index", that);
+								return that;}
 					});
 		});
 	// Define private handlers for subscribed events
 	function selectedLabelHandler(eventDetails)
 		{
 		
-		var set= d3.select(this);
-		set.select(".markerLabel")
-		.transition().duration(200)
-		.style("color", "#1d95ae")
-		.style("font-weight", "600");
-		console.log("Setting label lites", set);
+		var set= d3.select(that);
+		console.log(set);
+		//set.select(".markerLabel")
+		//.transition().duration(200)
+		//.style("color", "#1d95ae")
+		//.style("font-weight", "600");
+		//console.log("Setting label lites", set);
 		}
 
 		// Subscribe to own events, if appropriate
