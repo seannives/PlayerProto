@@ -98,11 +98,11 @@
 		{type: "numbered",
 		labels: 	
 		  [
-		{content: "1", xyPos: [.03,.18], width: 0},
+		{content: "1", xyPos: [.025,.17], width: 0},
 		{content: "2", xyPos: [.08,.38], width: 0},
-		{content: "3" , xyPos: [.32,.63], width: 0},
-		{content: "4" , xyPos: [.64,.58], width: 0},
-		{content: "5" , xyPos: [.68,.09], width: 0}
+		{content: "3" , xyPos: [.325,.64], width: 0},
+		{content: "4" , xyPos: [.645,.58], width: 0},
+		{content: "5" , xyPos: [.69,.095], width: 0}
 		]}, eventManager);
 
 	
@@ -134,89 +134,84 @@
 	//TODO: make these methods of the target widget?
 
 	// Handle changes of the levo and dextro input values
-	eventManager.subscribe(svgImg.SelectedEventId,
-						   function(ed) { handleSelectionChanged(callOuts, ed.value); });
-	 
-	
+	eventManager.subscribe(svgImg.selectedEventId,
+						   handleSelectionChanged);
 
-	/* **************************************************************************
-	 * handleSelectionChanged                                              *//**
-	 *
-	* handleInputValueChanged is called from the event handler for one of
-	* the input widgets when the user changes its value. It updates the
-	* given matching input widget's value to match the new value and then
-	* updates the bar chart.
-	*
-	* @param {NumericInput} otherInputWidget -This is the other input widget
-	*                                         whose value needs to be updated
-	*                                         to match the user changed widget.
-	* @param {number} newValue - The value of the widget that was changed.
-	*
-	****************************************************************************/
-	function handleSelectionChanged(InputWidget, newValue)
-	{
-		callOuts.displayCallouts(newValue);
-	}
 	
-	
-	/* **************************************************************************
-	 * handleNumericInputChanged                                            *//**
-	 *
-	* handleInputValueChanged is called from the event handler for one of
-	* the input widgets when the user changes its value. It updates the
-	* given matching input widget's value to match the new value and then
-	* updates the bar chart.
-	*
-	* @param {NumericInput} Otherwidgetarray -These are the other widgets
-	*                                         which need to be updated
-	*                                         to match the user changed widget.
-	* @param {number} newValue - The value of the widget that was changed.
-	*
-	****************************************************************************/
-	function handleNumericInputChanged(WidgetList, newValue)
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
 	{
-	//	var diff = inputDextro.getValue() - inputLevo.getValue();
-	//	var angle = newValue * diff/100;
-	//	rot.setValue(newValue * diff/100);
-		updatePieChart();
-	}
-
-	/* **************************************************************************
-	 * updateBarChart                                                       *//**
-	 *
-	 * updateBarChart updates the bar chart widget to match the current values
-	 * of the levo and dextro input widgets.
-	 *
-	 ****************************************************************************/
-	function updateBarChart()
-	{
-		console.log("TODO: fired updateBarChart log");
-		levoData[0].x = inputLevo.getValue();
-		dextroData[0].x = inputDextro.getValue();
-		svg70.BarChart({
-			Data: [dextroData, levoData],
-			type: "linear" //ignored for anything but grouped
-			});
-		var newMark = (levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0];
-		svg70.LineMarkers( {
-			xMarks: [newMark]
-			});
+		//InputWidget.displayCallouts(newValue);
+		//I want the handler for any page to get written with an array
+		//of Widgets to change, along with their private change methods
+		//since each one will have it's own way of responding  
+		//not quite working now, so I'm brute forcing it in the
+		//page. LabelLite should be a method of Labels, and calloutSwap
+		//should be a method of Callout.
+		labelLite(eventDetails.labelIndex);
+		callOuts.calloutSwap(eventDetails.labelIndex);
 		
 	}
-
-	function updatePieChart()
+	
+/* ***************************************************************** * labelLite                                                       *//**
+*
+* Updates the labels widget highlight to match the currently
+* selected index, lite.
+*
+**********************************************************************/
+	function labelLite(lite)
 	{
-		console.log("TODO: fired updatePieChart log");
-		pieDish.Pie({
-			Data: [{x:rot.getValue()/3.6}],
-			xYPos: [0.5,0.5]
-			});
-		var newMark = {x:(1/2), label: d3.format("+0r2")(rot.getValue()) + "&deg;"};
-		pieDish.LineMarkers( {
-			xMarks: [newMark]
-			});
+		console.log("TODO: fired LabelLite log");
+		//return all styles to normal on all the labels
+		var allLabels = 
+			d3.selectAll("#" + svgImg.labels.id).selectAll(".descLabel");
+		//TODO what I need is a better way to know which collection
+		//of labels to turn off. Doing it by class seems lame.
+		allLabels.transition().duration(100)
+		.style("color",null)//setting a style to null removes the special
+		//style property from the tag entirely.
+		.style("font-weight",null);
+	//	.style("background-color","")
+		var allBullets = 
+			d3.selectAll("#" + svgImg.labels.id);
+		//turn all the text back to white, and circles to black
+		allBullets.selectAll("text").style("fill","white");
+		allBullets.selectAll("circle").attr("class","steps")
+			;
+			
+		//highlight the selected label(s)
 		
+		var setLabels = d3.selectAll("#" + svgImg.labels.id + lite);
+		if(setLabels) 
+			{
+			setLabels.selectAll("circle")
+			.attr("class","stepsLit");
+			//highlight the one selected circle and any others
+			//with the same lite index
+			setLabels.selectAll("text").style("fill","#1d95ae");
+			setLabels.selectAll(".descLabel")
+			.transition().duration(100)
+			.style("color", "#1d95ae")
+			.style("font-weight", "600");
+		//	.style("background-color", "#e3effe");
+		// this renders badly from Chrome refresh bug
+			} 
+		else {
+		console.log("Invalid key. No label " + liteKey);
+			}
 	}
+
 		
 	
 	</script>

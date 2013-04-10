@@ -293,39 +293,62 @@ function Callouts(config,eventManager) { //begin callout generator
 	this.eventManager = eventManager;
 	var textBits = config.textBits;
 	var numLabels = textBits.length;
-	var myID= "label" + this.id + "_";
+	this.id = "callOut_";
 	var liteKey = config.liteKey;
 
 	var that = this;
 	//this.rootEl = <div>A bunch of text that swaps here and has visibility set</div>
 	//TODO make the class or the style so that these stack up and only one is visible
 	//use the event handlers
-	this.rootEl = this.node.append("div").attr("id", myID).style("display","block");
-	var labels = this.rootEl.selectAll("span.labels").data(textBits);
+	this.rootEl = this.node.append("div").attr("id", that.id).style("display","block");
+	var labels = this.rootEl.selectAll("span.callouts").data(textBits);
 
 	labels.enter()
 	.append("span")
-	.attr("class","labels")
+	.attr("class","callouts")
 	.text(function(d, i) {
 				return d.content;})//make the callouts
 	.style("display","none") //all callouts start out hidden
 	.attr("id",function(d,i) {
-			return myID + (liteKey?liteKey[i]:i);
+			return that.id + (liteKey?liteKey[i]:i);
 			});
 
 	console.log("Callouts made");
 
 	//show the first one by default
 	//TODO make this controllable by an event
-	d3.select("#" + myID + (liteKey?liteKey[0]:0)).style("display","block");
+	d3.select("#" + that.id + (liteKey?liteKey[0]:0)).style("display","block");
 
 
- // Define private handlers for subscribed events
-	function displayCallout(eventDetails)
-		{
-			d3.select("#" + myID+eventDetails).style("display","block");
-		}
 } //end MakeCallouts object generator function
+
+/* ********************************************************************
+* calloutSwap                                                     *//**
+*
+* Updates the Callouts widget to display the text that matches 
+* the currently selected index, lite.
+*
+* @param lite				the index or key specifying which of a
+*							collection to lite up
+*
+* NOTES: this is currently all based on members of a collection having
+* ID's that have the litekey or index appended to them after the _. We 
+* need to redo this according to object properties. TODO, ma
+***********************************************************************/
+Callouts.prototype.calloutSwap = function (lite)
+	{
+		console.log("TODO: fired callout swap log");
+		//hide all 
+		var unset = 
+			d3.selectAll(".callouts");
+		//TODO what I need is a better way to know which collection
+		//of labels to turn off. Doing it by class seems lame.
+		unset.style("display","none");
+		
+		var set = d3.selectAll("#" + callOuts.id + lite);
+		console.log("set callout", set);
+		set.style("display","block");
+	}
 
 
 /* **************************************************************************
@@ -949,9 +972,16 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 		.data(this.labels.labels);
 	this.labelCollection.enter()
 		.append("g")
-		.attr("transform", function(d, i) {
-			return "translate(" + that.xScale(d.xyPos[0]) + "," + that.yScale(d.xyPos[1]) + ")";
-		});
+		.attr("class","label")
+		.attr("transform", function(d, i) 
+				{
+				return "translate(" + that.xScale(d.xyPos[0]) + "," + that.yScale(d.xyPos[1]) + ")";
+				})
+		.attr("id", function(d, i) 
+			{
+				return myID + (liteKey ? liteKey[i] : i);
+			});
+			//name it so it can be manipulated or highlighted later
 
 	this.labelCollection.append("foreignObject")
 		.attr("x", 0)
@@ -970,9 +1000,8 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 
 	if(type == "bullets" || type == "numbered"){
 		this.labelCollection.append("circle")
-		.attr("cx",0).attr("cy",0).attr("r",14)
-		.style("fill","black").style("stroke","white")
-		.style("stroke-width",2);
+		.attr("cx",0).attr("cy",0).attr("r",16)
+		.attr("class","steps");
 	}
 
 	if(type == "numbered"){
@@ -985,72 +1014,75 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 				});
 	}
 	
-		if (liteKey) {
-			this.labelCollection.attr("id", function(d, i) {
-				return myID + liteKey[i];
-			})
-			//name it so it can be manipulated or highlighted later
-			.attr("class", "liteable");
-		}
 		
 	
-	this.labelCollection.on('click', function()
-		{
-		//this publishes the onClick on a label to the eventManager
-		//passing along the number in the enumeration.
+	this.labelCollection.on('click',
+				function (d, i)
+				{
+					that.eventManager.publish(that.selectedEventId, {labelIndex: i});
+				});
 	
-		that.eventManager.publish(that.selectedEventId,
-					{value: function(d,i){
-						console.log("selected index", that);
-								return that;}
-					});
-		});
 	// Define private handlers for subscribed events
+	//TODO: I don't think this should be private, I think
+	//it should be a method that is expose when Labels can be a 
+	//first class object
 	function selectedLabelHandler(eventDetails)
-		{
-		
-		var set= d3.select(that);
-		console.log(set);
-		//set.select(".markerLabel")
-		//.transition().duration(200)
-		//.style("color", "#1d95ae")
-		//.style("font-weight", "600");
-		//console.log("Setting label lites", set);
-		}
+	{
+		console.log(eventDetails);
+		var liteKey = that.getLiteKeyFromIndex(eventDetails.labelIndex);
+		that.highlightLabel(liteKey);
+	}
 
-		// Subscribe to own events, if appropriate
-		eventManager.subscribe(that.selectedEventId, selectedLabelHandler);
 } //end MakeLabels object generator function
 
-/*  MakeAxes.prototype.setLabelLite = function(liteKey) {
-	if (this.labelCollection.selectAll(".liteable")) {
-		console.log("TODO: Log highlight event on ", this.labels.id);
-		//return all styles to normal on the labels
-		var unset = d3.select("#" + this.labels.id).selectAll(".markerLabel");
-		unset.transition().duration(200)
-		.attr("filter", null)
-		.style("color",null)
-		.style("font-weight",null)
+/* ***************************************************************** * labelLite                                                       *//**
+*
+* Updates the labels widget highlight to match the currently
+* selected index, lite.
+*
+**********************************************************************/
+	function labelLite(lite)
+	{
+		console.log("TODO: fired LabelLite log");
+		//return all styles to normal on all the labels
+		var allLabels = 
+			d3.selectAll("#" + svgImg.labels.id).selectAll(".descLabel");
+		//TODO what I need is a better way to know which collection
+		//of labels to turn off. Doing it by class seems lame.
+		allLabels.transition().duration(100)
+		.style("color",null)//setting a style to null removes the special
+		//style property from the tag entirely.
+		.style("font-weight",null);
 	//	.style("background-color","")
-	;
-
+		var allBullets = 
+			d3.selectAll("#" + svgImg.labels.id);
+		//turn all the text back to white, and circles to black
+		allBullets.selectAll("text").style("fill","white");
+		allBullets.selectAll("circle").attr("class","steps")
+			;
+			
 		//highlight the selected label(s)
-		//d3.selectAll("#" + this.labels.id + liteKey).attr("filter", "url(#drop-shadow)");
-		//this won't render - browser bug
-		var set = d3.selectAll("#" + this.labels.id + liteKey).select(".markerLabel");
-		console.log("Setting label lites", set);
-		set.transition().duration(200)
-		.style("color", "#1d95ae")
-		.style("font-weight", "600");
+		
+		var setLabels = d3.selectAll("#" + svgImg.labels.id + lite);
+		if(setLabels) 
+			{
+			setLabels.selectAll("circle")
+			.attr("class","stepsLit");
+			//highlight the one selected circle and any others
+			//with the same lite index
+			setLabels.selectAll("text").style("fill","#1d95ae");
+			setLabels.selectAll(".descLabel")
+			.transition().duration(100)
+			.style("color", "#1d95ae")
+			.style("font-weight", "600");
+		//	.style("background-color", "#e3effe");
+		// this renders badly from Chrome refresh bug
+			} 
+		else {
+		console.log("Invalid key. No label " + liteKey);
+			}
+}
 
-	//	.style("background-color", "#e3effe");
-	// this renders badly from Chrome refresh bug
-		return liteKey;
-	} else {
-		console.log("Invalid key. No image " + liteKey);
-	}
-};
-*/
 
 
 /* **************************************************************************
