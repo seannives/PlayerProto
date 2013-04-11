@@ -27,7 +27,8 @@
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50"><p>3. Label positions</p></div>
-				<div id="widgetTarget80"><p>4. Labels fire callouts</p></div>
+				<div id="Endocrine"><p>4. Labels fire callouts</p>
+                </div><p id="endoCall"></p>
                 <div id="lineMarks"><p>5. x-axis Line Markers x and y</p></div>
                  <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
 			</div>
@@ -40,8 +41,11 @@
 	<script src="js/d3.v2.min.js"></script>
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
-
+	<script src="js/eventmanager.js"></script>
 <script>
+
+	var eventManager = new EventManager();
+
 var birth = [
 		{x: 0,	y: 2.0	},
 		{x: 1,	y: 1.95},
@@ -384,71 +388,130 @@ for(i=0;i<dataPts;i++){
 	
 	
 	
-	//	<div id="widgetTarget80"><p>5. labels to callouts and carousel (events)</p></div>
+	//	<div id="widgetTarget80"><p>5. labels fire callouts (events)</p></div>
 	var svg5 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget80"),
-		maxWid: 800,
-		maxHt:500
+		{node: d3.select("#Endocrine"),
+		maxWid: 550,
+		maxHt:680
 		}
 	);
 	svg5.Axes({
 		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc:.5, yPerc: 1,//full height and width
+		xPerc:1, yPerc: 1,//full height and width
 		xaxisType: "linear",
 		xOrient: "bottom",
+		xTicks: 5,
 		xLabel: "caption",
 		yaxisType: "linear",
+		yTicks: 5,
 		yOrient: "left",
 	});
 	
 	
 	svg5.ScalableImage(
 		{images: [
-				{URI:'img/endocrineSystem.jpg', caption: "The Endocrine System"}
+				{URI:'img/endocrineSystem.jpg', caption: "Human Glands"}
 				]});
 	
 	svg5.Labels(
 		{labels: 	
 		  [
-		{content: "Adrenal gland (outer cortex)", xyPos: [0,.5], width: 100	},
-		{content: "Testes" , xyPos: [0,0], width: 100	},
-		{content: "Thyroid", xyPos: [0,1], width: 100	},
-	{content:"Placenta*", xyPos: [.5,0], width: 100	},
-		{content: "Adrenal gland", xyPos: [.5,1], width: 100	},
-		{content: "Adrenal gland (inner medulla)", xyPos: [0,.35], width: 100	},
-		{content: "Ovaries", xyPos: [.5,0.5], width: 100	},
-	{content: "Stomach lining*", xyPos: [.25,.25], width: 100	},
-		{content: "Pancreas", xyPos: [0,.25], width: 100	},
-	{content: "Pineal gland", xyPos: [.75,.25], width: 100	},
-		{content: "Parathyroid", xyPos: [0,.25], width: 100	},
-		{content: "Ovaries", xyPos: [.75,.75], width: 100	},
-		{content: "Thyroid", xyPos: [0,.9], width: 100	}
+		{content: "Hypothalamus", xyPos: [0,1], width: 100	},
+		{content: "Pituitary gland" , xyPos: [0,.8], width: 80	},
+		{content: "Pineal gland (epiphysis)", xyPos: [.15,.75], width: 100	},
+		{content: "Thyroid gland", xyPos: [.5,.98], width: 100},
+		{content: "Parathyroid gland", xyPos: [.85,.9], width: 80},
+		{content: "Adrenal (surparenal)", xyPos: [.85,.8], width: 80},
+		{content: "Pancreas", xyPos: [.85,.52], width: 100},
+		{content: "Ovaries", xyPos: [.65,.38], width: 70},
+		{content: "Testicles", xyPos: [.7,.02], width: 70}
 		]
-	});
+	}, eventManager);
 	
 	
+// Handle changes of the levo and dextro input values
+	eventManager.subscribe(svg5.selectedEventId,
+						   handleSelectionChanged);
+
+//Test: set the start highlight state of 0 index by calling the 
+//handler with a hard-set index of 0.  This should result in the
+//first label getting highlighted and the first callout being displayed.
+	handleSelectionChanged({labelIndex: 0});
 	
-	svg5.Axes({
-		xPosPerc: .5, yPosPerc:0, //top, left corner
-		xPerc: .5, yPerc: 1,//full height and width
-		xaxisType: "linear",
-		xOrient: "bottom",
-		xLabel: "caption",
-		yaxisType: "linear",
-		yOrient: "left",
-	});
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		labelLite(eventDetails.labelIndex);
+		callOuts.calloutSwap(eventDetails.labelIndex);
+		
+	}
 	
-	svg5.ScalableImage(
-		{images: [
-				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."},
-				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."},
-				{URI:'img/ch4_4.jpg', caption: "Seaside Heights, NJ after Hurricane Sandy."}
-			],
-		liteKey: [0,1,2]
-		}
-	);
+		
+	var endoCallouts = new Callouts ({
+		node: d3.select("#endoCall"),
+		textBits: [ 
+	{key: "Adrenal",
+	 content: "Conserves sodium and encourages water retention, which increases blood pressure."
+	 },
+	 {key: "Testes",
+	  content: "Group of hormones responsible for male sexual characteristics.  Testosterone is the principal androgen."
+	 },
+	 {key: "Thyroid",
+	 content: "Reduces calcium levels in blood."
+	 },
+	 {key: "Placenta",
+	 content: "Acts as a temporary endocrine gland by secreting chorionic gonadotropin, which signals the woman’s ovaries to continue producing progesterone.  Without this signal, the lining of the uterus would be shed during the menstrual cycle and the pregnancy would be terminated. *The placenta is not a gland but produces hormones."
+	 },
+	 {key: "Adrenal gland",
+	 content: "Related to stress response - increases blood glucose levels, suppresses the immune system, and aids metabolism."
+	 },
+	 {key: "Adrenal gland",
+	 content: "Part of the body’s “fight-or-flight” response - increases heart rate, constricts blood vessels, and opens air passageways."
+	 },
+	 {key: "Ovaries",
+   	  content: "Group of hormones responsible for female sex characteristics."
+	 },
+	 {key: "Stomach",
+	 content: "Stimulates the production of hydrochloric acid and pepsin - necessary for normal food digestion. *Stomach lining is not a gland but produces hormones."
+	 },
+	 {key: "Pancreas",
+	 content: "Raises glucose levels in the blood by triggering the liver to convert stored glycogen to glucose."
+	 },
+	 {key: "Pancreas",
+	 content: "Lowers glucose levels in the blood by encouraging cells to take in glucose from the blood."
+	 },
+	 {key: "Pineal gland",
+	 content: "Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."
+	 },
+	 {key: "Adrenal gland",
+ 	 content:  "Part of the body’s “fight-or-flight” response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."
+	 },
+	 {key: "Parathyroid",
+ 	 content:  "Increases calcium levels in the blood."
+	 },
+	 {key: "Ovaries",
+ 	 content: "The “pregnancy” hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."
+	 },
+	 {key: "Thyroid",
+ 	 content: "Regulates metabolism." }] 
+		});
 	
-	//	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
+//	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
 	var svgMark = new MakeSVGContainer(
 		{node: d3.select("#lineMarks"),
 		maxWid: 500,

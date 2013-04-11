@@ -137,7 +137,10 @@
 	eventManager.subscribe(svgImg.selectedEventId,
 						   handleSelectionChanged);
 
-	
+//Test: set the start highlight state of 0 index by calling the 
+//handler with a hard-set index of 0.  This should result in the
+//first label getting highlighted and the first callout being displayed.
+	handleSelectionChanged({labelIndex: 0});
 /************************************************************************
 * handleSelectionChanged                                            *//**
 *
@@ -152,67 +155,16 @@
 *************************************************************************/
 	function handleSelectionChanged(eventDetails)
 	{
-		//InputWidget.displayCallouts(newValue);
-		//I want the handler for any page to get written with an array
-		//of Widgets to change, along with their private change methods
-		//since each one will have it's own way of responding  
-		//not quite working now, so I'm brute forcing it in the
-		//page. LabelLite should be a method of Labels, and calloutSwap
-		//should be a method of Callout.
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
 		labelLite(eventDetails.labelIndex);
 		callOuts.calloutSwap(eventDetails.labelIndex);
 		
 	}
 	
-/* ***************************************************************** * labelLite                                                       *//**
-*
-* Updates the labels widget highlight to match the currently
-* selected index, lite.
-*
-**********************************************************************/
-	function labelLite(lite)
-	{
-		console.log("TODO: fired LabelLite log");
-		//return all styles to normal on all the labels
-		var allLabels = 
-			d3.selectAll("#" + svgImg.labels.id).selectAll(".descLabel");
-		//TODO what I need is a better way to know which collection
-		//of labels to turn off. Doing it by class seems lame.
-		allLabels.transition().duration(100)
-		.style("color",null)//setting a style to null removes the special
-		//style property from the tag entirely.
-		.style("font-weight",null);
-	//	.style("background-color","")
-		var allBullets = 
-			d3.selectAll("#" + svgImg.labels.id);
-		//turn all the text back to white, and circles to black
-		allBullets.selectAll("text").style("fill","white");
-		allBullets.selectAll("circle").attr("class","steps")
-			;
-			
-		//highlight the selected label(s)
-		
-		var setLabels = d3.selectAll("#" + svgImg.labels.id + lite);
-		if(setLabels) 
-			{
-			setLabels.selectAll("circle")
-			.attr("class","stepsLit");
-			//highlight the one selected circle and any others
-			//with the same lite index
-			setLabels.selectAll("text").style("fill","#1d95ae");
-			setLabels.selectAll(".descLabel")
-			.transition().duration(100)
-			.style("color", "#1d95ae")
-			.style("font-weight", "600");
-		//	.style("background-color", "#e3effe");
-		// this renders badly from Chrome refresh bug
-			} 
-		else {
-		console.log("Invalid key. No label " + liteKey);
-			}
-	}
 
-		
 	
 	</script>
 </body>

@@ -346,7 +346,6 @@ Callouts.prototype.calloutSwap = function (lite)
 		unset.style("display","none");
 		
 		var set = d3.selectAll("#" + callOuts.id + lite);
-		console.log("set callout", set);
 		set.style("display","block");
 	}
 
