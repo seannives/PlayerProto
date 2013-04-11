@@ -39,11 +39,24 @@ function logFormat(d)
 	return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ? d3.round(Math.log(d)/Math.log(10)) : "";
 }
 
+//Tests for logFormat function
 console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(Math.pow(10, -2)) == -2);
 console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
 console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.pow(10, 3)) == "");
 
 /** @todo this is not how compareLen is normally defined verify how it is being used. -mjl */
+/* **************************************************************************
+ * compareLen                                                         *//**
+ *
+ * @function
+ *
+ * Returns the difference in the number of characters in two strings. Used
+ * to correctly size box to longest string in legends.
+ *
+ * @param a,b        		two string values
+ *
+****************************************************************************/
+
 function compareLen(a, b)
 {
 	return a.length - b.length;
@@ -190,7 +203,7 @@ function AxisFormat()
 	 * <li> "linear" - ...
 	 * <li> "log" - ...
 	 * <li> "ordinal" - The values along the axis are determined by a
-	 *                  discrete itemized list, calculated from the graphed data.
+	 *                  discrete itemized list, gathered from the graphed data.
 	 * <li> "double positive" - axis that always counts up from zero,
 	 *                          regardless of the sign of the data
 	 * </ul>
@@ -239,8 +252,9 @@ function AxisFormat()
 
 	/**
 	 * The label to display along the axis. It must be valid to be converted to
-	 * html as the inner html of a span element. This allow the use of text
-	 * markup and character entities in the label. Optional.
+	 * html as the inner html of a span element. This allows the use of text
+	 * markup and character entities in the label. Optional. Embedded in SVG as a 
+	 * foreignobject tag.
 	 * @type {string|undefined}
 	 */
 	this.label = "Labels can have extended chars (&mu;m)";
@@ -436,6 +450,8 @@ function Axes(container, config)
 		if (this.xFmt.type == "log")
 		{
 			this.xAxis.tickFormat(logFormat);
+			//this prevents too many tick labels on log graphs, making
+			//them unreadable
 		}
 
 		if (this.xFmt.type == "double positive")
@@ -467,7 +483,8 @@ function Axes(container, config)
 			//move it down if the axis is at the bottom of the graph
 			.attr("class", "x axis");
 
-		//if we want positive tick values radiating from 0, then make the negative half of the axis separately
+		//if we want positive tick values radiating from 0, then make the 
+		//negative half of the axis separately
 		if (this.xFmt.type == "double positive")
 		{
 			this.xaxis.append("g").call(this.leftXAxis)
@@ -542,7 +559,7 @@ function Axes(container, config)
 			.call(this.yAxis).attr("class", "y axis");
 
 		// make the y-axis label, if it exists
-		if (this.yFmt.label)
+		if (hasYAxisLabel)
 		{
 			var yaxisDims = this.yaxis.node().getBBox();
 			var yLabelObj = this.yaxis.append("foreignObject")
@@ -560,7 +577,8 @@ function Axes(container, config)
 					.html(this.yFmt.label) //make the label
 				;
 
-			console.log("label size ", $('#label' + this.id).height());//toDO use this to correctly move to the left of axis
+			console.log("label size ", $('#label' + this.id).height());
+			//toDO use this to correctly move to the left of axis
 		}
 
 		var yWid = d3.round(this.group.select(".y.axis").node().getBBox().width);
