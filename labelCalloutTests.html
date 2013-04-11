@@ -417,51 +417,18 @@ for(i=0;i<dataPts;i++){
 		{labels: 	
 		  [
 		{content: "Hypothalamus", xyPos: [0,1], width: 100	},
-		{content: "Pituitary gland" , xyPos: [0,.8], width: 80	},
-		{content: "Pineal gland (epiphysis)", xyPos: [.15,.75], width: 100	},
-		{content: "Thyroid gland", xyPos: [.5,.98], width: 100},
-		{content: "Parathyroid gland", xyPos: [.85,.9], width: 80},
-		{content: "Adrenal (surparenal)", xyPos: [.85,.8], width: 80},
-		{content: "Pancreas", xyPos: [.85,.52], width: 100},
-		{content: "Ovaries", xyPos: [.65,.38], width: 70},
-		{content: "Testicles", xyPos: [.7,.02], width: 70}
+		{key: "Pituitary", content: "Pituitary gland" , xyPos: [0,.8], width: 80	},
+		{key: "Pineal", content: "Pineal gland (epiphysis)", xyPos: [.15,.75], width: 100	},
+		{key: "Thyroid", content: "Thyroid gland", xyPos: [.5,.98], width: 100},
+		{key: "Parathyroid", content: "Parathyroid gland", xyPos: [.8,.9], width: 90},
+		{key: "Adrenal", content: "Adrenal (surparenal)", xyPos: [.85,.8], width: 80},
+		{key: "Pancreas", content: "Pancreas", xyPos: [.85,.52], width: 100},
+		{key: "Ovaries", content: "Ovaries", xyPos: [.65,.38], width: 70},
+		{key: "Testes", content: "Testicles", xyPos: [.7,.02], width: 70}
 		]
 	}, eventManager);
 	
-	
-// Handle changes of the levo and dextro input values
-	eventManager.subscribe(svg5.selectedEventId,
-						   handleSelectionChanged);
 
-//Test: set the start highlight state of 0 index by calling the 
-//handler with a hard-set index of 0.  This should result in the
-//first label getting highlighted and the first callout being displayed.
-	handleSelectionChanged({labelIndex: 0});
-	
-/************************************************************************
-* handleSelectionChanged                                            *//**
-*
-* handleInputValueChanged is called from the event handler for one of
-* the input widgets when the user changes its value. It updates the
-* given matching input widget's value to match the new value and then
-* updates the bar chart.
-*
-* @param eventDetails			These are the keyed values returned by 
-*								the event, in this case, a selection
-*								(click).
-*************************************************************************/
-	function handleSelectionChanged(eventDetails)
-	{
-		//Handler needs to get written into each page, 
-		//each widget will have it's own way of responding  
-		//LabelLite should be a method of Labels, once Labels
-		//is written as a constructor
-		labelLite(eventDetails.labelIndex);
-		callOuts.calloutSwap(eventDetails.labelIndex);
-		
-	}
-	
-		
 	var endoCallouts = new Callouts ({
 		node: d3.select("#endoCall"),
 		textBits: [ 
@@ -472,16 +439,13 @@ for(i=0;i<dataPts;i++){
 	  content: "Group of hormones responsible for male sexual characteristics.  Testosterone is the principal androgen."
 	 },
 	 {key: "Thyroid",
-	 content: "Reduces calcium levels in blood."
+	 content: "Reduces calcium levels in blood and regulates metabolism."
 	 },
 	 {key: "Placenta",
 	 content: "Acts as a temporary endocrine gland by secreting chorionic gonadotropin, which signals the woman’s ovaries to continue producing progesterone.  Without this signal, the lining of the uterus would be shed during the menstrual cycle and the pregnancy would be terminated. *The placenta is not a gland but produces hormones."
 	 },
 	 {key: "Adrenal gland",
 	 content: "Related to stress response - increases blood glucose levels, suppresses the immune system, and aids metabolism."
-	 },
-	 {key: "Adrenal gland",
-	 content: "Part of the body’s “fight-or-flight” response - increases heart rate, constricts blood vessels, and opens air passageways."
 	 },
 	 {key: "Ovaries",
    	  content: "Group of hormones responsible for female sex characteristics."
@@ -499,16 +463,15 @@ for(i=0;i<dataPts;i++){
 	 content: "Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."
 	 },
 	 {key: "Adrenal gland",
- 	 content:  "Part of the body’s “fight-or-flight” response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."
+ 	 content:  "Part of the body's <i>fight-or-flight</i> response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."
 	 },
 	 {key: "Parathyroid",
  	 content:  "Increases calcium levels in the blood."
 	 },
 	 {key: "Ovaries",
- 	 content: "The “pregnancy” hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."
-	 },
-	 {key: "Thyroid",
- 	 content: "Regulates metabolism." }] 
+ 	 content: "The 'pregnancy' hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."
+	 }
+	 ] 
 		});
 	
 //	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
@@ -578,22 +541,42 @@ for(i=0;i<dataPts;i++){
 		});
 		
 		
+//events
+	
+// Handle changes of the label selection
+	eventManager.subscribe(svg5.selectedEventId,
+						   handleSelectionChanged);
 
-	//var IDList = [images2,labels21,images51];
-//	var startState = 0, start2 = 51;
+//Test: set the start highlight state of 0 index by calling the 
+//handler with a hard-set index of 0.  This should result in the
+//first label getting highlighted and the first callout being displayed.
+	handleSelectionChanged({labelIndex: "Thyroid"});
+
 	
-	//images2.setState(startState);
-	//images51.setState(startState);
-//	labels21.setState(startState);
-//	axes1.setLabelLite(20);
-	
-//	legend5.setState(start2);
 		
-	// d3.selectAll('.liteable')
-	 //	.on("click", function(d,i){ 
-		//console.log("TODO: Log click and time on ", this.id);
-		//return stateCycle(this,IDList);});
 	
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		labelLite(svg5,eventDetails.labelIndex);
+		endoCallouts.calloutSwap(eventDetails.labelIndex);
+		
+	}
 </script>
 </body>
 </html>

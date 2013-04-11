@@ -66,8 +66,6 @@
 	//that must talk to it.
 	var eventManager = new EventManager();
 	
-
-
 	var svgImg = new MakeSVGContainer(
 		{
 			node: d3.select("#imgReactor"),
@@ -159,7 +157,7 @@
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		labelLite(eventDetails.labelIndex);
+		labelLite(svgImg,eventDetails.labelIndex);
 		callOuts.calloutSwap(eventDetails.labelIndex);
 		
 	}

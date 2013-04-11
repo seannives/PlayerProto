@@ -301,23 +301,23 @@ function Callouts(config,eventManager) { //begin callout generator
 	//TODO make the class or the style so that these stack up and only one is visible
 	//use the event handlers
 	this.rootEl = this.node.append("div").attr("id", that.id).style("display","block");
-	var labels = this.rootEl.selectAll("span.callouts").data(textBits);
+	this.calloutCollection = this.rootEl.selectAll("span.callouts").data(textBits);
 
-	labels.enter()
+	this.calloutCollection.enter()
 	.append("span")
 	.attr("class","callouts")
 	.text(function(d, i) {
 				return d.content;})//make the callouts
 	.style("display","none") //all callouts start out hidden
 	.attr("id",function(d,i) {
-			return that.id + (liteKey?liteKey[i]:i);
+			return that.id + (d.key ? d.key : i);
 			});
 
 	console.log("Callouts made");
 
 	//show the first one by default
-	//TODO make this controllable by an event
-	d3.select("#" + that.id + (liteKey?liteKey[0]:0)).style("display","block");
+	d3.select("#" + that.id + (textBits[0].key ? textBits[0].key : 0))
+	.style("display","block");
 
 
 } //end MakeCallouts object generator function
@@ -337,7 +337,7 @@ function Callouts(config,eventManager) { //begin callout generator
 ***********************************************************************/
 Callouts.prototype.calloutSwap = function (lite)
 	{
-		console.log("TODO: fired callout swap log");
+		console.log("TODO: fired callout swap log", lite);
 		//hide all 
 		var unset = 
 			d3.selectAll(".callouts");
@@ -345,7 +345,7 @@ Callouts.prototype.calloutSwap = function (lite)
 		//of labels to turn off. Doing it by class seems lame.
 		unset.style("display","none");
 		
-		var set = d3.selectAll("#" + callOuts.id + lite);
+		var set = d3.selectAll("#" + this.id + lite);
 		set.style("display","block");
 	}
 
@@ -978,7 +978,7 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 				})
 		.attr("id", function(d, i) 
 			{
-				return myID + (liteKey ? liteKey[i] : i);
+				return myID + (d.key ? d.key : i);
 			});
 			//name it so it can be manipulated or highlighted later
 
@@ -1013,24 +1013,12 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 				});
 	}
 	
-		
-	
 	this.labelCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex: i});
+					that.eventManager.publish(that.selectedEventId, {labelIndex: (d.key ? d.key : i)});
 				});
 	
-	// Define private handlers for subscribed events
-	//TODO: I don't think this should be private, I think
-	//it should be a method that is expose when Labels can be a 
-	//first class object
-	function selectedLabelHandler(eventDetails)
-	{
-		console.log(eventDetails);
-		var liteKey = that.getLiteKeyFromIndex(eventDetails.labelIndex);
-		that.highlightLabel(liteKey);
-	}
 
 } //end MakeLabels object generator function
 
@@ -1040,21 +1028,23 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 * selected index, lite.
 *
 **********************************************************************/
-	function labelLite(lite)
+	function labelLite(Obj,lite)
 	{
 		console.log("TODO: fired LabelLite log");
 		//return all styles to normal on all the labels
 		var allLabels = 
-			d3.selectAll("#" + svgImg.labels.id).selectAll(".descLabel");
+			d3.selectAll("#" + Obj.labels.id).selectAll(".descLabel");
 		//TODO what I need is a better way to know which collection
 		//of labels to turn off. Doing it by class seems lame.
-		allLabels.transition().duration(100)
-		.style("color",null)//setting a style to null removes the special
+		allLabels
+		.style("color",null)
+		//setting a style to null removes the special
 		//style property from the tag entirely.
-		.style("font-weight",null);
-	//	.style("background-color","")
+		//TODO: make the lit and unlit classes
+		.style("font-weight",null)
+		.style("background-color","");
 		var allBullets = 
-			d3.selectAll("#" + svgImg.labels.id);
+			d3.selectAll("#" + Obj.labels.id);
 		//turn all the text back to white, and circles to black
 		allBullets.selectAll("text").style("fill","white");
 		allBullets.selectAll("circle").attr("class","steps")
@@ -1062,7 +1052,7 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 			
 		//highlight the selected label(s)
 		
-		var setLabels = d3.selectAll("#" + svgImg.labels.id + lite);
+		var setLabels = d3.selectAll("#" + Obj.labels.id + lite);
 		if(setLabels) 
 			{
 			setLabels.selectAll("circle")
@@ -1071,11 +1061,14 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 			//with the same lite index
 			setLabels.selectAll("text").style("fill","#1d95ae");
 			setLabels.selectAll(".descLabel")
-			.transition().duration(100)
+			//.transition().duration(100)
+			// this renders badly from Chrome refresh bug
+			//we'll have to figure out how to get transitions
+			//back in - maybe just foreign objects?
 			.style("color", "#1d95ae")
-			.style("font-weight", "600");
-		//	.style("background-color", "#e3effe");
-		// this renders badly from Chrome refresh bug
+			.style("font-weight", "600")
+			.style("background-color", "#e3effe");
+		
 			} 
 		else {
 		console.log("Invalid key. No label " + liteKey);
