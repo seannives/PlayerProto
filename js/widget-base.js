@@ -373,7 +373,7 @@ function Axes(container, config)
 	{
 		if (this.yFmt.type == "ordinal")
 		{
-			//if we're making horizontal ordinal bars, x must include 0
+			//if we're making horizontal ordinal bars, x axis must include 0
 			this.xFmt.extent.push(0);
 			this.xFmt.extent = d3.extent(this.xFmt.extent);
 		}
@@ -522,7 +522,7 @@ function Axes(container, config)
 				.rangeRoundBands([dataAreaHeight, 0], 0.4);
 
 			//width is broken into even spaces allowing for bar width and
-			//a uniform white space between each, in this case, 20% white space
+			//a uniform white space between each, in this case, 40% white space
 	    }
 		else
 		{
