@@ -19,6 +19,7 @@
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
+            	<div id="bar0"><p>0n. Single bar graph</p></div>
 				<div id="widgetTarget0"><p>0. Single bar graph</p></div>
 				<div id="widgetTarget1"><p>1. Multiple series bar graph (these just stack up labels, or overprint bars with the same label)</p></div>
 				<div id="widgetTarget2"><p>2. Grouped bars (separate series with same label shown in group)</p></div>
@@ -36,10 +37,14 @@
 	<script src="js/jquery-latest.js"></script>
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
-	<script src="js/d3.v2.min.js"></script>
+	<script src="js/d3.v3.min.js"></script>
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
+
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-barchart.js"></script>
+	
 <script>
 
 var highIncome = [
@@ -194,7 +199,24 @@ var ordinalData2 = [
 		type: "linear" //ignored for anything but grouped
 	});
 
-	
+	var newCont0 = new SVGContainer({
+			node: d3.select("#bar0"),
+			maxWid: 400,
+			maxHt: 300
+		});
+	var newBar0 = new BarChart({
+			id: "bc0",
+			Data: [ordinalData], 
+			xAxisFormat: { type: "linear",
+						   ticks: 4,
+						   orientation: "bottom",
+						   label: "linear bar value (%)" },
+			yAxisFormat: { type: "ordinal",
+						   orientation: "left",
+						   label: "bar category labels" },
+		});		
+	newCont0.append(newBar0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 //	<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
 	var svg1 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget1"),

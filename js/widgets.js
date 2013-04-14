@@ -1681,20 +1681,6 @@ MakeSVGContainer.prototype.BarChart = function (config,eventManager)
 			  });
 }; //end bar chart object generator function
 
-/*
-MakeLineGraph.prototype.setState = function(liteKey) {
-	if (this.traces[liteKey]) {
-		//put all lines back to normal width (clear old state)
-		d3.selectAll("#"+this.id).transition().duration(100).style("stroke-width",2);
-		//emphasize the line selected
-		d3.select("#" + this.id + liteKey)
-		.style("stroke-width",4);
-		return liteKey;
-	} else {
-		console.log("Invalid key. No trace " + liteKey);
-	}
-};
-*/
 
 /* **************************************************************************
  * ScalableImage                                                        *//**

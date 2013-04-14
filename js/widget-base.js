@@ -290,6 +290,7 @@ function Axes(container, config)
 	this.yFmt = config.yAxisFormat;
 
 	// Set defaults for missing axis extents
+	// Use small positive non-zero value to accomodate log scale
 	if (!('extent' in this.xFmt))
 		this.xFmt.extent = [1e-10, 1];
 
@@ -297,7 +298,7 @@ function Axes(container, config)
 		this.yFmt.extent = [0, 1];
 
 	//default margin is set that is meant to be updated by the constituent
-	//objects if they require more space - mostly happens with axes so we use axes as a container
+	//objects if they require more space - mostly happens with axes 
 	//margin: an associative array/object with keys for top, bottom, left and right
 	this.margin = { top: 10,
 					bottom: 0,
@@ -366,16 +367,17 @@ function Axes(container, config)
 		// push everything down so text doesn't slop over the top - We'll do this later after measurement
 		.attr("id", this.id) //name it so it can be manipulated or highlighted later
 		;
-
-
+		
+		
 	if (this.xFmt.type)
 	{
 		if (this.yFmt.type == "ordinal")
 		{
-			//if we're making ordinal bars, x must start from 0
-			this.xFmt.extent = d3.extent(this.xFmt.extent.push(0));
+			//if we're making horizontal ordinal bars, x must include 0
+			this.xFmt.extent.push(0);
+			this.xFmt.extent = d3.extent(this.xFmt.extent);
 		}
-
+		console.log("x extent is " , this.xFmt.extent);
 		//Check if explicit ticks are specified, and if so, use them as the mapped range of the graph width
 		//ignore the actual data range
 		var xExtent = ($.isArray(xTicks)) ? d3.extent(xTicks) : this.xFmt.extent;
@@ -578,6 +580,7 @@ function Axes(container, config)
 				;
 
 			console.log("label size ", $('#label' + this.id).height());
+			
 			//toDO use this to correctly move to the left of axis
 		}
 
