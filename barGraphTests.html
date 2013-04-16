@@ -19,10 +19,9 @@
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
-            	<div id="bar0"><p>0n. Single bar graph</p></div>
-				<div id="widgetTarget0"><p>0. Single bar graph</p></div>
-				<div id="widgetTarget1"><p>1. Multiple series bar graph (these just stack up labels, or overprint bars with the same label)</p></div>
-				<div id="widgetTarget2"><p>2. Grouped bars (separate series with same label shown in group)</p></div>
+            	<div id="bar0"><p>0n. Single series bar graph</p></div>
+                <div id="barMulti"><p>1n. Multiple series bar graph (these just stack up labels, or overprint bars with the same label)</p></div>
+				<div id="groupBar"><p>2n. Grouped bars (separate series with same label shown in group)</p></div>
 				
 			</div>
 			<div class="span6 rightCol">
@@ -172,33 +171,8 @@ var ordinalData2 = [
 		]; // array of line data
 		
 	
-	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
+	//<div id="bar0"><p>0. Single series bar graph</p></div>
 	
-	var svg0 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget0"),
-		maxWid: 400,
-		maxHt: 300
-		}
-	);
-	
-	svg0.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		Data: [ordinalData],
-		xaxisType: "linear",
-		xTicks: 4,
-		xOrient: "bottom",
-		xLabel: "linear bar value (%)",
-		yaxisType: "ordinal",
-		yOrient: "left",
-		yLabel: "bar category labels"
-	});
-	
-	svg0.BarChart({
-		Data: [ordinalData],
-		type: "linear" //ignored for anything but grouped
-	});
-
 	var newCont0 = new SVGContainer({
 			node: d3.select("#bar0"),
 			maxWid: 400,
@@ -217,56 +191,47 @@ var ordinalData2 = [
 		});		
 	newCont0.append(newBar0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-//	<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
-	var svg1 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget1"),
-		maxWid: 400,
-		maxHt: 300
-		}
-	);
-	svg1.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		Data: [ordinalData, ordinalData2],
-		xaxisType: "linear",
-		xTicks: 5,
-		xOrient: "bottom",
-		xLabel: "counts",
-		yaxisType: "ordinal",
-		yOrient: "left",
-	});
-	
-	svg1.BarChart({
-		Data: [ordinalData, ordinalData2],
-		type: "lines"
-	});
+//	<div id="barMulti"><p>1. Multiple Series</p></div>
 
-	//	<div id="widgetTarget2"><p>Grouped bars (separate series with same label shown in group)</p></div>
+	var newContMulti = new SVGContainer({
+			node: d3.select("#barMulti"),
+			maxWid: 400,
+			maxHt: 300
+		});
+	var newBar1 = new BarChart({
+			id: "bcMultiSeries",
+			Data: [ordinalData,ordinalData2], 
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "counts" },
+			yAxisFormat: { type: "ordinal",
+						   orientation: "left",
+						   },
+		});		
+	newContMulti.append(newBar1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+	//	<div id="groupBar"><p>Grouped bars (separate series with same label shown in group)</p></div>
 	
-	var svg2 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget2"),
-		maxWid: 500,
-		maxHt: 500
-		}
-	);
-	svg2.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		Data: [lowIncome,middleIncome,highIncome],
-		xaxisType: "linear",
-		xTicks: 5,
-		xOrient: "bottom",
-		xLabel: "Percentage for Low, Middle, and High Income",
-		yaxisType: "ordinal",
-		yTicks: 5,
-		yOrient: "left",
-	});
-	
-	svg2.BarChart({
-		Data: [lowIncome,middleIncome,highIncome],
-		type: "grouped"
-	});
-	
+	var newGroup = new SVGContainer({
+			node: d3.select("#groupBar"),
+			maxWid: 500,
+			maxHt: 500
+		});
+	var barGroup = new BarChart({
+			id: "bcGrouped",
+			Data: [lowIncome,middleIncome,highIncome],
+			type: "grouped",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "Percentage for Low, Middle, and High Income" },
+			yAxisFormat: { type: "ordinal",
+						   orientation: "left",
+						   },
+		});		
+	newGroup.append(barGroup, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 	
 	//	<div id="widgetTarget50"><p>4. Doublesided bar</p></div>
 	var svg50 = new MakeSVGContainer(

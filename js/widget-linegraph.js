@@ -266,7 +266,7 @@ LineGraph.prototype.draw = function(container, size)
  * @param {?}	liteKey	-...
  *
  ****************************************************************************/
-LineGraph.prototype.setState = function(liteKey)
+LineGraph.prototype.lineLite = function(liteKey)
 {
 	if (this.traces[liteKey])
 	{

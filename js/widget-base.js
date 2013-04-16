@@ -179,7 +179,7 @@ function SVGContainer(config)
 SVGContainer.prototype.append = function(svgWidget, location)
 {
 	// create a group for the widget to draw into that we can then position
-	var g = this.svgObj.append('g');
+	var g = this.svgObj.append('g').attr("class","widget");
 	var h = d3.round(location.heightPercent * this.maxHt);
 	var w = d3.round(location.widthPercent * this.maxWid);
 	svgWidget.draw(g, {height: h, width: w});
@@ -362,11 +362,11 @@ function Axes(container, config)
 
 	var tickheight = 10;
 
-	this.group = this.container.append("g") //make a group to hold new scaled widget with axes
-		//.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-		// push everything down so text doesn't slop over the top - We'll do this later after measurement
+	 
+	this.group = this.container.append("g") //make a group to hold new axes
 		.attr("id", this.id) //name it so it can be manipulated or highlighted later
 		;
+	
 		
 		
 	if (this.xFmt.type)
@@ -377,7 +377,8 @@ function Axes(container, config)
 			this.xFmt.extent.push(0);
 			this.xFmt.extent = d3.extent(this.xFmt.extent);
 		}
-		console.log("x extent is " , this.xFmt.extent);
+		//TEST
+		console.log("x extent is two elements" , this.xFmt.extent.length == 2);
 		//Check if explicit ticks are specified, and if so, use them as the mapped range of the graph width
 		//ignore the actual data range
 		var xExtent = ($.isArray(xTicks)) ? d3.extent(xTicks) : this.xFmt.extent;

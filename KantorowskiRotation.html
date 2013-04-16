@@ -47,17 +47,22 @@ The % ee can also be calculated if the composition of the mixture is known. The 
                 	</p>
                 </div>
 				<div id="barChart0"></div>
-				
+				<div id="barChart"></div>
 			</div>
 		</div>
 	</div>
 
 	<script src="js/jquery-latest.js"></script>
-	<script src="js/d3.v2.min.js"></script>
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
+	<script src="js/d3.v3.min.js"></script>
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+
+
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-barchart.js"></script>
+    <script src="js/widget-slider.js"></script>
 	<script src="js/eventmanager.js"></script>
 
 	<script>
@@ -94,6 +99,24 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			label: "Dextro"
 		}, eventManager);
 
+	var cont1 = new SVGContainer({
+			node: d3.select("#barChart"),
+			maxWid: 450,
+			maxHt: 300
+		});
+	var Bars = new BarChart({
+			id: "bc0",
+			Data: [dextroData, levoData], 
+			xAxisFormat: { type: "linear",
+						   ticks: [0,10,20,30,40,50,60,70,80,90,100],
+						   orientation: "bottom",
+						   label: "% enantiomers" },
+			yAxisFormat: { type: "ordinal",
+						   orientation: "left",
+						    },
+		});		
+	cont1.append(Bars, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 	var svg70 = new MakeSVGContainer(
 		{
 			node: d3.select("#barChart0"),
@@ -103,7 +126,6 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 
 	svg70.Axes( 
 		{
-			
 			xPosPerc: 0, yPosPerc:0,
 			xPerc: 1, yPerc: 1,
 			xaxisType: "linear", yaxisType: "ordinal",
@@ -142,7 +164,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		label: "ee"
 	}, eventManager);
 	
-		// Create the alpha numeric input widget
+	/*	// Create the alpha numeric input widget
 	var inputAlpha = new NumericInput({
 			node: d3.select("#alpha"),
 			id: 'alphaSR',
@@ -152,12 +174,25 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			unit: "%",
 			label: "Specific rotation (&alpha;)"
 		}, eventManager);
+*/
 
+	var sl1 = new Slider ({
+			id: "slider1",
+			startVal: 80,
+			minVal: 0,
+			maxVal: 360,
+			stepVal: 10,
+			unit: "&deg;",
+			label: "Specific rotation (&alpha;): "
+		}, eventManager);
+		
+	sl1.draw(d3.select("#alpha"));
+	
 	// Create the rotation readout widget
 	var rot = new Readout({
 			node: d3.select("#Rotate"),
 			id: 'rotate',
-			startVal: inputAlpha.startVal * diff/100,
+			startVal: sl1.getValue() * diff/10,
 			readOnly: true,
 			size: 4,
 			unit:"&deg;", 
@@ -186,7 +221,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 
 	
 	pieDish.Pie({
-		Data: [{x:inputAlpha.startVal * diff/360}],
+		Data: [{x:80 * diff/360}],
 		xYPos: [.5,.5]
 	});
 	
@@ -208,13 +243,13 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 						   function(ed) { handleInputValueChanged(inputDextro, ed.value); });
 	eventManager.subscribe(inputDextro.changedValueEventId,
 						   function(ed) { handleInputValueChanged(inputLevo, ed.value); });
-	eventManager.subscribe(inputAlpha.changedValueEventId,
+	eventManager.subscribe(sl1.changedValueEventId,
 						   function(ed) { handleNumericInputChanged(rot, ed.value); });
 	
 
 	/* **************************************************************************
-	 * handleInputValueChanged                                              *//**
-	 *
+	* handleInputValueChanged                                              *//**
+	*
 	* handleInputValueChanged is called from the event handler for one of
 	* the input widgets when the user changes its value. It updates the
 	* given matching input widget's value to match the new value and then
@@ -232,7 +267,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		var diff = inputDextro.getValue() - inputLevo.getValue(),
 		    absDiff = Math.abs(diff);
 		eeReadout.setValue(absDiff);
-		rot.setValue(inputAlpha.getValue() * diff/100);
+		rot.setValue(sl1.getValue() * diff/100);
 		updateBarChart();
 		updatePieChart();
 	}
@@ -280,6 +315,9 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		svg70.LineMarkers( {
 			xMarks: [newMark]
 			});
+		
+		Bars.draw(Bars.lastdrawn.container,Bars.lastdrawn.size);
+
 		
 	}
 

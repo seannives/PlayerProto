@@ -52,7 +52,7 @@
  * @param {string		config.type		-String specifying "grouped", or anything else (ignored)
  * @param {AxisFormat}	config.xAxisFormat -Format of the x axis of the graph.
  * @param {AxisFormat}	config.yAxisFormat -Format of the y axis of the graph.
- *
+ * @param {eventManager} eventManager	- allows the object to emit events
  *
  * NOTES: One of the two axes must be ordinal for a bar graph. Only y is accomodated
  * for now.
@@ -60,12 +60,13 @@
  * negative values are accomodated.  Negative values have to count right to x=0
  * and positive must always count right from x=0. Currently all bar graphs are
  * assumed to layout horizontally.  TODO: vertical bar graphs (thermometers)
+ * TODO: emit events when edges of bars are dragged to set a new value
  **************************************************************************/
 
-function BarChart(config)
+function BarChart(config, eventManager)
 {
 	/**
-	 * A unique id for this instance of the line graph widget
+	 * A unique id for this instance of the bar chart widget
 	 * @type {string}
 	 */
 	this.id = config.id;
@@ -111,6 +112,13 @@ function BarChart(config)
 			yScale: null,
 			traces: null,
 		};
+		
+	//these aren't hooked up yet, but I expect bar graphs to eventually need
+	//to fire drag events that let users change the data for the bar length
+	//and drag events that let users sort the data differently, reordering the bars -lb
+	this.eventManager = eventManager;
+	this.changedEventId = this.id + 'barDataChanged';
+	this.sortedEventId = this.id + 'barSortChanged';
 } // end of barChart constructor
 
 
@@ -141,11 +149,11 @@ BarChart.prototype.draw = function(container, size)
 		};
 		
 	var dataPts = d3.merge(this.data);
+	
 	//all the data in each dimension is merged to use for the domain  
 	//on the axis (autoranging)
 	axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
 	axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
-	console.log("xExtent", axesConfig.xAxisFormat.extent);
 
 	//Check to see whether ordinal or other scales will be generated
 	// and whether explicit ticks are set, which overrides the autoranging
@@ -159,12 +167,15 @@ BarChart.prototype.draw = function(container, size)
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.y;}));
 		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
+		
 	} 
 	
 	//make the axes for this graph - draw these first because these are the 
 	//pieces that need extra unknown space for ticks, ticklabels, axis label
-	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
-
+	if(!d3.select("#"+ axesConfig.id)[0][0]){
+		//only draw axes if there aren't any yet
+		this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
+	}
 	// alias for axes once they've been rendered
 	var axesDrawn = this.lastdrawn.axes;
 
@@ -204,14 +215,20 @@ BarChart.prototype.draw = function(container, size)
 	};
 
 	
+	if (d3.select("#"+barsId)[0][0] === null)
+	{
 
 	var graph = axesDrawn.group.append("g") //make a group to hold new bar chart
 		.attr("id", barsId) //name it so it can be manipulated or highlighted later
 		//TODO: determine if this is really useful
 		;
-		
+	}
+	else
+	{
+		var graph = d3.select("#" + barsId);
+	}
 	//TEST: the graph group now exists and reports it's ID correctly
-	console.log("graph group is made:", graph.attr("id"));
+	console.log("graph group is made/found:", graph.attr("id")) == barsId;
 
 	
 	//draw the serie(s)
@@ -225,7 +242,10 @@ BarChart.prototype.draw = function(container, size)
 			.attr("class", function(d, i) {
 					return "series fill" + i;
 					//give each series it's own color
-				});
+				})
+			.attr("id", function(d, i) {return barsId + i;});
+			//put the number of the series on the series ID
+			//can't use the y label because it might contain spaces. -lb
 
 	barSeries.exit().remove();  //on redraw, get rid of any series which now have no data
 
@@ -253,13 +273,11 @@ BarChart.prototype.draw = function(container, size)
 
 	bars.enter()
 		.append("g")
-			.attr("id", function(d, i) {return barsId + (d.key? d.key : i);})
-			//if a key has been specified for the bar, put it on the ID, for highlighting
-			//TODO: this needs work - you might want to highlight the bar or the series, or
-			//several bars.  I don't want to mess up the array structure of the data 
-			//but to keep these unique we really need a key on the series and a key on the bar
-			//can't use the y label because it might contain spaces. -lb
 			.attr("class", "bar")
+			.attr("id", function(d, i) {return d.key ? (barsId + "bar" + d.key) : null;})
+			//if a key has been specified for the bar, put it on the ID, for highlighting
+			//otherwise, don't put an ID
+			//can't use the y label because it might contain spaces. -lb
 			.attr("transform",
 				  function(d)
 				  {
@@ -286,12 +304,4 @@ BarChart.prototype.draw = function(container, size)
 
 }; // end of barChart.draw()
 
-/* **************************************************************************
- * LineGraph.setState                                                   *//**
- *
- * setState ...
- *
- * @param {?}	liteKey	-...
- *
- ****************************************************************************/
 
