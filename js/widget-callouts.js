@@ -52,9 +52,10 @@ var callOutConfig = {
  * @param {string}		config.type		-String to specify table ("all") or box ("one")
 *  
  * @param {Object}		config.textBits	- array of objects
- * @param {string}		textBits.content- string to be displayed, may contain
+ * @param {string}		config.textBits.headers - 
+ * @param {string}		textBits.content.text- strings to be displayed in cols, may contain
  *										  tags or extended characters
- * @param {string}		textBits.key	- string used to relate the content
+ * @param {string}		textBits.content.key	- string used to relate the content
  *										  to other page elements (optional)
  *
  * NOTES: TODO there is a desire to show all text when in landscape, but just 
@@ -69,6 +70,7 @@ function Callouts(config,eventManager)
 	 */
 	this.id = config.id;
 	this.textBits = config.textBits;
+	this.headers = config.textBits.headers
 	this.type = config.type;
 	this.eventManager = eventManager;
 	// Define the ids of the events the slider uses
