@@ -32,18 +32,20 @@
 				<img src="img/Kequation1.png" />
 				<p>and</p>
 				<img src="img/Kequation2.png"/>
-				<p>For both equations, the numerator of the term in parentheses relates to the optically inactive portion of the sample. Halving this value provides the percentage of the enantiomer present in lesser amount. This same value needs to be added to the %ee to provide the percentage of the dominant enantiomer.
-</p>
-<p>
-The % ee can also be calculated if the composition of the mixture is known. The enantiomer present in smaller number is subtracted from the dominant enantiomer. Consider a sample that contains 35% of the dextrorotatory enantiomer and 65% of the levorotatory component. The % ee is given by
-<div>&#124;<span id="Dextro"></span> &minus; <span id="Levo"></span>&#124;
-                	= <span id="ee"></span> 
-                </div>
+				<p>For both equations, the numerator of the term in parentheses relates to the optically inactive 		portion of the sample. Halving this value provides the percentage of the enantiomer present in lesser amount. This same value needs to be added to the %ee to provide the percentage of the dominant enantiomer.
+				</p>
+				<p>
+					The % ee can also be calculated if the composition of the mixture is known. The enantiomer present in smaller number is subtracted from the dominant enantiomer. Consider a sample that contains
+					<span id="Dextro"></span><span id="Levo"></span>
+                	
+                  The % ee is given by the absolute difference between the components, or 
+                  <span id="ee" class="math"> </span>.
+          
 				</p>
 			</div>
 			<div class="span6 rightCol">
             	<div id="roto">
-                	<p> <span id="alpha"></span>  <span id="Rotate"></span>
+                	<p> <span id="alpha"></span> 
                 	</p>
                 </div>
 				<div id="barChart0"></div>
@@ -77,7 +79,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	var levoData =   [ { x: 35, y: "Levo" } ];
 	var dextroData = [ { x: 65, y: "Dextro" } ];
 
-// Create the Levo numeric input widget
+/* Create the Levo numeric input widget
 	var inputLevo = new NumericInput({
 			node: d3.select("#Levo"),
 			id: 'levo',
@@ -86,9 +88,21 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			maxVal: 100,
 			unit: "%",
 			label: "Levo"
+		}, eventManager);*/
+		
+		
+	var inputLevo = new Slider ({
+			id: "levo",
+			startVal: 35,
+			minVal: 0,
+			maxVal: 100,
+			stepVal: 1,
+			unit: "%",
+			label: "Levorotary "
 		}, eventManager);
+	inputLevo.draw(d3.select("#Levo"));
 
-// Create the Dextro numeric input widget
+/* Create the Dextro numeric input widget
 	var inputDextro = new NumericInput({
 			node: d3.select("#Dextro"),
 			id: 'dextro',
@@ -97,8 +111,22 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			maxVal: 100,
 			unit: "%",
 			label: "Dextro"
-		}, eventManager);
+		}, eventManager); */
 
+	
+	var inputDextro = new Slider ({
+			id: "dextro",
+			startVal: 65,
+			minVal: 0,
+			maxVal: 100,
+			stepVal: 1,
+			unit: "%",
+			label: "Dextrorotary "
+		}, eventManager);
+	
+	inputDextro.draw(d3.select("#Levo"));
+	
+	
 	var cont1 = new SVGContainer({
 			node: d3.select("#barChart"),
 			maxWid: 450,
@@ -161,7 +189,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		readOnly: true,
 		size: 4,
 		unit: "%", 
-		label: "ee"
+		label: "ee ="
 	}, eventManager);
 	
 	/*	// Create the alpha numeric input widget
@@ -188,7 +216,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		
 	sl1.draw(d3.select("#alpha"));
 	
-	// Create the rotation readout widget
+	/* Create the rotation readout widget
 	var rot = new Readout({
 			node: d3.select("#Rotate"),
 			id: 'rotate',
@@ -198,7 +226,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 			unit:"&deg;", 
 			label: "Rotation"
 		}, eventManager);
-
+	*/
 
 
 	var pieDish = new MakeSVGContainer(
@@ -228,7 +256,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	//This is the marker that shows the 0/180 rotation line
 	pieDish.LineMarkers({
 		xMarks: [{
-			x:(1/2), label: d3.format("+0r2")(rot.getValue()) + "&deg;"
+			x:(1/2), label: d3.format("+0r2")(sl1.getValue() * diff/100) + "&deg;"
 			}] 
 	});
 
@@ -243,8 +271,7 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 						   function(ed) { handleInputValueChanged(inputDextro, ed.value); });
 	eventManager.subscribe(inputDextro.changedValueEventId,
 						   function(ed) { handleInputValueChanged(inputLevo, ed.value); });
-	eventManager.subscribe(sl1.changedValueEventId,
-						   function(ed) { handleNumericInputChanged(rot, ed.value); });
+	eventManager.subscribe(sl1.changedValueEventId, function(ed) { handleNumericInputChanged(ed.value); });
 	
 
 	/* **************************************************************************
@@ -267,9 +294,9 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		var diff = inputDextro.getValue() - inputLevo.getValue(),
 		    absDiff = Math.abs(diff);
 		eeReadout.setValue(absDiff);
-		rot.setValue(sl1.getValue() * diff/100);
+		//rot.setValue(sl1.getValue() * diff/100);
 		updateBarChart();
-		updatePieChart();
+		updatePieChart(diff);
 	}
 	
 	
@@ -290,9 +317,9 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 	function handleNumericInputChanged(WidgetList, newValue)
 	{
 		var diff = inputDextro.getValue() - inputLevo.getValue();
-		var angle = newValue * diff/100;
-		rot.setValue(newValue * diff/100);
-		updatePieChart();
+		//var angle = newValue * diff/10;
+		//rot.setValue(newValue * diff/100);
+		updatePieChart(diff);
 	}
 
 	/* **************************************************************************
@@ -321,14 +348,14 @@ The % ee can also be calculated if the composition of the mixture is known. The 
 		
 	}
 
-	function updatePieChart()
+	function updatePieChart(diff)
 	{
 		console.log("TODO: fired updatePieChart log");
 		pieDish.Pie({
-			Data: [{x:rot.getValue()/3.6}],
+			Data: [{x: sl1.getValue() * diff/360}],
 			xYPos: [0.5,0.5]
 			});
-		var newMark = {x:(1/2), label: d3.format("+0r2")(rot.getValue()) + "&deg;"};
+		var newMark = {x:(1/2), label: d3.format("+0r2")(sl1.getValue() * diff/100) + "&deg;"};
 		pieDish.LineMarkers( {
 			xMarks: [newMark]
 			});

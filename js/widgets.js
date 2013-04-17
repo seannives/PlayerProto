@@ -287,7 +287,7 @@ function NumericInput(config, eventManager)
  * At the moment, this.id is undefined and just shows that way.
  ****************************************************************************/
 
-function Callouts(config,eventManager) { //begin callout generator
+function CallOuts(config,eventManager) { //begin callout generator
 
 	this.node = config.node;
 	this.eventManager = eventManager;
@@ -335,7 +335,7 @@ function Callouts(config,eventManager) { //begin callout generator
 * ID's that have the litekey or index appended to them after the _. We 
 * need to redo this according to object properties. TODO, ma
 ***********************************************************************/
-Callouts.prototype.calloutSwap = function (lite)
+CallOuts.prototype.calloutSwap = function (lite)
 	{
 		console.log("TODO: fired callout swap log", lite);
 		//hide all 

@@ -308,11 +308,20 @@ td.rightAlign {
 	min-width: 5em;
 	}
 .dataLabel {
+	border: none;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	padding: .2em;
+	margin: .1em;
+	font: 1.0em Helvetica, sans;
+	text-align:right;
+}
+.dataInput {
 	border: solid 1px #5BAFE4;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 	padding: .2em;
 	margin: .1em;
-	font: 1.2em Helvetica, sans;
+	font: 0.8em Helvetica, sans;
 	text-align:right;
 }

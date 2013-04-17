@@ -228,60 +228,56 @@ var ordinalData2 = [
 						   label: "Percentage for Low, Middle, and High Income" },
 			yAxisFormat: { type: "ordinal",
 						   orientation: "left",
-						   },
+						   }
 		});		
 	newGroup.append(barGroup, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 	
 	//	<div id="widgetTarget50"><p>4. Doublesided bar</p></div>
-	var svg50 = new MakeSVGContainer(
+	var svg50 = new SVGContainer(
 		{node: d3.select("#widgetTarget50"),
 		maxWid: 400,
 		maxHt: 300
 		}
 	);
 	
-	svg50.Axes({
-		xPosPerc: 0, yPosPerc:0,
-		xPerc: 1, yPerc: 1,//full height and width
+	var pyramid = new BarChart({
+		id: "pyrChart",
 		Data: [growthMen,growthWomen],
-		xaxisType: "linear", yaxisType: "ordinal",
-		xTicks: 10,
-		xOrient: "bottom",
-		yOrient: "left",
-		xLabel: "linear axis showing negative values",
-		yLabel: "Age ranges"
+		xAxisFormat: { type: "linear", 
+					   ticks: 10,
+					   orientation: "bottom",
+					   label: "linear axis showing negative values"},
+		yAxisFormat: { orientation: "left",
+					   label: "Age ranges",
+					   type: "ordinal"}
 	});
 
-	svg50.BarChart({
-		Data: [growthMen,growthWomen],
-		type: "linear"
-	});
+	svg50.append(pyramid, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 	
 	//	<div id="widgetTarget50"><p>4. Doublesided bar double positive axis</p></div>
-	var svg55 = new MakeSVGContainer(
+	var svg55 = new SVGContainer(
 		{node: d3.select("#widgetTarget55"),
 		maxWid: 400,
 		maxHt: 300
 		}
 	);
-	svg55.Axes({
-		xPosPerc: 0, yPosPerc:0,
-		xPerc: 1, yPerc: 1,//full height and width
+	
+	var dblPos = new BarChart ({
+		id: "dblPosChart",
 		Data: [growthMen,growthWomen],
-		xaxisType: "double positive", yaxisType: "ordinal",
-		xTicks: 10,
-		xOrient: "bottom",
-		yOrient: "left",
-		xLabel: "double positive axis",
-		yLabel: "Age ranges"
-		
+		xAxisFormat: { type: "double positive", 
+					   ticks: 10,
+					   orientation: "bottom",
+					   label: "double positive axis"},
+		yAxisFormat: { type: "ordinal",
+					   orientation: "left",
+					   yLabel: "Age ranges"},
 	});
 
-	svg55.BarChart({
-		Data: [growthMen,growthWomen],
-		type: "linear"
-	});
+	svg55.append(dblPos, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 
 	//	<div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
 

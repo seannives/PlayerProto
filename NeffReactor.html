@@ -30,14 +30,11 @@
 			<div class="span8 leftCol">
             	<p>Nuclear reactors use heat from fission reactions to turn water into steam, which spins turbines connected to generators that produce electricity. The figure shows a common design known as a pressurized water reactor.</p>
 			</div>
-			<div class="span6 rightCol">
-            	<div id="roto">
-                	<p> <span id="alpha"></span>  <span id="Rotate"></span>
-                	</p>
-                </div>
+			<div class="span4 rightCol">
 			</div>
 		</div>
-        <div class="row-fluid">
+        
+         <div class="row-fluid">
 			<div class="span8 leftCol">
             	<div id="imgReactor">
                 </div>
@@ -46,6 +43,24 @@
             	<div id="steps">
                 </div>
 			</div>
+            
+             <div class="row-fluid">
+			<div class="span6 leftCol">
+            <p>It’s easy to take our cars for granted, given how easy it is to fill a gas tank.  Yet the process of taking crude oil (petroleum) from the ground and turning it into gasoline and other fuels is long and elaborate. </p>
+            <p>
+Nearly all of the fuel used for transportation today comes from crude oil. When it is brought out of the ground, it has to be transported in pipelines, trucks, or ships across vast distances.  The engineering required for oil transport can be substantial.  The Trans Alaska Pipeline System that runs from the North Slope of Alaska to the city of Valdez on Alaska’s southern coast is 800 miles long.  A new pipeline in Russia and Siberia called the Eastern Siberia Pacific Ocean Pipeline will run 2,900 miles (4,700 km) when it is completed around 2014.  
+			</p>
+            <p>
+After oil has been transported, it has to be converted at refineries into secondary fuels such as gasoline. Crude oil contains a wide variety of hydrocarbons, molecules made from hydrogen and carbon.  These hydrocarbons are used for a variety of purposes, including fuels in liquid and gas forms. Crude oil is separated into these fuels through a process called fractional distillation that uses heat and chemical reactions to separate molecules into different groups.  These final products include not only gasoline and diesel fuels but also other products such as asphalt for roads, oils for engines, and specialized fuels for airplanes.
+			</p>
+            	<div id="imgReactor">
+                </div>
+			</div>
+            <div class="span6 rightCol">
+            	<div id="steps">
+                </div>
+			</div>
+		</div>
 		</div>
 	</div>
 
@@ -55,6 +70,8 @@
 	<script src="js/eCourse-master.js"></script>
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+    <script src="js/widget-callouts.js"></script>
+
 	<script src="js/eventmanager.js"></script>
 
 	<script>
@@ -105,8 +122,9 @@
 
 	
 	// Create the callout array.  These won't emit events, just get them.
-	var callOuts = new Callouts({
-		node: d3.select("#steps"),
+	var callEm = new Callouts({
+		id: "callme",
+		//type: "table",
 		textBits: [
 		{content: 
 		"1. In a closed circuit, (green) water is pumped at high pressure to the reactor core."},
@@ -119,9 +137,9 @@
 		{content: 
 		"5. A third supply of water is used to cool the steam so it condenses into water, which is pumped back to the steam generator."}
 		]
-	});
+	},eventManager);
 	
-	
+	callEm.draw(d3.select("#steps"));
 	
  
 
@@ -135,7 +153,7 @@
 	eventManager.subscribe(svgImg.selectedEventId,
 						   handleSelectionChanged);
 
-//Test: set the start highlight state of 0 index by calling the 
+//TEST: set the start highlight state of 0 index by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
 	handleSelectionChanged({labelIndex: 0});
@@ -158,7 +176,7 @@
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
 		labelLite(svgImg,eventDetails.labelIndex);
-		callOuts.calloutSwap(eventDetails.labelIndex);
+		callEm.calloutSwap(eventDetails.labelIndex);
 		
 	}
 	
