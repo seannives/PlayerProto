@@ -161,22 +161,63 @@ function SVGContainer(config)
 /* **************************************************************************
  * SVGContainer.append                                                  *//**
  *
- * Append the given widget to the container at the specified location
- * within it.
+ * Append the given widgets to the container at the specified location
+ * within it. If multiple widgets are passed in, the x and y scale of
+ * the 1st widget will be set on the other widgets before calling draw.
+ *
+ * @param {Object}	svgWidgets		-The widget or array of widgets to draw in the container
+ * @param {Object}	location		-The location in the container where the widget should be placed.
+ * @param {number}	location.topPercentOffset
+ *									-Fraction offset of the top of the widget.
+ * @param {number}	location.leftPercentOffset
+ *									-Fraction offset of the left of the widget.
+ * @param {number}	location.heightPercent
+ *									-Fraction of container height for the widget height.
+ * @param {number}	location.widthPercent
+ *									-Fraction of container width for the widget width.
+ *
+ ****************************************************************************/
+SVGContainer.prototype.append = function(svgWidgets, location)
+{
+	if (!$.isArray(svgWidgets))
+	{
+		this.append_one_(svgWidgets, location);
+	}
+	else
+	{
+		// When appending a group of widgets, the data scale of the 1st one
+		// should be used by the rest of the widgets.
+		for (var i = 0; i < svgWidgets.length; ++i)
+		{
+			if (i > 0)
+			{
+				svgWidgets[i].setScale(svgWidgets[0].xScale, svgWidgets[0].yScale);
+			}
+
+			this.append_one_(svgWidgets[i], location);
+		}
+	}
+};
+
+/* **************************************************************************
+ * SVGContainer.append_one_                                             *//**
+ *
+ * Private helper that appends the given widget to the container at the
+ * specified location within it.
  *
  * @param {Object}	svgWidget		-The widget to draw in the container
  * @param {Object}	location		-The location in the container where the widget should be placed.
  * @param {number}	location.topPercentOffset
- *									 -Fraction offset of the top of the widget.
+ *									-Fraction offset of the top of the widget.
  * @param {number}	location.leftPercentOffset
- *									 -Fraction offset of the left of the widget.
+ *									-Fraction offset of the left of the widget.
  * @param {number}	location.heightPercent
- *									 -Fraction of container height for the widget height.
+ *									-Fraction of container height for the widget height.
  * @param {number}	location.widthPercent
- *									 -Fraction of container width for the widget width.
+ *									-Fraction of container width for the widget width.
  *
  ****************************************************************************/
-SVGContainer.prototype.append = function(svgWidget, location)
+SVGContainer.prototype.append_one_ = function(svgWidget, location)
 {
 	// create a group for the widget to draw into that we can then position
 	var g = this.svgObj.append('g').attr("class","widget");
