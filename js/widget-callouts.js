@@ -70,11 +70,10 @@ function Callouts(config,eventManager)
 	 */
 	this.id = config.id;
 	this.textBits = config.textBits;
-	this.headers = config.textBits.headers
 	this.type = config.type;
 	this.eventManager = eventManager;
 	// Define the ids of the events the slider uses
-	this.changedKeyId = this.id + '_Callout';
+	this.selectedEventId = this.id + '_Callout';
 	 	
 } // end of barChart constructor
 
@@ -105,39 +104,41 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 	
 	if(this.type == "table"){
 		var table = this.rootEl.append("table").attr("class", "data");
-		/*table.append("thead")
-			.attr("class", "data")
-				.append("tr").selectAll("td").data(that.textBits)
-			.append("td").html(function(d) {
-							return d.content;
-							});*/
-
+		
+		if(this.textBits.headers){
+			var headRow = table.append("thead").attr("class", "data").append("tr");
+			headRow.selectAll("td").data(this.textBits.headers).enter()
+				.append("td")
+					.html(function(d) {
+							return d;
+							});
+		}
 	//Show the data in a table
-	this.calloutCollection = table.append("tbody").selectAll("tr").data(that.textBits);
-	this.calloutCollection.enter().append("tr")
+	this.calloutCollection = table.append("tbody").selectAll("tr").data(this.textBits.content);
+	var rows = this.calloutCollection.enter().append("tr")
 	//creates as many rows as there are elements in textBits
 		.attr("id", function(d,i) {
 			return that.id + (d.key ? d.key : i);
 			})
 		.attr("class", "dataTable");
 
-	this.calloutCollection.selectAll("td")
-		.data(function(d, i) {
-			return d3.values(d[i]);
+	rows.selectAll("td")
+		.data(function(d) {
+			return d3.values(d);
 			}) 
-	//values will return one entry for each value in each data entry.  So, if you
-	//supply multiple text strings, you get multiple columns.
+	//values will return one entry for each key in the data.  So, if you
+	//supply col0, col1, etc., you get multiple columns.
 		.enter().append("td")
 		.html(function(d) {
 				return d;
 				});
 	} else {
-		this.calloutCollection = this.rootEl.selectAll("span.callouts").data(that.textBits);
+		this.calloutCollection = this.rootEl.selectAll("span.callouts").data(that.textBits.content);
 		this.calloutCollection.enter()
 		.append("span")
-		.attr("class","callouts")
+		.attr("class","callOut")
 		.text(function(d, i) {
-				return d.content;})//make the callouts
+				return d3.values(d);})//make the callouts
 		.style("display","none") //all callouts start out hidden
 		.attr("id",function(d,i) {
 			return that.id + (d.key ? d.key : i);
@@ -146,9 +147,16 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 	console.log("Callouts made");
 
 	//show the first one by default
-	d3.select("#" + that.id + (that.textBits[0].key ? that.textBits[0].key : 0))
+	d3.select("#" + that.id + (that.textBits.content[0].key ? that.textBits.content[0].key : 0))
 	.style("display","block");
 	}
+	
+	this.calloutCollection.on('click',
+		function (d, i)
+			{
+				that.eventManager.publish(that.selectedEventId, {labelIndex: (d.key ? d.key : i)});
+			});
+	
 
 } //end Callouts object draw function
 
@@ -162,19 +170,79 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 *							collection to lite up
 *
 * NOTES: this is currently all based on members of a collection having
-* ID's that have the litekey or index appended to them after the _. We 
-* need to redo this according to object properties. TODO, ma
+* ID's that have the litekey or index appended to them after the ID. Maybe
+* want to redo this based on properties? Handles either the one-at-a-time
+* callOuts display or the table highlight display.
 ***********************************************************************/
 Callouts.prototype.calloutSwap = function (lite)
 	{
 		console.log("TODO: fired callout swap log", lite);
 		//hide all 
-		var unset = 
-			d3.selectAll(".callouts");
+		var unset = d3.selectAll(".callOut");
 		//TODO what I need is a better way to know which collection
 		//of labels to turn off. Doing it by class seems lame.
-		unset.style("display","none");
+		unset
+			.style("display","none");
 		
 		var set = d3.selectAll("#" + this.id + lite);
-		set.style("display","block");
+		set
+			.style("display","block");
+		
+		var unset = 
+			d3.selectAll(".dataTable");
+		//TODO what I need is a better way to know which collection
+		//of labels to turn off. Doing it by class seems lame.
+		unset
+		.style("color",null)
+		.style("border",null)
+		.style("background-color",null);
+		
+		var set = d3.selectAll("#" + this.id + lite);
+		set
+			.style("font-weight", "500")
+		//this slight bolding works in svg text, but is not really visible
+		//in table text. On the up side, it doesn't change width so much,
+		//so the letter spacing isn't necessary.
+		//.style("letter-spacing","-.07em")
+			.style("color", "#1d456e")
+			.style("border", "2px solid #bce8f1")
+			.style("background-color", "#E3EFFE");
+	}
+
+/* ********************************************************************
+* calloutLite                                                     *//**
+*
+* Updates the Callouts widget to display the text that matches 
+* the currently selected index, lite.
+*
+* @param lite				the index or key specifying which of a
+*							collection to lite up
+*
+* NOTES: this is currently all based on members of a collection having
+* ID's that have the litekey or index appended to them after the ID.
+***********************************************************************/
+Callouts.prototype.calloutLite = function (lite)
+	{
+		console.log("TODO: fired callout Lite log", lite);
+		//hide all 
+		var unset = 
+			d3.selectAll(".dataTable");
+		//TODO what I need is a better way to know which collection
+		//of labels to turn off. Doing it by class seems lame.
+		unset
+		.style("color",null)
+		.style("border",null)
+		.style("background-color",null);
+		
+		var set = d3.selectAll("#" + this.id + lite);
+		set
+		.style("font-weight", "500")
+		//this slight bolding works in svg text, but is not really visible
+		//in table text. On the up side, it doesn't change width so much,
+		//so the letter spacing isn't necessary.
+		//.style("letter-spacing","-.07em")
+		.style("color", "#1d456e")
+		.style("border", "2px solid #bce8f1")
+		.style("background-color", "#E3EFFE");
+	
 	}

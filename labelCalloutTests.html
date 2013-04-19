@@ -38,9 +38,11 @@
 	<script src="js/jquery-latest.js"></script>
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
-	<script src="js/d3.v2.min.js"></script>
+	<script src="js/d3.v3.min.js"></script>
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+    
+    <script src="js/widget-callouts.js"></script>
 	<script src="js/eventmanager.js"></script>
 <script>
 
@@ -319,22 +321,23 @@ for(i=0;i<dataPts;i++){
 	});
 
 
-	var textchunks = new Callouts (
-		{node: d3.select("#callOutHere"),
+	var textChunks = new Callouts (
+		{id: "Earth",
 		textBits: 	
-		  [	
-			{content: "Chapter 2 LO: Describe Earth's orientation to and revolution around the Sun and explain how they cause seasons."
+		  {	content:
+			[{content: "Chapter 2 LO: Describe Earth's orientation to and revolution around the Sun and explain how they cause seasons."
 		},
 			{content: "The thin veil of atmosphere includes relatively small percentages of gases such as carbon dioxide, methane, and water vapor absorb radiation emitted by Earth creating a greenhouse effect.",
 			},
 			{content: "The constant tilt and parallelism of Earth's axis as it revolves around the Sun creates the annual variation in day length and Earth's seasons.",
 			},
 			{content:"Heat is transferred by radiation, in the form of electromagnetic waves, conduction, which is caused by molecular collision, and convection, or molecular circulation. "	}
-		  ],
+		  ]},
 		liteKey: [0,1,2,3]
-		}
+		});
+		
+textChunks.draw(d3.select("#callOutHere"));
 
-	);
 	
 	svg2.ScalableImage(
 		{images: [
@@ -428,50 +431,40 @@ for(i=0;i<dataPts;i++){
 	
 
 	var endoCallouts = new Callouts ({
-		node: d3.select("#endoCall"),
-		textBits: [ 
-	{key: "Adrenal",
-	 content: "Conserves sodium and encourages water retention, which increases blood pressure."
-	 },
-	 {key: "Testes",
-	  content: "Group of hormones responsible for male sexual characteristics.  Testosterone is the principal androgen."
-	 },
-	 {key: "Thyroid",
-	 content: "Reduces calcium levels in blood and regulates metabolism."
-	 },
-	 {key: "Placenta",
-	 content: "Acts as a temporary endocrine gland by secreting chorionic gonadotropin, which signals the woman’s ovaries to continue producing progesterone.  Without this signal, the lining of the uterus would be shed during the menstrual cycle and the pregnancy would be terminated. *The placenta is not a gland but produces hormones."
-	 },
-	 {key: "Adrenal gland",
-	 content: "Related to stress response - increases blood glucose levels, suppresses the immune system, and aids metabolism."
-	 },
-	 {key: "Ovaries",
-   	  content: "Group of hormones responsible for female sex characteristics."
-	 },
-	 {key: "Stomach",
-	 content: "Stimulates the production of hydrochloric acid and pepsin - necessary for normal food digestion. *Stomach lining is not a gland but produces hormones."
-	 },
-	 {key: "Pancreas",
-	 content: "Raises glucose levels in the blood by triggering the liver to convert stored glycogen to glucose."
-	 },
-	 {key: "Pancreas",
-	 content: "Lowers glucose levels in the blood by encouraging cells to take in glucose from the blood."
-	 },
-	 {key: "Pineal gland",
-	 content: "Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."
-	 },
-	 {key: "Adrenal gland",
- 	 content:  "Part of the body's <i>fight-or-flight</i> response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."
-	 },
-	 {key: "Parathyroid",
- 	 content:  "Increases calcium levels in the blood."
-	 },
-	 {key: "Ovaries",
- 	 content: "The 'pregnancy' hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."
-	 }
-	 ] 
+		id: "glandEffect",
+		textBits: {
+			content:[ 
+				{key: "Adrenal",
+	 			content: "Conserves sodium and encourages water retention, which increases blood pressure."},
+				{key: "Testes",
+	  			content: "Group of hormones responsible for male sexual characteristics.  Testosterone is the principal androgen." },
+				{key: "Thyroid",
+	 			content: "Reduces calcium levels in blood and regulates metabolism."},
+	 			{key: "Placenta",
+	 			content: "Acts as a temporary endocrine gland by secreting chorionic gonadotropin, which signals the woman’s ovaries to continue producing progesterone.  Without this signal, the lining of the uterus would be shed during the menstrual cycle and the pregnancy would be terminated. *The placenta is not a gland but produces hormones."},
+				{key: "Adrenal gland",
+	 			content: "Related to stress response - increases blood glucose levels, suppresses the immune system, and aids metabolism."},
+				{key: "Ovaries",
+   	  			content: "Group of hormones responsible for female sex characteristics."},
+	 			{key: "Stomach",
+	 			content: "Stimulates the production of hydrochloric acid and pepsin - necessary for normal food digestion. *Stomach lining is not a gland but produces hormones."},
+				{key: "Pancreas",
+				content: "Raises glucose levels in the blood by triggering the liver to convert stored glycogen to glucose."},
+	 			{key: "Pancreas",
+	 			content: "Lowers glucose levels in the blood by encouraging cells to take in glucose from the blood."},
+	 			{key: "Pineal gland",
+	 			content: "Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."},
+	 			{key: "Adrenal gland",
+ 				content:  "Part of the body's <i>fight-or-flight</i> response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."},
+	 			{key: "Parathyroid",
+ 	 			content:  "Increases calcium levels in the blood."},
+	 			{key: "Ovaries",
+ 	 			content: "The 'pregnancy' hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."}
+	 			]} 
 		});
-	
+
+endoCallouts.draw(d3.select("#endoCall"));
+
 //	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
 	var svgMark = new MakeSVGContainer(
 		{node: d3.select("#lineMarks"),

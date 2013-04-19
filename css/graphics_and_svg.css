@@ -191,10 +191,12 @@ table.questionTable td {
 }
 
 .callOut {
-	font: 1em/1.1em HelveticaNeue-Light,HelveticaNeue,Helvetica, Arial, Lucida Grande, sans-serif;
+	font: 0.8em Helvetica, sans;
 	position:static;
 	text-align: left;
-	background-color: transparent;
+	color: #1d456e;
+	border: 2px solid #bce8f1;
+	background-color: #E3EFFE;
 	padding: .5em  .3em;
 	margin: .2em;
 }
@@ -292,10 +294,10 @@ border-collapse:collapse;
 
 table.data td {
 	vertical-align:top;
-	padding-top: 5px;
+	padding-top: 10px;
 	padding-right: 15px;
 	padding-left: 5px;
-	font-size: 80%;
+	font: 0.8em Helvetica, sans;
 }
 thead.data tr td{
 	border-bottom: 1px solid #000000;	

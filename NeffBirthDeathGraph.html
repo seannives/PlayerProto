@@ -464,6 +464,31 @@ for(i=0;i<dataPts;i++){
 	
 var markerX=[0,0,dataPts/5,dataPts/5,2*dataPts/5,2*dataPts/5,3*dataPts/5,3*dataPts/5,4*dataPts/5,4*dataPts/5,dataPts];
 var markerY=[height,0,0,height,height,0,0,height,height,0,0];
+// Create the callout array.  These won't emit events, just get them.
+var phases = new Callouts({
+	id: "phaseTable",
+	type: "table",
+	textBits: {
+			headers: ["Developmental Phase","Characteristics"],
+			content: [{col0:"Pre-development",
+					   col1: "High birth and death rates offset each other, so the population grows slowly."
+					   },
+					  {col0:"Developing",
+	 				   col1: "As a country's economy becomes stronger, medical care, clean water, and food are more available. The death rate declines and the birth rate remains high, so the population grows more rapidly."
+					   },
+					  {col0:"Modernizing",
+	 				   col1: "Economic, educational, and social changes cause declines in the birth rate. Population growth starts to slow."
+					   },
+					  {col0:"Developed",
+	 				   col1: "Birth and death rates fall to low levels, slowing population growth."
+					   },
+					  {col0:"Post-development",
+					   col1: "In highly developed countries, the birth rate is falling while the death rate is relatively constant. The population growth rate is negative and the population declines."
+					   }]
+	}});
+	
+phases.draw(d3.select("#tableTarget0"));
+	
 var tableData = [
 	{Period:"Pre-development",
 	 Characteristics: "High birth and death rates offset each other, so the population grows slowly."
