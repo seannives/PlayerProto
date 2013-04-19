@@ -78,19 +78,12 @@ var birth = [
 		{x: 1,y: 1.95},
 		{x: 2, y: 1.9 },
 		{x: 3, y: 1.85},
-		{ x: 4, y: 1.9
-		 },
+		{ x: 4, y: 1.9},
 		{ x: 5, y: 1.95},
-		 { x: 6, y: 2.0
-		 }, 
-		 { x: 7,
-		 y: 1.95
-		 },
-		 { x: 8,
-		 y: 1.9
-		 },
-		 { x: 9,
-		 y: 1.85
+		{ x: 6, y: 2.0}, 
+		{ x: 7, y: 1.95 },
+		{ x: 8, y: 1.9 },
+		{ x: 9, y: 1.85
 		 },
 		 { x: 10,
 		 y: 1.9
@@ -489,22 +482,6 @@ var phases = new Callouts({
 	
 phases.draw(d3.select("#tableTarget0"));
 	
-var tableData = [
-	{Period:"Pre-development",
-	 Characteristics: "High birth and death rates offset each other, so the population grows slowly."
-	},
-	{Period:"Developing",
-	 Characteristics: "As a country's economy becomes stronger, medical care, clean water, and food are more available. The death rate declines and the birth rate remains high, so the population grows more rapidly."
-	},
-	{Period:"Modernizing",
-	 Characteristics: "Economic, educational, and social changes cause declines in the birth rate. Population growth starts to slow."
-	},
-	{Period:"Developed",
-	 Characteristics: "Birth and death rates fall to low levels, slowing population growth."
-	},
-	{Period:"Post-development",
-	Characteristics: "In highly developed countries, the birth rate is falling while the death rate is relatively constant. The population growth rate is negative and the population declines."
-	}];
 var litekey1 = [0,10,20,30,40];
 var legendLabels=["Birth rate","Death rate","Population growth rate"];
 //call graphing shell and stacked bar charts

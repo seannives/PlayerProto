@@ -115,14 +115,14 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 		}
 	//Show the data in a table
 	this.calloutCollection = table.append("tbody").selectAll("tr").data(this.textBits.content);
-	var rows = this.calloutCollection.enter().append("tr")
+	this.rows = this.calloutCollection.enter().append("tr")
 	//creates as many rows as there are elements in textBits
 		.attr("id", function(d,i) {
 			return that.id + (d.key ? d.key : i);
 			})
 		.attr("class", "dataTable");
 
-	rows.selectAll("td")
+	this.rows.selectAll("td")
 		.data(function(d) {
 			return d3.values(d);
 			}) 
@@ -154,7 +154,9 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 	this.calloutCollection.on('click',
 		function (d, i)
 			{
-				that.eventManager.publish(that.selectedEventId, {labelIndex: (d.key ? d.key : i)});
+				that.eventManager.publish(that.selectedEventId, 
+					//the second argument is the event details.   
+					{labelIndex: (d.key ? d.key : i)});
 			});
 	
 
@@ -170,15 +172,15 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 *							collection to lite up
 *
 * NOTES: this is currently all based on members of a collection having
-* ID's that have the litekey or index appended to them after the ID. Maybe
-* want to redo this based on properties? Handles either the one-at-a-time
-* callOuts display or the table highlight display.
+* ID's that have the litekey or index appended to them after the ID.
+* Handles either the one-at-a-time callOuts display or the table 
+* row highlight display.
 ***********************************************************************/
 Callouts.prototype.calloutSwap = function (lite)
 	{
 		console.log("TODO: fired callout swap log", lite);
 		//hide all 
-		var unset = d3.selectAll(".callOut");
+		var unset = this.calloutCollection;
 		//TODO what I need is a better way to know which collection
 		//of labels to turn off. Doing it by class seems lame.
 		unset
@@ -188,11 +190,10 @@ Callouts.prototype.calloutSwap = function (lite)
 		set
 			.style("display","block");
 		
-		var unset = 
-			d3.selectAll(".dataTable");
+		
 		//TODO what I need is a better way to know which collection
 		//of labels to turn off. Doing it by class seems lame.
-		unset
+		this.rows
 		.style("color",null)
 		.style("border",null)
 		.style("background-color",null);
@@ -207,42 +208,4 @@ Callouts.prototype.calloutSwap = function (lite)
 			.style("color", "#1d456e")
 			.style("border", "2px solid #bce8f1")
 			.style("background-color", "#E3EFFE");
-	}
-
-/* ********************************************************************
-* calloutLite                                                     *//**
-*
-* Updates the Callouts widget to display the text that matches 
-* the currently selected index, lite.
-*
-* @param lite				the index or key specifying which of a
-*							collection to lite up
-*
-* NOTES: this is currently all based on members of a collection having
-* ID's that have the litekey or index appended to them after the ID.
-***********************************************************************/
-Callouts.prototype.calloutLite = function (lite)
-	{
-		console.log("TODO: fired callout Lite log", lite);
-		//hide all 
-		var unset = 
-			d3.selectAll(".dataTable");
-		//TODO what I need is a better way to know which collection
-		//of labels to turn off. Doing it by class seems lame.
-		unset
-		.style("color",null)
-		.style("border",null)
-		.style("background-color",null);
-		
-		var set = d3.selectAll("#" + this.id + lite);
-		set
-		.style("font-weight", "500")
-		//this slight bolding works in svg text, but is not really visible
-		//in table text. On the up side, it doesn't change width so much,
-		//so the letter spacing isn't necessary.
-		//.style("letter-spacing","-.07em")
-		.style("color", "#1d456e")
-		.style("border", "2px solid #bce8f1")
-		.style("background-color", "#E3EFFE");
-	
 	}

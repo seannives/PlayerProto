@@ -79,11 +79,11 @@ var bookConfig = {
                 id: "n.2.5",
                 title: "Label and Callout Tests"
             },
-            {
+			  {
                 type: "objective",
-                url: "mapTests.html",
+                url: "tableCalloutTests.html",
                 id: "n.2.6",
-                title: "Map and Contour Plot Tests"
+                title: "Callouts in Tables or singly"
             },
             {
                 type: "objective",
@@ -96,7 +96,13 @@ var bookConfig = {
                 url: "eventmanagerTests.html",
                 id: "n.2.8",
                 title: "Event Manager Tests"
-            }
+            },
+			  {
+                type: "objective",
+                url: "mapTests.html",
+                id: "n.2.x",
+                title: "Map and Contour Plot Tests"
+            },
             ]
         },
 		    {

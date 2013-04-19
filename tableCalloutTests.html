@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+    <head>
+ 	<title class="setTitle"></title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="eCourses Author, Title" name="description">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen">
+	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen">
+	<link href="css/graphics_and_svg.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+    </head>
+	<body>
+		<div class="titler">
+			<span class='number setId'></span>
+			<span class="setTitle">Test Cases for Labels Graph</span>
+		</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+				<div id="table0"><p>0. Table of callouts: these use headers, multiple columns of arbitrary key, and the "table" type.</p></div>
+				<div id="singly"><p>1. Individual callout - only shows the first of the table above. Typically used with links from labels or markers.</p></div>
+				<div id="widgetTarget2"><p>2. Carousel with callouts (events)</p>
+                </div>
+				<div id="callOutHere"></div>
+			</div>
+			<div class="span6 rightCol">
+				<div id="widgetTarget50"><p>3. Label positions</p></div>
+				<div id="Endocrine"><p>4. Labels fire callouts</p>
+                </div><p id="endoCall"></p>
+                <div id="lineMarks"><p>5. x-axis Line Markers x and y</p></div>
+                 <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/jquery-latest.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v3.min.js"></script>
+	<script src="js/widgets.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+    
+    <script src="js/widget-callouts.js"></script>
+	<script src="js/eventmanager.js"></script>
+<script>
+
+	var eventManager = new EventManager();
+	var phaseData = [{col0:"Pre-development",
+					   col1: "High birth and death rates offset each other, so the population grows slowly."
+					   },
+					  {col0:"Developing",
+	 				   col1: "As a country's economy becomes stronger, medical care, clean water, and food are more available. The death rate declines and the birth rate remains high, so the population grows more rapidly."
+					   },
+					  {col0:"Modernizing",
+	 				   col1: "Economic, educational, and social changes cause declines in the birth rate. Population growth starts to slow."
+					   },
+					  {col0:"Developed",
+	 				   col1: "Birth and death rates fall to low levels, slowing population growth."
+					   },
+					  {col0:"Post-development",
+					   col1: "In highly developed countries, the birth rate is falling while the death rate is relatively constant. The population growth rate is negative and the population declines."
+					   }];
+	//<div id="widgetTarget0"><p>0. Table of callouts</p></div>
+	
+	var phases = new Callouts({
+	id: "phaseTable",
+	type: "table",
+	textBits: {
+			headers: ["Developmental Phase","Characteristics"],
+			content: phaseData
+				}
+		});
+	
+	phases.draw(d3.select("#table0"));
+	
+	
+//	<div id="widgetTarget1"><p>1. Graph with Labels</p></div>
+	var onlyOne = new Callouts({
+	id: "singleton",
+	textBits: {
+			headers: ["Developmental Phase","Characteristics"],
+			content: phaseData
+				}
+		});
+	
+	onlyOne.draw(d3.select("#singly"));
+	
+	//	<div id="widgetTarget2"><p>Carousel with callouts (events)</p></div>
+	
+	var svg2 = new MakeSVGContainer(
+		{node: d3.select("#widgetTarget2"),
+		maxWid: 500,
+		maxHt: 400
+		}
+	);
+
+	svg2.Axes({
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and width
+		xaxisType: "linear", yaxisType: "linear",
+		xTicks: 0,
+		xOrient: "bottom",
+		yTicks: 0,
+		yOrient: "left",
+		xLabel: "caption",
+
+	});
+
+
+	var textChunks = new Callouts (
+		{id: "Earth",
+		textBits: 	
+		  {	content:
+			[{content: "Chapter 2 LO: Describe Earth's orientation to and revolution around the Sun and explain how they cause seasons."
+		},
+			{content: "The thin veil of atmosphere includes relatively small percentages of gases such as carbon dioxide, methane, and water vapor absorb radiation emitted by Earth creating a greenhouse effect.",
+			},
+			{content: "The constant tilt and parallelism of Earth's axis as it revolves around the Sun creates the annual variation in day length and Earth's seasons.",
+			},
+			{content:"Heat is transferred by radiation, in the form of electromagnetic waves, conduction, which is caused by molecular collision, and convection, or molecular circulation. "	}
+		  ]},
+		liteKey: [0,1,2,3]
+		});
+		
+textChunks.draw(d3.select("#callOutHere"));
+
+	
+	svg2.ScalableImage(
+		{images: [
+			{URI:'img/ch4_0_0.jpg', caption: "Earth's axis is tilted 23.5&deg; from perpendicular."},
+			{URI:'img/ch4_0_1.png', caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/ multimedia/imagegallery/ image_feature_1529.html"},
+			{URI:'img/ch4_03.jpg', caption: "The seasons"},
+			{URI:'img/ch4_0_2.jpg', caption: "Heat transfer mechanisms"}	
+			]
+		}
+	);
+	
+
+
+	//	<div id="widgetTarget50"><p>Images in grid</p></div>
+
+
+	var svg70 = new MakeSVGContainer(
+		{node: d3.select("#widgetTarget50"),
+		maxWid: 500,
+		maxHt: 300
+		}
+	);
+	svg70.Axes({
+		xPosPerc: 0, yPosPerc:0,
+		xPerc: 1, yPerc: 1,//full height and half width
+		xaxisType: "linear", yaxisType: "linear",
+		xOrient: "bottom",
+		yOrient: "left",
+		xLabel: "label placement"
+	});
+
+	svg70.Labels(
+		{type: "numbered",
+		labels: 	
+		  [
+		{content: "TOP left", xyPos: [0,1], width: 100	},
+		{content: "middle left", xyPos: [0,.5], width: 100	},
+		{content: "Bottom left" , xyPos: [0,0], width: 100	},
+		{content: "top middle", xyPos: [.5,1], width: 100	},
+		{content:"center", xyPos: [.5,.5], width: 100	},
+		{content: "bottom middle", xyPos: [.5,0], width: 100	},
+		{content: "TOP right", xyPos: [1,1], width: 50	},
+		{content: "middle right", xyPos: [1,0.5], width: 50	},
+		{content: "width 50 at 1/4,1/4", xyPos: [0.25,0.25], width: 50	},
+		{content: "width 150 at 3/4,3/4 with extended &copy; chars", xyPos: [0.75,0.75], width: 150},
+		{content: '3/4,1/4 with forn fields <input type="range" min="0" max="2.5" />', 
+			xyPos: [0.75,0.25], width: 150},
+		{content: "with bullet", xyPos: [0.25,0.75], width: 80, bullet: "circle"}		
+		]
+	});
+	
+	
+	
+	//	<div id="widgetTarget80"><p>5. labels fire callouts (events)</p></div>
+	var svg5 = new MakeSVGContainer(
+		{node: d3.select("#Endocrine"),
+		maxWid: 550,
+		maxHt:680
+		}
+	);
+	svg5.Axes({
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc:1, yPerc: 1,//full height and width
+		xaxisType: "linear",
+		xOrient: "bottom",
+		xLabel: "caption",
+		yaxisType: "linear",
+		yOrient: "left",
+	});
+	
+	
+	svg5.ScalableImage(
+		{images: [
+				{URI:'img/endocrineSystem.jpg', caption: "Human Glands"}
+				]});
+	
+	svg5.Labels(
+		{labels: 	
+		  [
+		{content: "Hypothalamus", xyPos: [0,1], width: 100	},
+		{key: "Pituitary", content: "Pituitary gland" , xyPos: [0,.8], width: 80	},
+		{key: "Pineal", content: "Pineal gland (epiphysis)", xyPos: [.15,.75], width: 100	},
+		{key: "Thyroid", content: "Thyroid gland", xyPos: [.5,.98], width: 100},
+		{key: "Parathyroid", content: "Parathyroid gland", xyPos: [.8,.9], width: 90},
+		{key: "Adrenal", content: "Adrenal (surparenal)", xyPos: [.82,.8], width: 80},
+		{key: "Pancreas", content: "Pancreas", xyPos: [.85,.52], width: 100},
+		{key: "Ovaries", content: "Ovaries", xyPos: [.65,.38], width: 70},
+		{key: "Testes", content: "Testicles", xyPos: [.7,.02], width: 70}
+		]
+	}, eventManager);
+	
+
+	var endoCallouts = new Callouts ({
+		id: "glandEffect",
+		textBits: {
+			content:[ 
+				{key: "Adrenal",
+	 			content: "Conserves sodium and encourages water retention, which increases blood pressure."},
+				{key: "Testes",
+	  			content: "Group of hormones responsible for male sexual characteristics.  Testosterone is the principal androgen." },
+				{key: "Thyroid",
+	 			content: "Reduces calcium levels in blood and regulates metabolism."},
+	 			{key: "Placenta",
+	 			content: "Acts as a temporary endocrine gland by secreting chorionic gonadotropin, which signals the woman’s ovaries to continue producing progesterone.  Without this signal, the lining of the uterus would be shed during the menstrual cycle and the pregnancy would be terminated. *The placenta is not a gland but produces hormones."},
+				{key: "Adrenal gland",
+	 			content: "Related to stress response - increases blood glucose levels, suppresses the immune system, and aids metabolism."},
+				{key: "Ovaries",
+   	  			content: "Group of hormones responsible for female sex characteristics."},
+	 			{key: "Stomach",
+	 			content: "Stimulates the production of hydrochloric acid and pepsin - necessary for normal food digestion. *Stomach lining is not a gland but produces hormones."},
+				{key: "Pancreas",
+				content: "Raises glucose levels in the blood by triggering the liver to convert stored glycogen to glucose."},
+	 			{key: "Pancreas",
+	 			content: "Lowers glucose levels in the blood by encouraging cells to take in glucose from the blood."},
+	 			{key: "Pineal gland",
+	 			content: "Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."},
+	 			{key: "Adrenal gland",
+ 				content:  "Part of the body's <i>fight-or-flight</i> response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."},
+	 			{key: "Parathyroid",
+ 	 			content:  "Increases calcium levels in the blood."},
+	 			{key: "Ovaries",
+ 	 			content: "The 'pregnancy' hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."}
+	 			]} 
+		});
+
+endoCallouts.draw(d3.select("#endoCall"));
+
+		
+//events
+	
+// Handle changes of the label selection
+	eventManager.subscribe(svg5.selectedEventId,
+						   handleSelectionChanged);
+
+//Test: set the start highlight state of 0 index by calling the 
+//handler with a hard-set index of 0.  This should result in the
+//first label getting highlighted and the first callout being displayed.
+	handleSelectionChanged({labelIndex: "Thyroid"});
+
+	
+		
+	
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		labelLite(svg5,eventDetails.labelIndex);
+		endoCallouts.calloutSwap(eventDetails.labelIndex);
+		
+	}
+</script>
+</body>
+</html>
