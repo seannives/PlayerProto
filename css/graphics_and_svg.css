@@ -150,6 +150,23 @@ table.questionTable td {
  stroke: #1d95ae;
  stroke-width:2;
 }
+
+.stepBadge {
+   /* background: radial-gradient( 5px -9px, circle, white 8%, black 26px ); */
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 14px; /* one half of ( (border * 2) + height + padding ) */
+    box-shadow: 1px 1px 1px black;
+	/*Got this from stack overflow, it's pretty close */
+    color: white;
+    font: 0.9em/1.1em Helvetica, Verdana, Tahoma;
+    height: 16px; 
+    min-width: 16px;
+    padding: 4px 3px 3px 3px;
+	margin: 4px 3px 3px 3px;
+    text-align: center;
+}
+
 /* Axes
 ================================================== */
  
