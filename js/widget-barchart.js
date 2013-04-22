@@ -214,7 +214,7 @@ BarChart.prototype.draw = function(container, size)
 			groupScale(this.data.length - 1) == 0);
 	};
 
-	
+	// todo: see if there is maybe a better way to determine if something is already drawn other than by id. -mjl
 	if (d3.select("#"+barsId)[0][0] === null)
 	{
 
@@ -228,7 +228,7 @@ BarChart.prototype.draw = function(container, size)
 		var graph = d3.select("#" + barsId);
 	}
 	//TEST: the graph group now exists and reports it's ID correctly
-	console.log("graph group is made/found:", graph.attr("id")) == barsId;
+	console.log("graph group is made/found:", graph.attr("id")) == barsId; // todo: what's with the == barsId? -mjl
 
 	
 	//draw the serie(s)
@@ -278,6 +278,7 @@ BarChart.prototype.draw = function(container, size)
 			//if a key has been specified for the bar, put it on the ID, for highlighting
 			//otherwise, don't put an ID
 			//can't use the y label because it might contain spaces. -lb
+			//todo: check the dom to verify that a null value for an attribute does not create that attribute -mjl
 			.attr("transform",
 				  function(d)
 				  {
