@@ -23,16 +23,16 @@
                 </div>
 				<div id="singly"><p>1. Individual callout - only shows the first callout text from the table above, and headers if there are any. Typically used with selection events from labels or markers or carousels.</p>
                 </div>
-				<div id="optionsOff"><p>3. Degenerate: single column, no headers	
+				<div id="optionsOff"><p>2. Degenerate: single column, no headers	
                 					</p>
                 </div>
-                <div id="numbered"><p>4. autonumbered callouts, linked to #5</p>
+                <div id="numbered"><p>3. autonumbered callouts, linked to #4</p>
                 </div>
 			</div>
 			<div class="span6 rightCol">
-				<div id="imgReactor"><p>5. Stepped image (auto numbered callouts - labels fire table, table fires labels)</p>
+				<div id="imgReactor"><p>4. Stepped image (auto numbered callouts - labels fire table, table fires labels)</p>
                 </div>
-				<div id="Endocrine"><p>6. Labels fire single callouts using Keys not numerical index</p>
+				<div id="Endocrine"><p>5. Labels fire single callouts using Keys not numerical index (below image)</p>
                 </div>
                 <div id="endoCall">
                 </div>
@@ -222,24 +222,24 @@ callEm.draw(d3.select("#numbered"));
 		cols: ["Cortisol", "Related to stress response - increases blood glucose levels, suppresses the immune system, and aids metabolism."]
 		},
 		{key: "Ovaries",
-		cols: [ "Group of hormones responsible for female sex characteristics."]
+		cols: ["Estrogens", "Group of hormones responsible for female sex characteristics."]
 		},
 	 	{key: "Stomach",
-		cols: [ "Stimulates the production of hydrochloric acid and pepsin - necessary for normal food digestion. *Stomach lining is not a gland but produces hormones."]
+		cols: ["Gastrin", "Stimulates the production of hydrochloric acid and pepsin - necessary for normal food digestion. *Stomach lining is not a gland but produces hormones."]
 		},
 		{key: "Pancreas",
-		cols: ["Raises glucose levels in the blood by triggering the liver to convert stored glycogen to glucose."]
+		cols: ["Glucagon","Raises glucose levels in the blood by triggering the liver to convert stored glycogen to glucose."]
 		},
-	 			{key: "Pancreas",
-				cols: [ "Lowers glucose levels in the blood by encouraging cells to take in glucose from the blood."]},
-	 			{key: "Pineal gland",
-				cols: ["Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."]},
-	 			{key: "Adrenal",
-				cols: ["Epinephrine","Part of the body's <i>fight-or-flight</i> response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."]},
-	 			{key: "Parathyroid",
-				cols: ["Increases calcium levels in the blood."]},
-	 			{key: "Ovaries",
-				cols: ["The 'pregnancy' hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."]}
+	 	{key: "Pancreas",
+		cols: ["Insulin","Lowers glucose levels in the blood by encouraging cells to take in glucose from the blood."]},
+	 	{key: "Pineal",
+		cols: ["Melatonin", "Regulates sleep cycles and plays a role in the reproductive cycles of many animals, especially those that reproduce seasonally."]},
+	 	{key: "Adrenal",
+		cols: ["Epinephrine","Part of the body's <i>fight-or-flight</i> response - increases blood pressure, blood flow to the brain, and releases stored glucose for quick energy."]},
+	 	{key: "Parathyroid",
+		cols: ["Increases calcium levels in the blood."]},
+	 	{key: "Ovaries",
+		cols: ["Progesterone","The 'pregnancy' hormone - progesterone causes the uterine lining to thicken in preparation for pregnancy and maintains the uterine lining during pregnancy."]}
 	 	]
 		});
 

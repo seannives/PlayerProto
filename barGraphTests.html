@@ -43,7 +43,7 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-barchart.js"></script>
-	
+	<script src="js/widget-legend.js"></script>
 <script>
 
 var highIncome = [
@@ -142,7 +142,7 @@ var shrinkMen = [
 						y: "novellas"}
 						];
 var ordinalData1 = [
-			{	x: 3,
+			{	x: 30,
 				y: "Energy 1"
 			},
 			{	x: 6,
@@ -150,7 +150,7 @@ var ordinalData1 = [
 				];
 var ordinalData2 = [
 			{	x: 1,	y: "Energy 2"	},
-			{	x: 4,	y: "Energy 1"},
+			{	x: 40,	y: "Energy 1"},
 								];
 		
 	var lineData2 = [
@@ -233,7 +233,7 @@ var ordinalData2 = [
 	newGroup.append(barGroup, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 	
-	//	<div id="widgetTarget50"><p>4. Doublesided bar</p></div>
+	//	<div id="widgetTarget50"><p>3. Doublesided pyramid bar</p></div>
 	var svg50 = new SVGContainer(
 		{node: d3.select("#widgetTarget50"),
 		maxWid: 400,
@@ -245,7 +245,7 @@ var ordinalData2 = [
 		id: "pyrChart",
 		Data: [growthMen,growthWomen],
 		xAxisFormat: { type: "linear", 
-					   ticks: 10,
+					   ticks: 6,
 					   orientation: "bottom",
 					   label: "linear axis showing negative values"},
 		yAxisFormat: { orientation: "left",
@@ -279,81 +279,75 @@ var ordinalData2 = [
 	svg55.append(dblPos, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 
-	//	<div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
+	//	<div id="widgetTarget70"><p>5. Small multiples (several line graphs in container)</p></div>
 
 
-	var svg70 = new MakeSVGContainer(
+	var svg70 = new SVGContainer(
 		{node: d3.select("#widgetTarget70"),
 		maxWid: 600,
 		maxHt: 300
 		}
 	);
-	svg70.Axes({
-		xPosPerc: 0, yPosPerc:0,
-		xPerc: .5, yPerc: 1,//full height and half width
+	var multi1 = new BarChart({
+		id: "women",
 		Data: [shrinkWomen],
-		xaxisType: "linear", yaxisType: "ordinal",
-		xTicks: 3,
-		xOrient: "bottom",
-		yTicks: 3,
-		yOrient: "left",
-		xLabel: "population",
-		yLabel: "age groups"
-
-	});
-	svg70.BarChart({
-		Data: [shrinkWomen],
-		type: "linear"
+		xAxisFormat: { 
+			type: "linear", 
+			ticks: [0,5,10],
+			orientation: "bottom",
+			label: "Female population"},
+		yAxisFormat: {
+			type: "ordinal",
+			orientation: "left",
+			label: "age groups"
+		}
 	});
 	
-	svg70.Axes({
-		xPosPerc: .5, yPosPerc:0,
-		xPerc: .5, yPerc: 1,//full height 
+	
+	svg70.append(multi1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 0.5});
+	
+	var multi2 = new BarChart({
+		id: "men",
 		Data: [shrinkMen],
-		xaxisType: "linear", yaxisType: "ordinal",
-		xTicks: 3,
-		xOrient: "bottom",
-		yTicks: 3,
-		yOrient: "left",
-		xLabel: "population",
-	 
-
-	});
-	svg70.LineGraph({
-		Data: [shrinkMen],
-		type: "linear"
+		xAxisFormat: { 
+			type: "linear", 
+			ticks: [-10,-5,0],
+			orientation: "bottom",
+			label: "Male population"},
+		yAxisFormat: {
+			type: "ordinal",
+			orientation: "left",
+			//label: "age groups"
+		}
 	});
 	
-	//	<div id="widgetTarget80"><p>5. Bars with Legend</p></div>
-	var svg5 = new MakeSVGContainer(
+
+		
+	
+	svg70.append(multi2, {topPercentOffset: 0, leftPercentOffset: 0.5, heightPercent: 1, widthPercent: 0.5});
+	
+	
+	//	<div id="widgetTarget80"><p>6. Bars with Legend</p></div>
+	var svg5 = new SVGContainer(
 		{node: d3.select("#widgetTarget80"),
 		maxWid: 500,
 		maxHt: 500
 		}
 	);
-	svg5.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		Data: [lowIncome,middleIncome,highIncome],
-		xaxisType: "linear",
-		xTicks: 5,
-		xOrient: "bottom",
-		xLabel: "Percentage for Low, Middle, and High Income",
-		yaxisType: "ordinal",
-		yTicks: 5,
-		yOrient: "left",
-	});
 	
-	svg5.BarChart({
-		Data: [lowIncome,middleIncome,highIncome],
-		type: "grouped"
-	});
 	
-	svg5.Legend({
+	var legBar = new Legend({
 		xPos: "right", yPos: "top",
 		labels: ["low income", "middle income", "high income"],
 		type: "box"
 	});
+	
+	//I can write the same defined widget above into a new SVG container, but only if 
+	//I give it a new ID first.
+	barGroup.id = "foo";
+	svg5.append([barGroup,legBar], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+	
 </script>
 </body>
 </html>
