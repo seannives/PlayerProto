@@ -44,25 +44,6 @@ console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(
 console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
 console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.pow(10, 3)) == "");
 
-/** @todo this is not how compareLen is normally defined verify how it is being used. -mjl */
-/* **************************************************************************
- * compareLen                                                           *//**
- *
- * @function
- *
- * Returns the difference in the number of characters in two strings. Used
- * to correctly size box to longest string in legends.
- *
- * @param a,b        		two string values
- *
-****************************************************************************/
-function compareLen(a, b)
-{
-	return a.length - b.length;
-}
-console.log("compare string a to string b equal lengths ", compareLen("a","b") === 0);
-console.log("compare string a to string bbbb equal lengths ", compareLen("a","bbbb") === -3);
-
 
 /* **************************************************************************
  * IWidget                                                              *//**
