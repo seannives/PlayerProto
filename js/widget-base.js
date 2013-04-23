@@ -44,28 +44,43 @@ console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(
 console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
 console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.pow(10, 3)) == "");
 
-/** @todo this is not how compareLen is normally defined verify how it is being used. -mjl */
+
 /* **************************************************************************
- * compareLen                                                         *//**
+ * IWidget                                                              *//**
  *
- * @function
+ * IWidget defines the methods and properties that are expected to exist
+ * on all widgets defined by this library.
+ * @interface
+ ****************************************************************************/
+ IWidget = function () {};
+ 
+/* **************************************************************************
+ * IWidget.draw                                                         *//**
  *
- * Returns the difference in the number of characters in two strings. Used
- * to correctly size box to longest string in legends.
+ * Render the widget into the given svg container at the given pixel size.
  *
- * @param a,b        		two string values
+ * @param {!d3.selection}
+ *					container	-The container svg element to append the widget element tree to.
+ * @param {Object}	size		-The size in pixels for the widget
+ * @param {number}	size.height	-The height for the widget.
+ * @param {number}	size.width	-The width for the widget.
  *
-****************************************************************************/
+ ****************************************************************************/
+IWidget.draw = function (container, size) {};
 
-function compareLen(a, b)
-{
-	return a.length - b.length;
-}
-console.log("compare string a to string b equal lengths ", compareLen("a","b") === 0);
-console.log("compare string a to string bbbb equal lengths ", compareLen("a","bbbb") === -3);
-
-
-
+/* **************************************************************************
+ * IWidget.setScale                                                     *//**
+ *
+ * Called to preempt the normal scale definition which is done when the
+ * widget is drawn. This is usually called in order to force one widget
+ * to use the scaling/data area calculated by another widget.
+ *
+ * @param {function} xScale	-function to convert a horizontal data offset
+ *							 to the pixel offset into the data area.
+ * @param {function} yScale	-function to convert a vertical data offset
+ *							 to the pixel offset into the data area.
+ ****************************************************************************/
+ IWidget.setScale = function (xScale, yScale) {};
 
 
  /**

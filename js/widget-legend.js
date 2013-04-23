@@ -28,13 +28,13 @@
 });
 	
 /* **************************************************************************
- * Legend                                                             *//**
- *
- * @constructor
+ * Legend                                                               *//**
  *
  * The Legend widget makes a legend for any series of labels. Should be callable
  * either standalone or from another widget that has options to generate a legend
  * from it's data.
+ * @constructor
+ * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this widget
  * @param {string}		config.id		-String to uniquely identify this widget
@@ -110,10 +110,8 @@ function Legend(config, eventManager)
  * @param {number}	size.width	-The width for the graph.
  *
  ****************************************************************************/
- 
-		
 Legend.prototype.draw = function (container, size)
-	{ //begin legend constructor
+{
 	this.lastdrawn.container = container;
 	this.lastdrawn.size = size;
 	
@@ -130,10 +128,11 @@ Legend.prototype.draw = function (container, size)
 	//calculate the height of the box that frames the whole legend
 	//which should be as tall as the number of rows plus some padding
 	var boxHeight = (boxLength + 6) * rowCt;
-	var longest = d3.last(this.labels, compareLen);
 	
 	//to calculate the width of the box big enough for the longest text string, we have to
 	//render the string, get its bounding box, then remove it.
+	//note: this is the simple algorithm and may fail because of proportional fonts, in which case we'll have to measure all labels.
+	var longest = this.labels.reduce(function (prev, cur) { return prev.length > cur.length ? prev : cur; });
 	var longBox = container.append("g");
 	longBox.append("text").text(longest);
 	this.boxWid = longBox.node().getBBox().width + inset/2 + boxLength;
@@ -221,7 +220,7 @@ Legend.prototype.draw = function (container, size)
 	
 	this.lastdrawn.legendRows = legendBox.selectAll("g.legend");
 	
-} //end of Legend constructor
+}; //end of Legend.draw
 
 Legend.prototype.setScale = function ()
 {
