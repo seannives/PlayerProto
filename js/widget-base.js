@@ -46,13 +46,136 @@ console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.p
 
 
 /* **************************************************************************
+ * Rect                                                                 *//**
+ *
+ * A Rect defines a rectangle on a plane whose coordinates increase down and
+ * to the right.
+ * It has a top, bottom, left, right, width and height.
+ * @constructor
+ *
+ * @param {number}	x		-The x-coordinate location of the left side of the rectangle.
+ * @param {number}	y		-The y-coordinate location of the top side of the rectangle.
+ * @param {number}	width	-A non-negative value that represents the Width of the rectangle.
+ * @param {number}	height	-A non-negative value that represents the Height of the rectangle.
+ *
+ ****************************************************************************/
+function Rect(x, y, width, height)
+{
+	this.x = x;
+	this.y = y;
+	this.width = width;
+	this.height = height;
+	
+	this.top = y;
+	this.left = x;
+	this.bottom = this.top + height;
+	this.right = this.left + width;
+}
+
+
+/* **************************************************************************
+ * Rect.makeRect - static                                               *//**
+ *
+ * Helper function to create a rect from any 2 vertical values (t,b,h) and
+ * any 2 horizontal values (l,r,w). If 3 values are specified, the height
+ * and width are the values that will be ignored (not checked that they match
+ * the other 2 values).
+ *
+ * @param {Object} definedBy	-object that must have 2 vertical values (t,b,h)
+ *								 and 2 horizontal values (l,r,w).
+ * @return {Rect}
+ ****************************************************************************/
+Rect.makeRect = function (definedBy)
+{
+	var vertCnt = 0;
+	
+	if ('t' in definedBy)
+	{
+		var haveT = true;
+		++vertCnt;
+	}
+	
+	if ('b' in definedBy)
+	{
+		var haveB = true;
+		++vertCnt;
+	}
+	
+	if ('h' in definedBy)
+	{
+		var haveH = true;
+		++vertCnt;
+	}
+	
+	var horizCnt = 0;
+	
+	if ('l' in definedBy)
+	{
+		var haveL = true;
+		++horizCnt;
+	}
+	
+	if ('r' in definedBy)
+	{
+		var haveR = true;
+		++horizCnt;
+	}
+	
+	if ('w' in definedBy)
+	{
+		var haveW = true;
+		++horizCnt;
+	}
+	
+	// todo: What is the appropriate abort mechanism? throw? if so throw what? -mjl
+	if (vertCnt < 2)
+		console.log("Cannot define rect, not enough vertical values", definedBy);
+
+	if (horizCnt < 2)
+		console.log("Cannot define rect, not enough horizontal values", definedBy);
+		
+	if (haveT)
+	{
+		var top = definedBy.t;
+		var bottom = haveB ? definedBy.b : top + definedBy.h;
+		var height = bottom - top;
+	}
+	else // must have B & H
+	{
+		var bottom = definedBy.b;
+		var height = definedBy.h;
+		var top = bottom - height;
+	}
+	
+	if (haveL)
+	{
+		var left = definedBy.l;
+		var right = haveR ? definedBy.r : left + definedBy.w;
+		var width = right - left;
+	}
+	else // must have R & W
+	{
+		var right = definedBy.r;
+		var width = definedBy.w;
+		var left = right - width;
+	}
+	
+	return new Rect(left, top, width, height);
+}; // end Rect.makeRect
+
+
+/* **************************************************************************
+ * Interfaces
+ * **************************************************************************/
+ 
+/* **************************************************************************
  * IWidget                                                              *//**
  *
  * IWidget defines the methods and properties that are expected to exist
  * on all widgets defined by this library.
  * @interface
  ****************************************************************************/
- IWidget = function () {};
+IWidget = function () {};
  
 /* **************************************************************************
  * IWidget.draw                                                         *//**
@@ -66,7 +189,7 @@ console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.p
  * @param {number}	size.width	-The width for the widget.
  *
  ****************************************************************************/
-IWidget.draw = function (container, size) {};
+IWidget.prototype.draw = function (container, size) {};
 
 /* **************************************************************************
  * IWidget.setScale                                                     *//**
@@ -75,13 +198,34 @@ IWidget.draw = function (container, size) {};
  * widget is drawn. This is usually called in order to force one widget
  * to use the scaling/data area calculated by another widget.
  *
- * @param {function} xScale	-function to convert a horizontal data offset
- *							 to the pixel offset into the data area.
- * @param {function} yScale	-function to convert a vertical data offset
- *							 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						xScale	-function to convert a horizontal data offset
+ *								 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						yScale	-function to convert a vertical data offset
+ *								 to the pixel offset into the data area.
  ****************************************************************************/
- IWidget.setScale = function (xScale, yScale) {};
+IWidget.prototype.setScale = function (xScale, yScale) {};
 
+/* **************************************************************************
+ * IWidget.xScale                                                       *//**
+ *
+ * Convert a data X position into a horizontal pixel position.
+ *
+ * @param {number}	dataX	-position along the X axis from the data domain.
+ * @return {number} horizontal pixel offset corresponding to that data position.
+ ****************************************************************************/
+IWidget.prototype.xScale = function (dataX) {};
+
+/* **************************************************************************
+ * IWidget.yScale                                                       *//**
+ *
+ * Convert a data Y position into a vertical pixel position.
+ *
+ * @param {number}	dataY	-position along the Y axis from the data domain.
+ * @return {number} vertical pixel offset corresponding to that data position.
+ ****************************************************************************/
+IWidget.prototype.yScale = function (dataY) {};
 
  /**
  * Definition of the fields of the configuration object used by the
