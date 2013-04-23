@@ -143,10 +143,10 @@ Legend.prototype.draw = function (container, size)
 	
 	
 	//position the legend
-	var xOffset = (xPos == "left") ? inset : (size.width - this.boxWid - inset);
+	var xOffset = (this.xPos == "left") ? inset : (size.width - this.boxWid - inset);
 	//if the position is left, start the legend on the left margin edge,
 	//otherwise start it across the graph box less its width less padding
-	var yOffset = (yPos == "bottom") ? size.height - boxHeight - inset : inset;
+	var yOffset = (this.yPos == "bottom") ? size.height - boxHeight - inset : inset;
 	//if the position is at the bottom, measure up from bottom of graph,
 	//otherwise just space it down from the top.
 	
@@ -188,7 +188,7 @@ Legend.prototype.draw = function (container, size)
 			//if a key has been specified for the row, put it on the ID,  
 			//otherwise, use the index
 
-	if (type == "box") {
+	if (this.type == "box") {
 		legendRows.append("rect")
 		.attr("x", 0).attr("y", 0)
 		//make the rectangle a square with width and height set to boxLength
