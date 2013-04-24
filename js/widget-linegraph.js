@@ -36,10 +36,11 @@
 /* **************************************************************************
  * LineGraph                                                            *//**
  *
- * @constructor
- *
  * The LineGraph widget provides a line (or scatter) graph visualization
  * of sets of data points.
+ *
+ * @constructor
+ * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this LineGraph
  * @param {string}		config.id		-String to uniquely identify this LineGraph.
