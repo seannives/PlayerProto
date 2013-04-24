@@ -24,22 +24,29 @@
 				
 			</div>
 			<div class="span6 rightCol">
+				<div id="widgetTarget50n"><p>3n. Label positions</p></div>
 				<div id="widgetTarget50"><p>3. Label positions</p></div>
                 <div id="lineMarks"><p>5. x-axis Line Markers x and y</p></div>
-                 <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
+                <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
 			</div>
 		</div>
 	</div>
 
+
+	
 	<script src="js/jquery-latest.js"></script>
-	<script src="js/toc-structure.js"></script>    
-	<script src="js/eCourse-master.js"></script>    
+	<script src="js/toc-structure.js"></script>
+	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v3.min.js"></script>
+
+	<script src="js/eventmanager.js"></script>
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
+	<script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-callouts.js"></script>
+	
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
-    
-    <script src="js/widget-callouts.js"></script>
-	<script src="js/eventmanager.js"></script>
 <script>
 
 	var eventManager = new EventManager();
@@ -179,13 +186,15 @@ var death = [
 		{ x: 63, y: 0.192 },
 		{ x: 64, y: 0.198 },
 		{ x: 65, y: 0.199 }];
-		
+
+// Calculate the population growth from the birth and death data		
 var dataPts = birth.length;
 var popGrowth = [];
-for(i=0;i<dataPts;i++){
-		popGrowth[i] = {x: birth[i].x,
-						y: birth[i].y - death[i].y};
-		}
+for (i = 0; i < dataPts; i++)
+{
+	popGrowth[i] = {x: birth[i].x,
+					y: birth[i].y - death[i].y};
+}
 		
 	
 	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
@@ -278,6 +287,39 @@ for(i=0;i<dataPts;i++){
 
 
 	//	<div id="widgetTarget50"><p>Labels in grid</p></div>
+	var cntrConfig50 = {
+			node: d3.select("#widgetTarget50n"),
+			maxWid: 500,
+			maxHt: 300
+		};
+
+	var lblGrpConfig50 = {
+			id: "lbls50",
+			type: "numbered",
+			labels: 	
+			[
+				{ content: "TOP left",		xyPos: [0,   1],	width: 100	},
+				{ content: "middle left",	xyPos: [0,   0.5],	width: 100	},
+				{ content: "Bottom left" ,	xyPos: [0,   0],	width: 100	},
+				{ content: "top middle",	xyPos: [0.5, 1],	width: 100	},
+				{ content: "center",		xyPos: [0.5, 0.5],	width: 100	},
+				{ content: "bottom middle",	xyPos: [0.5, 0],	width: 100	},
+				{ content: "TOP right",		xyPos: [1,   1],	width:  50	},
+				{ content: "middle right",	xyPos: [1,   0.5],	width:  50	},
+				{ content: "width 50 at 1/4,1/4",
+											xyPos: [0.25, 0.25],	width:  50	},
+				{ content: "width 150 at 3/4,3/4 with extended &copy; chars",
+											xyPos: [0.75, 0.75],	width: 150	},
+				{ content: '3/4,1/4 with forn fields <input type="range" min="0" max="2.5" />', 
+											xyPos: [0.75, 0.25],	width: 150	},
+				{ content: "with bullet",	xyPos: [0.25, 0.75],	width:  80, bullet: "circle"	}		
+			]
+		};
+
+	var cntr50 = new SVGContainer(cntrConfig50);
+	var labelGroup50 = new LabelGroup(lblGrpConfig50);
+	cntr50.append(labelGroup50, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
 
 
 	var svg70 = new MakeSVGContainer(
