@@ -25,8 +25,8 @@
 				{ content: "Pre-development",	xyPos: [ 0, -.25], width: 100 },
 				{ content: "Developing",		xyPos: [14, -.25], width:  80 },
 				{ content: "Modernizing",		xyPos: [27, -.25], width:  80 },
-				{ content:"Developed",			xyPos: [40, -.25], width:  70 },
-				{ content:"Post-development",	xyPos: [51, -.25], width: 100 },
+				{ content: "Developed",			xyPos: [40, -.25], width:  70 },
+				{ content: "Post-development",	xyPos: [51, -.25], width: 100 },
 			],
 		};
 });
