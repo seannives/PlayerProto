@@ -95,13 +95,13 @@ var bookConfig = {
                 type: "objective",
                 url: "eventmanagerTests.html",
                 id: "n.2.8",
-                title: "Event Manager Tests"
+                title: "Button and Slider Tests"
             },
 			  {
                 type: "objective",
                 url: "mapTests.html",
                 id: "n.2.x",
-                title: "Map and Contour Plot Tests"
+                title: "Map and Contour Plot Tests (blank)"
             },
             ]
         },
@@ -123,12 +123,18 @@ var bookConfig = {
                 id: "n.3.2",
                 title: "Neff Reactor Stepped Image"
             },
-            {
+			{
+                type: "objective",
+                url: "PhysicsResistance.html",
+                id: "n.3.3",
+                title: "Randomized Auto-data and buttons/events"
+            }, 
+			{
                 type: "objective",
                 url: "RitterImages.html",
                 id: "n.3.3",
-                title: "Ritter Images and Callouts"
-            }
+                title: "Ritter Image Carousel and Callouts"
+            },
 			]
 		}
         ]

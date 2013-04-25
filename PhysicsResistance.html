@@ -8,7 +8,7 @@
 	<meta name="Owner" content="Pearson" />
 	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
-	<meta content="eCourses Author, Title" name="description" />
+	<meta content="Carmen Santiago, Demo Book" name="description" />
 
     <!-- Bootstrap -->
     <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen" />
@@ -23,33 +23,36 @@
 <body>
 	<div class="titler">
 		<span class='number setId'></span>
-		<span class="setTitle">Bar Chart Length Updater</span>
+		<span class="setTitle">Resistance</span>
 	</div>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
-            	<p>Mathematically, the percentage of each enantiomer can be expressed as follows:</p>
-				<img src="img/Kequation1.png" />
-				<p>and</p>
-				<img src="img/Kequation2.png"/>
-				<p>For both equations, the numerator of the term in parentheses relates to the optically inactive 		portion of the sample. Halving this value provides the percentage of the enantiomer present in lesser amount. This same value needs to be added to the %ee to provide the percentage of the dominant enantiomer.
-				</p>
-				<p>
-					The % ee can also be calculated if the composition of the mixture is known. The enantiomer present in smaller number is subtracted from the dominant enantiomer. Consider a sample that contains
-					<span id="Dextro"></span><span id="Levo"></span>
-                	
-                  The % ee is given by the absolute difference between the components, or 
-                  <span id="ee" class="math"> </span>.
-          
+              <p><b>Resistivity</b> is an electrical material property that specifies how difficult it is to pass current through the material. Every material has its own characteristic resistivity – for example, rubber's resistivity is far larger than copper's. </p>
+              <p>You can think of passing current through a low-resistivity material as pushing water through an empty pipe. Nothing impedes the water. In reality, it's actually the presence rather than abscence of free electrons to pass along the charge that lowers the resistivity. </p>
+              <p>Resistivity is different from <b>resistance</b>, which is dependent on length and cross section of the physical object. A long, thin copper wire has a much larger resistance than a thick, short copper wire.  </p>
+<p>Experiment with the effect on resistance of the physical properties of a wire, then make this statement correct for the variable you are changing: The greater the <span id="selectTerm"></span> the <span id="dropdown"></span> the resistance?
 				</p>
 			</div>
 			<div class="span6 rightCol">
-            	<div id="roto">
-                	<p> <span id="alpha"></span> 
-                	</p>
+            <p>Resistance in a wire is defined by the expression 
+                <div>
+                <span id="resistance">R</span> = 
+                <span id="resistivity">&rho;</span> &middot; <span id="length">L</span> /
+                <span id="area">A</span>
                 </div>
-				<div id="barChart0"></div>
-				<div id="barChart"></div>
+               
+                <div id="defs"></div> 
+              
+				</p>
+				
+            	<div id="sliders">
+                	<span id="rhoSlider"></span> 
+                    <span id="LSlider"></span> 
+                	<span id="ASlider"></span> 
+					<span id="resVal"></span>
+                </div>
+				<div id="diagram"></div>
 			</div>
 		</div>
 	</div>
@@ -58,13 +61,14 @@
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v3.min.js"></script>
-	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 
 	<script src="js/widget-base.js"></script>
-	<script src="js/widget-barchart.js"></script>
+	<script src="js/widget-linegraph.js"></script>
     <script src="js/widget-slider.js"></script>
+    <script src="js/widget-callouts.js"></script>
+    <script src="js/widget-button.js"></script>
     <script src="js/widget-numeric.js"></script>
 	<script src="js/eventmanager.js"></script>
 
@@ -77,190 +81,106 @@
 	//that must talk to it.
 	var eventManager = new EventManager();
 	
-	var levoData =   [ { x: 35, y: "Levo" } ];
-	var dextroData = [ { x: 65, y: "Dextro" } ];
-
-/* Create the Levo numeric input widget
-	var inputLevo = new NumericInput({
-			node: d3.select("#Levo"),
-			id: 'levo',
-			startVal: 35,
-			minVal:0,
-			maxVal: 100,
-			unit: "%",
-			label: "Levo"
-		}, eventManager);*/
-		
-		
-	var inputLevo = new Slider ({
-			id: "levo",
-			startVal: 35,
-			minVal: 0,
-			maxVal: 100,
-			stepVal: 1,
-			unit: "%",
-			label: "Levorotary "
-		}, eventManager);
-	inputLevo.draw(d3.select("#Levo"));
-
-/* Create the Dextro numeric input widget
-	var inputDextro = new NumericInput({
-			node: d3.select("#Dextro"),
-			id: 'dextro',
-			startVal: 65,
-			minVal:0,
-			maxVal: 100,
-			unit: "%",
-			label: "Dextro"
-		}, eventManager); */
-
 	
-	var inputDextro = new Slider ({
-			id: "dextro",
-			startVal: 65,
-			minVal: 0,
-			maxVal: 100,
-			stepVal: 1,
-			unit: "%",
-			label: "Dextrorotary "
-		}, eventManager);
+	// Create the callout array, which also emits events so you 
+	//can click on the table row to highlight the labels.  
+	var rowDefs = new Callouts({
+		id: "varDefs",
+		show: "all",
+		//type: "numbered",
+		headers: ["where" ],
+		textBits: [
+		{cols: ['<span class="math">R</span> is resistance,']},
+		{cols:[ '<span class="math">&#961;</span> is resistivity, ']},
+		{cols:[ '<span class="math">L</span> is length, and']},
+		{cols:['<span class="math">A</span> is area.']}
+		]
+	},eventManager);
 	
-	inputDextro.draw(d3.select("#Levo"));
+	rowDefs.draw(d3.select("#defs"));
+	
+	var electrons = [];
+	
+	for(i=0;i<40;i++){
+		electrons[i] = {x: Math.random(), y: Math.random()};
+	}
+		
+	var rhoSlide = new Slider ({
+			id: "rhoVal",
+			startVal: 0.5,
+			minVal: 0,
+			maxVal: 1,
+			stepVal: .01,
+			unit: "&Ohm; &nbsp; cm",
+			label: "Resistivity"
+		}, eventManager);
+		
+	rhoSlide.draw(d3.select("#rhoSlider"));
+
+	var LSlide = new Slider ({
+			id: "LVal",
+			startVal: 5,
+			minVal: 0,
+			maxVal: 10,
+			stepVal: .1,
+			unit: "cm",
+			label: "Length"
+		}, eventManager);
+		
+	LSlide.draw(d3.select("#LSlider"));
+	
+	var ASlide = new Slider ({
+			id: "AVal",
+			startVal: 20,
+			minVal: 1,
+			maxVal: 50,
+			stepVal: .1,
+			unit: "cm<sup>2</sup>",
+			label: "Area"
+		}, eventManager);
+		
+	ASlide.draw(d3.select("#ASlider"));
+
 	
 	
 	var cont1 = new SVGContainer({
-			node: d3.select("#barChart"),
+			node: d3.select("#diagram"),
 			maxWid: 450,
-			maxHt: 300
+			maxHt: 200
 		});
-	var Bars = new BarChart({
-			id: "bc0",
-			Data: [dextroData, levoData], 
+	var dots = new LineGraph({
+			id: "lg0",
+			Data: [electrons], 
+			type: "points",
 			xAxisFormat: { type: "linear",
-						   ticks: [0,10,20,30,40,50,60,70,80,90,100],
+						   ticks: 0,
 						   orientation: "bottom",
-						   label: "% enantiomers" },
-			yAxisFormat: { type: "ordinal",
-						   orientation: "left",
+						   label: "wire length" },
+			yAxisFormat: { type: "linear",
+						   orientation: "right",
+						   label: "wire height"
 						    },
 		});		
-	cont1.append(Bars, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cont1.append(dots, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-	var svg70 = new MakeSVGContainer(
-		{
-			node: d3.select("#barChart0"),
-			maxWid: 450,
-			maxHt: 300
-		});
-
-	svg70.Axes( 
-		{
-			xPosPerc: 0, yPosPerc:0,
-			xPerc: 1, yPerc: 1,
-			xaxisType: "linear", yaxisType: "ordinal",
-			Data: [dextroData, levoData],
-			xTicks: [0,10,20,30,40,50,60,70,80,90,100],
-			xOrient: "bottom",
-			yOrient: "left",
-			xLabel: "% enantiomers"
-		});
-
-		
-	svg70.BarChart({
-		Data: [dextroData,levoData],
-		type: "linear" //ignored for anything but grouped
-	});//this doesn't have an eventmanager argument, because it isn't
-	//emitting events in this page.  If we were dragging around the ends 
-	//of the bars, then it would.
 	
-	//This is the marker that will stick to the end of the shortest bar
-	svg70.LineMarkers({
-		xMarks: [levoData[0]] //start it on the end of the levoData bar, arbitrarily
-		//because they are of equal length to start
-	});
 	
-	var diff = inputDextro.startVal-inputLevo.startVal,
-		absDiff = Math.abs(diff);
 	
 	// Create the ee readout widget
-	var eeReadout = new Readout({
-		node: d3.select("#ee"),
+	var resReadout = new Readout({
+		node: d3.select("#resVal"),
         id: 'eeRead',
-		startVal: absDiff,
+		startVal: resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue()),
 		readOnly: true,
 		size: 4,
 		unit: "%", 
-		label: "ee ="
+		label: "R ="
 	}, eventManager);
 	
-	/*	// Create the alpha numeric input widget
-	var inputAlpha = new NumericInput({
-			node: d3.select("#alpha"),
-			id: 'alphaSR',
-			startVal: 80,
-			minVal:0,
-			maxVal: 100,
-			unit: "%",
-			label: "Specific rotation (&alpha;)"
-		}, eventManager);
-*/
-
-	var sl1 = new Slider ({
-			id: "slider1",
-			startVal: 80,
-			minVal: 0,
-			maxVal: 360,
-			stepVal: 10,
-			unit: "&deg;",
-			label: "Specific rotation (&alpha;): "
-		}, eventManager);
-		
-	sl1.draw(d3.select("#alpha"));
+	function resist(rho,len,area) {
+		return rho*len/area;
+	}
 	
-	/* Create the rotation readout widget
-	var rot = new Readout({
-			node: d3.select("#Rotate"),
-			id: 'rotate',
-			startVal: sl1.getValue() * diff/10,
-			readOnly: true,
-			size: 4,
-			unit:"&deg;", 
-			label: "Rotation"
-		}, eventManager);
-	*/
-
-
-	var pieDish = new MakeSVGContainer(
-		{
-			node: d3.select("#roto"),
-			maxWid: 200,
-			maxHt: 200
-		});
-
-	pieDish.Axes( 
-		{
-			
-			xPosPerc: 0, yPosPerc:0,
-			xPerc: 1, yPerc: 1,
-			xaxisType: "linear",  yaxisType: "linear",
-			xTicks: 0, yTicks: 0,
-			xOrient: "top", yOrient: "right",
-			xLabel: "Rotation (&deg;)"
-		});
-
-	
-	pieDish.Pie({
-		Data: [{x:80 * diff/360}],
-		xYPos: [.5,.5]
-	});
-	
-	//This is the marker that shows the 0/180 rotation line
-	pieDish.LineMarkers({
-		xMarks: [{
-			x:(1/2), label: d3.format("+0r2")(sl1.getValue() * diff/100) + "&deg;"
-			}] 
-	});
-
 	// Modify the value of the data for the bar graph when the
 	//numerical input changes.  So, subscribe to the event emitted by inputLevo,
 	//or inputDextro,
@@ -268,11 +188,11 @@
 	//TODO: make these methods of the target widget?
 
 	// Handle changes of the levo and dextro input values
-	eventManager.subscribe(inputLevo.changedValueEventId,
-						   function(ed) { handleInputValueChanged(inputDextro, ed.value); });
-	eventManager.subscribe(inputDextro.changedValueEventId,
-						   function(ed) { handleInputValueChanged(inputLevo, ed.value); });
-	eventManager.subscribe(sl1.changedValueEventId, function(ed) { handleNumericInputChanged(ed.value); });
+	eventManager.subscribe(rhoSlide.changedValueEventId,
+						   resistanceHandler);
+	eventManager.subscribe(LSlide.changedValueEventId,
+						   resistanceHandler);
+	eventManager.subscribe(ASlide.changedValueEventId, resistanceHandler);
 	
 
 	/* **************************************************************************

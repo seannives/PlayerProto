@@ -96,7 +96,8 @@
 		]}, eventManager);
 
 	
-	// Create the callout array.  These won't emit events, just get them.
+	// Create the callout array, which also emits events so you 
+	//can click on the table row to highlight the labels.  
 	var callEm = new Callouts({
 		id: "callme",
 		show: "all",
