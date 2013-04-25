@@ -6,50 +6,50 @@
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="Neff,Our Changing Planet" name="description">
     <!-- Bootstrap -->
-    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen">
-	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
 	<link href="css/graphics_and_svg.css" rel="stylesheet">
 	<link href="css/learning-objective.css" rel="stylesheet">
-	<link href="css/neff-master.css" rel="stylesheet" media="screen">
+	<link href="css/module-opener.css" rel="stylesheet">
+	<link href="css/toc.css" rel="stylesheet">
+	<link href="css/grey-thing.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
     </head>
 <body>
 
 	<!-- Body Content -->
-	<div class="container-fluid">
-            <div class="titler"><span class='number  setId'></span> 
-			<span class="setTitle"></span>
-			</div>		
+	<div class="container-fluid contentBucket">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
-			
+				<h2></h2>
 				<div id="widget0" class="assessment">
 					<div class="graphTitle">Population growth equation</div>
 					    <p class="questionText">How many people are added to a population of one million each year with a one percent growth rate? </p>
-						<input type="text" size="8" id="stuAnswer0"></input>
-						<button class="questionSubmit" onClick="scoreIt(Q0Data,this.parentNode.id,document.getElementById('stuAnswer0').value);">Check it</button>
+						<input type="text" size="8" id="stuAnswer0" class="quizInput" />
+						<button class="btn btn-primary" onClick="scoreIt(Q0Data,this.parentNode.id,document.getElementById('stuAnswer0').value);">Check it</button>
 				</div>
 				<div id="widget1"  class="assessment">
 					<div class="graphTitle">Increasing population growth</div>
 					<p class="questionText">Why does it take less and less time to add each additional billion people to the planet? </p>
 						<table class="questionTable noSwipe"><tbody>
 							<tr><td><input type="radio" name="Q1" value="A"></td>
-							<td>A: Because the growth rate increases as the population rises</td></tr>
+							<td>Because the growth rate increases as the population rises</td></tr>
 							<tr><td><input type="radio" name="Q1" value="B"></td>
-								<td>B: Because the total fertility rate increases with population</td></tr>
+								<td>Because the total fertility rate increases with population</td></tr>
 							<tr><td><input type="radio" name="Q1" value="C"></td>
-							<td>C: Because as the population increases, the absolute number of births increases even
+							<td>Because as the population increases, the absolute number of births increases even
 								 though the growth rate stays constant</td></tr>
 							<tr><td><input type="radio" name="Q1" value="D"></td>
-							<td>D: Because social behaviors change and people decide to have more children</td></tr>
+							<td>Because social behaviors change and people decide to have more children</td></tr>
 						</tbody></table>
-						<button class="questionSubmit" onClick="scoreIt(Q1Data,this.parentNode.id,getCheckedRadio('Q1'));">Check it</button>
+						<p></p>
+						<button class="btn btn-primary" onClick="scoreIt(Q1Data,this.parentNode.id,getCheckedRadio('Q1'));">Check it</button>
 				</div>
 				
 			</div>
 			
-			<div class="span6 rightCol">
+			<div class="span6">
 					<p> The human population grows according to the equation</p>
-					<blockquote class="math">N0&middot;e<sup>r&nbsp;t</sup></blockquote>
+					<blockquote class="math">N0 &times; e<sup>rt</sup></blockquote>
 					<p>	Use the population growth lab to help you answer questions about population growth.</p>
 				<div id="graphTarget0" > </div>
 				
@@ -71,8 +71,7 @@
 					
 				</tr>
 				<tr>
-					<td ><input type="number" min="1000000" max="10000000" step="1000000" value="5000000" id="numInput_0" 
-						class="dataLabel" onChange="update()"></span></td>
+					<td ><input type="number" min="1000000" max="10000000" step="1000000" value="5000000" id="numInput_0" onChange="update()"></span></td>
 					<td><span id="readout_1" class="dataLabel"></span></td>
 				</tr>
 					</tbody>
@@ -84,10 +83,12 @@
 	</div>
 
 	<script src="js/jquery-latest.js"></script>
-    <script src="js/neffRev-structure.js"></script>    
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
+    <script src="js/neff-structure.js"></script>    
     <script src="js/neff-master.js"></script>    
 	<script src="js/d3.v2.min.js"></script>
 	<script src="js/graphing.js"></script>
+	<script src="js/assessment.js"></script>
 	<script src="js/widgets.js"></script>
     <script src="js/bootstrap.min.js"></script>
 	

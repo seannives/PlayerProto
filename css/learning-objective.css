@@ -1,124 +1,80 @@
 html > body, html {
   XXXmargin: 36px;
   color: #333;
-  background-color: #fff;
-}
+  background-color: #fff; }
 
 html > body {
-    padding-left: 40px;
-    padding-right: 30px;  /* pull this in a little bit: with the ragged-right text, it's optically wider */
-    margin-left: 0;
-    margin-right: 0;
-}
+  padding-left: 40px;
+  padding-right: 30px;
+  /* pull this in a little bit: with the ragged-right text, it's optically wider */
+  margin-left: 0;
+  margin-right: 0; }
 
 .blah {
-    color: #f49524;
-}
+  color: #f49524; }
+
 .blah:hover {
-    color: #fefece;
-}
+  color: #fefece; }
 
 .titler {
-    font-family: Helvetica, sans;
-    font-size: 15pt;
-    font-weight: bold;
-    
-    border-bottom: #AAAAAA 1px solid;
-    margin-bottom: 0.8em;
-    padding-bottom: 0.7em;
-}
+  font-family: Helvetica, sans;
+  font-size: 15pt;
+  font-weight: bold;
+  border-bottom: #AAAAAA 1px solid;
+  margin-bottom: 0.8em;
+  padding-bottom: 0.7em; }
 
+.rightCol {
+  margin-top: 87px; }
 
 .contentBucket .texty, .contentBucket .texty p {
-    font-family: Georgia,serif;
-    font-size: 11pt;
-    XXXfont-weight: bold;
-    text-align: start;
-}
+  font-family: Georgia,serif;
+  font-size: 11pt;
+  XXXfont-weight: bold;
+  text-align: start; }
 
 .titler .number {
-    color: #1a7ebf;
-}
-
+  color: #1a7ebf; }
 
 .derpcap {
-    font-family: Helvetica, sans;
-    float: left;
-    color: #f49524;
-    font-size: 50pt;
-    line-height: 40pt;
-}
+  font-family: Helvetica, sans;
+  float: left;
+  color: #f49524;
+  font-size: 50pt;
+  line-height: 40pt; }
 
 .chapter-num {
-    font-family: Helvetica, sans;
-    font-size: 84pt;
-    line-height: 86pt;
-}
+  font-family: Helvetica, sans;
+  font-size: 84pt;
+  line-height: 86pt; }
 
 .chapter-title {
-    font-family: Helvetica, sans;
-    font-size: 30pt;
-    line-height: 32pt;
-    margin-bottom: .5em;
-}
+  font-family: Helvetica, sans;
+  font-size: 30pt;
+  line-height: 32pt;
+  margin-bottom: .5em; }
 
 .figure-placeholder {
-    background-color: #2d2c2d;
-}
-
-
-.figure-caption {
-    font-family: Helvetica, sans;
-    font-size: 9pt;
-    font-weight: bold;
-    line-height: 12pt;
-    color: #babcbe;
-    margin-top: 5pt;
-    margin-bottom: 5pt;
-}
-
-
-
-
-.steps {
-    position: fixed;
-    top: 50px;
-    left: 16px;
-    text-align: center;
-    margin: 0px;
-    padding: 0px;
-    line-height: 0;
-}
-.steps .step {
-    width: 20%;
-    width: 6px;
-    height: 6px;
-    margin-bottom: 5px;
-    background-color: #EEE;
-	border:1px solid #BBB;
-}
-.steps .step.active {
-    background-color: #9CF;
-	border-color: #2C6CB8;
-	#box-shadow: 0px 0px 1px #0CF;
-	opacity: 0.7;
-}
-
-
+  background-color: #2d2c2d; }
 
 footer {
-    border-top: 1px solid #AAAAAA;
-    margin-top: 1.3em;
-    padding-top: 0.6em;
-}
-
-footer p {
-    text-align: center;
-    color: #999;
-}
-
+  border-top: 1px solid #AAAAAA;
+  margin-top: 1.3em;
+  padding-top: 0.6em;
+  text-align: center;
+  color: #999; }
 
 .contentBucket {
-    margin-top: 42px;
-}
-
+  margin-top: 42px;
+  padding: 0 40px; }
+  .contentBucket h2 {
+    font-size: 210%;
+    font-weight: normal; }
+  .contentBucket p {
+    line-height: 140%; }
+    .contentBucket p:last-child:after {
+      content: "\f06c";
+      display: block;
+      text-align: center;
+      font-family: "FontAwesome";
+      margin-top: 20px; }

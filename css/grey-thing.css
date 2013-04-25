@@ -1,101 +1,27 @@
-html > body, html {
-  xxxmargin: 36px;
-  color: #fefefe;
-  background-color: #4e4e50;
-}
-
-
-
-
-.mainContent {
-  font-family: Georgia, serif;
-  font-weight: bold;
-  font-size: 15px;
-  line-height: 20px;
-}
-
-.mainContent p {
-    margin: 0;
-    text-align: start;
-    text-indent: 20px;
-}
-
 .container .term {
-    color: #f49524;
-}
+  color: #f49524; }
+
 .container .term :hover {
-    color: #fefece;
-}
+  color: #fefece; }
 
 .derpcap {
-    font-family: Helvetica, sans;
-    float: left;
-    color: #f49524;
-    font-size: 50pt;
-    line-height: 40pt;
-    padding-right: 3px;
-}
+  font-family: Helvetica, sans;
+  float: left;
+  color: #f49524;
+  font-size: 50pt;
+  line-height: 40pt;
+  padding-right: 3px; }
 
 .chapter-num {
-    font-family: Helvetica, sans;
-    font-size: 84pt;
-    line-height: 86pt;
-}
+  font-family: Helvetica, sans;
+  font-size: 84pt;
+  line-height: 86pt; }
 
 .chapter-title {
-    font-family: Helvetica, sans;
-    font-size: 30pt;
-    line-height: 32pt;
-    margin-bottom: .5em;
-}
+  font-family: Helvetica, sans;
+  font-size: 30pt;
+  line-height: 32pt;
+  margin-bottom: .5em; }
 
 .figure-placeholder {
-    XXXbackground-color: #2d2c2d;
-}
-
-
-.figure-caption {
-    font-family: Helvetica, sans;
-    font-size: 9pt;
-    font-weight: bold;
-    line-height: 12pt;
-    color: #babcbe;
-    margin-top: 5pt;
-    margin-bottom: 5pt;
-}
-
-
-html > body div.modal {
-    color: #333;
-}
-
-.toc {
-    margin-top: 1em;
-    color: white;
-}
-
-.toc tr {
-    vertical-align: top;
-}
-
-.toc tr td {
-    padding-bottom: 4px;
-}
-
-.toc .number,
-.toc .number a {
-    color: #f49524;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-    font-weight: bold;
-    padding-right: .25em;
-    font-size: 14pt;
-    xxline-height: 21pt;
-}
-
-
-.toc .name a {
-    color: white;
-}
-
-
-
+  XXXbackground-color: #2d2c2d; }

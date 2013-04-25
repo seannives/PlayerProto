@@ -2,204 +2,160 @@ html > body, html {
   margin: 0;
   padding: 0;
   color: #333;
-  background-color: #fff;
-}
-
+  background-color: #fff; }
 
 .structure {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    width: 100%;
-}
+  border-collapse: collapse;
+  border-spacing: 0px;
+  width: 100%; }
 
 .structure > thead td {
-    padding: 0;
-    margin: 0;
-}
+  padding: 0;
+  margin: 0; }
 
 .structure > thead td {
-    vertical-align: top;
-}
+  vertical-align: top; }
 
 .structure > thead td.gutter {
-    width: 4px;
-    height: 4px;
-    min-width: 4px;
-    min-height: 4px;
-    max-width: 4px;
-    max-height: 4px;
-}
+  width: 4px;
+  height: 4px;
+  min-width: 4px;
+  min-height: 4px;
+  max-width: 4px;
+  max-height: 4px; }
 
 .structure > thead td > div {
-    color: #fff;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-    font-weight: 300;
-    font-size: 18pt;
-    line-height: 20pt;
-    padding: 0;
-}
-
+  color: #fff;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  font-size: 18pt;
+  line-height: 20pt;
+  padding: 0; }
 
 .structure > thead td.num {
-    width: 100px;
-    XXXborder-right: 4px solid #fff;    
-}
+  width: 100px;
+  XXXborder-right: 4px solid #fff; }
 
 .structure > thead td.num > div {
-    text-align: right;
-    font-weight: bold;
-    font-size: 20pt;    
-}
+  text-align: right;
+  font-weight: bold;
+  font-size: 20pt; }
 
 .structure > thead .chap-row td.obg {
-    background-color: #f49524;
-    XXXborder-bottom: 4px solid #fff;
-}
+  background-color: #f49524;
+  XXXborder-bottom: 4px solid #fff; }
 
 .structure > tbody .text-row td > div {
-    padding-top: 5px;
-}
+  padding-top: 5px; }
 
 .structure > thead .chap-row td > div {
-    padding-top: 46px;
-    padding-bottom: 20px;    
-}
+  padding-top: 46px;
+  padding-bottom: 20px; }
 
 .structure > thead .mod-row td > div {
-    padding-top: 24px;
-    padding-bottom: 10px;    
-}
+  padding-top: 24px;
+  padding-bottom: 10px; }
 
 .structure > thead .mod-row td.num {
-    background-color: #4ea341;
-}
+  background-color: #4ea341; }
+
 .structure > thead .mod-row td.title > div {
-    color: #333;
-    font-weight: bold;
-}
+  color: #333;
+  font-weight: bold; }
 
 .structure td.left-col > div {
-    padding-right: 16px;
-    padding-left: 10px;
-}
+  padding-right: 16px;
+  padding-left: 10px; }
 
 .structure td.right-col > div {
-    padding-left: 19px;
-}
+  padding-left: 19px; }
 
 .structure td.right-col > div > div {
-    max-width: 588px;
-    margin-right: 70px;
-}
+  max-width: 588px;
+  margin-right: 70px; }
 
 #ulc {
-    -moz-border-radius: 0 0 7px 0;
-    -webkit-border-radius: 0 0 7px 0;
-    border-radius: 0 0 7px 0;
-}
+  -moz-border-radius: 0 0 7px 0;
+  -webkit-border-radius: 0 0 7px 0;
+  border-radius: 0 0 7px 0; }
 
 #urc {
-    -moz-border-radius: 0 0 0 7px;
-    -webkit-border-radius: 0 0 0 7px;
-    border-radius: 0 0 0 7px;
-    text-transform:uppercase;
-}
+  -moz-border-radius: 0 0 0 7px;
+  -webkit-border-radius: 0 0 0 7px;
+  border-radius: 0 0 0 7px;
+  text-transform: uppercase; }
 
 #llc {
-    -moz-border-radius: 0 7px 7px 0;
-    -webkit-border-radius: 0 7px 7px 0;
-    border-radius: 0 7px 7px 0;
-}
+  -moz-border-radius: 0 7px 7px 0;
+  -webkit-border-radius: 0 7px 7px 0;
+  border-radius: 0 7px 7px 0; }
 
-
-
-.toc tr {
-    vertical-align: top;
-}
-
-.toc tr td {
-    padding-bottom: 4px;
-}
-
-.toc .number {
-    color: #2071b7;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+.toc {
+  margin-top: 51px;
+  margin-bottom: 20px; }
+  .toc tr {
+    vertical-align: top; }
+    .toc tr td {
+      padding-bottom: 4px; }
+  .toc .number {
     font-weight: bold;
     padding-right: .75em;
-    font-size: 14pt;
-    xxline-height: 21pt;
-}
-
-.toc .name a {
-    color: #333;
-}
-
+    display: none; }
 
 .titler {
-    font-family: Helvetica, sans;
-    font-size: 15pt;
-    font-weight: bold;
-}
-
+  font-family: Helvetica, sans;
+  font-size: 15pt;
+  font-weight: bold; }
 
 .structure .texty, .structure .texty p {
-    font-family: Georgia,serif;
-    font-size: 13pt;
-    line-height: 17pt;
-    XXXfont-weight: bold;
-    text-align: start;
-}
-
-
+  font-family: Georgia,serif;
+  font-size: 13pt;
+  line-height: 17pt;
+  XXXfont-weight: bold;
+  text-align: start; }
 
 .titler .number {
-    color: #1a7ebf;
-}
-
+  color: #1a7ebf; }
 
 .hardline {
-    background-color: #AAAAAA;
-    height: 1px;
-    margin: 1em 0;
-}
+  background-color: #AAAAAA;
+  height: 1px;
+  margin: 1em 0; }
 
 .derpcap {
-    font-family: Helvetica, sans;
-    float: left;
-    color: #f49524;
-    font-size: 50pt;
-    line-height: 40pt;
-}
+  font-family: Helvetica, sans;
+  float: left;
+  color: #f49524;
+  font-size: 50pt;
+  line-height: 40pt; }
 
 .chapter-num {
-    font-family: Helvetica, sans;
-    font-size: 84pt;
-    line-height: 86pt;
-}
+  font-family: Helvetica, sans;
+  font-size: 84pt;
+  line-height: 86pt; }
 
 .chapter-title {
-    font-family: Helvetica, sans;
-    font-size: 30pt;
-    line-height: 32pt;
-    margin-bottom: .5em;
-}
+  font-family: Helvetica, sans;
+  font-size: 30pt;
+  line-height: 32pt;
+  margin-bottom: .5em; }
 
 .figure-placeholder {
-    background-color: #2d2c2d;
-}
+  background-color: #2d2c2d; }
 
-
-.figure-caption {
-    font-family: Helvetica, sans;
-    font-size: 9pt;
-    font-weight: bold;
-    line-height: 12pt;
-    color: #babcbe;
-    margin-top: 5pt;
-    margin-bottom: 5pt;
-}
-
+.figure-wrapper {
+  position: relative; }
+  .figure-wrapper .figure-caption {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    padding: 10px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box; }
 
 html > body div#def0.modal {
-    color: #333;
-}
+  color: #333; }
