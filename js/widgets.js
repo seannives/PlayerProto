@@ -834,7 +834,7 @@ MakeAxes.prototype.setState = function(liteKey) {
 
 
 /* **************************************************************************
- * Labels                                                                 *//**
+ * Labels                                                               *//**
  *
  * Method of MakeSVGContainer: 	Create labels on local axes scale
  *
@@ -855,7 +855,8 @@ MakeAxes.prototype.setState = function(liteKey) {
  * TODO: we need some sort of autowidth intelligence on these, but I don't
  * know how to reconcile that with giving user control over wrapping
  ****************************************************************************/
-MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labeled image object generator
+MakeSVGContainer.prototype.Labels = function(config, eventManager)
+{ //begin labeled image object generator
 
 	var myID  = "label" + this.id + "_";
 	this.labels = {id: myID,
@@ -937,57 +938,58 @@ MakeSVGContainer.prototype.Labels = function(config,eventManager) { //begin labe
 
 } //end MakeLabels object generator function
 
-/* ***************************************************************** * labelLite                                                       *//**
-*
-* Updates the labels widget highlight to match the currently
-* selected index, lite.
-*
-**********************************************************************/
-	function labelLite(Obj,lite)
-	{
-		console.log("TODO: fired LabelLite log");
-		//return all styles to normal on all the labels
-		var allLabels = 
-			d3.selectAll("#" + Obj.labels.id).selectAll(".descLabel");
-		//TODO what I need is a better way to know which collection
-		//of labels to turn off. Doing it by class seems lame.
-		allLabels
-		.style("color",null)
-		//setting a style to null removes the special
-		//style property from the tag entirely.
-		//TODO: make the lit and unlit classes
-		.style("font-weight",null)
-		.style("background-color","");
-		var allBullets = 
-			d3.selectAll("#" + Obj.labels.id);
-		//turn all the text back to white, and circles to black
-		allBullets.selectAll("text").style("fill","white");
-		allBullets.selectAll("circle").attr("class","steps")
-			;
-			
-		//highlight the selected label(s)
+/* **************************************************************************
+ * labelLite                                                            *//**
+ *
+ * Updates the labels widget highlight to match the currently
+ * selected index, lite.
+ *
+ **********************************************************************/
+function labelLite(Obj, lite)
+{
+	console.log("TODO: fired LabelLite log");
+	//return all styles to normal on all the labels
+	var allLabels = 
+		d3.selectAll("#" + Obj.labels.id).selectAll(".descLabel");
+	//TODO what I need is a better way to know which collection
+	//of labels to turn off. Doing it by class seems lame.
+	allLabels
+	.style("color",null)
+	//setting a style to null removes the special
+	//style property from the tag entirely.
+	//TODO: make the lit and unlit classes
+	.style("font-weight",null)
+	.style("background-color","");
+	var allBullets = 
+		d3.selectAll("#" + Obj.labels.id);
+	//turn all the text back to white, and circles to black
+	allBullets.selectAll("text").style("fill","white");
+	allBullets.selectAll("circle").attr("class","steps")
+		;
 		
-		var setLabels = d3.selectAll("#" + Obj.labels.id + lite);
-		if(setLabels) 
-			{
-			setLabels.selectAll("circle")
-			.attr("class","stepsLit");
-			//highlight the one selected circle and any others
-			//with the same lite index
-			setLabels.selectAll("text").style("fill","#1d95ae");
-			setLabels.selectAll(".descLabel")
-			//.transition().duration(100)
-			// this renders badly from Chrome refresh bug
-			//we'll have to figure out how to get transitions
-			//back in - maybe just foreign objects?
-			.style("color", "#1d95ae")
-			.style("font-weight", "600")
-			.style("background-color", "#e3effe");
-		
-			} 
-		else {
-		console.log("Invalid key. No label " + liteKey);
-			}
+	//highlight the selected label(s)
+	
+	var setLabels = d3.selectAll("#" + Obj.labels.id + lite);
+	if(setLabels) 
+		{
+		setLabels.selectAll("circle")
+		.attr("class","stepsLit");
+		//highlight the one selected circle and any others
+		//with the same lite index
+		setLabels.selectAll("text").style("fill","#1d95ae");
+		setLabels.selectAll(".descLabel")
+		//.transition().duration(100)
+		// this renders badly from Chrome refresh bug
+		//we'll have to figure out how to get transitions
+		//back in - maybe just foreign objects?
+		.style("color", "#1d95ae")
+		.style("font-weight", "600")
+		.style("background-color", "#e3effe");
+	
+		} 
+	else {
+	console.log("Invalid key. No label " + liteKey);
+		}
 }
 
 

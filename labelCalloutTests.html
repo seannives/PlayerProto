@@ -24,188 +24,177 @@
 				
 			</div>
 			<div class="span6 rightCol">
+				<div id="widgetTarget50n"><p>3n. Label positions</p></div>
 				<div id="widgetTarget50"><p>3. Label positions</p></div>
                 <div id="lineMarks"><p>5. x-axis Line Markers x and y</p></div>
-                 <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
+                <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
 			</div>
 		</div>
 	</div>
 
+
+	
 	<script src="js/jquery-latest.js"></script>
-	<script src="js/toc-structure.js"></script>    
-	<script src="js/eCourse-master.js"></script>    
+	<script src="js/toc-structure.js"></script>
+	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v3.min.js"></script>
+
+	<script src="js/eventmanager.js"></script>
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
+	<script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-callouts.js"></script>
+	
 	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
-    
-    <script src="js/widget-callouts.js"></script>
-	<script src="js/eventmanager.js"></script>
 <script>
 
 	var eventManager = new EventManager();
 
 var birth = [
-		{x: 0,	y: 2.0	},
-		{x: 1,	y: 1.95},
-		{ x: 2,	 y: 1.9 },
-		 { x: 3, y: 1.85 },
-		 { x: 4, y: 1.9	 },
-		 { x: 5, y: 1.95 },
-		 { x: 6, y: 2.0	 },
-		 { x: 7, y: 1.95 },
-		 { x: 8, y: 1.9	 },
-		 { x: 9, y: 1.85 },
-		 { x: 10, y: 1.9 },
-		 { x: 11, y: 1.95},
-		 { x: 12, y: 2.0 },
-		 { x: 13, y: 1.95 },
-		 { x: 14, y: 1.9 },
-		 { x: 15, y: 1.85 },
-		 { x: 16, y: 1.9 },
-		 { x: 17, y: 1.95 },
-		 { x: 18, y: 1.96 },
-		 { x: 19, y: 1.95 },
-		 { x: 20, y: 1.94 },
-		 { x: 21, y: 1.93 },
-		 { x: 22, y: 1.94 },
-		 { x: 23, y: 1.95 },
-		 { x: 24, y: 1.94 },
-		 { x: 25, y: 1.93 },
-		 { x: 26, y: 1.8 },
-		 { x: 27, y: 1.7 },
-		 { x: 28, y: 1.6 },
-		 { x: 29, y: 1.5 },
-		 { x: 30, y: 1.4 },
-		 { x: 31, y: 1.3 },
-		 { x: 32, y: 1.2 },
-		 { x: 33, y: 1.1 },
-		 { x: 34, y: 1.0 },
-		 { x: 35, y: 0.9 },
-		 { x: 36, y: 0.8 },
-		 { x: 37, y: 0.7 },
-		 { x: 38, y: 0.6 },
-		 { x: 39, y: .5 },
-		 { x: 40, y: 0.4 },
-		 { x: 41, y: 0.35 },
-		 { x: 42, y: 0.35 },
-		 { x: 43, y: 0.34 },
-		 { x: 44, y: 0.33 },
-		 { x: 45, y: 0.33 },
-		 { x: 46, y: 0.32 },
-		 { x: 47, y: 0.33 },
-		 { x: 48, y: 0.31 },
-		 { x: 49, y: 0.29 },
-		 { x: 50, y: .25 },
-		 { x: 51, y: .198 },
-		 { x: 52, y: 0.2 },
-		 { x: 53, y: 0.19 },
-		 { x: 54, y: 0.18 },
-		 { x: 55, y: 0.175 },
-		 { x: 56, y: 0.172 },
-		 { x: 57, y: 0.16 },
-		 { x: 58, y: 0.155 },
-		 { x: 59, y: 0.153 },
-		 { x: 60, y: 0.151 },
-		 { x: 61, y: 0.15 },
-		 { x: 62, y: .145 },
-		 { x: 63, y: 0.145 },
-		 { x: 64, y: 0.15 },
-		 { x: 65, y: 0.145 }];
+		{ x:  0, y: 2.0	},
+		{ x:  1, y: 1.95 },
+		{ x:  2, y: 1.9 },
+		{ x:  3, y: 1.85 },
+		{ x:  4, y: 1.9	 },
+		{ x:  5, y: 1.95 },
+		{ x:  6, y: 2.0	 },
+		{ x:  7, y: 1.95 },
+		{ x:  8, y: 1.9	 },
+		{ x:  9, y: 1.85 },
+		{ x: 10, y: 1.9 },
+		{ x: 11, y: 1.95 },
+		{ x: 12, y: 2.0 },
+		{ x: 13, y: 1.95 },
+		{ x: 14, y: 1.9 },
+		{ x: 15, y: 1.85 },
+		{ x: 16, y: 1.9 },
+		{ x: 17, y: 1.95 },
+		{ x: 18, y: 1.96 },
+		{ x: 19, y: 1.95 },
+		{ x: 20, y: 1.94 },
+		{ x: 21, y: 1.93 },
+		{ x: 22, y: 1.94 },
+		{ x: 23, y: 1.95 },
+		{ x: 24, y: 1.94 },
+		{ x: 25, y: 1.93 },
+		{ x: 26, y: 1.8 },
+		{ x: 27, y: 1.7 },
+		{ x: 28, y: 1.6 },
+		{ x: 29, y: 1.5 },
+		{ x: 30, y: 1.4 },
+		{ x: 31, y: 1.3 },
+		{ x: 32, y: 1.2 },
+		{ x: 33, y: 1.1 },
+		{ x: 34, y: 1.0 },
+		{ x: 35, y: 0.9 },
+		{ x: 36, y: 0.8 },
+		{ x: 37, y: 0.7 },
+		{ x: 38, y: 0.6 },
+		{ x: 39, y: 0.5 },
+		{ x: 40, y: 0.4 },
+		{ x: 41, y: 0.35 },
+		{ x: 42, y: 0.35 },
+		{ x: 43, y: 0.34 },
+		{ x: 44, y: 0.33 },
+		{ x: 45, y: 0.33 },
+		{ x: 46, y: 0.32 },
+		{ x: 47, y: 0.33 },
+		{ x: 48, y: 0.31 },
+		{ x: 49, y: 0.29 },
+		{ x: 50, y: 0.25 },
+		{ x: 51, y: 0.198 },
+		{ x: 52, y: 0.2 },
+		{ x: 53, y: 0.19 },
+		{ x: 54, y: 0.18 },
+		{ x: 55, y: 0.175 },
+		{ x: 56, y: 0.172 },
+		{ x: 57, y: 0.16 },
+		{ x: 58, y: 0.155 },
+		{ x: 59, y: 0.153 },
+		{ x: 60, y: 0.151 },
+		{ x: 61, y: 0.15 },
+		{ x: 62, y: 0.145 },
+		{ x: 63, y: 0.145 },
+		{ x: 64, y: 0.15 },
+		{ x: 65, y: 0.145 }];
  
 var death = [
-		{x: 0,	y: 1.95	},
-		{x: 1,	y: 1.95	},
-		{ x: 2,	 y: 1.98 },
-		 { x: 3, y: 1.95 },
-		 { x: 4, y: 1.95 },
-		 { x: 5, y: 1.98 },
-		 { x: 6, y: 1.95 },
-		 { x: 7, y: 1.88 },
-		 { x: 8, y:  1.85 },
-		 { x: 9, y: 1.85 },
-		 { x: 10, y: 1.84 },
-		 { x: 11, y: 1.8 },
-		 { x: 12, y: 1.7 },
-		 { x: 13, y: 1.6 },
-		 { x: 14, y: 1.5 },
-		 { x: 15, y: 1.4 },
-		 { x: 16, y: 1.3 },
-		 { x: 17, y: 1.2 },
-		 { x: 18, y: 1.1 },
-		 { x: 19, y: 0.9 },
-		 { x: 20, y: 0.8 },
-		 { x: 21, y: 0.7 },
-		 { x: 22, y: 0.55 },
-		 { x: 23, y: 0.45 },
-		 { x: 24, y: 0.35 },
-		 { x: 25, y: 0.2 },
-		 { x: 26, y: 0.195 },
-		 { x: 27, y: 0.19 },
-		 { x: 28, y: 0.18 },
-		 { x: 29, y: 0.19 },
-		 { x: 30, y:  0.195},
-		 { x: 31, y: 0.2},
-		 { x: 32, y: 0.195},
-		 { x: 33, y: 0.19},
-		 { x: 34, y: 0.195 },
-		 { x: 35, y: 0.198 },
-		 { x: 36, y: 0.2 },
-		 { x: 37, y: 0.2 },
-		 { x: 38, y: 0.19 },
-		 { x: 39, y: 0.18 },
-		 { x: 40, y: 0.19},
-		 { x: 41, y: 0.195},
-		 { x: 42, y: 0.2},
-		 { x: 43, y: 0.195},
-		 { x: 44,
-		 y: 0.198
-		 },
-		 { x: 45,
-		 y: 0.2
-		 },
-		 { x: 46,
-		 y: 0.2
-		 },
-		 { x: 47,
-		 y: 0.195
-		 },
-		 { x: 48,
-		 y: 0.192
-		 },
-		 { x: 49,
-		 y: 0.192
-		 },
-		 { x: 50,
-		 y: .19
-		 },
-		 { x: 51,
-		 y: .198
-		 },
-		 { x: 52,
-		 y: 0.2
-		 },
-		 { x: 53,
-		 y: 0.19
-		 },
-		 { x: 54, y: 0.18
-		 },
-		 { x: 55, y: 0.198	 },
-		 { x: 56, y: 0.195	 },
-		 { x: 57,	 y: 0.2	 },
-		 { x: 58,	 y: 0.19	 },
-		 { x: 59,	 y: 0.195	 },
-		 { x: 60,	 y: 0.198	 },
-		 { x: 61,	 y: 0.193},
-		 { x: 62,	 y: .145	 },
-		 { x: 63,	 y: 0.192		 },
-		 { x: 64,	 y: 0.198	 },
-		 { x: 65,	 y: 0.199	 }];
+		{ x:  0, y: 1.95 },
+		{ x:  1, y: 1.95 },
+		{ x:  2, y: 1.98 },
+		{ x:  3, y: 1.95 },
+		{ x:  4, y: 1.95 },
+		{ x:  5, y: 1.98 },
+		{ x:  6, y: 1.95 },
+		{ x:  7, y: 1.88 },
+		{ x:  8, y: 1.85 },
+		{ x:  9, y: 1.85 },
+		{ x: 10, y: 1.84 },
+		{ x: 11, y: 1.8 },
+		{ x: 12, y: 1.7 },
+		{ x: 13, y: 1.6 },
+		{ x: 14, y: 1.5 },
+		{ x: 15, y: 1.4 },
+		{ x: 16, y: 1.3 },
+		{ x: 17, y: 1.2 },
+		{ x: 18, y: 1.1 },
+		{ x: 19, y: 0.9 },
+		{ x: 20, y: 0.8 },
+		{ x: 21, y: 0.7 },
+		{ x: 22, y: 0.55 },
+		{ x: 23, y: 0.45 },
+		{ x: 24, y: 0.35 },
+		{ x: 25, y: 0.2 },
+		{ x: 26, y: 0.195 },
+		{ x: 27, y: 0.19 },
+		{ x: 28, y: 0.18 },
+		{ x: 29, y: 0.19 },
+		{ x: 30, y: 0.195 },
+		{ x: 31, y: 0.2 },
+		{ x: 32, y: 0.195 },
+		{ x: 33, y: 0.19 },
+		{ x: 34, y: 0.195 },
+		{ x: 35, y: 0.198 },
+		{ x: 36, y: 0.2 },
+		{ x: 37, y: 0.2 },
+		{ x: 38, y: 0.19 },
+		{ x: 39, y: 0.18 },
+		{ x: 40, y: 0.19 },
+		{ x: 41, y: 0.195 },
+		{ x: 42, y: 0.2 },
+		{ x: 43, y: 0.195 },
+		{ x: 44, y: 0.198 },
+		{ x: 45, y: 0.2 },
+		{ x: 46, y: 0.2 },
+		{ x: 47, y: 0.195 },
+		{ x: 48, y: 0.192 },
+		{ x: 49, y: 0.192 },
+		{ x: 50, y: .19 },
+		{ x: 51, y: .198 },
+		{ x: 52, y: 0.2 },
+		{ x: 53, y: 0.19 },
+		{ x: 54, y: 0.18 },
+		{ x: 55, y: 0.198 },
+		{ x: 56, y: 0.195 },
+		{ x: 57, y: 0.2 },
+		{ x: 58, y: 0.19 },
+		{ x: 59, y: 0.195 },
+		{ x: 60, y: 0.198 },
+		{ x: 61, y: 0.193 },
+		{ x: 62, y: .145 },
+		{ x: 63, y: 0.192 },
+		{ x: 64, y: 0.198 },
+		{ x: 65, y: 0.199 }];
+
+// Calculate the population growth from the birth and death data		
 var dataPts = birth.length;
 var popGrowth = [];
-for(i=0;i<dataPts;i++){
-		popGrowth[i] = {x: birth[i].x,
-						y: birth[i].y - death[i].y};
-		}
+for (i = 0; i < dataPts; i++)
+{
+	popGrowth[i] = {x: birth[i].x,
+					y: birth[i].y - death[i].y};
+}
 		
 	
 	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
@@ -298,6 +287,39 @@ for(i=0;i<dataPts;i++){
 
 
 	//	<div id="widgetTarget50"><p>Labels in grid</p></div>
+	var cntrConfig50 = {
+			node: d3.select("#widgetTarget50n"),
+			maxWid: 500,
+			maxHt: 300
+		};
+
+	var lblGrpConfig50 = {
+			id: "lbls50",
+			type: "numbered",
+			labels: 	
+			[
+				{ content: "TOP left",		xyPos: [0,   1],	width: 100	},
+				{ content: "middle left",	xyPos: [0,   0.5],	width: 100	},
+				{ content: "Bottom left" ,	xyPos: [0,   0],	width: 100	},
+				{ content: "top middle",	xyPos: [0.5, 1],	width: 100	},
+				{ content: "center",		xyPos: [0.5, 0.5],	width: 100	},
+				{ content: "bottom middle",	xyPos: [0.5, 0],	width: 100	},
+				{ content: "TOP right",		xyPos: [1,   1],	width:  50	},
+				{ content: "middle right",	xyPos: [1,   0.5],	width:  50	},
+				{ content: "width 50 at 1/4,1/4",
+											xyPos: [0.25, 0.25],	width:  50	},
+				{ content: "width 150 at 3/4,3/4 with extended &copy; chars",
+											xyPos: [0.75, 0.75],	width: 150	},
+				{ content: '3/4,1/4 with forn fields <input type="range" min="0" max="2.5" />', 
+											xyPos: [0.75, 0.25],	width: 150	},
+				{ content: "with bullet",	xyPos: [0.25, 0.75],	width:  80, bullet: "circle"	}		
+			]
+		};
+
+	var cntr50 = new SVGContainer(cntrConfig50);
+	var labelGroup50 = new LabelGroup(lblGrpConfig50);
+	cntr50.append(labelGroup50, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
 
 
 	var svg70 = new MakeSVGContainer(
