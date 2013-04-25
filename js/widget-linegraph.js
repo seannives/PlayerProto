@@ -104,6 +104,7 @@ function LineGraph(config)
 		{
 			container: null,
 			size: {height: 0, width: 0},
+			dataRect: new Rect(0, 0, 0, 0),
 			linesId: 'lines',
 			axes: null,
 			xScale: null,
@@ -163,6 +164,9 @@ LineGraph.prototype.draw = function(container, size)
 	//inherit the x and y scales from the axes container
 	this.lastdrawn.xScale = axesCont.xScale;
 	this.lastdrawn.yScale = axesCont.yScale;
+	
+	//inherit the dataRect from the axes container
+	this.lastdrawn.dataRect = axesCont.dataRect;
 
 	this.lastdrawn.linesId = this.id + '_lines';
 	var linesId = this.lastdrawn.linesId;
@@ -179,8 +183,8 @@ LineGraph.prototype.draw = function(container, size)
 			.append("clipPath")
 				.attr("id", clipId)
 				.append("rect")
-					.attr("width", axesCont.dataArea.width)
-					.attr("height", axesCont.dataArea.height);
+					.attr("width", axesCont.dataRect.width)
+					.attr("height", axesCont.dataRect.height);
 
 	//draw the trace(s)
 	if (this.type == "lines" || this.type == "lines+points")

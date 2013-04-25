@@ -58,6 +58,8 @@ console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.p
  * @param {number}	width	-A non-negative value that represents the Width of the rectangle.
  * @param {number}	height	-A non-negative value that represents the Height of the rectangle.
  *
+ * @todo consider using javascript property accessor for width/height, so dependent properties stay consistent
+ *
  ****************************************************************************/
 function Rect(x, y, width, height)
 {
@@ -866,7 +868,7 @@ function Axes(container, config)
 		}
 	}
 
-	this.dataArea = { height: dataAreaHeight, width: dataAreaWidth };
+	this.dataRect = Rect.makeRect({t: this.margin.top, l: this.margin.left, h: dataAreaHeight, w: dataAreaWidth});
 	
 	//and finally, with the margins all settled, move the group down to accomodate the
 	//top and left margins and position
