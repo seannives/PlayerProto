@@ -1,48 +1,60 @@
 @charset "UTF-8";
 /* CSS Document */
-
-
-
-.toc {
+/*.toc {
     margin-top: 2em;
     padding-left: 2em;
-}
+}*/
+.tableOfContentsPage .tocRightCol {
+  text-align: center; }
+  .tableOfContentsPage .tocRightCol img.tocImage {
+    position: relative;
+    top: 100px; }
+.tableOfContentsPage ul {
+  list-style: none; }
+.tableOfContentsPage .toc {
+  margin: 20px 0 0; }
+  .tableOfContentsPage .toc li {
+    margin: 0; }
+  .tableOfContentsPage .toc .chapter {
+    font-weight: normal;
+    font-size: 200%;
+    margin-bottom: 15px 0 5px; }
+  .tableOfContentsPage .toc .module {
+    font-weight: normal;
+    font-size: 150%;
+    margin: 10px 0; }
+  .tableOfContentsPage .toc .objective {
+    font-size: 100%; }
+  .tableOfContentsPage .toc a .num {
+    display: none; }
+  .tableOfContentsPage .toc a .title {
+    margin: 0; }
 
 .book {
-	visibility: hidden;
-}
+  visibility: hidden; }
 
 .chapter {
-	font-weight: bold;
-	font-size: 1.2em;
-	list-style-type: none;
-}
+  font-weight: bold;
+  font-size: 1.2em; }
 
 .module {
-	padding-top: 0.5em;
-	padding-bottom: 0.1em;
-	font-size:1.1em;
-	list-style-type:none;
-}
+  padding-top: 0.5em;
+  padding-bottom: 0.1em;
+  font-size: 1.1em; }
 
 .objective {
-	padding-top: 0.1em;
-	font-size: 1em;
-	list-style-type:none;
-}
+  padding-top: 0.1em;
+  font-size: 1em; }
 
 a .num {
-	font-weight: bold;
-	font-family: Helvetica Neue, Helvetica, Arial,sans-serif;
-	padding-right:0.1em;
-}
+  font-weight: bold;
+  padding-right: 0.1em;
+  display: none; }
 
-a .title { 
-	color: #333;
-	margin-left: 0.5em;
-}
+a .title {
+  color: #333;
+  margin-left: 0; }
 
-a .title:hover { 
-	color: #333;
-	text-decoration:underline;
-}
+a .title:hover {
+  color: #333;
+  text-decoration: underline; }

@@ -1683,12 +1683,12 @@ function scoreIt(config, container, studAnswer) {
 		match = 1;
 	}
 	if (answer.content === studAnswer) {
-		d3.select("#" + container).append("div").attr("class", "feedback correct").html("Your answer, " + studAnswer + ", is correct. " + answer.response);
+		d3.select("#" + container).append("div").attr("class", "alert alert-success").html("<i class='icon-ok-sign'></i> Your answer, " + studAnswer + ", is correct. " + answer.response);
 		match = 1;
 	} else {
 		for (i = 0; i < distractor.length; i++) {
 			if (distractor[i].content === studAnswer) {
-				d3.select("#" + container).append("div").attr("class", "feedback wrong").html("Your answer, " + studAnswer + ", isn't correct. " + distractor[i].response);
+				d3.select("#" + container).append("div").attr("class", "alert alert-error").html("<i class='icon-exclamation-sign'></i> Your answer, " + studAnswer + ", isn't correct. " + distractor[i].response);
 				match = 1;
 				break;
 			}
@@ -1696,7 +1696,7 @@ function scoreIt(config, container, studAnswer) {
 	}
 
 	if (match == 0) {
-		d3.select("#" + container).append("div").attr("class", "feedback wrong").html("Sorry, your answer, " + studAnswer + ", isn't correct.");
+		d3.select("#" + container).append("div").attr("class", "alert alert-error").html("<i class='icon-exclamation-sign'></i> Sorry, your answer, " + studAnswer + ", isn't correct.");
 	}
 } //end scoreIt function
 //utility function for finding selected radio button from a group
