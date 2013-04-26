@@ -39,7 +39,7 @@
                 <div>
                 <span id="resistance">R</span> = 
                 <span id="resistivity">&rho;</span> &middot; <span id="length">L</span> /
-                <span id="area">A</span>
+                <span id="area">A</span> = <span id="resVal"></span>
                 </div>
                
                 <div id="defs"></div> 
@@ -84,7 +84,7 @@
 	
 	// Create the callout array, which also emits events so you 
 	//can click on the table row to highlight the labels.  
-	var rowDefs = new Callouts({
+	/*var rowDefs = new Callouts({
 		id: "varDefs",
 		show: "all",
 		//type: "numbered",
@@ -98,20 +98,16 @@
 	},eventManager);
 	
 	rowDefs.draw(d3.select("#defs"));
+	*/
 	
-	var electrons = [];
-	
-	for(i=0;i<40;i++){
-		electrons[i] = {x: Math.random(), y: Math.random()};
-	}
 		
 	var rhoSlide = new Slider ({
 			id: "rhoVal",
 			startVal: 0.5,
-			minVal: 0,
+			minVal: 0.01,
 			maxVal: 1,
 			stepVal: .01,
-			unit: "&Ohm; &nbsp; cm",
+			unit: "&Omega;&nbsp;cm",
 			label: "Resistivity"
 		}, eventManager);
 		
@@ -140,8 +136,45 @@
 		}, eventManager);
 		
 	ASlide.draw(d3.select("#ASlider"));
-
 	
+	
+	// Create the ee readout widget
+	var resReadout = new Readout({
+		node: d3.select("#resVal"),
+        id: 'eeRead',
+		startVal: resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue()),
+		readOnly: true,
+		size: 5,
+		unit: "&Omega;", 
+		label: "R ="
+	}, eventManager);
+	
+	function resist(rho,len,area) {
+		return rho*len/area;
+	}
+	
+	//generate the random data based on the slider values
+	
+	function randomData(inputVals){
+		
+		var pts = inputVals.pts;
+		var amplitudeX = inputVals.amplitudeX;
+		var amplitudeY = inputVals.amplitudeY;
+	
+		var data = [];
+	
+		for(i=0;i<pts;i++){
+		data[i] = {x: amplitudeX* Math.random(), y: amplitudeY*Math.random()};
+		}
+		
+		return data;
+	}
+	var electrons = randomData({
+		pts: Math.floor(200*rhoSlide.getValue()),
+		amplitudeX: LSlide.getValue()*10,
+		amplitudeY: ASlide.getValue()/50,
+		
+	});
 	
 	var cont1 = new SVGContainer({
 			node: d3.select("#diagram"),
@@ -166,20 +199,6 @@
 	
 	
 	
-	// Create the ee readout widget
-	var resReadout = new Readout({
-		node: d3.select("#resVal"),
-        id: 'eeRead',
-		startVal: resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue()),
-		readOnly: true,
-		size: 4,
-		unit: "%", 
-		label: "R ="
-	}, eventManager);
-	
-	function resist(rho,len,area) {
-		return rho*len/area;
-	}
 	
 	// Modify the value of the data for the bar graph when the
 	//numerical input changes.  So, subscribe to the event emitted by inputLevo,
@@ -189,10 +208,10 @@
 
 	// Handle changes of the levo and dextro input values
 	eventManager.subscribe(rhoSlide.changedValueEventId,
-						   resistanceHandler);
+						   handleChangedValue);
 	eventManager.subscribe(LSlide.changedValueEventId,
-						   resistanceHandler);
-	eventManager.subscribe(ASlide.changedValueEventId, resistanceHandler);
+						   handleChangedValue);
+	eventManager.subscribe(ASlide.changedValueEventId, handleChangedValue);
 	
 
 	/* **************************************************************************
@@ -209,15 +228,23 @@
 	* @param {number} newValue - The value of the widget that was changed.
 	*
 	****************************************************************************/
-	function handleInputValueChanged(otherInputWidget, newValue)
+	function handleChangedValue(newValue)
 	{
-		otherInputWidget.setValue(100 - newValue);
-		var diff = inputDextro.getValue() - inputLevo.getValue(),
-		    absDiff = Math.abs(diff);
-		eeReadout.setValue(absDiff);
-		//rot.setValue(sl1.getValue() * diff/100);
-		updateBarChart();
-		updatePieChart(diff);
+		//get the values of all the sliders, calculate new resistance
+		newRes = resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue());
+		//write that resistance to the readout
+		resReadout.setValue(newRes);
+		//recalculate the data
+		electrons = randomData({
+		pts: Math.floor(500*rhoSlide.getValue()),
+		amplitudeX: LSlide.getValue()*10,
+		amplitudeY: ASlide.getValue()/50,
+		});
+		console.log(electrons.length);
+		//redraw the dots
+		dots.draw(dots.lastdrawn.container,dots.lastdrawn.size);
+
+	
 	}
 	
 	
