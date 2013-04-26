@@ -97,12 +97,67 @@ var userId, userName;
      if( beacon.onerror )        { beacon.onerror = opts.error; }        
      if( beacon.onload )        { beacon.onload  = opts.success; }                 
      // Attach the src for the script call        
-     beacon.src = opts.url + '?' + qString;    }
-    }
+     beacon.src = opts.url + '?' + qString;    }}
 
 	 getPageId = function() {
        return  window.location.pathname;	   
 	 }
+	
+//function to show the popover
+function showPopover(target, it) {
+	var top = target.position().top,
+		left = target.position().left,
+		width = it.outerWidth(),
+		iWidth = target.outerWidth(),
+		iHeight = target.outerHeight()
+	
+	if(it.is(":visible")){
+		it.css({
+			display: "none"
+		}).addClass("hide").removeClass("in")
+		target.removeClass("open")
+	}
+	else {
+		it.css({
+			display: "block",
+			left: left-width+iWidth+18 + "px",
+			top: top+iHeight+5 +"px"
+		}).removeClass("hide").addClass("in")
+		target.addClass("open")
+	}
+}
+
+function toggleFont(font){
+	$("body").removeClass("sans-serif")
+	$("body").removeClass("serif")
+	$("body").removeClass("mono")
+	$("body").addClass(font)
+}
+
+function toggleBackground(bg){
+	$("body").removeClass("white")
+	$("body").removeClass("black")
+	$("body").removeClass("yellow")
+	$("body").addClass(bg)
+}
+
+function fontSize(size){
+	$("body").css({
+		fontSize: size + "px"
+	})
+}
+function resizeColumns(e, ui){
+	//calculate the size of each column
+	var col1 = $(e.currentTarget).parent().children(".span6:first-child"),
+		col2 = $(e.currentTarget).parent().children(".span6:nth-child(2)"),
+		parent = $(e.currentTarget).parent(),
+		col1W = ((ui.position.left)/parent.width()) * 100,
+		col2W = (((parent.width()-ui.position.left)/parent.width()) * 100) - 4.12766
+		
+	col1.css("width", col1W + "%")
+	col2.css("width", col2W + "%")
+}
+
 
 $(document).ready(function(){
 
@@ -122,34 +177,34 @@ $(document).ready(function(){
         var page = $("html");
         var body = $("html > body");    
         var prepend = '';  // for debugging, a callout to any replaced text (try '#')
-    
-
-// Steps dots
-        
-        if (thisTier.type == "objective") {
-            body.prepend (
-            '<div class="steps"></div>'
-            );
-        
-            var steps = $(".steps");
-            for (var i = 0; i < thisTier._parent.children.length; i++) {
-                steps.append(
-                '<div class="step'+(i == thisTier.ordinal-1 ? ' active':'')+'"></div>'
-                );
-            }          
-        }
-        
+            
 // "Swipe" arrows
         
         if (thisTier._next) {
             body.prepend (
-            '<a class="swipe next'+(thisTier.type == "chapter" ? ' inv':'')+'" href="'+thisTier._next.url+'" alt="Next page"></a>'
+            $('<a class="swipe next" href="'+thisTier._next.url+'" alt="Next page"><i class="icon-chevron-right"></i></a>')
+			.on({
+				mouseover: function(){
+					$(".swipe").addClass("active")
+				},
+				mouseout: function(){
+					$(".swipe").removeClass("active")
+				}
+			})
             );
         }
         
         if (thisTier._prev) {
             body.prepend (
-            '<a class="swipe prev'+(thisTier.type == "chapter" ? ' inv':'')+'" href="'+thisTier._prev.url+'" alt="Previous page"></a>'   
+            $('<a class="swipe prev" href="'+thisTier._prev.url+'" alt="Previous page"><i class="icon-chevron-left"></i></a>')
+   			.on({
+				mouseover: function(){
+					$(".swipe").addClass("active")
+				},
+				mouseout: function(){
+					$(".swipe").removeClass("active")
+				}
+			})
             );
         }
 
@@ -159,14 +214,14 @@ $(document).ready(function(){
         if (1) {        
             body.prepend (
             '<!-- Top Bar -->'+
-            '<div class="topbar hidden">'+
-                '<div class="left-slot">'+
-                    '<ul class="crumbs">'+
-                    '</ul>'+
+            '<div class="topbar">'+
+                '<div class="left-slot breadcrumbs">'+
+                    '<ul class="crumbs"></ul>'+
                 '</div>'+
-                '<div class="right-slot">'+
-                    '<span id="un">' + userName +'</span>'+
-                '</div>'+
+                '<div class="dropdown breadcrumbDrop pull-left">'+
+					'<a href="#" class="btn btn-mini dropdown-toggle" data-toggle="dropdown"><i class="icon-reorder"></i></a>'+
+					'<ul class="crumbs dropdown-menu"></ul>'+
+				'</div>'+
             '</div>'
             );
             
@@ -175,26 +230,120 @@ $(document).ready(function(){
             for (var tier = thisTier._parent; tier != null; tier = tier._parent) {
                 bcrumb.prepend(
                 '<li>'+
-                    '<a href="'+tier.url+'">'+(tier.ordinal > 0 ? tier.ordinal+' ':'')+' '+tier.title+'</a>'+
-                    (tier != thisTier._parent ? ' <span class="divider">&gt;</span>' : '' )+
+                    '<a href="'+tier.url+'">'+tier.title+'</a>'+
+                    (tier != thisTier._parent ? ' <span class="divider visible-desktop">:</span>' : '' )+
                 '</li>');
             }
-            
-    
-            body.prepend (
-            '<div class="expando"></div>'
-            );    
-                        
-            var expando = $(".expando");
-            var topbar = $(".topbar");
-            
-            expando && topbar && expando.click(function(event){
-                expando.toggleClass("opened");
-                topbar.toggleClass("hidden");
-            });
                 
         }
+//controls for font-size, etc...
+	var popoverStruct = $('<div class="dropdown-menu displayConfig pull-right noSwipe" />')
+						.append($('<div class="popover-content" />')
+							.append($('<form class="form-inline" />')
+								.append('<label>Size</label>')
+								.append($('<div class="slider" />')
+									.slider({
+										max: 24,
+										step: 1,
+										value: 13,
+										min: 8
+									})
+									.on({
+										slidechange: function(e, ui){
+											fontSize(ui.value)
+										}
+									})
+								)
+								.append('<label>Font</label>')
+								.append($('<div class="btn-group block" data-toggle="buttons-radio">')
+								    .append($('<button type="button" class="btn sans-serif active">Aa</button>')
+										.click(function(e){
+											toggleFont("sans-serif")
+										})
+									)
+								    .append($('<button type="button" class="btn serif">Aa</button>')
+										.click(function(e){
+											toggleFont("serif")
+										})
+									)
+								    .append($('<button type="button" class="btn mono">Aa</button>')
+										.click(function(e){
+											toggleFont("mono")
+										})
+									)
+							    )
+								.append('<label>Background</label>')
+								.append($('<div class="btn-group block" data-toggle="buttons-radio">')
+								    .append($('<button type="button" class="btn white active">White</button>')
+										.click(function(e){
+											toggleBackground("white")
+										})
+									)
+								    .append($('<button type="button" class="btn black">Black</button>')
+										.click(function(e){
+											toggleBackground("black")
+										})
+									)
+								    .append($('<button type="button" class="btn yellow">Yellow</button>')
+										.click(function(e){
+											toggleBackground("yellow")
+										})
+									)
+							    )
+							)
+						)
+						
+	var controls = $('<div class="controls" />')
+					.append($('<div class="control index dropdown" />')
+						.append('<a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-list" /></a>')
+						.append('<div class="dropdown-menu pull-right tableOfContents"><div class="scroll"><ul class="toc" role="menu"></ul></div></div>')
+					)
+					.append('<div class="divider" />')
+					.append($('<div class="control notes" />')
+						.append('<a href="#"><i class="icon-edit" /></a>')
+					)
+					.append($('<div class=" dropdown control display" />')
+						.append('<a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-font" /></a>')
+						.append(popoverStruct)
+						/*.click(function(e){
+							e.preventDefault()
+							showPopover($(e.currentTarget), popoverStruct)
+						})*/
+					)
+					//.append(popoverStruct)
+					.appendTo(".topbar")
+// Steps dots
+        if (thisTier.type == "objective") {
+            $(".topbar").append (
+            '<div class="steps"></div>'
+            );
 
+            var steps = $(".steps");
+            for (var i = 0; i < thisTier._parent.children.length; i++) {
+                steps.append(
+                '<div class="step'+(i == thisTier.ordinal-1 ? ' active':'')+'">'+(i+1)+'</div>'
+                );
+            }          
+        }
+
+//resizable columns
+	var container = $(".contentBucket").children(".row-fluid"),
+		handle = $('<span class="resize-btn"><i class="icon-arrow-left"></i>&nbsp;<i class="icon-arrow-right"></i></span>')
+		columnHandle = $('<div class="columnResize" />')
+						.append(handle)
+						.draggable({
+							handle : handle,
+							axis : "x",
+							containment : "parent",
+							grid : [(container.width()-80)/5, 0]
+						})
+						.css("height", $(window).height()-60 + "px")
+						.on({
+							drag: function(e, ui){
+								resizeColumns(e, ui)
+							}
+						})
+						.appendTo(container)
 
 // TOC for module and chapter
         
@@ -230,71 +379,75 @@ $(document).ready(function(){
         
         
 // TOC for book
-
+		//console.log(thisTier)
         if (thisTier.type == "book") {
             var toc = $(".toc"); // must exist already
+		}
+		else {
+			var toc = $(".dropdown-menu").find(".toc")
+		}
+	        
             
-            function bookToc(tier, node, ignore) {
-                // Pre-munge your strings, if needed
-                
-                var url = tier.url;
-                var unit = tier.id;
-                var title = tier.title;
-                var style = tier.type;
-                
-                switch (tier.type) {
-                case "book":
-                    url = '';
-                    unit = "TITLE";
-                    break;
-                case "chapter":
-                    unit = "Chapter "+tier.ordinal;
-                    break;
-                }
-                
-                ignore = ignore || tier.ignore;
-                
-                if (ignore) {
-                    url = '';
-                    style += ' ignore';
-                }
-                
-                // List yourself as li
-
-                if (tier.type == "book") {
-                    // skip!
-                }
-                else if (!url) {
-                    node.append(
-                    '<li class="'+style+'">'+unit+' - '+title+'</li>'
-                    );                
-                }
-                else {
-                    node.append(
-                    '<li class="'+style+'"><a href="'+url+'"><span class="num">'+unit+'</span><span class="title">'+title+'</span></a></li>'
-                    );
-                }
-                
-                // Create ul container for children
-                
-                
-                var ul = node;
-
-                if (tier.type != "book") {
-                    ul = $('<ul></ul>').appendTo(node);
-                }
-                
-                // Iterate over children
+        function bookToc(tier, node, ignore) {
+            // Pre-munge your strings, if needed
             
-                if (tier.children) {
-                    for (var i = 0; i < tier.children.length; i++) {
-                        bookToc(tier.children[i], ul, ignore);
-                    }
-                }
+            var url = tier.url;
+            var unit = tier.id;
+            var title = tier.title;
+            var style = tier.type;
+            
+            switch (tier.type) {
+            case "book":
+                url = '';
+                unit = "TITLE";
+                break;
+            case "chapter":
+                unit = "Chapter "+tier.ordinal;
+                break;
             }
             
-            toc && bookToc(thisTier, toc, false)
+            ignore = ignore || tier.ignore;
+            
+            if (ignore) {
+                url = '';
+                style += ' ignore';
+            }
+            
+            // List yourself as li
+
+            if (tier.type == "book") {
+                // skip!
+            }
+            else if (!url) {
+                node.append(
+                '<li class="'+style+'">'+unit+' - '+title+'</li>'
+                );                
+            }
+            else {
+                node.append(
+                '<li class="'+style+'"><a href="'+url+'"><span class="num">'+unit+'</span><span class="title">'+title+'</span></a></li>'
+                );
+            }
+            
+            // Create ul container for children
+            
+            
+            var ul = node;
+
+            if (tier.type != "book") {
+                ul = $('<ul></ul>').appendTo(node);
+            }
+            
+            // Iterate over children
+        
+            if (tier.children) {
+                for (var i = 0; i < tier.children.length; i++) {
+                    bookToc(tier.children[i], ul, ignore);
+                }
+            }
         }
+        var newTier = thisTier.type == "book" ? thisTier : thisTier.type == "chapter" ? thisTier : thisTier.type == "objective" ? thisTier._parent._parent : thisTier._parent
+        toc && bookToc(newTier, toc, false)
         
         
 // Hook up interactive indicators
@@ -303,7 +456,7 @@ $(document).ready(function(){
             var content = $(this);
             
             content.append (
-            '<div class="inter-indy" title="This content is interactive: play with it!"></div>'
+            '<div class="inter-indy" title="This content is interactive: play with it!"><i class="icon-hand-up"></i></div>'
             );
 
         });
@@ -325,7 +478,7 @@ $(document).ready(function(){
             aside.remove();
             
             body.append(
-'<div id="'+(href.substring(1))+'" class="done modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+'<div id="'+(href.substring(1))+'" class="noSwipe done modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
 	'<div class="modal-header">'+
 		'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>'+
 		'<h3 id="myModalLabel">'+(label)+'</h3>'+
@@ -359,7 +512,7 @@ $(document).ready(function(){
             container.append (
             '<footer>'+
                 //'<hr/>'+
-                '<p>&copy; Pearson Education 2012</p>'+
+                '&copy; Pearson Education 2012'+
             '</footer>'
             );
         }
@@ -385,7 +538,7 @@ $(document).ready(function(){
         
         // Set the document title, if the browser allows it
         
-        document.title = prepend + "Pearson: " + thisTier.title;
+        document.title = prepend + "NEFF: " + thisTier.title;
         
         // Set the tier ID, title, etc where we find it: catch-all pseudo-templating!
         
@@ -432,15 +585,21 @@ $(document).ready(function(){
         });
 
         
-/*// Beacon tracking
+// Beacon tracking
 
        beacon({ url : 'http://'+window.location.host+'/scripts/track', vars : { 'id':getPageId(), 'name':userId.replace(/"/g,''), 'itype':'p', 'screenSize':screen.width+'x'+screen.height, 'rand':Math.floor((Math.random()*100000)+1) }});
 	   //console.log(userId.replace('"',''));
-*/
+
 
     } // end if(thisTier)
 
-
+//measure the length of the window and the length of the viewpane, then append a class to the body
+	var wH = $(window).height(),
+		bH = $("body").outerHeight()
+	
+	if(wH < bH){
+		$("body").addClass("overflow")
+	}
         
 }); // end DOM ready
 
