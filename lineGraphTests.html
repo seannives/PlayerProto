@@ -20,24 +20,17 @@
 		<div class="row-fluid">
 			<div class="span6 leftCol">
 				<div id="widgetTarget0n"><p>0n. Line Graph one line linear</p></div>
-				<div id="widgetTarget0"><p>0. Line Graph one line linear</p></div>
-				<div id="widgetTarget1n"><p>1n. Line graph several traces linear</p></div>
-				<div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
+		<div id="widgetTarget1n"><p>1n. Line graph several traces linear</p></div>
+			
 				<div id="widgetTarget2n"><p>2n. Scatter graph</p></div>
-				<div id="widgetTarget2"><p>2. Scatter graph</p></div>
 				<div id="widgetTarget3n"><p>3n. Lines and points several traces linear</p></div>
-				<div id="widgetTarget3"><p>3. Lines and points several traces linear</p></div>
 
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50n"><p>50n. Several traces log scale</p></div>
-				<div id="widgetTarget50"><p>50. Several traces log scale</p></div>
 				<div id="widgetTarget60n"><p>60n. Several traces Ordinal</p></div>
-				<div id="widgetTarget60"><p>60. Several traces Ordinal</p></div>
 				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container)</p></div>
-				<div id="widgetTarget70"><p>70. Small multiples (several line graphs in container)</p></div>
 				<div id="widgetTarget80n"><p>80n. Lines with Legend</p></div>
-				<div id="widgetTarget80"><p>80. Lines with Legend</p></div>
 			</div>
 		</div>
 	</div>
@@ -53,7 +46,6 @@
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
 	
-	<script src="js/widgets.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 <script>
@@ -243,32 +235,6 @@
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-	
-	
-    var svg0 = new MakeSVGContainer({
-			node: d3.select("#widgetTarget0"),
-			maxWid: 400,
-			maxHt: 300
-        });
-
-	svg0.Axes({
-			xPosPerc: 0, yPosPerc:0, //top, left corner
-			xPerc: 1, yPerc: 1,//full height and width
-			Data: [lineData1],
-			xaxisType: "linear",
-			xTicks: 5,
-			xOrient: "bottom",
-			xLabel: "one line with markup <span class='math'>y=x<sup>2</sup></span>",
-			yaxisType: "linear",
-			yTicks: 5,
-			yOrient: "right",
-			yLabel: "Labels can have extended chars (&mu;m)"
-		});
-
-	svg0.LineGraph({
-			Data: [lineData1],
-			type: "lines"
-		});
 
 
 //  <div id="widgetTarget1"><p>1. Line graph several traces linear</p></div>
@@ -297,31 +263,6 @@
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-    var svg1 = new MakeSVGContainer({
-			node: d3.select("#widgetTarget1"),
-			maxWid: 400,
-			maxHt: 300
-        }
-    );
-	svg1.Axes({
-        xPosPerc: 0, yPosPerc:0, //top, left corner
-        xPerc: 1, yPerc: 1,//full height and width
-        Data: [lineData1,lineData2],
-        xaxisType: "linear",
-        xTicks: 5,
-        xOrient: "bottom",
-        xLabel: "an x axis on bottom",
-		yaxisType: "linear",
-		yTicks: 5,
-		yOrient: "left",
-		yLabel: "Population (Billions)"
-    });
-
-	svg1.LineGraph({
-        Data: [lineData1,lineData2],
-        type: "lines"
-    });
-
     //  <div id="widgetTarget2"><p>2. Scatter graph</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
 	config[n].cntr = {
@@ -347,30 +288,6 @@
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-
-    var svg2 = new MakeSVGContainer({
-		node: d3.select("#widgetTarget2"),
-		maxWid: 400,
-		maxHt: 300
-    });
-	svg2.Axes({
-        xPosPerc: 0, yPosPerc:0, //top, left corner
-        xPerc: 1, yPerc: 1,//full height and width
-        Data: [lineData1],
-		xaxisType: "linear",
-		xTicks: [1200,1500,1900,2050],
-		xOrient: "bottom",
-		xLabel: "Year (explicit ticks)",
-        yaxisType: "linear",
-        yTicks: 5,
-        yOrient: "left",
-        yLabel: "Population (Billions)"
-    });
-
-	svg2.LineGraph({
-        Data: [lineData1],
-        type: "points"
-    });
 
 //  <div id="widgetTarget3"><p>3. Lines and points several traces linear</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
@@ -398,29 +315,6 @@
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-    var svg3 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget3"),
-        maxWid: 400,
-        maxHt: 200
-    });
-	svg3.Axes({
-        xPosPerc: 0, yPosPerc:0, //top, left corner
-        xPerc: 1, yPerc: 1,//full height and width
-        Data: [lineData2,specData],
-        xaxisType: "linear",
-        xTicks: [400,600,800,1000],
-        xOrient: "top",
-        xLabel: "x axis on the top",
-		yaxisType: "linear",
-        yTicks: 5,
-        yOrient: "right",
-        yLabel: "a y axis on the right"
-    });
-
-	svg3.LineGraph({
-        Data: [lineData2,specData],
-        type: "lines+points"
-    });
 
     //  <div id="widgetTarget50"><p>4. Several traces log scale</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
@@ -448,31 +342,6 @@
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-    var svg50 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget50"),
-        maxWid: 400,
-        maxHt: 300
-        }
-    );
-	svg50.Axes({
-        xPosPerc: 0, yPosPerc:0,
-        xPerc: 1, yPerc: 1,//full height and width
-        Data: [specData],
-        xaxisType: "log",
-        xTicks: 5,
-        xOrient: "bottom",
-		yaxisType: "linear",
-        yTicks: 5,
-        yOrient: "left",
-        xLabel: "log scale",
-        yLabel: "linear scale"
-
-    });
-
-	svg50.LineGraph({
-        Data: [specData],
-        type: "lines"
-    });
 
     //  <div id="widgetTarget60"><p>5. traces Ordinal</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
@@ -499,29 +368,6 @@
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-    var svg60 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget60"),
-        maxWid: 400,
-        maxHt: 400
-        }
-    );
-	svg60.Axes({
-        xPosPerc: 0, yPosPerc:0,
-        xPerc: 1, yPerc: 1,//full height and width
-        Data: [ordinalData,ordinalData2],
-        xaxisType: "linear",
-        xTicks: [0,10],
-        xOrient: "bottom",
-        xLabel: "linear scale",
-		yaxisType: "ordinal",
-        yOrient: "left",
-        yLabel: "ordinal scale"
-
-    });
-	svg60.LineGraph({
-        Data: [ordinalData,ordinalData2],
-        type: "lines"
-    });
 
     //  <div id="widgetTarget70"><p>6. Small multiples (several line graphs in container)</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
@@ -583,68 +429,7 @@
 	lineGraph3 = new LineGraph(config[n].lg3);
 	cntr[n].append(lineGraph3, {topPercentOffset: 0, leftPercentOffset: 2/3, heightPercent: 1, widthPercent: 1/3});
 
-    var svg70 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget70"),
-        maxWid: 900,
-        maxHt: 300
-        }
-    );
-	svg70.Axes({
-        xPosPerc: 0, yPosPerc:0,
-        xPerc: .33, yPerc: 1,//full height and width
-        Data: [testData],
-        xaxisType: "linear", yaxisType: "linear",
-        xTicks: 3,
-        xOrient: "bottom",
-        yTicks: 3,
-        yOrient: "left",
-        xLabel: "x vals",
-        yLabel: "vertical"
 
-    });
-	svg70.LineGraph({
-        Data: [testData],
-        type: "lines"
-    });
-
-/*	
-	svg70.MakeAxes({
-        xPosPerc: .33, yPosPerc:0,
-        xPerc: .33, yPerc: 1,//full height and width
-        Data: [lineData1],
-        xaxisType: "linear", yaxisType: "linear",
-        xTicks: 3,
-        xOrient: "bottom",
-        yTicks: 3,
-        yOrient: "left",
-        xLabel: "x vals",
-        yLabel: "vertical"
-
-    });
-	svg70.MakeLineGraph({
-        Data: [lineData1],
-        type: "lines"
-    });
-	//TODO: we will have to make axes a collection inside the SVG if we want
-	//to be able to target which one to use.
-	svg70.Axes({
-        xPosPerc: .66, yPosPerc:0,
-        xPerc: .33, yPerc: 1,//full height and width
-        Data: [specData],
-        xaxisType: "linear", yaxisType: "linear",
-        xTicks: 3,
-        xOrient: "bottom",
-        yTicks: 3,
-        yOrient: "left",
-        xLabel: "x vals",
-        yLabel: "vertical"
-
-    });
-	svg70.LineGraph({
-        Data: [specData],
-        type: "lines"
-    });
-*/	
 
     //  <div id="widgetTarget80"><p>7. Lines with Legend</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
@@ -673,37 +458,8 @@
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
     var litekey = [0,1,2];
-    var svg80 = new MakeSVGContainer(
-        {node: d3.select("#widgetTarget80"),
-        maxWid: 500,
-        maxHt: 400
-        }
-    );
-	svg80.Axes({
-        xPosPerc: 0, yPosPerc:0,
-        xPerc: 1, yPerc: 1,//full height and width
-        Data: [lineData,projected,nineB],
-        xaxisType: "linear", yaxisType: "linear",
-        xTicks: [1900,1950,1990,2010,2030,2050],
-        xOrient: "bottom",
-        yTicks: 8,
-        yOrient: "left",
-        xLabel: "Year",
-        yLabel: "Human Population (Billions)"
+ 
 
-    });
-	svg80.LineGraph({
-        Data: [lineData,projected,nineB],
-        type: "lines",
-        liteKey: litekey
-    });
-
-    svg80.Legend({
-        xPos:"right", yPos: "bottom",
-        labels: ["Historical Population","Projected Growth", "Nine Billion"],
-        type: "line",
-        liteKey: litekey
-    });
 </script>
 </body>
 </html>

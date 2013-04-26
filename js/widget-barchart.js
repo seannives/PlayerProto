@@ -172,8 +172,8 @@ BarChart.prototype.draw = function(container, size)
 	
 	//make the axes for this graph - draw these first because these are the 
 	//pieces that need extra unknown space for ticks, ticklabels, axis label
+	//only draw axes if there aren't any yet
 	if(!d3.select("#"+ axesConfig.id)[0][0]){
-		//only draw axes if there aren't any yet
 		this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
 	}
 	// alias for axes once they've been rendered

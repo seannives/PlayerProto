@@ -155,7 +155,17 @@ LineGraph.prototype.draw = function(container, size)
 		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
 	}
 	
-	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
+	
+	//make the axes for this graph - draw these first because these are the 
+	//pieces that need extra unknown space for ticks, ticklabels, axis label
+	//only draw axes if there aren't any yet
+	if(!d3.select("#"+ axesConfig.id)[0][0]){
+		this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
+	}
+	// alias for axes once they've been rendered
+	var axesDrawn = this.lastdrawn.axes;
+	
+	//this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
 
 	// alias for axes used by the old code below
 	var axesCont = this.lastdrawn.axes;
