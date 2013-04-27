@@ -17,14 +17,13 @@
 /* Math and questions
 ================================================== */
 .math {
-  font: bold italic 1em Times, serif;
-  border: 0;
-  font-size: 155%;
-  padding: 0; }
-  .math sup {
-    font-size: 80%;
-    position: relative;
-    top: -4px; }
+	font-family: Times, serif;
+	font-weight: bold;
+	font-style: italic;
+	border: 0;
+	font-size: 155%;
+	padding: 0; 
+}
 
 .assessment {
   margin: 30px 0em; }
@@ -182,13 +181,14 @@ table.questionTable td {
   white-space: normal; }
 
 .descLabel {
-  border: solid 1px #5bafe4;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-  max-width: 30em;
-  padding: .5em  .3em;
-  font-size: .8em;
-  text-align:center;
+	border: solid 1px #5bafe4;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	max-width: 30em;
+	padding: .5em  .3em;
+	font-size: .8em;
+	text-align:center;
+	white-space: normal;
 }
 
 .areaMarker {
@@ -200,6 +200,10 @@ table.questionTable td {
   color: #000;
   word-wrap: break-word;
   text-align: center; 
+}
+
+.axisLabel .math {
+	font-size: 100%;
 }
 
 .callOut {

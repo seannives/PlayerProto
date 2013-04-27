@@ -4,8 +4,6 @@ html > body, html {
   background-color: #fff; }
 
 html > body {
-  padding-left: 40px;
-  padding-right: 30px;
   /* pull this in a little bit: with the ragged-right text, it's optically wider */
   margin-left: 0;
   margin-right: 0; }
@@ -27,7 +25,7 @@ html > body {
 .rightCol {
   margin-top: 87px; }
 
-.contentBucket .texty, .contentBucket .texty p {
+.container-fluid .texty, .container-fluid .texty p {
   font-family: Georgia,serif;
   font-size: 11pt;
   XXXfont-weight: bold;
@@ -64,15 +62,15 @@ footer {
   text-align: center;
   color: #999; }
 
-.contentBucket {
+.container-fluid {
   margin-top: 42px;
   padding: 0 40px; }
-  .contentBucket h2 {
+  .container-fluid h2 {
     font-size: 210%;
     font-weight: normal; }
-  .contentBucket p {
+  .container-fluid p {
     line-height: 140%; }
-    .contentBucket p:last-child:after {
+    .container-fluid p:last-child:after {
       content: "\f06c";
       display: block;
       text-align: center;
