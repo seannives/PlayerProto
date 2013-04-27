@@ -29,14 +29,17 @@ function Readout(config, eventManager)
 		//<input type="text" id="myID" maxLength="<number>" value="startVal" readonly>;
 		this.rootEl = this.node.append("span");
 		//write a label in front of the input if there is one
-		var readout = this.rootEl.append("span").html(this.label?this.label:"").attr("role","label");
+		var readout = this.rootEl.html(this.label?this.label:"").attr("role","label");
 		this.rootEl
 		.append("input")
+		.style("max-width","40px")
+		.style("max-width","40px")
 		.attr("type","text")
 		.property("value",this.startVal)
+		.attr("align","right")
 		.attr("size",size?size:6)
 		.attr("id",that.id)
-		.attr("class","dataLabel")
+		
 		;
 
 		if(this.startVal){

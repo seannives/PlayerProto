@@ -99,7 +99,7 @@ Slider.prototype.draw = function(container)
 		//write a label in front of the input if there is one
 		this.rootEl.attr("class", "dataInput");
 		this.rootEl.append("span").html(this.label ? this.label : "").attr("role", "label");
-		this.rootEl.append("span").attr("id", readOutId);
+		this.rootEl.append("span").attr("id", readOutId).attr("class", "sliderLabel");
 		this.rootEl.append("span").html(" &nbsp;&nbsp;&nbsp;" + this.minVal);
 		this.rootEl.append("input")
 				.attr("type", "range")
