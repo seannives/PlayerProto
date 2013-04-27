@@ -1,0 +1,360 @@
+/*
+* Axes, markers, ticks, and other graph styling
+* required for eCourses/Neff.
+* 1/15/2013 LBondaryk
+* adding math styling
+*/
+
+/* highlights                                      
+===================================================*/
+
+.lit {
+  fill: none;
+  stroke-width: 4px;
+  stroke: #f49524;
+}
+
+/* Math and questions
+================================================== */
+.math {
+  font: bold italic 1em Times, serif;
+  border: 0;
+  font-size: 155%;
+  padding: 0; }
+  .math sup {
+    font-size: 80%;
+    position: relative;
+    top: -4px; }
+
+.assessment {
+  margin: 30px 0em; }
+  .assessment#widget0 {
+    margin-top: 0; }
+  .assessment .graphTitle {
+    padding-left: 0; }
+  .assessment .quizInput {
+    margin-bottom: 0;
+    width: 100px; }
+  .assessment .alert {
+    margin-top: 10px; }
+  .assessment .questionText {
+    max-width: 40em;
+    padding: 10px 0; }
+  .assessment input[type=radio] {
+    margin-top: 0;
+    margin-right: 5px; }
+
+table.questionTable td {
+  vertical-align: top; }
+
+.hanging {
+  padding-left: 22px;
+  text-indent: -22px; }
+
+.questionSubmit {
+  color: white;
+  text-decoration: none;
+  background-color: #EE8C1E;
+  border: 1px solid #C37030;
+  text-shadow: 1px 1px 1px #A54314;
+  font-weight: bold;
+  margin-right: 1em;
+  padding: 0.2em 1.0em;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor: default; }
+
+.feedback {
+  font-weight: 600;
+  border: solid 1px #aaaaaa;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  display: block;
+  margin: .2em;
+  padding: 0.3em; }
+
+.correct {
+  color: #C9A0DC; }
+
+.wrong {
+  color: #8C1717; }
+
+/* title and captions and feedback messages
+================================================== */
+.graphTitle {
+  font-size: 17px;
+  border-bottom: 1px solid #ccc;
+  padding-left: 20px;
+  padding-bottom: 5px; }
+
+.msgbox {
+  background-color: #d0eaea;
+  border: solid #008496;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  height: 4em;
+  max-width: 30em;
+  padding: .5em; }
+
+#message_0 {
+  font: .8em/1.5em;
+  color: #003; }
+
+.caption {
+  font: bold 0.6em/0.9em;
+  color: #000;
+  padding: 0em 0.2em; }
+
+.markerLabel {
+  border: solid 1px #5bafe4;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  max-width: 10em;
+  padding: .2em  .3em;
+  font: .7em HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Lucida, sans-serif;
+  text-align:right;
+}
+
+.legendLabel {
+  font: 0.85em/1.1em HelveticaNeue-Light,HelveticaNeue,Helvetica, Arial, Lucida Grande, sans-serif;
+  color: #000; 
+  text-align: left;
+  padding: 2px;
+}
+
+.legendBox {
+  fill: #fff;
+  stroke: #3A87AD;
+  stroke-width: 1px;
+}
+
+.steps {
+ fill: black;
+ stroke: white;
+ stroke-width:2;
+}
+
+.stepsLit {
+ fill: #e3effe;
+ stroke: #1d95ae;
+ stroke-width:2;
+}
+
+.stepBadge {
+   /* background: radial-gradient( 5px -9px, circle, white 8%, black 26px ); */
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 14px; /* one half of ( (border * 2) + height + padding ) */
+    box-shadow: 1px 1px 1px black;
+  /*Got this from stack overflow, it's pretty close */
+    color: white;
+    font: 0.9em/1.1em Helvetica, Verdana, Tahoma;
+    height: 16px; 
+    min-width: 16px;
+    padding: 4px 3px 3px 3px;
+  margin: 4px 3px 3px 3px;
+    text-align: center;
+}
+
+/* Axes
+================================================== */
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #aaaaaa; }
+
+.axis text {
+  font: bold .7em/1.5em;
+  color: #008496; }
+
+.markers {
+  stroke: #aaa; }
+
+.markerLabel {
+  border: solid 1px #5bafe4;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  max-width: 30em;
+  padding: .5em .3em;
+  margin: .2em;
+  font-size: 10px;
+  text-align: center;
+  white-space: normal; }
+
+.descLabel {
+  border: solid 1px #5bafe4;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  max-width: 30em;
+  padding: .5em  .3em;
+  font-size: .8em;
+  text-align:center;
+}
+
+.areaMarker {
+  fill: #2C6CB8;
+  opacity: .3; }
+
+.axisLabel {
+  font: .9em/1.1em;
+  color: #000;
+  word-wrap: break-word;
+  text-align: center; 
+}
+
+.callOut {
+  font: 0.8em Helvetica, sans;
+  position:static;
+  text-align: left;
+  color: #1d456e;
+  border: 2px solid #bce8f1;
+  background-color: #E3EFFE;
+  padding: .5em  .3em;
+  margin: .2em;
+}
+
+.graphLabel {
+  font: .85em/1.1em;
+  word-wrap: break-word;
+  position: static;
+  text-align: left;
+  background-color: transparent;
+  padding: .2em;
+  margin: .2em; }
+
+.legendLabel {
+  font: .85em/1.1em;
+  color: #000;
+  text-align: left;
+  padding: 2px; }
+
+.legendBox {
+  fill: #fff;
+  stroke: #3A87AD;
+  stroke-width: 1px; }
+
+/* bars, lines and points
+================================================== */
+.bar {
+  opacity: 0.8; }
+
+.trace {
+  fill: none;
+  stroke-width: 4px; }
+
+.fill0 {
+  fill: #2C6CB8; }
+
+.fill1 {
+  fill: #66A62E; }
+
+.fill2 {
+  fill: #E8B12E; }
+
+.fill3 {
+  fill: #6B4FB8; }
+
+.fill4 {
+  fill: #D44C17; }
+
+.fill5 {
+  fill: #E39014; }
+
+.fill6 {
+  fill: #666666; }
+
+.fillWhite {
+  fill: #fff;
+}
+
+.stroke0 {
+  stroke: #2C6CB8; }
+
+.stroke1 {
+  stroke: #66A62E; }
+
+.stroke2 {
+  stroke: #E8B12E; }
+
+.stroke3 {
+  stroke: #6B4FB8; }
+
+.stroke4 {
+  stroke: #D44C17; }
+
+.stroke5 {
+  stroke: #E39014; }
+
+.stroke6 {
+  stroke: #666666; }
+
+/* zoom and pan widget 
+================================================== */
+g.context g.axis path {
+  stroke-opacity: 0; }
+
+g.context g.axis line {
+  stroke-opacity: .1; }
+
+g.context g.brush rect.background {
+  fill: rgba(0, 0, 0, 0.1); }
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges; }
+
+g.context rect.background {
+  fill: #c8c8ff;
+  visibility: visible !important; }
+
+/* tables of data and readouts
+================================================== */
+table.data {
+  border-collapse: collapse;
+  width: 100%; }
+
+table.data td {
+  vertical-align: top;
+  padding-top: 5px;
+  padding-right: 15px;
+  padding-left: 5px; }
+
+thead.data tr td {
+  border-bottom: 1px solid #000000;
+  padding-bottom: 2px;
+  font-weight: bold; }
+
+td.rightAlign {
+  padding: 5px;
+  text-align: right;
+  min-width: 5em; }
+
+tr:first-child td {
+  padding-bottom: 10px; }
+tr.liteable td {
+  padding-bottom: 0; }
+
+.dataLabel {
+  font-weight: bold;
+  margin-left: 3px; }
+  .dataLabel.green {
+    background: green;
+    color: #fff;
+    border: 1px solid #004d00;
+    padding: 5px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px; }
+  .dataLabel.short {
+    margin-right: 10px; }
+
+.dataInput {
+  border: solid 1px #5BAFE4;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  padding: .2em;
+  margin: .1em;
+  font-size: 0.8em;
+  text-align:right;
+}
