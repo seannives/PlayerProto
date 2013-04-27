@@ -30,8 +30,8 @@
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50n"><p>50n. Several traces log scale</p></div>
-				<div id="widgetTarget60n"><p>60n. Several traces Ordinal</p></div>
-				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container)</p></div>
+				<div id="widgetTarget60n"><p>60n. Several traces Ordinal <span style="color: red">BUG: this graph doesn't use the full available width, it should.</span></p></div>
+				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container) <span style="color: red">BUG: the first axis shoves over too far leaving not enough remaining space to draw the graph.  Need to rethink sizing when it doesn't fit.</span></p></div>
 				<div id="widgetTarget80n"><p>80n. Lines with Legend</p></div>
 			</div>
 		</div>
@@ -53,6 +53,7 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
+    <script src="js/widget-legend.js"></script>
 
 <script>
 	var testData = [
@@ -379,8 +380,8 @@
 	n = config.push({cntr: null, lg: null}) - 1;
 	config[n].cntr = {
 			node: d3.select("#widgetTarget70n"),
-			maxWid: 900,
-			maxHt: 300
+			maxWid: 500,
+			maxHt:200
 		};
 
 	config[n].lg = {
@@ -412,7 +413,7 @@
 		};
 
 	config[n].lg3 = {
-			id: "lg2_" + n,
+			id: "lg3_" + n,
 			Data: [specData],
 			type: "lines",
 			xAxisFormat: { type: "linear",
@@ -437,7 +438,7 @@
 
 
 
-    //  <div id="widgetTarget80"><p>7. Lines with Legend</p></div>
+    //  <div id="widgetTarget80"><p>80n. Lines with Legend</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
 	config[n].cntr = {
 			node: d3.select("#widgetTarget80n"),
@@ -461,7 +462,15 @@
 
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
-	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	
+	var legLines = new Legend({
+		xPos: "right", yPos: "bottom",
+		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
+		type: "line"
+	});
+	
+	cntr[n].append([lineGraph[n],legLines], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
     var litekey = [0,1,2];
  

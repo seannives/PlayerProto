@@ -98,13 +98,15 @@
 	
 	rowDefs.draw(d3.select("#defs"));
 	*/
-	
+	var rhoExtent = [0.01,1], 
+		LExtent = [1,10],
+		AExtent = [1,50];
 		
 	var rhoSlide = new Slider ({
 			id: "rhoVal",
 			startVal: 0.5,
-			minVal: 0.01,
-			maxVal: 1,
+			minVal: rhoExtent[0],
+			maxVal: rhoExtent[1],
 			stepVal: .01,
 			unit: "&Omega;&nbsp;cm",
 			label: "Resistivity"
@@ -115,8 +117,8 @@
 	var LSlide = new Slider ({
 			id: "LVal",
 			startVal: 5,
-			minVal: 0,
-			maxVal: 10,
+			minVal: LExtent[0],
+			maxVal: LExtent[1],
 			stepVal: .1,
 			unit: "cm",
 			label: "Length"
@@ -127,8 +129,8 @@
 	var ASlide = new Slider ({
 			id: "AVal",
 			startVal: 20,
-			minVal: 1,
-			maxVal: 50,
+			minVal: AExtent[0],
+			maxVal: AExtent[1],
 			stepVal: .1,
 			unit: "cm<sup>2</sup>",
 			label: "Area"
@@ -140,7 +142,7 @@
 	// Create the ee readout widget
 	var resReadout = new Readout({
 		node: d3.select("#resVal"),
-        id: 'eeRead',
+        id: 'resRead',
 		startVal: resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue()),
 		readOnly: true,
 		size: 5,
@@ -154,7 +156,7 @@
 	
 	//generate the random data based on the slider values
 	
-	function randomData(inputVals){
+	function randomXYData(inputVals){
 		
 		var pts = inputVals.pts;
 		var amplitudeX = inputVals.amplitudeX;
@@ -168,29 +170,31 @@
 		
 		return data;
 	}
-	var electrons = randomData({
-		pts: Math.floor(200*rhoSlide.getValue()),
+	var factor = 100;
+	var electrons = randomXYData({
+		pts: Math.floor(factor*rhoSlide.getValue()),
 		amplitudeX: LSlide.getValue()*10,
-		amplitudeY: ASlide.getValue()/50,
+		amplitudeY: 2*Math.sqrt(ASlide.getValue()/Math.PI),
 		
 	});
 	
 	var cont1 = new SVGContainer({
 			node: d3.select("#diagram"),
 			maxWid: 450,
-			maxHt: 200
+			maxHt: 300
 		});
 	var dots = new LineGraph({
 			id: "lg0",
 			Data: [electrons], 
 			type: "points",
 			xAxisFormat: { type: "linear",
-						   ticks: 0,
+						   ticks: [0,LExtent[1]+1],
 						   orientation: "bottom",
 						   label: "wire length" },
 			yAxisFormat: { type: "linear",
 						   orientation: "right",
-						   label: "wire height"
+						   label: "wire height",
+						    ticks: [0,2*Math.sqrt(AExtent[1]/Math.PI) + 1],
 						    },
 		});		
 	cont1.append(dots, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
@@ -234,81 +238,20 @@
 		//write that resistance to the readout
 		resReadout.setValue(newRes);
 		//recalculate the data
-		electrons = randomData({
-		pts: Math.floor(500*rhoSlide.getValue()),
+		electrons = randomXYData({
+		pts: Math.floor(factor*rhoSlide.getValue()),
 		amplitudeX: LSlide.getValue()*10,
 		amplitudeY: ASlide.getValue()/50,
 		});
-		console.log(electrons.length);
+		console.log(electrons[0]);
 		//redraw the dots
 		dots.draw(dots.lastdrawn.container,dots.lastdrawn.size);
 
 	
 	}
 	
+
 	
-	/* **************************************************************************
-	 * handleNumericInputChanged                                            *//**
-	 *
-	* handleInputValueChanged is called from the event handler for one of
-	* the input widgets when the user changes its value. It updates the
-	* given matching input widget's value to match the new value and then
-	* updates the bar chart.
-	*
-	* @param {NumericInput} Otherwidgetarray -These are the other widgets
-	*                                         which need to be updated
-	*                                         to match the user changed widget.
-	* @param {number} newValue - The value of the widget that was changed.
-	*
-	****************************************************************************/
-	function handleNumericInputChanged(WidgetList, newValue)
-	{
-		var diff = inputDextro.getValue() - inputLevo.getValue();
-		//var angle = newValue * diff/10;
-		//rot.setValue(newValue * diff/100);
-		updatePieChart(diff);
-	}
-
-	/* **************************************************************************
-	 * updateBarChart                                                       *//**
-	 *
-	 * updateBarChart updates the bar chart widget to match the current values
-	 * of the levo and dextro input widgets.
-	 *
-	 ****************************************************************************/
-	function updateBarChart()
-	{
-		console.log("TODO: fired updateBarChart log");
-		levoData[0].x = inputLevo.getValue();
-		dextroData[0].x = inputDextro.getValue();
-		svg70.BarChart({
-			Data: [dextroData, levoData],
-			type: "linear" //ignored for anything but grouped
-			});
-		var newMark = (levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0];
-		svg70.LineMarkers( {
-			xMarks: [newMark]
-			});
-		
-		Bars.draw(Bars.lastdrawn.container,Bars.lastdrawn.size);
-
-		
-	}
-
-	function updatePieChart(diff)
-	{
-		console.log("TODO: fired updatePieChart log");
-		pieDish.Pie({
-			Data: [{x: sl1.getValue() * diff/360}],
-			xYPos: [0.5,0.5]
-			});
-		var newMark = {x:(1/2), label: d3.format("+0r2")(sl1.getValue() * diff/100) + "&deg;"};
-		pieDish.LineMarkers( {
-			xMarks: [newMark]
-			});
-		
-	}
-		
 	
 	</script>
 </body>
