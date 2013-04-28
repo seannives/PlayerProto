@@ -33,7 +33,7 @@ function Readout(config, eventManager)
 		this.rootEl
 		.append("input")
 		.style("max-width","40px")
-		.style("max-width","40px")
+		.style("direction","rtl")
 		.attr("type","text")
 		.property("value",this.startVal)
 		.attr("align","right")
