@@ -164,7 +164,7 @@ LineGraph.prototype.draw = function(container, size)
 		this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
 
 		//inherit the dataRect from the axes container
-		this.lastdrawn.dataRect = axesCont.dataRect;
+		this.lastdrawn.dataRect = this.lastdrawn.axes.dataRect;
 	}
 	
 	// alias for axes once they've been rendered
