@@ -228,7 +228,7 @@ BarChart.prototype.draw = function(container, size)
 		var graph = d3.select("#" + barsId);
 	}
 	//TEST: the graph group now exists and reports it's ID correctly
-	console.log("graph group is made/found:", graph.attr("id")) == barsId; // todo: what's with the == barsId? -mjl
+	console.log("graph group is made/found:", graph.attr("id") == barsId); 
 
 	
 	//draw the serie(s)
@@ -240,14 +240,15 @@ BarChart.prototype.draw = function(container, size)
 	barSeries.enter()
 		.append("g")
 			.attr("class", function(d, i) {
-					return "series fill" + i;
 					//give each series it's own color
+					return "series fill" + i;
 				})
-			.attr("id", function(d, i) {return barsId + i;});
+			.attr("id", function(d, i) {
 			//put the number of the series on the series ID
 			//can't use the y label because it might contain spaces. -lb
-
-	barSeries.exit().remove();  //on redraw, get rid of any series which now have no data
+				return barsId + i;});
+	//on redraw, get rid of any series which now have no data
+	barSeries.exit().remove();  
 
 	//If it's a grouped barchart, shimmie out the bars by group
 	if (this.type == "grouped")
@@ -258,14 +259,12 @@ BarChart.prototype.draw = function(container, size)
 	}
 	
 
-	// The series data was an array of values for each bar of the series
-	// bind each series data to a child group element 1 for each bar in the
-	// series.
-	//
-	// Note: the x<0 logic allows us to draw pyramid charts, although normally bar charts
-	//  are bin counts and all positive
-	//  I enclose the bars in individual groups so you could choose to label the ends with data or label
-	//  and have it stick to the bar by putting it in the same group
+	// The series data is an array of values for each bar of the series
+	// bind each series data element (bar length) to a child group element, 
+	// one for each bar in the series. - mjl
+	//	Enclose the bars in individual groups 
+	// so you could choose to label the ends with data or label
+	//  and have it stick to the bar by putting it in the same group -lb
 	var bars = barSeries.selectAll("g.bar")
 		.data(function(d) {return d;}); 	//drill down into the nested data
 
@@ -282,8 +281,10 @@ BarChart.prototype.draw = function(container, size)
 			.attr("transform",
 				  function(d)
 				  {
-					  // move each group to the x=0 position horizontally if it's a
-					  // positive bar, or start at it's negative x value if it's reversed.
+				// move each group to the x=0 position horizontally if it's a
+				// positive bar, or start at it's negative x value if it's reversed.
+				// The x<0 logic allows us to draw pyramid charts, normally bar 
+				// charts are bin counts and all positive. 
 				      var x = (d.x < 0) ? axesDrawn.xScale(d.x) : axesDrawn.xScale(0);
 					  var y = axesDrawn.yScale(d.y);
 				      return "translate(" + x + "," + y + ")";
@@ -293,8 +294,8 @@ BarChart.prototype.draw = function(container, size)
 
 	// Update the height and width of the bar rects based on the data points bound above.
 	bars.select("rect")
+	//if grouped, each bar is only 1/# groups of the available width
 		.attr("height", (this.type == "grouped") ? (bandsize / (this.data.length + 1)) : bandsize)
-		//divide height into uniform bar widths, narrower if grouped
 		.attr("width",
 			  function(d)
 			  {

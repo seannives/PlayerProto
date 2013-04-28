@@ -5,20 +5,19 @@
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="eCourses Author, Title" name="description">
     <!-- Bootstrap -->
-    <link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen">
-	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen">
+   
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
 	<link href="css/graphics_and_svg.css" rel="stylesheet">
 	<link href="css/learning-objective.css" rel="stylesheet">
 	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+
     </head>
 	<body>
-		<div class="titler">
-			<span class='number setId'></span>
-			<span class="setTitle"></span>
-		</div>
+	
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
+            	<h2 class="setTitle"></h2>
 				<p>Here is some test in a paragraph in the left column.</p>
 				<div id="Target0"></div>
 				
@@ -28,14 +27,20 @@
 			</div>
 		</div>
 	</div>
-
-	<script src="js/jquery-latest.js"></script>
+   <script src="js/jquery-latest.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!-- script src="js/jquery.touchSwipe.min.js"></script-->
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
-	<script src="js/d3.v2.min.js"></script>
-	<script src="js/widgets.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="js/d3.v3.min.js"></script>
 
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
+    <script src="js/widget-slider.js"></script>
+    <script src="js/widget-callouts.js"></script>
+     <script src="js/widget-numeric.js"></script>
+	<script src="js/eventmanager.js"></script>
 <script>
 var testData = [
 	{	x: 0,
@@ -135,33 +140,29 @@ var logData = [
 	}
 	]; // array of line data
 	
-	var svg0 = new MakeSVGContainer(
+	var svg0 = new SVGContainer(
 		{node: d3.select("#Target0"),
-		maxWid: 400,
+		maxWid: 500,
 		maxHt: 300
 		}
 	);
 	
-	svg0.Axes({
-		id: 1,
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		Data: [logData],
-		axisType: "linear",
-		xTicks: [1200,1300,1500,1900,2010],
-		xOrient: "bottom",
-		xLabel: "Year",
-		yaxisType: "linear",
-		yTicks: 5,
-		yOrient: "right",
-		yLabel: "Population"
-	});
 	
-	var graph0 = new MakeLineGraph(axes0,{
-		Data:[logData],
-		type:"lines"
-	});
-
+	var graph = new LineGraph({
+			id: "pop",
+			Data: [logData],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: [1200,1300,1500,1900,2010],
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "right",
+						   label: "Population (Billions)" },
+		});
+ 
+	 svg0.append(graph, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 
 </script>

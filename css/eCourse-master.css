@@ -216,7 +216,7 @@ html > body.yellow {
   color: #000 !important; }
 
 /*resizable columns*/
-.contentBucket .span6 {
+.container-fluid .span6 {
   width: 47.936%;
   margin-left: 4.12766%;
   -moz-transition: all 0.3s;
@@ -229,7 +229,7 @@ html > body.yellow {
       display: block;
       width: 100%;
       margin: 0; } }
-.contentBucket .columnResize {
+.container-fluid .columnResize {
   position: absolute;
   width: 1px;
   background: #ccc;
@@ -239,9 +239,9 @@ html > body.yellow {
   -webkit-transition: all 0.3s;
   transition: all 0.3s; }
   @media (max-width: 768px) {
-    .contentBucket .columnResize {
+    .container-fluid .columnResize {
       display: none; } }
-  .contentBucket .columnResize .resize-btn {
+  .container-fluid .columnResize .resize-btn {
     cursor: pointer;
     position: absolute;
     top: 50%;
@@ -251,7 +251,7 @@ html > body.yellow {
     padding: 3px;
     color: #fff;
     font-size: 13px; }
-  .contentBucket .columnResize:hover, .contentBucket .columnResize:focus, .contentBucket .columnResize.ui-draggable-dragging {
+  .container-fluid .columnResize:hover, .container-fluid .columnResize:focus, .container-fluid .columnResize.ui-draggable-dragging {
     opacity: 1; }
 
 /* popover customizations for configurations */

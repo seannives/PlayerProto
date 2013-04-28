@@ -3,39 +3,47 @@
 	<head>
 	<title class="setTitle"></title>
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<meta content="eCourses Author, Title" name="description">
-	<!-- Bootstrap -->
-	<link href="css/bootstrap_eCourses_customized.css" rel="stylesheet" media="screen">
-	<link href="css/bootstrap_eCourses_responsive.css" rel="stylesheet" media="screen">
+	<meta content="eCourses Author, Title" name="description">   	
+    <!-- Bootstrap -->
+  
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
 	<link href="css/graphics_and_svg.css" rel="stylesheet">
 	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/module-opener.css" rel="stylesheet">
+	<!-- link href="css/toc.css" rel="stylesheet"-->
+	<!-- link href="css/grey-thing.css" rel="stylesheet"-->
 	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+
 	</head>
 	<body>
-		<div class="titler">
-			<span class='number setId'></span>
-			<span class="setTitle">Test Cases for SVG Container, Axes Container, Line Graph</span>
-		</div>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
+                <h2 class="setTitle"></h2>
 				<div id="widgetTarget0n"><p>0n. Line Graph one line linear</p></div>
-		<div id="widgetTarget1n"><p>1n. Line graph several traces linear</p></div>
-			
+				<div id="widgetTarget1n"><p>1n. Line graph several traces linear</p>
+                </div>
 				<div id="widgetTarget2n"><p>2n. Scatter graph</p></div>
-				<div id="widgetTarget3n"><p>3n. Lines and points several traces linear</p></div>
-
+				<div id="widgetTarget3n">
+                	<p>3n. Lines and points several traces linear</p>
+                </div>
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50n"><p>50n. Several traces log scale</p></div>
-				<div id="widgetTarget60n"><p>60n. Several traces Ordinal</p></div>
-				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container)</p></div>
+				<div id="widgetTarget60n"><p>60n. Several traces Ordinal <span style="color: red">BUG: this graph doesn't use the full available width, it should.</span></p></div>
+				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container) <span style="color: red">BUG: the first axis shoves over too far leaving not enough remaining space to draw the graph.  Need to rethink sizing when it doesn't fit.</span></p></div>
 				<div id="widgetTarget80n"><p>80n. Lines with Legend</p></div>
 			</div>
 		</div>
 	</div>
+    
+    
+    <script src="js/neff-structure.js"></script>    
+    
 
 	<script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui-1.10.2.custom.js"></script>
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
 	<script src="js/d3.v3.min.js"></script>
@@ -45,8 +53,7 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
-	
-	<script src="js/bootstrap.min.js"></script>
+    <script src="js/widget-legend.js"></script>
 
 <script>
 	var testData = [
@@ -373,8 +380,8 @@
 	n = config.push({cntr: null, lg: null}) - 1;
 	config[n].cntr = {
 			node: d3.select("#widgetTarget70n"),
-			maxWid: 900,
-			maxHt: 300
+			maxWid: 500,
+			maxHt:200
 		};
 
 	config[n].lg = {
@@ -406,7 +413,7 @@
 		};
 
 	config[n].lg3 = {
-			id: "lg2_" + n,
+			id: "lg3_" + n,
 			Data: [specData],
 			type: "lines",
 			xAxisFormat: { type: "linear",
@@ -431,7 +438,7 @@
 
 
 
-    //  <div id="widgetTarget80"><p>7. Lines with Legend</p></div>
+    //  <div id="widgetTarget80"><p>80n. Lines with Legend</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;
 	config[n].cntr = {
 			node: d3.select("#widgetTarget80n"),
@@ -455,7 +462,15 @@
 
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
-	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	
+	var legLines = new Legend({
+		xPos: "right", yPos: "bottom",
+		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
+		type: "line"
+	});
+	
+	cntr[n].append([lineGraph[n],legLines], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
     var litekey = [0,1,2];
  
