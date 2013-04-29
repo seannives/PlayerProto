@@ -141,42 +141,44 @@
 	
 	// Create the ee readout widget
 	var resReadout = new Readout({
-		node: d3.select("#resVal"),
-        id: 'resRead',
-		startVal: resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue()),
-		readOnly: true,
-		size: 5,
-		unit: "&Omega;", 
-		label: "R ="
-	}, eventManager);
+			node: d3.select("#resVal"),
+			id: 'resRead',
+			startVal: resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue()),
+			readOnly: true,
+			size: 5,
+			unit: "&Omega;", 
+			label: "R ="
+		}, eventManager);
 	
-	function resist(rho,len,area) {
-		return rho*len/area;
+	function resist(rho, len, area)
+	{
+		return rho * len / area;
 	}
 	
 	//generate the random data based on the slider values
 	
-	function randomXYData(inputVals){
-		
+	function randomXYData(inputVals)
+	{
 		var pts = inputVals.pts;
 		var amplitudeX = inputVals.amplitudeX;
 		var amplitudeY = inputVals.amplitudeY;
 	
 		var data = [];
 	
-		for(i=0;i<pts;i++){
-		data[i] = {x: amplitudeX* Math.random(), y: amplitudeY*Math.random()};
+		for (i = 0; i < pts; i++)
+		{
+			data[i] = { x: amplitudeX * Math.random(), y: amplitudeY * Math.random() };
 		}
 		
 		return data;
 	}
+	
 	var factor = 100;
 	var electrons = randomXYData({
-		pts: Math.floor(factor*rhoSlide.getValue()),
-		amplitudeX: LSlide.getValue()*10,
-		amplitudeY: 2*Math.sqrt(ASlide.getValue()/Math.PI),
-		
-	});
+			pts: Math.floor(factor * rhoSlide.getValue()),
+			amplitudeX: LSlide.getValue() * 10,
+			amplitudeY: 2 * Math.sqrt(ASlide.getValue() / Math.PI),
+		});
 	
 	var cont1 = new SVGContainer({
 			node: d3.select("#diagram"),
@@ -188,7 +190,7 @@
 			Data: [electrons], 
 			type: "points",
 			xAxisFormat: { type: "linear",
-						   ticks: [0,LExtent[1]+1],
+						   ticks: [0, LExtent[1] + 1],
 						   orientation: "bottom",
 						   label: "wire length" },
 			yAxisFormat: { type: "linear",
@@ -218,36 +220,39 @@
 	
 
 	/* **************************************************************************
-	* handleInputValueChanged                                              *//**
-	*
-	* handleInputValueChanged is called from the event handler for one of
-	* the input widgets when the user changes its value. It updates the
-	* given matching input widget's value to match the new value and then
-	* updates the bar chart.
-	*
-	* @param {NumericInput} otherInputWidget -This is the other input widget
-	*                                         whose value needs to be updated
-	*                                         to match the user changed widget.
-	* @param {number} newValue - The value of the widget that was changed.
-	*
-	****************************************************************************/
+	 * handleInputValueChanged                                              *//**
+	 *
+	 * handleInputValueChanged is called from the event handler for one of
+	 * the input widgets when the user changes its value. It updates the
+	 * given matching input widget's value to match the new value and then
+	 * updates the bar chart.
+	 *
+	 * @param {NumericInput} otherInputWidget -This is the other input widget
+	 *                                         whose value needs to be updated
+	 *                                         to match the user changed widget.
+	 * @param {number} newValue - The value of the widget that was changed.
+	 *
+	 ****************************************************************************/
 	function handleChangedValue(newValue)
 	{
 		//get the values of all the sliders, calculate new resistance
-		newRes = resist(rhoSlide.getValue(),LSlide.getValue(),ASlide.getValue());
+		newRes = resist(rhoSlide.getValue(), LSlide.getValue(), ASlide.getValue());
 		//write that resistance to the readout
 		resReadout.setValue(newRes);
 		//recalculate the data
 		electrons = randomXYData({
-		pts: Math.floor(factor*rhoSlide.getValue()),
-		amplitudeX: LSlide.getValue()*10,
-		amplitudeY: ASlide.getValue()/50,
-		});
+			pts: Math.floor(factor * rhoSlide.getValue()),
+			amplitudeX: LSlide.getValue() * 10,
+			amplitudeY: ASlide.getValue() / 50,
+			});
+			
 		console.log(electrons[0]);
+		
+		// update the linegraph w/ the new data
+		dots.data[0] = electrons;
+		
 		//redraw the dots
-		dots.draw(dots.lastdrawn.container,dots.lastdrawn.size);
-
-	
+		dots.redraw();
 	}
 	
 

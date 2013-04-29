@@ -302,6 +302,118 @@ LineGraph.prototype.draw = function(container, size)
 }; // end of LineGraph.draw()
 
 /* **************************************************************************
+ * LineGraph.redraw                                                     *//**
+ *
+ * Redraw the line graph data as it may have been modified. It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ *
+ ****************************************************************************/
+LineGraph.prototype.redraw = function()
+{
+	// TODO: We may want to create new axes if the changed data would cause their
+	//       min/max to have changed, but for now we're going to keep them.
+
+	// local var names are easier to read (shorter)
+	var linesId = this.lastdrawn.linesId;
+	var xScale = this.lastdrawn.xScale;
+	var yScale = this.lastdrawn.yScale;
+
+	var clipId = linesId + "_clip";
+
+	// get the group that contains the graph lines
+	var graph = this.lastdrawn.axes.group.select("#" + linesId);
+
+	//TEST: the graph group now exists and reports it's ID correctly
+	console.log("line graph group is found:", graph.attr("id") == linesId);  
+
+	// draw the trace(s)
+	if (this.type == "lines" || this.type == "lines+points")
+	{
+		// d3 utility function for generating all the point to point paths
+		// using the scales from the axes
+		var line = d3.svg.line()
+			// TODO: someday might want to add options for other interpolations -lb
+			.interpolate("basis")
+			.x(function (d) {return xScale(d.x);})
+			.y(function (d) {return yScale(d.y);});
+
+		// rebind the trace data to the trace groups
+		var traces = graph.selectAll("g.traces")
+			.data(this.data);
+			
+		// get rid of any trace groups without data
+		traces.exit().remove();
+
+		// create trace groups for trace data that didn't exist when we last bound the data
+		traces.enter().append("g")
+			.attr("class", "traces")
+			.append("path")
+				.attr("clip-path", "url(#" + clipId + ")")
+			//use the line function defined above to set the path data
+				.attr("d", function(d) {return line(d);})
+			//pick the colors sequentially off the list
+				.attr("class", function(d, i) {return "trace stroke" + i;});
+			
+		this.lastdrawn.traces = graph.selectAll("g.traces");
+	
+		if (this.liteKey)
+		{
+			traces.attr("class", "traces liteable")
+				  .attr("id", function (d, i) {return linesId + "_" + this.liteKey[i];});
+		}
+	}
+
+	// draw the points
+	if (this.type == "points" || this.type == "lines+points")
+	{
+		// rebind the series data to the series groups
+		var series = graph.selectAll("g.series")
+			.data(this.data);
+			
+		// get rid of any series groups without data
+		series.exit().remove();
+
+		// create series groups for series data that didn't exist when we last bound the data
+		series.enter().append("g")
+			.attr("class", function (d, i) {return "series fill" + i;})
+			.attr("clip-path", "url(#" + clipId + ")");
+			
+		if (this.liteKey)
+		{
+			series.attr("class", function(d, i) {return "liteable series fill" + i;})
+				  .attr("id", function(d, i) {return linesId + "_" + this.liteKey[i];})
+		}
+
+		// rebind the point data of each series to the point groups
+		// (the data of the series is an array of point data)
+		var points = series.selectAll("g.points") 
+			.data(function (d) {return d;});
+		
+		// get rid of any point groups without data
+		points.exit().remove();
+		
+		// create point groups for point data that didn't exist when we last bound the data
+		points.enter().append("g") 
+			.attr("class", "points")
+			.attr("transform", function (d)
+							   {
+								   // move each symbol to the x,y coordinates in scale
+								   return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+							   })
+			.append("path")
+				.attr("d", 
+					// j is the index of the series, 
+					// i of the data point in the series
+					function(d, i, j)
+					{
+						//pick the shapes sequentially off the list
+						return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
+					});
+	}
+} // end of LineGraph.redraw()
+
+/* **************************************************************************
  * LineGraph.setState                                                   *//**
  *
  * setState ...
