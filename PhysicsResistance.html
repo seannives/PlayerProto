@@ -152,7 +152,7 @@
 	
 	function resist(rho, len, area)
 	{
-		return rho * len / area;
+		return d3.round(rho * len / area, 2);
 	}
 	
 	//generate the random data based on the slider values
@@ -176,10 +176,10 @@
 	var factor = 100;
 	var electrons = randomXYData({
 			pts: Math.floor(factor * rhoSlide.getValue()),
-			amplitudeX: LSlide.getValue() * 10,
+			amplitudeX: LSlide.getValue(),
 			amplitudeY: 2 * Math.sqrt(ASlide.getValue() / Math.PI),
 		});
-	
+
 	var cont1 = new SVGContainer({
 			node: d3.select("#diagram"),
 			maxWid: 450,
@@ -213,11 +213,11 @@
 
 	// Handle changes of the levo and dextro input values
 	eventManager.subscribe(rhoSlide.changedValueEventId,
-						   handleChangedValue);
+							handleChangedValue);
 	eventManager.subscribe(LSlide.changedValueEventId,
-						   handleChangedValue);
-	eventManager.subscribe(ASlide.changedValueEventId, handleChangedValue);
-	
+							handleChangedValue);
+	eventManager.subscribe(ASlide.changedValueEventId, 
+							handleChangedValue);
 
 	/* **************************************************************************
 	 * handleInputValueChanged                                              *//**
@@ -240,17 +240,17 @@
 		//write that resistance to the readout
 		resReadout.setValue(newRes);
 		//recalculate the data
-		electrons = randomXYData({
+		var electrons = randomXYData({
 			pts: Math.floor(factor * rhoSlide.getValue()),
-			amplitudeX: LSlide.getValue() * 10,
-			amplitudeY: ASlide.getValue() / 50,
-			});
+			amplitudeX: LSlide.getValue(),
+			amplitudeY: 2 * Math.sqrt(ASlide.getValue() / Math.PI),
+		});
 			
 		console.log(electrons[0]);
 		
 		// update the linegraph w/ the new data
 		dots.data[0] = electrons;
-		
+
 		//redraw the dots
 		dots.redraw();
 	}

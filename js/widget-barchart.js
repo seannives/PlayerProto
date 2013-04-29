@@ -269,11 +269,11 @@ BarChart.prototype.draw = function(container, size)
 		.data(function(d) {return d;}); 	//drill down into the nested data
 
 	bars.exit().remove();
-
+ 
 	bars.enter()
 		.append("g")
 			.attr("class", "bar")
-			.attr("id", function(d, i) {return d.key ? (barsId + "bar" + d.key) : null;})
+			.attr("id", function(d, i) {return key in d ? (barsId + "bar" + d.key) : null;})
 			//if a key has been specified for the bar, put it on the ID, for highlighting
 			//otherwise, don't put an ID
 			//can't use the y label because it might contain spaces. -lb
