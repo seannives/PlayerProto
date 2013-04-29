@@ -256,6 +256,26 @@ LabelGroup.prototype.draw = function(container, size)
 	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.label");
 }; // end of LabelGroup.draw()
 
+/* **************************************************************************
+ * LabelGroup.setScale                                                  *//**
+ *
+ * Called to preempt the normal scale definition which is done when the
+ * widget is drawn. This is usually called in order to force one widget
+ * to use the scaling/data area calculated by another widget.
+ *
+ * @param {function(number): number}
+ *						xScale	-function to convert a horizontal data offset
+ *								 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						yScale	-function to convert a vertical data offset
+ *								 to the pixel offset into the data area.
+ *
+ ****************************************************************************/
+LabelGroup.prototype.setScale = function (xScale, yScale)
+{
+	this.explicitScales_.xScale = xScale;
+	this.explicitScales_.yScale = yScale;
+};
 
 /* **************************************************************************
  * LabelGroup.labelLite                                                 *//**

@@ -74,6 +74,17 @@ function Rect(x, y, width, height)
 	this.right = this.left + width;
 }
 
+/* **************************************************************************
+ * Rect.getSize                                                         *//**
+ *
+ * Get the size of this rect in a Size object.
+ *
+ * @return {Size}
+ ****************************************************************************/
+ Rect.prototype.getSize = function ()
+ {
+	return { height: this.height, width: this.width };
+ };
 
 /* **************************************************************************
  * Rect.makeRect - static                                               *//**
@@ -192,6 +203,15 @@ IWidget = function () {};
  *
  ****************************************************************************/
 IWidget.prototype.draw = function (container, size) {};
+
+/* **************************************************************************
+ * IWidget.redraw                                                       *//**
+ *
+ * Redraw the widget assuming its data may have been modified. It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+IWidget.prototype.redraw = function () {};
 
 /* **************************************************************************
  * IWidget.setScale                                                     *//**

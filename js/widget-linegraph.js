@@ -91,6 +91,13 @@ function LineGraph(config)
 	this.yAxisFormat = config.yAxisFormat;
 
 	/**
+	 * List of child widgets which are to be drawn in this line graph's data area.
+	 * Child widgets are added using LineGraph.append.
+	 * @type {Array.<IWidget>}
+	 */
+	this.childWidgets = [];
+	
+	/**
 	 * highlight key is an array of integers relating the traces to other selectable things on the page, optional
 	 * @type Array.<number>|undefined
 	 */
@@ -199,6 +206,9 @@ LineGraph.prototype.draw = function(container, size)
 	// Draw the data (traces and/or points as specified by the graph type)
 	this.drawData_();
 
+	// Draw any child widgets that got appended before draw was called
+	this.childWidgets.forEach(this.drawWidget_, this);
+	
 }; // end of LineGraph.draw()
 
 /* **************************************************************************
@@ -208,14 +218,53 @@ LineGraph.prototype.draw = function(container, size)
  * redrawn into the same container area as it was last drawn.
  *
  ****************************************************************************/
-LineGraph.prototype.redraw = function()
+LineGraph.prototype.redraw = function ()
 {
 	// TODO: We may want to create new axes if the changed data would cause their
 	//       min/max to have changed, but for now we're going to keep them.
 
+	// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
+	//       by doing nothing? -mjl
 	this.drawData_();
-}
 	
+	this.childWidgets.forEach(this.redrawWidget_, this);
+};
+
+/* **************************************************************************
+ * LineGraph.drawWidget_                                                *//**
+ *
+ * Draw the given child widget in this line graph's data area.
+ * This line graph must have been drawn BEFORE this method is called or
+ * bad things will happen.
+ *
+ * @private
+ *
+ * @todo implement some form of error handling! -mjl
+ *
+ ****************************************************************************/
+LineGraph.prototype.drawWidget_ = function (widget)
+{
+	widget.setScale(this.lastdrawn.xScale, this.lastdrawn.yScale);
+	widget.draw(this.lastdrawn.axes.group, this.lastdrawn.dataRect.getSize());
+};
+
+/* **************************************************************************
+ * LineGraph.redrawWidget_                                              *//**
+ *
+ * Redraw the given child widget.
+ * This line graph and this child widget must have been drawn BEFORE this
+ * method is called or bad things will happen.
+ *
+ * @private
+ *
+ * @todo implement some form of error handling! -mjl
+ *
+ ****************************************************************************/
+LineGraph.prototype.redrawWidget_ = function (widget)
+{
+	widget.redraw();
+};
+
 /* **************************************************************************
  * LineGraph.drawData_                                                  *//**
  *
@@ -224,7 +273,7 @@ LineGraph.prototype.redraw = function()
  * @private
  *
  ****************************************************************************/
-LineGraph.prototype.drawData_ = function()
+LineGraph.prototype.drawData_ = function ()
 {
 	// local var names are easier to read (shorter)
 	var linesId = this.lastdrawn.linesId;
@@ -329,7 +378,28 @@ LineGraph.prototype.drawData_ = function()
 						return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
 					});
 	}
-} // end of LineGraph.drawData_()
+}; // end of LineGraph.drawData_()
+
+/* **************************************************************************
+ * LineGraph.append                                                     *//**
+ *
+ * Append the widget to this line graph and draw it on top of the line
+ * graph's data area and any widgets appended before this. If append is called
+ * before draw has been called, then the appended widget will be drawn when
+ * draw is called.
+ *
+ * @param {!IWidget}	-The widget which is to be drawn in this line graph's
+ *						 data area.
+ *
+ ****************************************************************************/
+LineGraph.prototype.append = function(widget)
+{
+	this.childWidgets.push(widget);
+	
+	if (this.lastdrawn.container !== null)
+		this.drawWidget_(widget);
+		
+}; // end of LineGraph.append()
 
 /* **************************************************************************
  * LineGraph.setState                                                   *//**
