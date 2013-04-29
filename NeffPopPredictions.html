@@ -39,7 +39,12 @@
 				
             	<div id="sliders">
                 	<span id="growthSlider"></span> 
-					<span id="popVal"></span>
+					<span id="popDay"></span>
+                    <span id="pop2010"></span>
+                    <span id="popWeek"></span>
+                    <span id="pop2050"></span>
+                    <span id="popYear"></span>
+                    
                 </div>
 				 
 			</div>
@@ -127,23 +132,58 @@ var lineData = [
 		
 	growRt.draw(d3.select("#growthSlider"));
 
+	var N0 = 6.908688;	
 	
-	// Create the ee readout widget
-	var resReadout = new Readout({
-			node: d3.select("#popVal"),
-			id: 'resRead',
-			startVal: growRt.getValue(),
+	// Create the population growth in a day
+	var popDayRead = new Readout({
+			node: d3.select("#popDay"),
+			id: 'pDay',
+			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/36500)-1)),
 			readOnly: true,
 			size: 5,
-			unit: "&Omega;", 
-			label: "R ="
+			label: "Born in one day"
+		});
+	
+ 	// Create the population growth in a week
+	var popDayRead = new Readout({
+			node: d3.select("#popWeek"),
+			//id: 'pDay',
+			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/5200)-1)),
+			readOnly: true,
+			size: 5,
+			label: "Born in one week"
+		});
+	
+	// Create the population growth in a year
+	var popYearRead = new Readout({
+			node: d3.select("#popYear"),
+			//id: 'pDay',
+			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/10)-1)),
+			readOnly: true,
+			size: 5,
+			label: "Born in one year"
+		});
+		
+	// Create the population growth in 2010 (historic census data)
+	var popNow = new Readout({
+			node: d3.select("#pop2010"),
+			//id: 'pDay',
+			startVal: d3.format(",.0f")(1E9*N0),
+			readOnly: true,
+			size: 5,
+			label: "2010 Population"
+		});
+		
+	// Create the population projected for 2050
+	var popProj = new Readout({
+			node: d3.select("#pop2050"),
+			//id: 'pDay',
+			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(4*growRt.getValue()/10)-1)),
+			readOnly: true,
+			size: 5,
+			label: "Born in one week"
 		}, eventManager);
-	
-	function resist(rho, len, area)
-	{
-		return d3.round(rho * len / area, 2);
-	}
-	
+		
 	projected = [];
 for (i=0;i<10;i++){
 	projected[i] = { x: 2010 + i*5,
@@ -224,7 +264,7 @@ var Data = [lineData,projected,nineB];
 		//get the values of all the sliders, calculate new resistance
 		newRes = growRt.getValue();
 		//write that resistance to the readout
-		resReadout.setValue(newRes);
+		popDayRead.setValue(newRes);
 		//recalculate the data
 		
 		for (i=0;i<10;i++){
