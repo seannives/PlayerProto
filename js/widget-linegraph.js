@@ -104,11 +104,14 @@ function LineGraph(config)
 		{
 			container: null,
 			size: {height: 0, width: 0},
+			dataRect: new Rect(0, 0, 0, 0),
 			linesId: 'lines',
 			axes: null,
 			xScale: null,
 			yScale: null,
+			graph: null,
 			traces: null,
+			series: null,
 		};
 } // end of LineGraph constructor
 
@@ -116,8 +119,7 @@ function LineGraph(config)
 /* **************************************************************************
  * LineGraph.draw                                                       *//**
  *
- * The LineGraph widget provides a line (or scatter) graph visualization
- * of sets of data points.
+ * Draw the LineGraph widget into the specified area of the given container.
  *
  * @param {!d3.selection}
  *					container	-The container svg element to append the graph element tree to.
@@ -155,31 +157,24 @@ LineGraph.prototype.draw = function(container, size)
 		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
 	}
 	
-	
 	//make the axes for this graph - draw these first because these are the 
 	//pieces that need extra unknown space for ticks, ticklabels, axis label
-	//only draw axes if there aren't any yet
-	if(!d3.select("#"+ axesConfig.id)[0][0]){
-		this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
-	}
+	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
+
+	//inherit the dataRect from the axes container
+	this.lastdrawn.dataRect = this.lastdrawn.axes.dataRect;
+	
 	// alias for axes once they've been rendered
 	var axesDrawn = this.lastdrawn.axes;
 	
-	//this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
-
 	//inherit the x and y scales from the axes container
 	this.lastdrawn.xScale = axesDrawn.xScale;
 	this.lastdrawn.yScale = axesDrawn.yScale;
 
 	this.lastdrawn.linesId = this.id + '_lines';
 	var linesId = this.lastdrawn.linesId;
-	var prefix = this.lastdrawn.linesId;
 
 	var clipId = linesId + "_clip";
-
-	// todo: see if there is maybe a better way to determine if something is already drawn other than by id. -mjl
-	if (d3.select("#"+linesId)[0][0] === null)
-	{
 
 	var graph = axesDrawn.group.append("g") //make a group to hold new lines
 		.attr("id", linesId);
@@ -189,39 +184,80 @@ LineGraph.prototype.draw = function(container, size)
 			.append("clipPath")
 				.attr("id", clipId)
 				.append("rect")
-					.attr("width", axesDrawn.dataArea.width)
-					.attr("height", axesDrawn.dataArea.height);
+					.attr("width", axesDrawn.dataRect.width)
+					.attr("height", axesDrawn.dataRect.height);
 
 	// make a clippath, which is used in the case that we zoom or pan 
 	// the graph dynamically, or for data overflow into the tick and
 	// label areas
-	}
-	else
-	{
-		//if we are just redrawing, then redraw into the selection
-		var graph = d3.select("#" + linesId);
-	}
+
 	//TEST: the graph group now exists and reports it's ID correctly
-	console.log("graph group is made/found:", graph.attr("id") == linesId);  
+	console.log("graph group is made:", graph.attr("id") == linesId);
+	
+	this.lastdrawn.graph = graph;
 
+	// Draw the data (traces and/or points as specified by the graph type)
+	this.drawData_();
 
-	//draw the trace(s)
+}; // end of LineGraph.draw()
+
+/* **************************************************************************
+ * LineGraph.redraw                                                     *//**
+ *
+ * Redraw the line graph data as it may have been modified. It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+LineGraph.prototype.redraw = function()
+{
+	// TODO: We may want to create new axes if the changed data would cause their
+	//       min/max to have changed, but for now we're going to keep them.
+
+	this.drawData_();
+}
+	
+/* **************************************************************************
+ * LineGraph.drawData_                                                  *//**
+ *
+ * Draw the line graph data (overwriting any existing line graph data).
+ *
+ * @private
+ *
+ ****************************************************************************/
+LineGraph.prototype.drawData_ = function()
+{
+	// local var names are easier to read (shorter)
+	var linesId = this.lastdrawn.linesId;
+	var xScale = this.lastdrawn.xScale;
+	var yScale = this.lastdrawn.yScale;
+
+	// get the group that contains the graph lines
+	var graph = this.lastdrawn.graph;
+
+	//TEST: the graph group now exists and reports it's ID correctly
+	console.log("line graph group is found:", graph.attr("id") == linesId);  
+
+	var clipId = linesId + "_clip";
+
+	// draw the trace(s)
 	if (this.type == "lines" || this.type == "lines+points")
 	{
+		// d3 utility function for generating all the point to point paths
+		// using the scales from the axes
 		var line = d3.svg.line()
-			//d3 utility function for generating all the point to point paths
-			// using the scales from the axes
-			//TODO: someday might want to add options for other interpolations -lb
+			// TODO: someday might want to add options for other interpolations -lb
 			.interpolate("basis")
-				.x(function(d) {return axesDrawn.xScale(d.x);})
-				.y(function(d) {return axesDrawn.yScale(d.y);});
+			.x(function (d) {return xScale(d.x);})
+			.y(function (d) {return yScale(d.y);});
 
-
+		// rebind the trace data to the trace groups
 		var traces = graph.selectAll("g.traces")
 			.data(this.data);
 			
-		traces.exit().remove();  //on redraw, get rid of any traces without data
+		// get rid of any trace groups without data
+		traces.exit().remove();
 
+		// create trace groups for trace data that didn't exist when we last bound the data
 		traces.enter().append("g")
 			.attr("class", "traces")
 			.append("path")
@@ -231,70 +267,63 @@ LineGraph.prototype.draw = function(container, size)
 			//pick the colors sequentially off the list
 				.attr("class", function(d, i) {return "trace stroke" + i;});
 			
-		this.lastdrawn.traces = traces;
+		this.lastdrawn.traces = graph.selectAll("g.traces");
 	
 		if (this.liteKey)
 		{
-			traces.attr("class", "traces liteable").attr("id", function(d, i) {
-					return prefix + "_" + this.liteKey[i];
-				});
+			traces.attr("class", "traces liteable")
+				  .attr("id", function (d, i) {return linesId + "_" + this.liteKey[i];});
 		}
-
 	}
 
-
+	// draw the points
 	if (this.type == "points" || this.type == "lines+points")
 	{
-
+		// rebind the series data to the series groups
 		var series = graph.selectAll("g.series")
 			.data(this.data);
 			
-		series.enter()
-				.append("g")
-					.attr("clip-path", "url(#" + clipId + ")")
-					.attr("class",
-						  function (d, i) {return "series fill" + i;});
-		series.exit().remove();  //on redraw, get rid of any series without data
+		// get rid of any series groups without data
+		series.exit().remove();
+
+		// create series groups for series data that didn't exist when we last bound the data
+		series.enter().append("g")
+			.attr("class", function (d, i) {return "series fill" + i;})
+			.attr("clip-path", "url(#" + clipId + ")");
+			
 		if (this.liteKey)
 		{
-			series.attr("id", function(d, i) {
-					return linesId + "_" + this.liteKey[i];
-				})
-				.attr("class", function(d, i) {
-					return "liteable series fill" + i;});
+			series.attr("class", function(d, i) {return "liteable series fill" + i;})
+				  .attr("id", function(d, i) {return linesId + "_" + this.liteKey[i];})
 		}
 
+		// rebind the point data of each series to the point groups
+		// (the data of the series is an array of point data)
 		var points = series.selectAll("g.points") 
-		//this selects all <g> elements with class points (first time there 
-		//aren't any yet) within the selection series.  series has nested point
-		//Data associated with it.  So the data for the points is each x,y pair 
-		//in the series.  This can also be done by using the keyword Object
-		//as the .data for points, but it's a little obscure why that works. -lb
-			.data(function(d, i) {return d;}); //drill down into the nested Data
+			.data(function (d) {return d;});
 		
-		points.exit().remove(); //get rid of removed data points
+		// get rid of any point groups without data
+		points.exit().remove();
 		
-		//this will create or update <g> elements for every data pt
-		points.enter() 
-			.append("g") 
-				.attr("class","points")
-				.attr("transform", function(d, i) {
-					//move each symbol to the x,y coordinates in scale
-					return "translate(" + axesDrawn.xScale(d.x) + 
-						"," + axesDrawn.yScale(d.y) + ")";
-				})
-				.append("path")
-					.attr("d", 
+		// create point groups for point data that didn't exist when we last bound the data
+		points.enter().append("g") 
+			.attr("class", "points")
+			.attr("transform", function (d)
+							   {
+								   // move each symbol to the x,y coordinates in scale
+								   return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+							   })
+			.append("path")
+				.attr("d", 
 					// j is the index of the series, 
-					// i of the data points in the series
-						function(d, i, j) {
-							//pick the shapes sequentially off the list
-					   		return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
-						}
-				);
+					// i of the data point in the series
+					function(d, i, j)
+					{
+						//pick the shapes sequentially off the list
+						return (d3.svg.symbol().type(d3.svg.symbolTypes[j])());
+					});
 	}
-
-}; // end of LineGraph.draw()
+} // end of LineGraph.drawData_()
 
 /* **************************************************************************
  * LineGraph.setState                                                   *//**

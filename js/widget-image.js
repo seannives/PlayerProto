@@ -1,10 +1,10 @@
 /* **************************************************************************
- * $Workfile:: widget-labelgroup.js                                         $
+ * $Workfile:: widget-image.js                                         $
  * **********************************************************************//**
  *
- * @fileoverview Implementation of the LabelGroup widget.
+ * @fileoverview Implementation of the Image widget.
  *
- * The LabelGroup widget draws a group of labels at specified locations
+ * The Image widget draws a group of labels at specified locations
  * in an SVGContainer.
  *
  * Created on		April 23, 2013
@@ -15,24 +15,25 @@
  *
  * **************************************************************************/
 
-// Sample Label constructor configuration
+// Sample Image constructor configuration
 (function()
 {
-	var lbl1Config = {
-			id: "lbl1",
-			labels: 	
-			[	
-				{ content: "Pre-development",	xyPos: [ 0, -.25], width: 100 },
-				{ content: "Developing",		xyPos: [14, -.25], width:  80 },
-				{ content: "Modernizing",		xyPos: [27, -.25], width:  80 },
-				{ content: "Developed",			xyPos: [40, -.25], width:  70 },
-				{ content: "Post-development",	xyPos: [51, -.25], width: 100 },
-			],
+	var imageConfig = {
+			id: "img1",
+			images:
+			[
+				{ URI: 'img/ch4_0_1.png', caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/multimedia/imagegallery/ image_feature_1529.html" },
+				{ URI: 'img/ch4_03.jpg', caption: "The seasons" },
+				{ URI: 'img/ch4_0_2.jpg', caption: "Heat transfer mechanisms" },	
+				{ URI: 'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire." },
+				{ URI: 'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky." },
+				{ URI: 'img/ch4_4.jpg', caption: "Seaside Heights, NJ after Hurricane Sandy." }
+			]
 		};
 });
 
 /**
- * Information needed to process a label in a LabelGroup.
+ * Information needed to process a label in a Image.
  *
  * @typedef {Object} LabelConfig
  * @property {string}	content	-string with HTML markup to be displayed by the label
@@ -49,7 +50,7 @@
  */
 	
 /* **************************************************************************
- * LabelGroup                                                           *//**
+ * Image                                                                *//**
  *
  * The LabelGroup widget draws a group of labels at specified locations
  * in an SVGContainer.
@@ -74,10 +75,10 @@
  * @todo: we need some sort of autowidth intelligence on these, but I don't
  * know how to reconcile that with giving user control over wrapping
  ****************************************************************************/
-function LabelGroup(config, eventManager)
+function Image(config, eventManager)
 {
 	/**
-	 * A unique id for this instance of the labelgroup widget
+	 * A unique id for this instance of the image widget
 	 * @type {string}
 	 */
 	this.id = config.id;
@@ -150,12 +151,12 @@ function LabelGroup(config, eventManager)
 			xScale: null,
 			yScale: null,
 		};
-} // end of Label constructor
+} // end of Image constructor
 
 /* **************************************************************************
- * LabelGroup.draw                                                      *//**
+ * Image.draw                                                           *//**
  *
- * Draw this LabelGroup in the given container.
+ * Draw this Image in the given container.
  *
  * @param {!d3.selection}
  *					container	-The container svg element to append the labels element tree to.
@@ -164,7 +165,7 @@ function LabelGroup(config, eventManager)
  * @param {number}	size.width	-The width in pixels of the area the labels are drawn within.
  *
  ****************************************************************************/
-LabelGroup.prototype.draw = function(container, size)
+Image.prototype.draw = function(container, size)
 {
 	this.lastdrawn.container = container;
 	this.lastdrawn.size = size;
@@ -197,132 +198,80 @@ LabelGroup.prototype.draw = function(container, size)
 		.attr("class", "labels")
 		.attr("id", this.id);
 
-	//this filter can be used to add dropshadows to highlighted labels and bullets
-	var filter = labelsContainer.append("defs").append("filter").attr("id", "drop-shadow");
-	filter.append("feGaussianBlur").attr("in", "SourceAlpha").attr("stdDeviation", 2).attr("result", "blur");
-	filter.append("feOffset").attr("in", "blur").attr("dx", 2).attr("dy", 2).attr("result", "offsetBlur");
- 	var merge = filter.append("feMerge");
-	merge.append("feMergeNode").attr("in", "offsetBlur");
-	merge.append("feMergeNode").attr("in", "SourceGraphic");
 
-	var labelCollection = labelsContainer.selectAll("g.label").data(this.labels);
-	labelCollection.enter()
-		.append("g")
-			.attr("class", "label")
-				// name it so it can be manipulated or highlighted later
-			.attr("id", function (d, i) { return that.id + "_label_" + ('key' in d ? d.key : i); })
-			.attr("transform",
-				  function (d, i) 
-				  {
-					  return "translate(" + that.lastdrawn.xScale(d.xyPos[0]) + "," + that.lastdrawn.yScale(d.xyPos[1]) + ")";
-				  });
-
-	labelCollection.append("foreignObject")
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("width", function (d) { return d.width; })
-		.attr("height", 200)
-		.append("xhtml:body")
-			.style("margin", "0px")
-			//this interior body shouldn't inherit margins from page body
-			.append("div")
-				.attr("class", "descLabel")
-				//.style("visibility",function(d,i) { return d.viz;})
-				//I punted on the show/hide thing, but it could come back
-				.html(function (d) { return d.content; }); //make the label
-
-	if (this.type == "bullets" || this.type == "numbered")
-	{
-		labelCollection.append("circle")
-			.attr("class", "steps")
-			.attr("r", 16).attr("cx", 0).attr("cy", 0);
-	}
-
-	if (this.type == "numbered")
-	{
-		labelCollection.append("text")
-			.style("fill", "white")
-			.attr("text-anchor", "middle")
-			.attr("alignment-baseline", "middle")
-			.text(function (d, i) { return i + 1; });
-	}
-	
-	labelCollection.on('click',
-				function (d, i)
-				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex: ('key' in d ? d.key : i)});
-				});
-
-	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.label");
-}; // end of LabelGroup.draw()
-
-
-/* **************************************************************************
- * LabelGroup.labelLite                                                 *//**
- *
- * Highlight the label(s) associated w/ the given labelIndex (key) and
- * remove any highlighting on all other labels.
- *
- * @param {string|number}	labelIndex	-The key associated with the label(s) to be highlighted.
- *
- ****************************************************************************/
-LabelGroup.prototype.labelLite = function (labelIndex)
-{
-	console.log("TODO: fired LabelLite log");
-	
-	// return all styles to normal on all the labels
-	this.lastdrawn.labelCollection.classed('lit', false);
-	
-	// Set the findKey function based on whether the key is an index or a data key string.
-	if (typeof labelIndex == "number")
-	{
-		var matchesLabelIndex = function (d, i) { return i == labelIndex; };
-	}
-	else
-	{
-		var matchesLabelIndex = function (d, i) { return 'key' in d ? d.key === labelIndex : false; };
-	}
-	
-	var labels2lite = this.lastdrawn.labelCollection.filter(matchesLabelIndex);
-	labels2lite.classed('lit', true);
-	
-	//TODO what I need is a better way to know which collection
-	//of labels to turn off. Doing it by class seems lame.
-	allLabels
-		.style("color", null)
-		//setting a style to null removes the special
-		//style property from the tag entirely.
-		//TODO: make the lit and unlit classes
-		.style("font-weight", null)
-		.style("background-color", "");
-
-	var allBullets = d3.selectAll("#" + Obj.labels.id);
-	//turn all the text back to white, and circles to black
-	allBullets.selectAll("text").style("fill", "white");
-	allBullets.selectAll("circle").attr("class", "steps");
 		
-	//highlight the selected label(s)
-	
-	var setLabels = d3.selectAll("#" + Obj.labels.id + lite);
-	if (setLabels) 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+	//images is an array of objects with keys URI: string with the location of the image file
+	//jpg, png, svg supported, and caption: string with caption or source text.
+	this.images = config.images;
+	var numImg = this.images.length;
+	var myID = "img" + this.id + "_";
+	var that = this;
+
+	var graph = this.group.append("g") //make a group to hold new line chart
+		.attr("class", "scalableImage");
+	graph.append("rect")
+		.attr("width", this.innerWid)
+		.attr("height", this.innerHt)
+		.attr("fill", "#efefef");
+
+	graph.append("image").attr("xlink:href", this.images[0].URI)
+		.attr("id", this.id) //name it so it can be manipulated or highlighted later
+		.attr("width", this.innerWid)
+		.attr("height", this.innerHt)
+		.append("desc").text(this.images[0].caption);
+
+	console.log("Target for caption exists: ",	this.xaxis.select(".axisLabel"));
+
+	this.xaxis.select(".axisLabel").html(this.images[0].caption);
+	console.log("image group is made:",
+				d3.select("#" + this.id).attr("id"), ", number of images in container is ", numImg);
+
+	if (numImg > 1)
 	{
-		setLabels.selectAll("circle")
-			.attr("class", "stepsLit");
-		//highlight the one selected circle and any others
-		//with the same lite index
-		setLabels.selectAll("text").style("fill", "#1d95ae");
-		setLabels.selectAll(".descLabel")
-			//.transition().duration(100)
-			// this renders badly from Chrome refresh bug
-			//we'll have to figure out how to get transitions
-			//back in - maybe just foreign objects?
-			.style("color", "#1d95ae")
-			.style("font-weight", "600")
-			.style("background-color", "#e3effe");
-	} 
-	else
-	{
-		console.log("Invalid key. No label " + key);
+		//if there are multiple images, calculate dimensions for thumbnails, and make the
+		//svg box bigger to display them in a new group at the top.
+		var thumbScale = 0.85 / (numImg + 2);
+		this.xThumbDim = d3.round(this.innerWid * thumbScale);
+		this.yThumbDim = d3.round(this.innerHt * thumbScale);
+		var maxWid = this.maxWid;
+		var maxHt = this.maxHt;
+		this.margin.top = this.margin.top + this.yThumbDim;
+
+		this.group.append("g")
+			.attr("class", "thumbs")
+			.attr("id", "thumbs" + this.id)
+			.selectAll("image.thumbs").data(this.images)
+			.enter().append("g")
+				.attr("id", function (d, i) { return (myID + i);})
+				.attr("class", "liteable thumbs")
+				.attr("transform", function (d, i)
+								   {
+									   return "translate(" + (d3.round((i + 1) * that.innerWid / (numImg + 2))
+											+ that.margin.left) + "," + 5 + ")";
+								   })
+				.append("image")
+					.attr("xlink:href", function (d) {return d.URI;})
+					.attr("width", this.xThumbDim).attr("height", this.yThumbDim)
+					.append("desc")
+						.text(function (d) {return d.caption;});
+		//required - we should never have an image inserted without a description for ARIA
+		//then move the main image down to make room for the thumbnails
+		that.group.attr("transform", "translate(" + that.margin.left + "," + that.margin.top + ")");
+		that.rootEl.attr("viewBox", "0 0 " + that.maxWid + " " + (that.maxHt + this.yThumbDim))
+			.style("max-height", (maxHt + this.yThumbDim) + "px");
 	}
-}; // end of LabelGroup.labelLite()
+		
+		
+		
+}; // end of Image.draw()
 
