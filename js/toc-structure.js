@@ -127,12 +127,18 @@ var bookConfig = {
                 type: "objective",
                 url: "PhysicsResistance.html",
                 id: "n.3.3",
-                title: "Randomized Auto-data and buttons/events"
+                title: "Resistance: Randomized Scatter Data and slider events"
             }, 
 			{
                 type: "objective",
+                url: "NeffPopPredictions.html",
+                id: "n.3.4",
+                title: "Neff Population Predictions Updating Lines"
+            },
+			{
+                type: "objective",
                 url: "RitterImages.html",
-                id: "n.3.3",
+                id: "n.3.5",
                 title: "Ritter Image Carousel and Callouts"
             },
 			]
