@@ -261,11 +261,14 @@ LineGraph.prototype.drawData_ = function()
 		traces.enter().append("g")
 			.attr("class", "traces")
 			.append("path")
-				.attr("clip-path", "url(#" + clipId + ")")
-			//use the line function defined above to set the path data
-				.attr("d", function(d) {return line(d);})
 			//pick the colors sequentially off the list
-				.attr("class", function(d, i) {return "trace stroke" + i;});
+				.attr("class", function(d, i) {return "trace stroke" + i;})
+				.attr("clip-path", "url(#" + clipId + ")");
+			
+		// update the data on all traces, new and old
+		traces.select("path")
+			//use the line function defined above to set the path data
+				.attr("d", function(d) {return line(d);});
 			
 		this.lastdrawn.traces = graph.selectAll("g.traces");
 	
@@ -307,7 +310,10 @@ LineGraph.prototype.drawData_ = function()
 		
 		// create point groups for point data that didn't exist when we last bound the data
 		points.enter().append("g") 
-			.attr("class", "points")
+			.attr("class", "points");
+		
+		// update the data on all points (new and old)
+		points
 			.attr("transform", function (d)
 							   {
 								   // move each symbol to the x,y coordinates in scale
