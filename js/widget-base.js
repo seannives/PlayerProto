@@ -397,6 +397,8 @@ SVGContainer.prototype.append = function(svgWidgets, location)
  * @param {number}	location.widthPercent
  *									-Fraction of container width for the widget width.
  *
+ * @private
+ *
  ****************************************************************************/
 SVGContainer.prototype.append_one_ = function(svgWidget, location)
 {

@@ -383,28 +383,53 @@ LineGraph.prototype.drawData_ = function ()
 /* **************************************************************************
  * LineGraph.append                                                     *//**
  *
- * Append the widget to this line graph and draw it on top of the line
- * graph's data area and any widgets appended before this. If append is called
- * before draw has been called, then the appended widget will be drawn when
- * draw is called.
+ * Append the widget or widgets to this line graph and draw it/them on top
+ * of the line graph's data area and any widgets appended earlier. If append
+ * is called before draw has been called, then the appended widget(s) will be
+ * drawn when draw is called.
  *
- * @param {!IWidget}	-The widget which is to be drawn in this line graph's
- *						 data area.
+ * @param {!IWidget|Array.<IWidget>}
+ * 						svgWidgets	-The widget or array of widgets to be drawn in
+ *									 this line graph's data area.
  *
  ****************************************************************************/
-LineGraph.prototype.append = function(widget)
+LineGraph.prototype.append = function(svgWidgets)
+{
+	if (!$.isArray(svgWidgets))
+	{
+		this.append_one_(svgWidgets);
+	}
+	else
+	{
+		svgWidgets.forEach(this.append_one_, this);
+	}
+		
+}; // end of LineGraph.append()
+
+/* **************************************************************************
+ * LineGraph.append_one_                                                *//**
+ *
+ * Helper for append that does the work needed to append a single widget.
+ *
+ * @param {!IWidget}	widget	-The widget which is to be drawn in this line
+ *								 graph's data area.
+ *
+ * @private
+ *
+ ****************************************************************************/
+LineGraph.prototype.append_one_ = function(widget)
 {
 	this.childWidgets.push(widget);
 	
 	if (this.lastdrawn.container !== null)
 		this.drawWidget_(widget);
 		
-}; // end of LineGraph.append()
+}; // end of LineGraph.append_one_()
 
 /* **************************************************************************
- * LineGraph.setState                                                   *//**
+ * LineGraph.lineLite                                                   *//**
  *
- * setState ...
+ * lineLite ...
  *
  * @param {?}	liteKey	-...
  *
