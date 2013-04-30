@@ -54,6 +54,7 @@
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
     <script src="js/widget-legend.js"></script>
+    <script src="js/widget-labelgroup.js"></script>
 
 <script>
 	var testData = [
@@ -460,6 +461,19 @@
 						   label: "Human Population (Billions)" },
 		};
 
+	var lblGrpConfig80 = {
+			id: "lbls80",
+			type: "numbered",
+			labels: 	
+			[
+				{ content: "TOP left",		xyPos: [1960, 3],	width: 100	},
+				{ content: "middle left",	xyPos: [1980, 4.5],	width: 100	},
+				{ content: "Bottom left" ,	xyPos: [2013, 7],	width: 100	},
+			]
+		};
+
+	var labelGroup80 = new LabelGroup(lblGrpConfig80);
+
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
 	
@@ -470,7 +484,9 @@
 		type: "line"
 	});
 	
-	cntr[n].append([lineGraph[n],legLines], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cntr[n].append([lineGraph[n], legLines], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	lineGraph[n].append(labelGroup80);
 
     var litekey = [0,1,2];
  
