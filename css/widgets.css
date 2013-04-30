@@ -345,7 +345,9 @@ tr.liteable td {
 
 .dataLabel {
   font-weight: bold;
-  margin-left: 3px; }
+  margin-left: 3px; 
+  }
+  
   .dataLabel.green {
     background: green;
     color: #fff;

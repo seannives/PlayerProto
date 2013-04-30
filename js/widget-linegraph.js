@@ -345,8 +345,7 @@ LineGraph.prototype.drawData_ = function ()
 			
 		if (this.liteKey)
 		{
-			series.attr("class", function(d, i) {return "liteable series fill" + i;})
-				  .attr("id", function(d, i) {return linesId + "_" + this.liteKey[i];})
+			series.attr("id", function(d, i) {return linesId + "_" + this.liteKey[i];})
 		}
 
 		// rebind the point data of each series to the point groups

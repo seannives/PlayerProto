@@ -464,11 +464,11 @@
 	var lblGrpConfig80 = {
 			id: "lbls80",
 			type: "numbered",
-			labels: 	
+			labels: 
 			[
-				{ content: "TOP left",		xyPos: [1960, 3],	width: 100	},
-				{ content: "middle left",	xyPos: [1980, 4.5],	width: 100	},
-				{ content: "Bottom left" ,	xyPos: [2013, 7],	width: 100	},
+				{ content: "exponential turning point",	xyPos: [1960, 3], width: 100},
+				{ content: "steep growth",	xyPos: [1980, 4.5],	width: 100	},
+				{ content: "present day" ,	xyPos: [2013, 7],	width: 100	},
 			]
 		};
 
@@ -479,14 +479,15 @@
 	
 	
 	var legLines = new Legend({
-		xPos: "right", yPos: "bottom",
+		xPos: "left", yPos: "top",
 		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
 		type: "line"
 	});
 	
-	cntr[n].append([lineGraph[n], legLines], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 	lineGraph[n].append(labelGroup80);
+	lineGraph[n].append(legLines);
 
     var litekey = [0,1,2];
  
