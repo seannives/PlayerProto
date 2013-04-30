@@ -28,6 +28,7 @@
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span6 leftCol">
+            <h2 class="setTitle"></h2>
             	<p>Mathematically, the percentage of each enantiomer can be expressed as follows:</p>
 				<img src="img/Kequation1.png" />
 				<p>and</p>
@@ -101,7 +102,8 @@
 			maxVal: 100,
 			stepVal: 1,
 			unit: "%",
-			label: "Levorotary "
+			label: "Levorotary ",
+			format: d3.format('.0f')
 		}, eventManager);
 	inputLevo.draw(d3.select("#Levo"));
 
@@ -124,7 +126,8 @@
 			maxVal: 100,
 			stepVal: 1,
 			unit: "%",
-			label: "Dextrorotary "
+			label: "Dextrorotary ",
+			format: d3.format('.0f')
 		}, eventManager);
 	
 	inputDextro.draw(d3.select("#Levo"));
@@ -214,7 +217,8 @@
 			maxVal: 360,
 			stepVal: 10,
 			unit: "&deg;",
-			label: "Specific rotation (&alpha;): "
+			label: "Specific rotation (&alpha;): ",
+			format: d3.format('.0f')
 		}, eventManager);
 		
 	sl1.draw(d3.select("#alpha"));

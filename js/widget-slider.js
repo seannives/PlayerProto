@@ -25,7 +25,8 @@
 			maxVal: 5,
 			stepVal: 0.1,
 			unit: "&micro;m",
-			label: "diameter: "
+			label: "diameter: ",
+			format:  d3.format('5.2f'),
 		};
 });
 	
@@ -45,6 +46,8 @@
  * @param {stepVal}		config.stepVal	- step size of slider, number
  * @param {label}		config.label	- text preceding the slider, optional
  * @param {unit}		config.unit		- text following the slider, optional
+ * @param {format}		config.format	- d3 formatting function for numerics
+ *						https://github.com/mbostock/d3/wiki/Formatting
  *
  * @param {Object}		eventManager
  *
@@ -65,6 +68,7 @@ function Slider(config, eventManager)
 	this.stepVal = config.stepVal;
 	this.unit = config.unit;
 	this.label = config.label;
+	this.format = config.format;
 	this.display = null;
 	// Define the ids of the events the slider uses
 	this.changedValueEventId = this.id + 'Slider';
@@ -113,7 +117,7 @@ Slider.prototype.draw = function(container)
 		this.display = new Readout({
 		node: d3.select("#"+readOutId),
         id: this.id + "_Display",
-		startVal: this.startVal,
+		startVal: this.format(this.startVal),
 		readOnly: true,
 		size: 4,
 		unit:  (this.unit ? this.unit : ""), 
@@ -126,7 +130,9 @@ Slider.prototype.draw = function(container)
 			//note that jQuery returns an array for selections, the
 			//first element of which is the actual pointer to the
 			//tag in the DOM
-				that.display.setValue($("#" + that.id)[0].value);
+				var newVal = $("#" + that.id)[0].value;
+				newVal = that.format(newVal);
+				that.display.setValue(newVal);
 				that.eventManager.publish(that.changedValueEventId,
 								{value: $("#" + that.id)[0].value});
 									} );

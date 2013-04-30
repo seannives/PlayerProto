@@ -31,22 +31,17 @@
 				
 				<p>At this growth rate, the world's population would hit 9 billion around 2033. In the figure, you can see what happens if the growth rate falls or rises just a little, and as you can see, small changes in the growth rate can have big impacts on future population growth.</p>
 			</div>
-			<div class="span6 rightCol">
-                         
+			<div class="span6 rightCol">         
                 <div id="graph0"></div> 
-              
-				
-				
-            	<div id="sliders">
-                	<span id="growthSlider"></span> 
-					<span id="popDay"></span>
-                    <span id="pop2010"></span>
-                    <span id="popWeek"></span>
-                    <span id="pop2050"></span>
-                    <span id="popYear"></span>
-                    
-                </div>
-				 
+               		<table>
+                    <tr><td colspan="2">
+                	<span id="growthSlider"></span> </td></tr>
+					<tr><td><span id="popDay"></span></td>
+                    	<td><span id="pop2010"></span></td></tr>
+                    <tr><td><span id="popWeek"></span></td>
+                    	<td><span id="pop2050"></span></td></tr>
+                    <tr><td><span id="popYear"></span></td></tr>
+            		</table>
 			</div>
 		</div>
 	</div>
@@ -127,7 +122,8 @@ var lineData = [
 			maxVal: 2.5,
 			stepVal: .1,
 			unit: "%",
-			label: "Growth Rate"
+			label: "Growth Rate",
+			format: d3.format('.1f')
 		}, eventManager);
 		
 	growRt.draw(d3.select("#growthSlider"));
@@ -145,9 +141,9 @@ var lineData = [
 		});
 	
  	// Create the population growth in a week
-	var popDayRead = new Readout({
+	var popWkRead = new Readout({
 			node: d3.select("#popWeek"),
-			//id: 'pDay',
+			id: 'pWk',
 			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/5200)-1)),
 			readOnly: true,
 			size: 5,
@@ -157,8 +153,8 @@ var lineData = [
 	// Create the population growth in a year
 	var popYearRead = new Readout({
 			node: d3.select("#popYear"),
-			//id: 'pDay',
-			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/10)-1)),
+			id: 'pYr',
+			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/100)-1)),
 			readOnly: true,
 			size: 5,
 			label: "Born in one year"
@@ -167,21 +163,21 @@ var lineData = [
 	// Create the population growth in 2010 (historic census data)
 	var popNow = new Readout({
 			node: d3.select("#pop2010"),
-			//id: 'pDay',
+			id: 'pNow',
 			startVal: d3.format(",.0f")(1E9*N0),
 			readOnly: true,
 			size: 5,
 			label: "2010 Population"
 		});
 		
-	// Create the population projected for 2050
+	// Create the population projected for 2050, 40 years on
 	var popProj = new Readout({
 			node: d3.select("#pop2050"),
-			//id: 'pDay',
-			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(4*growRt.getValue()/10)-1)),
+			id: 'pProj',
+			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(40*growRt.getValue()/100))),
 			readOnly: true,
 			size: 5,
-			label: "Born in one week"
+			label: "2050 Population"
 		}, eventManager);
 		
 	projected = [];
@@ -261,10 +257,21 @@ var Data = [lineData,projected,nineB];
 	 ****************************************************************************/
 	function handleChangedValue(newValue)
 	{
-		//get the values of all the sliders, calculate new resistance
-		newRes = growRt.getValue();
-		//write that resistance to the readout
-		popDayRead.setValue(newRes);
+		//get the values of the growth rate
+		newRate = growRt.getValue();
+		//use that to calculate the new populations
+		popDayRead.setValue(d3.format(",.0f")
+			(1E9*N0*(Math.exp(newRate/36500)-1)));
+		popWkRead.setValue(d3.format(",.0f")
+			(1E9*N0*(Math.exp(newRate/5200)-1)));
+		// factor of 100 to convert to percent decimal value
+		popYearRead.setValue(d3.format(",.0f")
+			(1E9*N0*(Math.exp(newRate/100)-1)));
+		// factor of 100 to convert to percent decimal value
+		popProj.setValue(d3.format(",.0f")
+			(1E9*N0*(Math.exp(40*newRate/100))));
+	
+		
 		//recalculate the data
 		
 		for (i=0;i<10;i++){

@@ -32,7 +32,12 @@
 				</p>
 			</div>
 			<div class="span6 rightCol">
-            <p>Resistance in a wire is defined by the expression 
+         	    <div id="sliders">
+                	<span id="rhoSlider"></span> 
+                    <span id="LSlider"></span> 
+                	<span id="ASlider"></span> 
+				</div>
+                   <p>Resistance in a wire is defined by the expression 
                 <div>
                 <span id="resistance">R</span> = 
                 <span id="resistivity">&rho;</span> &middot; <span id="length">L</span> /
@@ -42,13 +47,6 @@
                 <div id="defs"></div> 
               
 				</p>
-				
-            	<div id="sliders">
-                	<span id="rhoSlider"></span> 
-                    <span id="LSlider"></span> 
-                	<span id="ASlider"></span> 
-					<span id="resVal"></span>
-                </div>
 				<div id="diagram"></div>
 			</div>
 		</div>
@@ -98,7 +96,7 @@
 	
 	rowDefs.draw(d3.select("#defs"));
 	*/
-	var rhoExtent = [0.01,1], 
+	var rhoExtent = [0,1], 
 		LExtent = [1,10],
 		AExtent = [1,50];
 		
@@ -109,31 +107,34 @@
 			maxVal: rhoExtent[1],
 			stepVal: .01,
 			unit: "&Omega;&nbsp;cm",
-			label: "Resistivity"
+			label: "Resistivity, &rho; =",
+			format:  d3.format('5.2f'),
 		}, eventManager);
 		
 	rhoSlide.draw(d3.select("#rhoSlider"));
 
 	var LSlide = new Slider ({
 			id: "LVal",
-			startVal: 5,
+			startVal: 7,
 			minVal: LExtent[0],
 			maxVal: LExtent[1],
 			stepVal: .1,
 			unit: "cm",
-			label: "Length"
+			label: "Length, L = ", 
+			format:  d3.format('5.2f'),
 		}, eventManager);
 		
 	LSlide.draw(d3.select("#LSlider"));
 	
 	var ASlide = new Slider ({
 			id: "AVal",
-			startVal: 20,
+			startVal: 27,
 			minVal: AExtent[0],
 			maxVal: AExtent[1],
 			stepVal: .1,
 			unit: "cm<sup>2</sup>",
-			label: "Area"
+			label: "Area, A = ",
+			format:  d3.format('5.2f'),
 		}, eventManager);
 		
 	ASlide.draw(d3.select("#ASlider"));
@@ -147,7 +148,7 @@
 			readOnly: true,
 			size: 5,
 			unit: "&Omega;", 
-			label: "R ="
+			//label: "R ="
 		}, eventManager);
 	
 	function resist(rho, len, area)
@@ -190,13 +191,13 @@
 			Data: [electrons], 
 			type: "points",
 			xAxisFormat: { type: "linear",
-						   ticks: [0, LExtent[1] + 1],
+						   ticks: [0, LExtent[1]],
 						   orientation: "bottom",
 						   label: "wire length" },
 			yAxisFormat: { type: "linear",
 						   orientation: "right",
 						   label: "wire height",
-						    ticks: [0,2*Math.sqrt(AExtent[1]/Math.PI) + 1],
+						    ticks: [0,2*Math.sqrt(AExtent[1]/Math.PI)],
 						    },
 		});		
 	cont1.append(dots, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});

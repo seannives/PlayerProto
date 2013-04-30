@@ -4,32 +4,29 @@
 /* inside foreign object containers to the extent that browsers will render them
 ********************************************/
 
-function Readout(config, eventManager)
+function Readout(config)
 	{
 		//Readout Widget is just a way to display calculated or event-driven text
 		//in a page.  This is commonly used for meters, results, tests, updatable text, etc.
-		//Currently done as a text input so you can either display or type into it
+		// Formerly done as a text input so you can either display or type into it
 		this.node = config.node;
 		this.id = config.id;
-		this.startVal = config.startVal;
-		//Whatever the readout displays at page load. String value
-		this.eventManager = eventManager;
-
+		this.startVal = config.startVal;	
 		this.unit = config.unit;
 		//if the readout requires a unit to be appended, do so. String value.
 		this.label = config.label;
 		//if the readout requires a label to be prepended, do so. String value.
 		// Define the ids of the events this widget broadcasts
-		this.changedValueId = this.id + 'Number';
 		var that = this;
-		var size = config.size;
-		var placeHolder = config.placeHolder;
-		var readOnly = config.readOnly; //boolean - display but no typing
-
-		//<input type="text" id="myID" maxLength="<number>" value="startVal" readonly>;
+		var precision = config.precision;
+ 
+		//<span id="myID" class"dataLabel">numeric readout</span>;
 		this.rootEl = this.node.append("span");
 		//write a label in front of the input if there is one
 		var readout = this.rootEl.html(this.label?this.label:"").attr("role","label");
+		
+		
+		/* used to be input fields, but I switched to text per the design -lb
 		this.rootEl
 		.append("input")
 		.style("max-width","40px")
@@ -39,43 +36,18 @@ function Readout(config, eventManager)
 		.attr("align","right")
 		.attr("size",size?size:6)
 		.attr("id",that.id)
+		; */
 		
-		;
+		this.rootEl.append("span")
+			.attr("class","dataLabel")
+			.attr("id",that.id)
+			.text(this.startVal);
 
-		if(this.startVal){
-			readout.attr("value",this.startVal);
-		} else if (placeHolder)
-		{
-			readout.attr("placeholder",placeHolder);
-		}
+		this.rootEl.append("span").html("&nbsp;" + (this.unit ? this.unit : ""));
+		
+		// TEST: the written text span is the start value
+		console.log("text is the startVal:", d3.select("#" + this.id).text() == this.startVal, d3.select("#" + this.id).text());
 
-		if(readOnly){
-			readout.property("readonly");
-		}
-
-		this.rootEl.append("span").html(this.unit?this.unit:"");
-
-		this.rootEl.on('change', function()
-				{
-			//this publishes the onChange event to the eventManager
-			//passing along the updated value in the numeric field.
-			//note that jQuery returns an array for selections, the
-			//first element of which is the actual pointer to the
-			//tag in the DOM
-			that.eventManager.publish(that.changedValueId,
-							{value: $("#" + that.id)[0].value});
-										} );
-
-		// Define private handlers for subscribed events
-		//This doesn't do anything - it's broken, but the numeric input
-		//works just fine on it's own in the browser
-		function updateValue(eventDetails)
-		{
-			$("#" + that.id)[0].value = eventDetails.value;
-		}
-
-		// Subscribe to own events, if appropriate
-		//eventManager.subscribe(that.changedValueId, changedValueHandler);
 	}//end Readout widget
 	
 	/* **************************************************************************
@@ -92,7 +64,7 @@ function Readout(config, eventManager)
 		console.log("TODO: called setReadoutValue log", this.id, newValue);
 		
 		// The value is kept in the input element which was given an id
-		$("#" + this.id)[0].value = newValue;
+		d3.select("#" + this.id).text(newValue);
 	}
 	
 
@@ -108,7 +80,7 @@ function Readout(config, eventManager)
 	Readout.prototype.getValue = function ()
 	{
 		// The value is kept in the input element which was given an id
-		return $("#" + this.id)[0].value;
+		return d3.select("#" + this.id).text();
 	}
 	
 	/* **************************************************************************
@@ -124,7 +96,7 @@ function Readout(config, eventManager)
 	 *								event is fired.
 	 *
 	 ****************************************************************************/
-function NumericInput(config, eventManager)
+	function NumericInput(config, eventManager)
 	{
 		this.node = config.node;
 		this.id = config.id;
