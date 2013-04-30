@@ -40,7 +40,8 @@
  *						xyPos	-An array containing the x,y data coordinates for the
  *								 top left corner of the label
  * @property {number}	width	-The pixel width of the label
- *								 @todo we need a better way to deal w/ the width, than hard-coding it here. -lb
+ *								 @todo we need a better way to deal w/ the width, 
+ *									than hard-coding it here. -lb
  * @property {string|undefined}
  *						key		-optional string used to reference the label
  *								 in order to manipulate it (such as highlight it).

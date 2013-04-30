@@ -477,12 +477,12 @@
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
 	
-	
 	var legLines = new Legend({
 		xPos: "left", yPos: "top",
 		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
 		type: "line"
 	});
+	
 	
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
