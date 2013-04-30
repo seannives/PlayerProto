@@ -278,7 +278,10 @@ BarChart.prototype.draw = function(container, size)
 			//otherwise, don't put an ID
 			//can't use the y label because it might contain spaces. -lb
 			//todo: check the dom to verify that a null value for an attribute does not create that attribute -mjl
-			.attr("transform",
+			.append("rect")
+			;
+
+	bars.attr("transform",
 				  function(d)
 				  {
 				// move each group to the x=0 position horizontally if it's a
@@ -288,10 +291,8 @@ BarChart.prototype.draw = function(container, size)
 				      var x = (d.x < 0) ? axesDrawn.xScale(d.x) : axesDrawn.xScale(0);
 					  var y = axesDrawn.yScale(d.y);
 				      return "translate(" + x + "," + y + ")";
-				  })
-			.append("rect")
-			;
-
+				  });
+				  
 	// Update the height and width of the bar rects based on the data points bound above.
 	bars.select("rect")
 	//if grouped, each bar is only 1/# groups of the available width
