@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-    <title>Earth's Energy Balance</title>
+    <title class="setTitle"></title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="Book Author, Book Title" name="description">
@@ -20,9 +20,9 @@
 	<!-- Body Content -->
 	<div class="container">
 		<div class="row-fluid">
-        
 			<div class="span6 leftCol">
-				<h2>Earth's Energy Balance</h2>
+				<h2 class="setTitle">Earth's Energy Balance</h2>
+                <p>Here is some sample text that might show you what a chapter opener could look like. It can include any interactive elements a regular page might have. In fact, it should include them.</p>
 				<p>No sooner had 2012 begun when the January skies over the southern United States darkened by storms forming tornadoes that left a deadly toll. March roared in as another <a href="#" class="liteable">outbreak of tornadoes</a> ripped across a large section of the Southern United States into the Ohio Valley. By June records were falling as temperatures soared across the United States, Switzerland, Germany, and Italy. The night sky was alight over much of the western US as <a href="#" class="liteable">wildfires scorched tinder dry mountain slopes</a> and raged in southwest France, Spain, Italy and Croatia. Crops planted during the record warm spring now <a href="#" class="liteable">withered under the dry summer sky</a> of the midwest United States. By late summer drought gripped much of the United States. Wheat prices soared to new heights after the Russian crop failed. <a href="#" class="liteable">"Super storm" Sandy</a> struck the eastern seaboard of the United States in late October leaving billions of dollars in damage. Newscasters asked "What's up with the climate? Is this the new normal?" NOAA scientists warned that Earth's heat balance was tipping out of balance.</p>
 				<p>The Earth System seeks a state of equilibrium where inputs of mass and energy are balanced by outputs. Extreme, or at least out of the ordinary events are likely to occur. Uncommon weather patterns, migratory birds returning early and flowers blooming sooner each year herald a change in climate.The physical geography of Earth reflects the patterns of energy that drive environmental processes. An understanding of the global variations in energy and heat explains much about the current and future physical geography of Earth.</p>
 			</div>
@@ -39,55 +39,42 @@
     <script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery.touchSwipe.min.js"></script>
 	<script src="js/jquery-ui-1.10.2.custom.js"></script>
-    <script src="js/neff-structure.js"></script>    
     <script src="js/toc-structure.js"></script>    
-    <script src="js/neff-master.js"></script>    
-    <script src="js/d3.v2.min.js"></script>
+    <script src="js/eCourse-master.js"></script>    
+    <script src="js/d3.v3.min.js"></script>
     <script src="js/widgets.js"></script>
+    <script src="js/widget-callouts.js"></script>
+    <script src="js/eventmanager.js"></script>
+
 <script>
 
-var svg0 = new MakeSVGContainer(
-	{ node: d3.select("#widgetTarget0"),
-	maxWid: 480,
-	maxHt: 400
-	}
-);
- 
-var axes0 = new MakeAxes(svg0,{
-	id: 0,
-	xPosPerc: 0, yPosPerc:0,
-	xPerc: 1, yPerc: 1,//full height and width
-	xscale: d3.scale.linear(),
-	yscale: d3.scale.linear(),
-	xaxisType: "linear", yaxisType: "linear",
-	xTicks: 0,
-	xOrient: "bottom",
-	yTicks: 0,
-	yOrient: "right",
-	xLabel: "caption",
-
-});
-
-var svg1 = new MakeSVGContainer(
-	{node: d3.select("#widgetTarget1"),
-	maxWid: 500,
-	maxHt: 180
-	}
-);
- 
-var axes1 = new MakeAxes(svg1,{
-	id: 1,
-	xPosPerc: 0, yPosPerc:0,
-	xPerc: 1, yPerc: 1,//full height and width
-	xscale: d3.scale.linear(),
-	yscale: d3.scale.linear(),
-	xaxisType: "linear",  yaxisType: "linear",
-	xTicks: 0,
-	xOrient: "bottom",
-	yTicks: 0,
-	yOrient: "right",
 	
-});
+//	<div id="widgetTarget1"><p>1. Multiple images with autoCarousel</p></div>
+	var svg1 = new MakeSVGContainer(
+		{node: d3.select("#widgetTarget0"),
+		maxWid: 400,
+		maxHt: 300
+		}
+	);
+	svg1.Axes({
+		xPosPerc: 0, yPosPerc:0, //top, left corner
+		xPerc: 1, yPerc: 1,//full height and width
+		xaxisType: "linear",
+		xOrient: "bottom",
+		xLabel: "counts",
+		yaxisType: "linear",
+		yOrient: "left",
+	});
+	
+	svg1.ScalableImage(
+		{images: [
+			{URI:'img/ch4_0_1.png', caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/multimedia/imagegallery/image_feature_1529.html"},
+				{URI:'img/ch4_1.jpg', caption: "The Whitewater-Baldy Complex wildfire."},
+				{URI:'img/ch4_2.jpg', caption: "Aerial image near downtown West Liberty, Kentucky."},
+				{URI:'img/ch4_4.jpg', caption: "Seaside Heights, NJ after Hurricane Sandy."}
+			]
+		}
+	);
  
 var images0 = new MakeScalableImage(axes0,
 	{images: [
@@ -101,7 +88,7 @@ var images0 = new MakeScalableImage(axes0,
 	}
 );
 
-var labels1 = new MakeCallouts (axes1,
+var labels1 = new Callouts (axes1,
 	{labels: 	
 	  [	
 		{content: "Deke Arndt of the National Climatic Data Center explains how weather and climate factors came together to fuel the devastating wildfire season of 2012 in 'The Heat is On'.",
@@ -120,7 +107,6 @@ var labels1 = new MakeCallouts (axes1,
 		xyPos:[0,1], width: axes1.innerWid
 		}
 	  ],
-	liteKey: [0,1,2,3,4]
 	}
 	
 );
