@@ -6,7 +6,7 @@
 	<meta content="eCourses Author, Title" name="description">
     <!-- Bootstrap -->
     <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
-	<link href="css/graphics_and_svg.css" rel="stylesheet">
+	<link href="css/widgets.css" rel="stylesheet">
 	<link href="css/learning-objective.css" rel="stylesheet">
 	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
  
@@ -285,13 +285,15 @@ for (i = 0; i < dataPts; i++)
 		});
 		
 	
-//	<div id="newBruce"><p>1. Graph with Labels</p></div>
+	//	<div id="newBruce"><p>1. Graph with Labels</p></div>
 	var newCont = new SVGContainer(
 		{node: d3.select("#newBruce"),
 		maxWid: 500,
 		maxHt: 400
 		}
 	);
+	
+	// configure the birth/death graph
 	var newGraph = new LineGraph({
 		id: "newHot",
 		type: "lines",
@@ -307,18 +309,20 @@ for (i = 0; i < dataPts; i++)
 						orientation: "left",}
 	});
 	
+	// draw newGraph in the container newCont
 	newCont.append(newGraph, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 	var newLabels = new LabelGroup(
-		{labels: 	
+		{id: "phaseLabel",
+		labels: 	
 		  [	
-			{content: "Pre-development", xyPos: [0,-.25], width: 100},
-			{content: "Developing",	xyPos:[15,-.25], width: 80},
-			{content: "Modernizing", xyPos:[28,-.25], width: 80},
-			{content:"Developed",	xyPos:[40,-.25], width: 70},
-			{content:"Post-development", xyPos:[51,-.25], width: 100},
+			{content: "Pre-development", xyPos: [0,-.25], width: 100, key: "pre"},
+			{content: "Developing",	xyPos:[15,-.25], width: 80, key: "Dev0"},
+			{content: "Modernizing", xyPos:[28,-.25], width: 80, key: "Modern"},
+			{content:"Developed",	xyPos:[40,-.25], width: 70, key: "Dev1"},
+			{content:"Post-development", xyPos:[51,-.25], width: 100, key: "Post"},
 		  ]
-		});
+		}, eventManager);
 		
 	// write the labels onto the graph in the local coordinates, inside the 
 	// data area
@@ -330,22 +334,22 @@ for (i = 0; i < dataPts; i++)
 		headers: ["Period", "Characteristics"],
 		show: "all",
 		textBits: [
-			{key: "one",
+			{key: "pre",
 			cols: ["Pre-development",
 	 			"High birth and death rates offset each other, so the population grows slowly."]
 			},
-			{key: "Developing",
+			{key: "Dev0",
 			cols: ["Developing","As a country's economy becomes stronger, medical care, clean water, and food are more available. The death rate declines and the birth rate remains high, so the population grows more rapidly." ]
 			},
-			{key: "Modernizing",
+			{key: "Modern",
 			cols: ["Modernizing", "Economic, educational, and social changes cause declines in the birth rate. Population growth starts to slow."]
 			},
-	 		{key: "Developed",
+	 		{key: "Dev1",
 			cols: ["Developed", "Birth and death rates fall to low levels, slowing population growth."]
 			},
-			{key: "Post-development",
+			{key: "Post",
 			cols: ["Post-development", "In highly developed countries, the birth rate is falling while the death rate is relatively constant. The population growth rate is negative and the population declines."]}]
-	});
+	}, eventManager);
 
 	phases.draw(d3.select("#phaseCall"));
 
@@ -492,14 +496,18 @@ for (i = 0; i < dataPts; i++)
 //events
 	
 // Handle changes of the label selection
-	eventManager.subscribe(svg5.selectedEventId,
-						   handleSelectionChanged);
+ 
 
 //Test: set the start highlight state of 0 index by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
-	handleSelectionChanged({labelIndex: "Thyroid"});
+handleSelectionChanged({labelIndex: "Post"});
 
+	
+	eventManager.subscribe(newLabels.selectedEventId,
+						   handleSelectionChanged);
+	eventManager.subscribe(phases.selectedEventId,
+						   handleSelectionChanged);
 	
 		
 	
@@ -521,8 +529,8 @@ for (i = 0; i < dataPts; i++)
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		labelLite(svg5,eventDetails.labelIndex);
-		endoCallouts.calloutSwap(eventDetails.labelIndex);
+		newLabels.labelLite(eventDetails.labelIndex);
+		phases.calloutSwap(eventDetails.labelIndex);
 		
 	}
 </script>

@@ -46,6 +46,7 @@
     <script src="js/jquery-ui-1.10.2.custom.js"></script>
 	<script src="js/toc-structure.js"></script>
 	<script src="js/eCourse-master.js"></script>
+    <script src="js/eventmanager.js"></script>
 	<script src="js/d3.v3.min.js"></script>
 
 	<!--script src="js/goog.base.js"></script>
@@ -57,6 +58,9 @@
     <script src="js/widget-labelgroup.js"></script>
 
 <script>
+
+	var eventManager = new EventManager();
+
 	var testData = [
 			{ x:    0, y: 0 },
 			{ x:    5, y: 5 },
@@ -466,13 +470,13 @@
 			type: "numbered",
 			labels: 
 			[
-				{ content: "exponential turning point",	xyPos: [1960, 3], width: 100},
-				{ content: "steep growth",	xyPos: [1980, 4.5],	width: 100	},
-				{ content: "present day" ,	xyPos: [2013, 7],	width: 100	},
+				{ content: "historical data",	xyPos: [1960, 3], width: 100},
+				{ content: "predicted",	xyPos: [2011, 7],	width: 100	},
+				{ content: "threshold" ,	xyPos: [1980, 9],	width: 100	},
 			]
 		};
-
-	var labelGroup80 = new LabelGroup(lblGrpConfig80);
+	// create a label group that emits events
+	var labelGroup80 = new LabelGroup(lblGrpConfig80, eventManager);
 
 	cntr[n] = new SVGContainer(config[n].cntr);
 	lineGraph[n] = new LineGraph(config[n].lg);
@@ -483,13 +487,38 @@
 		type: "line"
 	});
 	
+	// draw the lineGraph in the container
+	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, 		
+	widthPercent: 1});
 	
-	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-	
+	// draw the legend and the labels on the line graph
 	lineGraph[n].append([labelGroup80, legLines]);
 
-    var litekey = [0,1,2];
- 
+	eventManager.subscribe(labelGroup80.selectedEventId,
+						   handleSelectionChanged);
+	
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		labelGroup80.labelLite(eventDetails.labelIndex);
+		//phases.calloutSwap(eventDetails.labelIndex);
+		
+	}
 
 </script>
 </body>
