@@ -211,18 +211,17 @@ LabelGroup.prototype.draw = function(container, size)
 	this.labelCollection = labelsContainer.selectAll("g.label").data(this.labels);
 	
 	// on the enter selection (create new ones from data labels) make
-	// the groups, and class them, and id them.  
-	
+	// the groups. This is useful in case you want to pack more than just the
+	// text label into the graup with the same relative positioning.  
 	this.labelCollection.enter()
-		.append("g")
-			.attr("class", "label")
-				// name it so it can be manipulated or highlighted later
-			.attr("id", function (d, i) { 
+		.append("g");
+		
+	// autokey entries which have no key with the data index
+	this.labelCollection.each(function (d, i) { 
 					// if there is no key assigned, make one from the index
 					d.key = 'key' in d ? d.key : i;
-					return that.lastdrawn.labelsId + d.key; 
 					});
-	
+					
 	// move the labels into position, but do it on the data collection, which 
 	// includes both the update and the enter selections, so you can drag them around
 	// on a suitable event or redraw.
@@ -248,13 +247,20 @@ LabelGroup.prototype.draw = function(container, size)
 				// in the way it does for callouts -lb
 				.html(function (d) { return d.content; }); //make the label
 
+	// bullets type just puts big black circle markers on key areas of a diagram
+	// a precursor to hotspot answertypes
 	if (this.type == "bullets" || this.type == "numbered")
 	{
 		this.labelCollection.append("circle")
-			.attr("class", "steps")
+			.attr("class", "numSteps")
 			.attr("r", 16).attr("cx", 0).attr("cy", 0);
 	}
 
+	// numbered bullets are what PM is referring to as stepped diagrams,
+	// work with text labels or without, but there's a really stupid rendering
+	// bug in Chrome when highlighting circles or anything that overlaps the 
+	// foreign object. Recommend using either numbers or text labels. -lb
+	
 	if (this.type == "numbered")
 	{
 		this.labelCollection.append("text")
@@ -270,7 +276,6 @@ LabelGroup.prototype.draw = function(container, size)
 					that.eventManager.publish(that.selectedEventId, {labelIndex:d.key});
 				});
 
-	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.label");
 }; // end of LabelGroup.draw()
 
 /* **************************************************************************
@@ -303,52 +308,35 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
  * @param {string|number}	labelIndex	-The key associated with the label(s) to be highlighted.
  *
  ****************************************************************************/
-/* ********************************************************************
-* calloutSwap                                                     *//**
-*
-* Updates the Callouts widget to display the text that matches 
-* the currently selected index, lite.
-*
-* @param {string}	lite	the key specifying which of a
-*							collection to lite up
-*
-* NOTES: this is currently all based on members of a collection having
-* ID's that have the litekey or index appended to them after the ID.
-* Handles either the one-at-a-time callOuts display or the table 
-* row highlight display.
-***********************************************************************/
+
 
 LabelGroup.prototype.labelLite = function (liteKey)
 {
 	console.log("TODO: fired LabelLite log " + liteKey);
-	var that = this;
 	
-	// return all styles to normal on all the labels
-	this.lastdrawn.labelCollection.selectAll(".descLabel")
+	// return all styles to normal on all the labels and numbers
+	this.labelCollection.selectAll(".descLabel")
 		.classed('lit', false);
-	this.lastdrawn.labelCollection.selectAll("circle")
-		.attr("class","steps");
-	// Set the findKey function based on whether the key is an index or a data key string.
+		//In the case of numbered type, turn all the text back to white, and circles to black
+	this.labelCollection.selectAll("text")
+		.style("fill", "white");
+	this.labelCollection.selectAll("circle")
+		.attr("class","numSteps");
 	
+	
+	// create a filter function that will match all instances of the liteKey
+	// then find the set that matches
 	var matchesLabelIndex = function (d, i) { return d.key === liteKey; };
 	
+	var set = this.labelCollection.filter(matchesLabelIndex);
 	
-	var set = this.lastdrawn.labelCollection.filter(matchesLabelIndex);
-	//set.classed('lit', true);
-	
-	
-	
-	//In the case of numbered type, turn all the text back to white, and circles to black
-	this.lastdrawn.labelCollection.selectAll("text").style("fill", "white");
-	this.lastdrawn.labelCollection.selectAll("circle").attr("class", "steps");
-		
-	//highlight the selected label(s)
+	// if any are found, highlight the selected label(s)
 	if (set[0][0]) 
 	{
 		// for numbered labels, highlight the selected circle and any others
 		// with the same liteKey
 		set.selectAll("circle")
-			.attr("class", "stepsLit");
+			.attr("class", "numStepsLit");
 		set.selectAll("text").style("fill", "#1d95ae");
 		
 		set.selectAll(".descLabel")
