@@ -128,13 +128,13 @@ table.questionTable td {
   stroke-width: 1px;
 }
 
-.steps {
+.numSteps {
  fill: black;
  stroke: white;
  stroke-width:2;
 }
 
-.stepsLit {
+.numStepsLit {
  fill: #e3effe;
  stroke: #1d95ae;
  stroke-width:2;
