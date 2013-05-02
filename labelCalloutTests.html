@@ -6,7 +6,7 @@
 	<meta content="eCourses Author, Title" name="description">
     <!-- Bootstrap -->
     <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
-	<link href="css/graphics_and_svg.css" rel="stylesheet">
+	<link href="css/widgets.css" rel="stylesheet">
 	<link href="css/learning-objective.css" rel="stylesheet">
 	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
  
@@ -18,6 +18,8 @@
                 <h2 class="setTitle"></h2>
 				<div id="widgetTarget0"><p>0. Single image with labels</p></div>
 				<div id="widgetTarget1"><p>1. Line Graph with area markers and labels</p></div>
+				<div id="newBruce"><p>1n. Line Graph with labels and callouts (events)</p></div>
+				<div id="phaseCall"></div>
 				
 			</div>
 			<div class="span6 rightCol">
@@ -196,7 +198,7 @@ for (i = 0; i < dataPts; i++)
 }
 		
 	
-	//<div id="widgetTarget0"><p>0. Single bar graph</p></div>
+	//<div id="widgetTarget0"><p>0. Labels on an Image</p></div>
 	
 	var svg0 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget0"),
@@ -283,7 +285,73 @@ for (i = 0; i < dataPts; i++)
 		});
 		
 	
+	//	<div id="newBruce"><p>1. Graph with Labels</p></div>
+	var newCont = new SVGContainer(
+		{node: d3.select("#newBruce"),
+		maxWid: 500,
+		maxHt: 400
+		}
+	);
+	
+	// configure the birth/death graph
+	var newGraph = new LineGraph({
+		id: "newHot",
+		type: "lines",
+		Data: [birth,death,popGrowth, [{x:0,y:-0.5}]],
+		xAxisFormat: {
+						type: "linear",
+						ticks: 0,
+						orientation: "bottom",
+						label: "Time",	},
+		yAxisFormat: {
+						type: "linear",
+						ticks: 0,
+						orientation: "left",}
+	});
+	
+	// draw newGraph in the container newCont
+	newCont.append(newGraph, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
+	var newLabels = new LabelGroup(
+		{id: "phaseLabel",
+		labels: 	
+		  [	
+			{content: "Pre-development", xyPos: [0,-.25], width: 100, key: "pre"},
+			{content: "Developing",	xyPos:[15,-.25], width: 80, key: "Dev0"},
+			{content: "Modernizing", xyPos:[28,-.25], width: 80, key: "Modern"},
+			{content:"Developed",	xyPos:[40,-.25], width: 70, key: "Dev1"},
+			{content:"Post-development", xyPos:[51,-.25], width: 100, key: "Post"},
+		  ]
+		}, eventManager);
+		
+	// write the labels onto the graph in the local coordinates, inside the 
+	// data area
+	newGraph.append(newLabels);
+	
+	//make a set of callouts in a table that lights up with the labels.
+	var phases = new Callouts ({
+		id: "phaseDesc",
+		headers: ["Period", "Characteristics"],
+		show: "all",
+		textBits: [
+			{key: "pre",
+			cols: ["Pre-development",
+	 			"High birth and death rates offset each other, so the population grows slowly."]
+			},
+			{key: "Dev0",
+			cols: ["Developing","As a country's economy becomes stronger, medical care, clean water, and food are more available. The death rate declines and the birth rate remains high, so the population grows more rapidly." ]
+			},
+			{key: "Modern",
+			cols: ["Modernizing", "Economic, educational, and social changes cause declines in the birth rate. Population growth starts to slow."]
+			},
+	 		{key: "Dev1",
+			cols: ["Developed", "Birth and death rates fall to low levels, slowing population growth."]
+			},
+			{key: "Post",
+			cols: ["Post-development", "In highly developed countries, the birth rate is falling while the death rate is relatively constant. The population growth rate is negative and the population declines."]}]
+	}, eventManager);
+
+	phases.draw(d3.select("#phaseCall"));
 
 	//	<div id="widgetTarget50"><p>Labels in grid</p></div>
 	var cntrConfig50 = {
@@ -428,14 +496,18 @@ for (i = 0; i < dataPts; i++)
 //events
 	
 // Handle changes of the label selection
-	eventManager.subscribe(svg5.selectedEventId,
-						   handleSelectionChanged);
+ 
 
 //Test: set the start highlight state of 0 index by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
-	handleSelectionChanged({labelIndex: "Thyroid"});
+handleSelectionChanged({labelIndex: "Post"});
 
+	
+	eventManager.subscribe(newLabels.selectedEventId,
+						   handleSelectionChanged);
+	eventManager.subscribe(phases.selectedEventId,
+						   handleSelectionChanged);
 	
 		
 	
@@ -457,8 +529,8 @@ for (i = 0; i < dataPts; i++)
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		labelLite(svg5,eventDetails.labelIndex);
-		endoCallouts.calloutSwap(eventDetails.labelIndex);
+		newLabels.labelLite(eventDetails.labelIndex);
+		phases.calloutSwap(eventDetails.labelIndex);
 		
 	}
 </script>

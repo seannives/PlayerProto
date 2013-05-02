@@ -75,7 +75,7 @@ var userId, userName;
 })(jQuery, document);
 
 
- // Utility Function for Image Beacons to track interactions
+ /* Utility Function for Image Beacons to track interactions
     beacon = function(opts){    
     // Make sure we have a base object for opts    
     opts = opts || {};    
@@ -102,7 +102,7 @@ var userId, userName;
 	 getPageId = function() {
        return  window.location.pathname;	   
 	 }
-	
+	*/
 //function to show the popover
 function showPopover(target, it) {
 	var top = target.position().top,
@@ -585,11 +585,11 @@ $(document).ready(function(){
         });
 
         
-// Beacon tracking
+/* Beacon tracking
 
        beacon({ url : 'http://'+window.location.host+'/scripts/track', vars : { 'id':getPageId(), 'name':userId.replace(/"/g,''), 'itype':'p', 'screenSize':screen.width+'x'+screen.height, 'rand':Math.floor((Math.random()*100000)+1) }});
 	   //console.log(userId.replace('"',''));
-
+*/
 
     } // end if(thisTier)
 

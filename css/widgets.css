@@ -198,7 +198,11 @@ table.questionTable td {
   font-size: .8em;
   text-align:center;
 }
-
+.descLabel.lit {
+	color: #1d95ae;
+	font-weight: 600;
+	background-color: #e3effe;
+}
 .areaMarker {
   fill: #2C6CB8;
   opacity: .3; }

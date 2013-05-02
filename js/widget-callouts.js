@@ -21,7 +21,8 @@
 {
 var callOutConfig = {
 		id: "callme",
-		type: "all",
+		show: "all",
+		type: "numbered",
 		headers: ["Nonsense","Reactor steps"],
 		textBits: [{
 			key: "foo",

@@ -221,7 +221,7 @@ var Data = [lineData,projected,nineB];
 	var cont1 = new SVGContainer({
 			node: d3.select("#graph0"),
 			maxWid: 500,
-			maxHt: 300
+			maxHt: 320
 		});
 		
 	var lines = new LineGraph({
@@ -233,7 +233,7 @@ var Data = [lineData,projected,nineB];
 						   orientation: "bottom",
 						   label: "Year" },
 			yAxisFormat: { type: "linear",
-						   orientation: "right",
+						   orientation: "left",
 						   label: "Human Population (Billions)",
 						    ticks: 7,
 						    },

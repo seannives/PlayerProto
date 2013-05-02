@@ -40,7 +40,8 @@
  *						xyPos	-An array containing the x,y data coordinates for the
  *								 top left corner of the label
  * @property {number}	width	-The pixel width of the label
- *								 @todo we need a better way to deal w/ the width, than hard-coding it here. -lb
+ *								 @todo we need a better way to deal w/ the width, 
+ *									than hard-coding it here. -lb
  * @property {string|undefined}
  *						key		-optional string used to reference the label
  *								 in order to manipulate it (such as highlight it).
@@ -146,7 +147,7 @@ function LabelGroup(config, eventManager)
 		{
 			container: null,
 			size: {height: 0, width: 0},
-			labelsId: 'labels',
+			labelsId: this.id + 'Labels',
 			xScale: null,
 			yScale: null,
 		};
@@ -205,19 +206,34 @@ LabelGroup.prototype.draw = function(container, size)
 	merge.append("feMergeNode").attr("in", "offsetBlur");
 	merge.append("feMergeNode").attr("in", "SourceGraphic");
 
-	var labelCollection = labelsContainer.selectAll("g.label").data(this.labels);
-	labelCollection.enter()
+	// bind the label group collection to the label data
+	// the collection is used to highlight and unhighlight
+	this.labelCollection = labelsContainer.selectAll("g.label").data(this.labels);
+	
+	// on the enter selection (create new ones from data labels) make
+	// the groups, and class them, and id them.  
+	
+	this.labelCollection.enter()
 		.append("g")
 			.attr("class", "label")
 				// name it so it can be manipulated or highlighted later
-			.attr("id", function (d, i) { return that.id + "_label_" + ('key' in d ? d.key : i); })
-			.attr("transform",
-				  function (d, i) 
-				  {
-					  return "translate(" + that.lastdrawn.xScale(d.xyPos[0]) + "," + that.lastdrawn.yScale(d.xyPos[1]) + ")";
+			.attr("id", function (d, i) { 
+					// if there is no key assigned, make one from the index
+					d.key = 'key' in d ? d.key : i;
+					return that.lastdrawn.labelsId + d.key; 
+					});
+	
+	// move the labels into position, but do it on the data collection, which 
+	// includes both the update and the enter selections, so you can drag them around
+	// on a suitable event or redraw.
+	this.labelCollection.attr("transform", function (d, i)  {
+					return "translate(" + that.lastdrawn.xScale(d.xyPos[0]) + "," 
+						+ that.lastdrawn.yScale(d.xyPos[1]) + ")";
 				  });
 
-	labelCollection.append("foreignObject")
+	// write each label text as a foreignObject, to get wrapping and full HTML
+	// rendering support
+	this.labelCollection.append("foreignObject")
 		.attr("x", 0)
 		.attr("y", 0)
 		.attr("width", function (d) { return d.width; })
@@ -227,30 +243,31 @@ LabelGroup.prototype.draw = function(container, size)
 			//this interior body shouldn't inherit margins from page body
 			.append("div")
 				.attr("class", "descLabel")
-				//.style("visibility",function(d,i) { return d.viz;})
-				//I punted on the show/hide thing, but it could come back
+				// .style("visibility",function(d,i) { return d.viz;})
+				// I punted on the show/hide thing, but it could come back 
+				// in the way it does for callouts -lb
 				.html(function (d) { return d.content; }); //make the label
 
 	if (this.type == "bullets" || this.type == "numbered")
 	{
-		labelCollection.append("circle")
+		this.labelCollection.append("circle")
 			.attr("class", "steps")
 			.attr("r", 16).attr("cx", 0).attr("cy", 0);
 	}
 
 	if (this.type == "numbered")
 	{
-		labelCollection.append("text")
+		this.labelCollection.append("text")
 			.style("fill", "white")
 			.attr("text-anchor", "middle")
 			.attr("alignment-baseline", "middle")
 			.text(function (d, i) { return i + 1; });
 	}
 	
-	labelCollection.on('click',
+	this.labelCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex: ('key' in d ? d.key : i)});
+					that.eventManager.publish(that.selectedEventId, {labelIndex:d.key});
 				});
 
 	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.label");
@@ -286,63 +303,64 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
  * @param {string|number}	labelIndex	-The key associated with the label(s) to be highlighted.
  *
  ****************************************************************************/
-LabelGroup.prototype.labelLite = function (labelIndex)
+/* ********************************************************************
+* calloutSwap                                                     *//**
+*
+* Updates the Callouts widget to display the text that matches 
+* the currently selected index, lite.
+*
+* @param {string}	lite	the key specifying which of a
+*							collection to lite up
+*
+* NOTES: this is currently all based on members of a collection having
+* ID's that have the litekey or index appended to them after the ID.
+* Handles either the one-at-a-time callOuts display or the table 
+* row highlight display.
+***********************************************************************/
+
+LabelGroup.prototype.labelLite = function (liteKey)
 {
-	console.log("TODO: fired LabelLite log");
+	console.log("TODO: fired LabelLite log " + liteKey);
+	var that = this;
 	
 	// return all styles to normal on all the labels
-	this.lastdrawn.labelCollection.classed('lit', false);
-	
+	this.lastdrawn.labelCollection.selectAll(".descLabel")
+		.classed('lit', false);
+	this.lastdrawn.labelCollection.selectAll("circle")
+		.attr("class","steps");
 	// Set the findKey function based on whether the key is an index or a data key string.
-	if (typeof labelIndex == "number")
-	{
-		var matchesLabelIndex = function (d, i) { return i == labelIndex; };
-	}
-	else
-	{
-		var matchesLabelIndex = function (d, i) { return 'key' in d ? d.key === labelIndex : false; };
-	}
 	
-	var labels2lite = this.lastdrawn.labelCollection.filter(matchesLabelIndex);
-	labels2lite.classed('lit', true);
+	var matchesLabelIndex = function (d, i) { return d.key === liteKey; };
 	
-	//TODO what I need is a better way to know which collection
-	//of labels to turn off. Doing it by class seems lame.
-	allLabels
-		.style("color", null)
-		//setting a style to null removes the special
-		//style property from the tag entirely.
-		//TODO: make the lit and unlit classes
-		.style("font-weight", null)
-		.style("background-color", "");
-
-	var allBullets = d3.selectAll("#" + Obj.labels.id);
-	//turn all the text back to white, and circles to black
-	allBullets.selectAll("text").style("fill", "white");
-	allBullets.selectAll("circle").attr("class", "steps");
+	
+	var set = this.lastdrawn.labelCollection.filter(matchesLabelIndex);
+	//set.classed('lit', true);
+	
+	
+	
+	//In the case of numbered type, turn all the text back to white, and circles to black
+	this.lastdrawn.labelCollection.selectAll("text").style("fill", "white");
+	this.lastdrawn.labelCollection.selectAll("circle").attr("class", "steps");
 		
 	//highlight the selected label(s)
-	
-	var setLabels = d3.selectAll("#" + Obj.labels.id + lite);
-	if (setLabels) 
+	if (set[0][0]) 
 	{
-		setLabels.selectAll("circle")
+		// for numbered labels, highlight the selected circle and any others
+		// with the same liteKey
+		set.selectAll("circle")
 			.attr("class", "stepsLit");
-		//highlight the one selected circle and any others
-		//with the same lite index
-		setLabels.selectAll("text").style("fill", "#1d95ae");
-		setLabels.selectAll(".descLabel")
+		set.selectAll("text").style("fill", "#1d95ae");
+		
+		set.selectAll(".descLabel")
 			//.transition().duration(100)
-			// this renders badly from Chrome refresh bug
-			//we'll have to figure out how to get transitions
-			//back in - maybe just foreign objects?
-			.style("color", "#1d95ae")
-			.style("font-weight", "600")
-			.style("background-color", "#e3effe");
+			// TODO: transitions render badly from Chrome refresh bug
+			// we'll have to figure out how to get transitions
+			// back in - maybe just foreign objects?
+			.classed('lit', true);
 	} 
 	else
 	{
-		console.log("Invalid key. No label " + key);
+		console.log("No key '" + liteKey + "' in Labels group " + this.id );
 	}
 }; // end of LabelGroup.labelLite()
 
