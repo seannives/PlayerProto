@@ -104,6 +104,7 @@ function Image(config, eventManager)
 		{
 			container: null,
 			size: {height: 0, width: 0},
+			widgetGroup: null,
 		};
 } // end of Image constructor
 
@@ -134,10 +135,11 @@ Image.prototype.draw = function(container, size)
 		.attr("id", this.id);
 
 	// Rect for the background of the viewbox in case the image doesn't fill it
-	imageGroup.append("rect")
-		.attr("width", size.width)
-		.attr("height", size.height)
-		.attr("fill", "#efefef");	// TODO: move this to css selector: 'g.widgetImage>rect' -mjl
+	imageGroup
+		.append("rect")
+			.attr("width", size.width)
+			.attr("height", size.height)
+			.attr("fill", "#efefef");	// TODO: move this to css selector: 'g.widgetImage>rect' -mjl
 		
 	imageGroup
 		.append("image")
@@ -147,6 +149,104 @@ Image.prototype.draw = function(container, size)
 			.attr("height", size.height)
 			.append("desc")
 				.text(this.caption);
+				
+	this.widgetGroup = imageGroup;
 
 }; // end of Image.draw()
+
+/* **************************************************************************
+ * Image.redraw                                                         *//**
+ *
+ * Redraw the image as it may have been changed (new URI or caption). It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+Image.prototype.redraw = function ()
+{
+	// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
+	//       by doing nothing? -mjl
+	var image = this.widgetGroup.select("image");
+	image.attr("xlink:href", this.URI);
+	
+	var desc = image.select("desc");
+	desc.text(this.caption);
+};
+
+/* **************************************************************************
+ * Image.changeImage                                                    *//**
+ *
+ * Change the URI of this Image and/or the caption. After changing the
+ * image it should be redrawn.
+ *
+ * @param	{?string}	URI			-The new URI for the image. If null, the URI
+ *									 will not be changed.
+ * @param	{string=}	opt_caption	-The new caption for the image.
+ *
+ ****************************************************************************/
+Image.prototype.changeImage = function (URI, opt_caption)
+{
+	if (URI)
+	{
+		this.URI = URI;
+	}
+	
+	if (opt_caption !== undefined)
+	{
+		this.caption = opt_caption;
+	}
+};
+
+/* **************************************************************************
+ * CaptionedImage                                                       *//**
+ *
+ * The CaptionedImage widget draws an image in an SVGContainer with a caption.
+ *
+ * @constructor
+ * @implements {IWidget}
+ *
+ * @param {Object}		config			-The settings to configure this Image
+ * @param {string}		config.id		-String to uniquely identify this Image.
+ * @param {Image}		config.image	-Image widget to be drawn w/ a caption.
+ * @param {string}		config.captionPosition
+ *										-Where the caption should be placed in
+ *										 relation to the image.
+ *
+ ****************************************************************************/
+function CaptionedImage(config, eventManager)
+{
+	/**
+	 * A unique id for this instance of the captioned image widget
+	 * @type {string}
+	 */
+	this.id = config.id;
+
+	/**
+	 * The Image which is to be drawn with a caption.
+	 * @type {Image}
+	 */
+	this.image = config.image;
+	 
+	 
+	/**
+	 * Where the caption should be placed in relation to the image.
+	 * @type {string}
+	 */
+	this.captionPosition = config.captionPosition;
+	 
+	/**
+	 * The event manager to use to publish (and subscribe to) events for this widget
+	 * @type {EventManager}
+	 */
+	this.eventManager = eventManager;
+
+	/**
+	 * Information about the last drawn instance of this image (from the draw method)
+	 * @type {Object}
+	 */
+	this.lastdrawn =
+		{
+			container: null,
+			size: {height: 0, width: 0},
+		};
+} // end of CaptionedImage constructor
 
