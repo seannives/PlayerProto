@@ -208,13 +208,14 @@ LabelGroup.prototype.draw = function(container, size)
 
 	// bind the label group collection to the label data
 	// the collection is used to highlight and unhighlight
-	this.labelCollection = labelsContainer.selectAll("g.label").data(this.labels);
+	this.labelCollection = labelsContainer.selectAll("g.labels").data(this.labels);
 	
 	// on the enter selection (create new ones from data labels) make
 	// the groups. This is useful in case you want to pack more than just the
 	// text label into the graup with the same relative positioning.  
 	this.labelCollection.enter()
-		.append("g");
+		.append("g")
+		.attr("class","labels");
 		
 	// autokey entries which have no key with the data index
 	this.labelCollection.each(function (d, i) { 
