@@ -176,6 +176,62 @@ Rect.makeRect = function (definedBy)
 	return new Rect(left, top, width, height);
 }; // end Rect.makeRect
 
+/* **************************************************************************
+ * Size                                                                 *//**
+ *
+ * Size defines a 2 dimensional area. It has a height and a width in some
+ * common unit such as pixels.
+ *
+ * @param {number}	height	-The vertical dimension in the common units
+ * @param {number}	width	-The horizontal dimension in the common units
+ ****************************************************************************/
+function Size(height, width)
+{
+	/**
+	 * The number of units that measures the vertical dimension.
+	 * @type {number}
+	 */
+	this.height = height;
+
+	/**
+	 * The number of units that measures the horizontal dimension.
+	 * @type {number}
+	 */
+	this.width = width;
+}
+ 
+/* **************************************************************************
+ * Size.matchRatioWithHeight                                            *//**
+ *
+ * Return a Size with the specified height whose aspect ratio is the same as
+ * that of the given size.
+ *
+ * @param {number}	desiredHeight	-The vertical dimension of the Size to be returned.
+ * @param {Size}	desiredRatio	-A Size whose ratio should be preserved in the returned Size.
+ * @return {Size}
+ ****************************************************************************/
+Size.matchRatioWithHeight = function (desiredHeight, desiredRatio)
+{
+	return {height: desiredHeight,
+			width: desiredRatio.width * desiredHeight / desiredRatio.height};
+};
+
+/* **************************************************************************
+ * Size.matchRatioWithWidth                                             *//**
+ *
+ * Return a Size with the specified width whose aspect ratio is the same as
+ * that of the given size.
+ *
+ * @param {number}	desiredWidth	-The horizontal dimension of the Size to be returned.
+ * @param {Size}	desiredRatio	-A Size whose ratio should be preserved in the returned Size.
+ * @return {Size}
+ ****************************************************************************/
+Size.matchRatioWithWidth = function (desiredWidth, desiredRatio)
+{
+	return {height: desiredRatio.height * desiredWidth / desiredRatio.width,
+			width: desiredWidth};
+};
+
 
 /* **************************************************************************
  * Interfaces
@@ -403,7 +459,7 @@ SVGContainer.prototype.append = function(svgWidgets, location)
 SVGContainer.prototype.append_one_ = function(svgWidget, location)
 {
 	// create a group for the widget to draw into that we can then position
-	var g = this.svgObj.append('g').attr("class","widget");
+	var g = this.svgObj.append('g').attr("class", "widget");
 	var h = d3.round(location.heightPercent * this.maxHt);
 	var w = d3.round(location.widthPercent * this.maxWid);
 	svgWidget.draw(g, {height: h, width: w});
@@ -411,7 +467,10 @@ SVGContainer.prototype.append_one_ = function(svgWidget, location)
 	// position the widget
 	var top = d3.round(location.topPercentOffset * this.maxHt);
 	var left = d3.round(location.leftPercentOffset * this.maxWid);
-	g.attr('transform', 'translate(' + left + ',' + top + ')');
+	if (top !== 0 || left !== 0)
+	{
+		g.attr('transform', 'translate(' + left + ',' + top + ')');
+	}
 };
 
 /**
