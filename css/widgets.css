@@ -20,11 +20,11 @@
   font: bold italic 1em Times, serif;
   border: 0;
   font-size: 155%;
-  padding: 0; }
-  .math sup {
-    font-size: 80%;
-    position: relative;
-    top: -4px; }
+  padding: 0;
+}
+.math sup {
+	font-size: 80%;
+}
 
 .assessment {
   margin: 30px 0em; }
