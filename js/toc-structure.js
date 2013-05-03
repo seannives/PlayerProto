@@ -99,9 +99,9 @@ var bookConfig = {
             },
 			  {
                 type: "objective",
-                url: "mapTests.html",
+                url: "sketchTests.html",
                 id: "n.2.x",
-                title: "Map and Contour Plot Tests (blank)"
+                title: "Sketch Tests"
             },
             ]
         },

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+ 	<title class="setTitle"></title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="eCourses Author, Title" name="description">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
+	<link href="css/widgets.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+ 
+    </head>
+	<body>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+                <h2 class="setTitle"></h2>
+				<div id="rectTest"><p>0. Rectangle 	{ shape: "rectangle",	xyPos: [ 0.25, .75], width: 0.5, height: 0.5 } half the width and height of the box, starting at left edge halfway up.
+	</p></div>
+				<div id="circTest"><p>1. Three concentric circles centered on space { shape: "circle",	xyPos: [0.5, 0.5], radius: .5 },</p></div>
+				<div id="molecule"><p>2. hexagon and lines</p></div>
+				 
+				
+			</div>
+			<div class="span6 rightCol">
+				<div id="hotSpot"><p>Click the shapes to lite the label</p></div>
+                <div id="redraw"><p>Slide the size</p></div>
+			</div>
+		</div>
+	</div>
+
+
+	
+    <script src="js/jquery-latest.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.touchSwipe.min.js"></script>
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v3.min.js"></script>
+
+	<script src="js/eventmanager.js"></script>
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
+	<script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-callouts.js"></script>
+	<script src="js/widget-sketch.js"></script>
+	
+	<script src="js/widgets.js"></script>
+<script>
+
+	var eventManager = new EventManager();
+
+
+// Case 0 rectangle
+var svgRect = new SVGContainer(
+		{node: d3.select("#rectTest"),
+		maxWid: 200,
+		maxHt: 200
+		}
+	);
+	
+var rect0 = new Sketch({
+			id: "rect0",
+			drawShape: 	
+			[	
+				{ shape: "rectangle",	xyPos: [ 0.25, 0.75], width: 0.5, height: 0.5 },
+			],
+		});
+svgRect.append(rect0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+// Case 1 circle
+var svgCirc = new SVGContainer(
+		{node: d3.select("#circTest"),
+		maxWid: 200,
+		maxHt: 200
+		}
+	);
+	
+var circ0 = new Sketch({
+			id: "circle0",
+			drawShape: 	
+			[	
+				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .5 },
+				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .25 },
+				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .15 },
+
+			],
+		});
+svgCirc.append(circ0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+// Case 2 circle
+var svgMole = new SVGContainer(
+		{node: d3.select("#molecule"),
+		maxWid: 200,
+		maxHt: 200
+		}
+	);
+	
+var mole = new Sketch({
+			id: "carbon",
+			drawShape: 	
+			[	
+				{ shape: "hexagon",	xyPos: [0, 0.5], radius: .25 },
+				{ shape: "line",	xyPos: [0.25, 0.5], xyEnd: [0.5,1] },
+
+			],
+		});
+svgMole.append(mole, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+
+
+
+//Test: set the start highlight state of 0 index by calling the 
+//handler with a hard-set index of 0.  This should result in the
+//first label getting highlighted and the first callout being displayed.
+//handleSelectionChanged({labelIndex: "Post"});
+
+	
+//eventManager.subscribe(newLabels.selectedEventId, handleSelectionChanged);
+	
+		
+	
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		////newLabels.labelLite(eventDetails.labelIndex);
+		//phases.calloutSwap(eventDetails.labelIndex);
+		
+	}
+</script>
+</body>
+</html>

@@ -78,6 +78,25 @@ table.questionTable td {
 
 .wrong {
   color: #8C1717; }
+  
+  
+/* sketches
+================================================== */
+
+.sketch {
+	fill: none;
+	stroke: #666;
+	stroke-width: 1;
+}
+
+.sketch.lit {
+	fill: #e3effe;
+	stroke: #1d95ae;
+	stroke-width:2;
+	opacity: 0.5;
+}
+
+
 
 /* title and captions and feedback messages
 ================================================== */
