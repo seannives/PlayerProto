@@ -1,5 +1,5 @@
 /* **************************************************************************
- * $Workfile:: widget-image.js                                         $
+ * $Workfile:: widget-image.js                                              $
  * **********************************************************************//**
  *
  * @fileoverview Implementation of the Image widget.
