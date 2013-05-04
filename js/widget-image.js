@@ -4,10 +4,10 @@
  *
  * @fileoverview Implementation of the Image widget.
  *
- * The Image widget draws a group of labels at specified locations
- * in an SVGContainer.
+ * The Image widget draws a scaled image in an SVGContainer.
+ * The CaptionedImage widget draws a caption next to an Image.
  *
- * Created on		April 23, 2013
+ * Created on		May 04, 2013
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
@@ -15,9 +15,10 @@
  *
  * **************************************************************************/
 
-// Sample Image constructor configuration
+// Sample configuration objects for classes defined here
 (function()
 {
+	// config for Image class
 	var imageConfig =
 		{
 			id: "img1",
@@ -26,6 +27,15 @@
 			preserveAspectRatio: "xMinYMin meet",
 			actualSize: {height: 960, width: 1280}
 		};
+	
+	// config for CaptionedImage class
+	var cimgConfig =
+		{
+			id: "cimg1",
+			image: new Image(imageConfig),
+			captionPosition: "below"
+		};
+
 });
 
 /* **************************************************************************
@@ -127,8 +137,6 @@ Image.prototype.draw = function(container, size)
 	this.lastdrawn.URI = this.URI;
 	this.lastdrawn.caption = this.caption;
 	
-	var that = this;
-
 	// make a group to hold the image
 	var imageGroup = container.append("g")
 		.attr("class", "widgetImage")
@@ -197,6 +205,26 @@ Image.prototype.changeImage = function (URI, opt_caption)
 };
 
 /* **************************************************************************
+ * Image.setScale                                                       *//**
+ *
+ * Called to preempt the normal scale definition which is done when the
+ * widget is drawn. This is usually called in order to force one widget
+ * to use the scaling/data area calculated by another widget.
+ * Images don't have a scale, so this method does nothing.
+ *
+ * @param {function(number): number}
+ *						xScale	-function to convert a horizontal data offset
+ *								 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						yScale	-function to convert a vertical data offset
+ *								 to the pixel offset into the data area.
+ *
+ ****************************************************************************/
+Image.prototype.setScale = function (xScale, yScale)
+{
+};
+
+/* **************************************************************************
  * CaptionedImage                                                       *//**
  *
  * The CaptionedImage widget draws an image in an SVGContainer with a caption.
@@ -229,6 +257,10 @@ function CaptionedImage(config, eventManager)
 	 
 	/**
 	 * Where the caption should be placed in relation to the image.
+	 *   <ul>
+	 *   <li> "above" - The caption should be below the image.
+	 *   <li> "below" - The caption should be above the image.
+	 *   </ul>
 	 * @type {string}
 	 */
 	this.captionPosition = config.captionPosition;
@@ -247,6 +279,98 @@ function CaptionedImage(config, eventManager)
 		{
 			container: null,
 			size: {height: 0, width: 0},
+			widgetGroup: null,
 		};
 } // end of CaptionedImage constructor
+
+/* **************************************************************************
+ * CaptionedImage.draw                                                  *//**
+ *
+ * Draw this CaptionedImage in the given container.
+ *
+ * @param {!d3.selection}
+ *					container	-The container svg element to append the captioned image element tree to.
+ * @param {Object}	size		-The size in pixels for the captioned image
+ * @param {number}	size.height	-The height in pixels of the area the captioned image are drawn within.
+ * @param {number}	size.width	-The width in pixels of the area the captioned image are drawn within.
+ *
+ ****************************************************************************/
+CaptionedImage.prototype.draw = function(container, size)
+{
+	this.lastdrawn.container = container;
+	this.lastdrawn.size = size;
+	this.lastdrawn.URI = this.image.URI;
+	this.lastdrawn.caption = this.image.caption;
+
+	// make a group to hold the image
+	var widgetGroup = container.append("g")
+		.attr("class", "widgetCaptionedImage")
+		.attr("id", this.id);
+
+	var captionSize = {height: 40, width: size.width};
+	var imageSize = {height: size.height - captionSize.height, width: size.width};
+	
+	// Draw the image
+	var imageGroup = widgetGroup.append("g");
+	this.image.draw(imageGroup, imageSize);	
+	
+	// Draw the caption
+	var captionGroup = widgetGroup.append("g");
+
+	captionGroup
+		.append("foreignObject")
+			.attr("width", captionSize.width)
+			.attr("height", captionSize.height)
+			.append("xhtml:body")
+				.style("margin", "0px")		// this interior body shouldn't inherit margins from page body
+				.append("div")
+					.attr("class", "widgetImageCaption")
+					.html(this.image.caption);
+
+	// position the caption
+	if (this.captionPosition === "above")
+	{
+		imageGroup.attr("transform", attrFnVal("translate", 0, captionSize.height));
+	}
+	else // assume below
+	{
+		captionGroup.attr("transform", attrFnVal("translate", 0, imageSize.height));
+	}
+	
+	this.lastdrawn.widgetGroup = widgetGroup;
+	
+} // end of CaptionedImage.draw()
+
+/* **************************************************************************
+ * CaptionedImage.redraw                                                *//**
+ *
+ * Redraw the image as it may have been changed (new URI or caption). It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+CaptionedImage.prototype.redraw = function ()
+{
+	// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
+	//       by doing nothing? -mjl
+	this.image.redraw();
+
+	var captionDiv = this.lastdrawn.widgetGroup.select("g foreignObject div")
+		.html(this.image.caption);
+};
+
+/* **************************************************************************
+ * CaptionedImage.changeImage                                           *//**
+ *
+ * Change the URI of this Image and/or the caption. After changing the
+ * image it should be redrawn.
+ *
+ * @param	{?string}	URI			-The new URI for the image. If null, the URI
+ *									 will not be changed.
+ * @param	{string=}	opt_caption	-The new caption for the image.
+ *
+ ****************************************************************************/
+CaptionedImage.prototype.changeImage = function (URI, opt_caption)
+{
+	this.image.changeImage(URI, opt_caption);
+};
 

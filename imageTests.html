@@ -73,20 +73,27 @@ var lineData = [
 			caption: "The Whitewater-Baldy Complex wildfire.",
 			actualSize: {height: 960, width: 1280}
 		};
-	
-	var cntrSize = Size.matchRatioWithHeight(450, imgConfig0.actualSize);
+
+	var cimgConfig0 =
+		{
+			id: "cimg0n",
+			image: new Image(imgConfig0),
+			captionPosition: "below"
+		};
+		
+	var cntrSize = Size.matchRatioWithHeight(450 - 40, imgConfig0.actualSize);
 	var cntrConfig0 = 
 		{
 			node: d3.select("#widgetTarget0n"),
-			maxSize: Size.matchRatioWithHeight(450, imgConfig0.actualSize),
+			maxSize: Size.matchRatioWithHeight(450 - 40, imgConfig0.actualSize),
 			maxWid: cntrSize.width, //550,
 			maxHt: 450
 		};
 		
 	var cntr0 = new SVGContainer(cntrConfig0);
-	var img0 = new Image(imgConfig0);
+	var cimg0 = new CaptionedImage(cimgConfig0);
 	
-	cntr0.append(img0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cntr0.append(cimg0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 	
 	var svg0 = new MakeSVGContainer(
