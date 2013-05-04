@@ -39,6 +39,28 @@ function logFormat(d)
 	return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ? d3.round(Math.log(d)/Math.log(10)) : "";
 }
 
+
+/* **************************************************************************
+ * attrFnVal                                                            *//**
+ *
+ * Utility method that constructs a string function call given the
+ * function name and arguments.
+ *
+ * @param {string}		fnName		-Function name that will be called.
+ * @param {...[number]} arguments	-Arguments for the function call.
+ ****************************************************************************/
+function attrFnVal(fnName)
+{
+	// get the fn args into an Array
+	var args = Array.prototype.slice.call(arguments, 1);
+
+	var fnCallStr = fnName + '(';
+	fnCallStr += args.join(',');
+	fnCallStr += ')';
+	
+	return fnCallStr;
+}
+
 //Tests for logFormat function
 console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(Math.pow(10, -2)) == -2);
 console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
