@@ -25,7 +25,8 @@
 			URI: 'img/ch4_1.jpg',
 			caption: "The Whitewater-Baldy Complex wildfire.",
 			preserveAspectRatio: "xMinYMin meet",
-			actualSize: {height: 960, width: 1280}
+			actualSize: {height: 960, width: 1280},
+			key: "fire"
 		};
 	
 	// config for CaptionedImage class
@@ -59,6 +60,8 @@
  *										 area it is to be drawn in.
  * @param {Size}		config.actualSize
  *										-The actual height and width in pixels of the image.
+ * @param {string}		config.key		-Association key used to determine if this
+ *										 image should be highlighted.
  *
  ****************************************************************************/
 function Image(config, eventManager)
@@ -74,14 +77,14 @@ function Image(config, eventManager)
 	 * @type {string}
 	 */
 	this.URI = config.URI;
-	 
-	 
+	
+	
 	/**
 	 * The caption for the image.
 	 * @type {string}
 	 */
 	this.caption = config.caption;
-	 
+
 	/**
 	 * String that determines if the aspect ratio of the image should be preserved, and if
 	 * so how it should be laid out in the viewport. The values that are allowed are defined by svg.
@@ -100,6 +103,12 @@ function Image(config, eventManager)
 	 */
 	this.actualSize = config.actualSize;
 	
+	/**
+	 * Association key used to determine if this image should be highlighted.
+	 * @type {string}
+	 */
+	this.key = config.key;
+
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
@@ -145,10 +154,12 @@ Image.prototype.draw = function(container, size)
 	// Rect for the background of the viewbox in case the image doesn't fill it
 	imageGroup
 		.append("rect")
+			.attr("class", "background")
 			.attr("width", size.width)
 			.attr("height", size.height)
 			.attr("fill", "#efefef");	// TODO: move this to css selector: 'g.widgetImage>rect' -mjl
-		
+	
+	// Draw the image itself
 	imageGroup
 		.append("image")
 			.attr("xlink:href", this.URI)
@@ -157,7 +168,18 @@ Image.prototype.draw = function(container, size)
 			.attr("height", size.height)
 			.append("desc")
 				.text(this.caption);
-				
+
+	// Rect to highlight this image when needed	
+	var hilightWidth = 6;
+	imageGroup
+		.append("rect")
+			.attr("class", "highlight")
+			.attr("width", size.width - hilightWidth)
+			.attr("height", size.height - hilightWidth)
+			.attr("stroke-width", hilightWidth)
+			.attr("x", hilightWidth / 2)
+			.attr("y", hilightWidth / 2);
+
 	this.widgetGroup = imageGroup;
 
 }; // end of Image.draw()
@@ -225,6 +247,20 @@ Image.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
+ * Image.lite                                                           *//**
+ *
+ * Highlight the image if it is identified by the given liteKey.
+ *
+ * @param {string}	liteKey	-The key associated with this image if it is to be highlighted.
+ *
+ ****************************************************************************/
+Image.prototype.lite = function (liteKey)
+{
+	var shouldHilight = liteKey === this.key;
+	this.lastdrawn.widgetGroup.classed('lit', shouldHilight);
+};
+
+/* **************************************************************************
  * CaptionedImage                                                       *//**
  *
  * The CaptionedImage widget draws an image in an SVGContainer with a caption.
@@ -253,8 +289,8 @@ function CaptionedImage(config, eventManager)
 	 * @type {Image}
 	 */
 	this.image = config.image;
-	 
-	 
+	
+	
 	/**
 	 * Where the caption should be placed in relation to the image.
 	 *   <ul>
@@ -264,7 +300,7 @@ function CaptionedImage(config, eventManager)
 	 * @type {string}
 	 */
 	this.captionPosition = config.captionPosition;
-	 
+	
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}

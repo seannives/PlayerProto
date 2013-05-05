@@ -303,16 +303,14 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * LabelGroup.labelLite                                                 *//**
+ * LabelGroup.lite                                                      *//**
  *
  * Highlight the label(s) associated w/ the given labelIndex (key) and
  * remove any highlighting on all other labels.
  *
- * @param {string|number}	labelIndex	-The key associated with the label(s) to be highlighted.
+ * @param {string|number}	liteKey	-The key associated with the label(s) to be highlighted.
  *
  ****************************************************************************/
-
-
 LabelGroup.prototype.lite = function (liteKey)
 {
 	console.log("TODO: fired LabelLite log " + liteKey);

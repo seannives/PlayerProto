@@ -14,6 +14,25 @@
   stroke: #f49524;
 }
 
+/* Images
+================================================== */
+g.widgetImage>rect.background
+{
+	fill:	#efefef;
+}
+g.widgetImage>rect.highlight
+{
+	fill-opacity:	0.0;
+	stroke-opacity:	0.0;	
+}
+g.widgetImage.lit>rect.highlight
+{
+	fill-opacity:	0.0;
+	stroke:			blue;
+	stroke-opacity:	0.8;	
+}
+
+
 /* Math and questions
 ================================================== */
 .math {

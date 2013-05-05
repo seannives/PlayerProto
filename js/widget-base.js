@@ -308,6 +308,19 @@ IWidget.prototype.redraw = function () {};
 IWidget.prototype.setScale = function (xScale, yScale) {};
 
 /* **************************************************************************
+ * IWidget.lite                                                         *//**
+ *
+ * Highlight the area identified by the given key, unlighting all other
+ * liteable areas.
+ * Note that how the individual widget associates a given key with a particular
+ * area is up to the widget implementation.
+ *
+ * @param {string}	liteKey	-The key associated with the area to be highlighted.
+ *
+ ****************************************************************************/
+IWidget.prototype.lite = function (liteKey) {};
+
+/* **************************************************************************
  * IWidget.xScale                                                       *//**
  *
  * Convert a data X position into a horizontal pixel position.
