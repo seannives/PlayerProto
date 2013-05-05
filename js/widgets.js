@@ -737,13 +737,13 @@ MakeSVGContainer.prototype.Labels = function(config, eventManager)
 } //end MakeLabels object generator function
 
 /* **************************************************************************
- * labelLite                                                            *//**
+ * lite                                                            *//**
  *
  * Updates the labels widget highlight to match the currently
  * selected index, lite.
  *
  **********************************************************************/
-function labelLite(Obj, lite)
+function lite(Obj, lite)
 {
 	console.log("TODO: fired LabelLite log");
 	//return all styles to normal on all the labels
