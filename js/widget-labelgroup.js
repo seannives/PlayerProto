@@ -313,7 +313,7 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
  ****************************************************************************/
 
 
-LabelGroup.prototype.labelLite = function (liteKey)
+LabelGroup.prototype.lite = function (liteKey)
 {
 	console.log("TODO: fired LabelLite log " + liteKey);
 	
@@ -353,5 +353,5 @@ LabelGroup.prototype.labelLite = function (liteKey)
 	{
 		console.log("No key '" + liteKey + "' in Labels group " + this.id );
 	}
-}; // end of LabelGroup.labelLite()
+}; // end of LabelGroup.lite()
 
