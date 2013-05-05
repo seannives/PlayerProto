@@ -16,22 +16,44 @@
 
 /* Images
 ================================================== */
-g.widgetImage>rect.background
+svg g.widgetImage>rect.background
 {
 	fill:	#efefef;
 }
-g.widgetImage>rect.highlight
+svg g.widgetImage>rect.highlight
 {
 	fill-opacity:	0.0;
 	stroke-opacity:	0.0;	
 }
-g.widgetImage.lit>rect.highlight
+svg g.widgetImage.lit>rect.highlight
 {
 	fill-opacity:	0.0;
 	stroke:			blue;
 	stroke-opacity:	0.8;	
 }
 
+/* Labels
+================================================== */
+svg g.widgetLabel>circle
+{
+	fill:			black;
+	stroke:			white;
+	stroke-width:	2;
+}
+svg g.widgetLabel.lit>circle
+{
+	fill:			#e3effe;
+	stroke:			#1d95ae;
+}
+svg g.widgetLabel>text
+{
+	fill:			white;
+	stroke-width:	1;
+}
+svg g.widgetLabel.lit>text
+{
+	fill:			#1d95ae;
+}
 
 /* Math and questions
 ================================================== */
@@ -166,12 +188,14 @@ table.questionTable td {
   stroke-width: 1px;
 }
 
+/* todo: double check if it is still used anywhere -mjl */
 .numSteps {
  fill: black;
  stroke: white;
  stroke-width:2;
 }
 
+/* todo: double check if it is still used anywhere -mjl */
 .numStepsLit {
  fill: #e3effe;
  stroke: #1d95ae;
