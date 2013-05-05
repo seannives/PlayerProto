@@ -75,6 +75,8 @@ function Carousel(config, eventManager)
 	 * @type {Array.<IWidget>}
 	 */
 	this.items = config.items;
+
+	this.assignMissingItemKeys_();
 	
 	/**
 	 * How the carousel will layout the items (vertical or horizontal).
@@ -109,6 +111,19 @@ function Carousel(config, eventManager)
 	this.eventManager = eventManager;
 
 	/**
+	 * The event id published when an item in this carousel is selected.
+	 * @const
+	 * @type {string}
+	 */
+	this.selectedEventId = this.id + '_itemSelected';
+	
+	/**
+	 * The event details for this.selectedEventId events
+	 * @typedef {Object} SelectedEventDetails
+	 * @property {string} itemKey	-The key associated with the selected item.
+	 */
+	
+	/**
 	 * Information about the last drawn instance of this image (from the draw method)
 	 * @type {Object}
 	 */
@@ -137,6 +152,7 @@ Carousel.prototype.draw = function(container, size)
 	this.lastdrawn.container = container;
 	this.lastdrawn.size = size;
 
+	var that = this;
 	
 	var itemMargin = this.itemMargin;
 	
@@ -189,6 +205,12 @@ Carousel.prototype.draw = function(container, size)
 	itemGroups
 		.attr("transform", translateItem);
 
+	itemGroups.on('click',
+				  function (d)
+				  {
+					  that.eventManager.publish(that.selectedEventId, {itemKey: d.key});
+				  });
+				
 	this.widgetGroup = widgetGroup;
 
 }; // end of Carousel.draw()
@@ -211,4 +233,23 @@ Carousel.prototype.redraw = function ()
 	desc.text(this.caption);
 };
 
+/* **************************************************************************
+ * Carousel.assignMissingItemKeys_                                      *//**
+ *
+ * Assign a key property value of the index in the item list to any
+ * item which doesn't have a key property. This key is used for selection and
+ * highlighting.
+ * @private
+ *
+ ****************************************************************************/
+Carousel.prototype.assignMissingItemKeys_ = function ()
+{
+	this.items.forEach(function (item, i)
+					   {
+						   if (!('key' in item))
+						   {
+							   item.key = i.toString();
+						   }
+					   });
+};
 
