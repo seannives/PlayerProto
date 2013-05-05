@@ -208,17 +208,17 @@ LabelGroup.prototype.draw = function(container, size)
 
 	// bind the label group collection to the label data
 	// the collection is used to highlight and unhighlight
-	this.labelCollection = labelsContainer.selectAll("g.labels").data(this.labels);
+	var labelCollection = labelsContainer.selectAll("g.labels").data(this.labels);
 	
 	// on the enter selection (create new ones from data labels) make
 	// the groups. This is useful in case you want to pack more than just the
 	// text label into the graup with the same relative positioning.  
-	this.labelCollection.enter()
+	labelCollection.enter()
 		.append("g")
 		.attr("class","labels");
 		
 	// autokey entries which have no key with the data index
-	this.labelCollection.each(function (d, i) { 
+	labelCollection.each(function (d, i) { 
 					// if there is no key assigned, make one from the index
 					d.key = 'key' in d ? d.key : i;
 					});
@@ -226,14 +226,14 @@ LabelGroup.prototype.draw = function(container, size)
 	// move the labels into position, but do it on the data collection, which 
 	// includes both the update and the enter selections, so you can drag them around
 	// on a suitable event or redraw.
-	this.labelCollection.attr("transform", function (d, i)  {
+	labelCollection.attr("transform", function (d, i)  {
 					return "translate(" + that.lastdrawn.xScale(d.xyPos[0]) + "," 
 						+ that.lastdrawn.yScale(d.xyPos[1]) + ")";
 				  });
 
 	// write each label text as a foreignObject, to get wrapping and full HTML
 	// rendering support
-	this.labelCollection.append("foreignObject")
+	labelCollection.append("foreignObject")
 		.attr("x", 0)
 		.attr("y", 0)
 		.attr("width", function (d) { return d.width; })
@@ -252,7 +252,7 @@ LabelGroup.prototype.draw = function(container, size)
 	// a precursor to hotspot answertypes
 	if (this.type == "bullets" || this.type == "numbered")
 	{
-		this.labelCollection.append("circle")
+		labelCollection.append("circle")
 			.attr("class", "numSteps")
 			.attr("r", 16).attr("cx", 0).attr("cy", 0);
 	}
@@ -264,18 +264,20 @@ LabelGroup.prototype.draw = function(container, size)
 	
 	if (this.type == "numbered")
 	{
-		this.labelCollection.append("text")
+		labelCollection.append("text")
 			.style("fill", "white")
 			.attr("text-anchor", "middle")
 			.attr("alignment-baseline", "middle")
 			.text(function (d, i) { return i + 1; });
 	}
 	
-	this.labelCollection.on('click',
+	labelCollection.on('click',
 				function (d, i)
 				{
 					that.eventManager.publish(that.selectedEventId, {labelIndex:d.key});
 				});
+				
+	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.labels");
 
 }; // end of LabelGroup.draw()
 
@@ -316,12 +318,12 @@ LabelGroup.prototype.labelLite = function (liteKey)
 	console.log("TODO: fired LabelLite log " + liteKey);
 	
 	// return all styles to normal on all the labels and numbers
-	this.labelCollection.selectAll(".descLabel")
+	this.lastdrawn.labelCollection.selectAll(".descLabel")
 		.classed('lit', false);
 		//In the case of numbered type, turn all the text back to white, and circles to black
-	this.labelCollection.selectAll("text")
+	this.lastdrawn.labelCollection.selectAll("text")
 		.style("fill", "white");
-	this.labelCollection.selectAll("circle")
+	this.lastdrawn.labelCollection.selectAll("circle")
 		.attr("class","numSteps");
 	
 	
@@ -329,7 +331,7 @@ LabelGroup.prototype.labelLite = function (liteKey)
 	// then find the set that matches
 	var matchesLabelIndex = function (d, i) { return d.key === liteKey; };
 	
-	var set = this.labelCollection.filter(matchesLabelIndex);
+	var set = this.lastdrawn.labelCollection.filter(matchesLabelIndex);
 	
 	// if any are found, highlight the selected label(s)
 	if (set[0][0]) 
