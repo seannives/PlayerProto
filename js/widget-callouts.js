@@ -124,12 +124,6 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 	//Show the data in a table
 	this.calloutCollection = table.append("tbody").selectAll("tr")
 		.data(this.textBits);
-		
-	// autokey entries which have no key with the data index
-	this.calloutCollection.each(function (d, i) { 
-					// if there is no key assigned, make one from the index
-					d.key = 'key' in d ? d.key : i.toString();
-					});
 					
 	this.rows = this.calloutCollection.enter().append("tr");
 	//creates as many rows as there are elements in textBits
@@ -139,7 +133,11 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 	//		return that.id + (d.key ? d.key : i.toString());
 	//		});
 		
-				
+	// autokey entries which have no key with the data index
+	this.calloutCollection.each(function (d, i) { 
+					// if there is no key assigned, make one from the index
+					d.key = 'key' in d ? d.key : i.toString();
+					});
 	
 
 	this.rows.selectAll("td")
