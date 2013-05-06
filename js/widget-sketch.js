@@ -172,28 +172,69 @@ Sketch.prototype.draw = function(container, size)
 		this.lastdrawn.yScale = d3.scale.linear().rangeRound([size.height, 0]);
 	}
 	
+
+	var sketchContainer = container.append("g") //make a group to hold labels
+		.attr("id", this.lastdrawn.sketchId)
+		.attr("class","widgetSketch");
+	
+	this.lastdrawn.widgetGroup = sketchContainer;
+
+	this.redraw();
+	
+	
+}; // end of Sketch.draw()
+
+/* **************************************************************************
+ * Sketch.setScale                                                  *//**
+ *
+ * Called to preempt the normal scale definition which is done when the
+ * widget is drawn. This is usually called in order to force one widget
+ * to use the scaling/data area calculated by another widget.
+ *
+ * @param {function(number): number}
+ *						xScale	-function to convert a horizontal data offset
+ *								 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						yScale	-function to convert a vertical data offset
+ *								 to the pixel offset into the data area.
+ *
+ ****************************************************************************/
+Sketch.prototype.setScale = function (xScale, yScale)
+{
+	this.explicitScales_.xScale = xScale;
+	this.explicitScales_.yScale = yScale;
+};
+
+/* **************************************************************************
+ * Sketch.redraw                        	                             *//**
+ *
+ * Redraw the sketch as it may have been modified in size or draw bits. It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+Sketch.prototype.redraw = function ()
+{
+	var sketchContainer = this.lastdrawn.widgetGroup;
+
 	var that = this;
 	var xScale = this.lastdrawn.xScale;
 	var yScale = this.lastdrawn.yScale;
 	
-	var sketchContainer = container.append("g") //make a group to hold labels
-		.attr("id", this.lastdrawn.sketchId);
-
 	// bind the sketch group collection to the data
 	// the collection is used to highlight and unhighlight
-	var drawCollection = sketchContainer.selectAll("g.sketch").data(this.drawShape);
+	var drawCollection = sketchContainer.selectAll("g.shape").data(this.drawShape);
 	
 	// on the enter selection (create new ones from drawStuff) make
 	// the groups. This is useful in case you want to pack more than just the
 	// text label into the graup with the same relative positioning.  
 	drawCollection.enter()
 		.append("g")
-		.attr("class","sketch");
+		.attr("class","shape");
 		
 	// autokey entries which have no key with the data index
 	drawCollection.each(function (d, i) { 
 					// if there is no key assigned, make one from the index
-					d.key = 'key' in d ? d.key : i;
+					d.key = 'key' in d ? d.key : i.toString();
 					});
 					
 	// move the sketch objects into position, but do it on the data collection, which 
@@ -202,7 +243,7 @@ Sketch.prototype.draw = function(container, size)
 	
  
 	drawCollection.attr("transform", function (d, i)  {
-					return "translate(" + xScale(d.xyPos[0]) + "," + yScale(d.xyPos[1]) + ")";
+					return attrFnVal("translate", xScale(d.xyPos[0]), yScale(d.xyPos[1]));
 				  });
 
 	// TODO: we're likely going to want to label the drawBits, but 
@@ -237,42 +278,8 @@ Sketch.prototype.draw = function(container, size)
 					that.eventManager.publish(that.selectedEventId, {selectKey:d.key});
 				});
 
-	this.lastdrawn.drawCollection = sketchContainer.selectAll(".sketch");
-	
-}; // end of Sketch.draw()
+	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 
-/* **************************************************************************
- * Sketch.setScale                                                  *//**
- *
- * Called to preempt the normal scale definition which is done when the
- * widget is drawn. This is usually called in order to force one widget
- * to use the scaling/data area calculated by another widget.
- *
- * @param {function(number): number}
- *						xScale	-function to convert a horizontal data offset
- *								 to the pixel offset into the data area.
- * @param {function(number): number}
- *						yScale	-function to convert a vertical data offset
- *								 to the pixel offset into the data area.
- *
- ****************************************************************************/
-Sketch.prototype.setScale = function (xScale, yScale)
-{
-	this.explicitScales_.xScale = xScale;
-	this.explicitScales_.yScale = yScale;
-};
-
-/* **************************************************************************
- * Sketch.redraw                        	                             *//**
- *
- * Redraw the sketch as it may have been modified in size or draw bits. It will be
- * redrawn into the same container area as it was last drawn.
- *
- ****************************************************************************/
-Sketch.prototype.redraw = function ()
-{
-	
-	this.draw();
 };
 
 /* **************************************************************************
