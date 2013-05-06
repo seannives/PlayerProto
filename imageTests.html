@@ -49,7 +49,9 @@
     <script src="js/widget-carousel.js"></script>
 
 <script>
-var lineData = [
+	var eventManager = new EventManager();
+
+	var lineData = [
 		{	x: 0,	y: -3.1},
 		{	x: 2,	y: -2.02},
 		{	x: 12,	y: -1.2},
@@ -199,7 +201,7 @@ var lineData = [
 		};
 
 	var cntr1 = new SVGContainer(cntrConfig1);
-	var crsl1 = new Carousel(crslConfig1);
+	var crsl1 = new Carousel(crslConfig1, eventManager);
 	
 	cntr1.append(crsl1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
