@@ -162,7 +162,7 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 			{
 				that.eventManager.publish(that.selectedEventId, 
 					//the second argument is the event details.   
-					{labelIndex: (d.key ? d.key : i)});
+					{selectKey: (d.key ? d.key : i)});
 			});
 	
 

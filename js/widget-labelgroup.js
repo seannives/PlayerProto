@@ -119,7 +119,7 @@ function LabelGroup(config, eventManager)
 	/**
 	 * The event details for this.selectedEventId events
 	 * @typedef {Object} SelectedEventDetails
-	 * @property {string|number} labelIndex	-The key associated with the selected label if it has one,
+	 * @property {string|number} selectKey	-The key associated with the selected label if it has one,
 	 *										 otherwise the label's index within the group.
 	 */
 	
@@ -276,7 +276,7 @@ LabelGroup.prototype.draw = function(container, size)
 	labelCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex:d.key});
+					that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
 				});
 				
 	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.widgetLabel");
@@ -307,7 +307,7 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
 /* **************************************************************************
  * LabelGroup.lite                                                      *//**
  *
- * Highlight the label(s) associated w/ the given labelIndex (key) and
+ * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
  *
  * @param {string|number}	liteKey	-The key associated with the label(s) to be highlighted.

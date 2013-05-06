@@ -160,6 +160,9 @@ var newLabels = new LabelGroup(
 			]
 	});
 
+// TODO: there is a bug here that prevents me from stacking up both the sketch and the newLabels in an
+// array in the svg append function.  One expects the other to have axes, or something. Need mjl 
+// to have a look - lb
 svgLabel.append([clicks], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 svgLabel.append([newLabels], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
@@ -172,7 +175,8 @@ handleSelectionChanged({selectKey: 0});
 
 	
 eventManager.subscribe(clicks.selectedEventId, handleSelectionChanged);
-	
+eventManager.subscribe(newLabels.selectedEventId, handleSelectionChanged);
+
 		
 	
 /************************************************************************

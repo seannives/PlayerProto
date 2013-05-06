@@ -234,10 +234,10 @@ Sketch.prototype.draw = function(container, size)
 	drawCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {sketchIndex:d.key});
+					that.eventManager.publish(that.selectedEventId, {selectKey:d.key});
 				});
 
-	this.lastdrawn.drawCollection = d3.selectAll(".sketch");
+	this.lastdrawn.drawCollection = sketchContainer.selectAll(".sketch");
 	
 }; // end of Sketch.draw()
 
@@ -263,6 +263,19 @@ Sketch.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
+ * Sketch.redraw                        	                             *//**
+ *
+ * Redraw the sketch as it may have been modified in size or draw bits. It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+Sketch.prototype.redraw = function ()
+{
+	
+	this.draw();
+};
+
+/* **************************************************************************
  * Sketch.lite                                                 *//**
  *
  * Highlight the drawing bits associated w/ the given key and
@@ -275,10 +288,10 @@ Sketch.prototype.setScale = function (xScale, yScale)
 
 Sketch.prototype.lite = function (liteKey)
 {
-	console.log("TODO: fired LabelLite log " + liteKey);
+	console.log("TODO: Log fired Sketch Select " + liteKey);
 	
 	// return all styles to normal on all the labels and numbers
-	this.lastdrawn.sketchCollection
+	this.lastdrawn.drawCollection
 		.classed('lit', false);
 	 
 	

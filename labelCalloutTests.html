@@ -501,7 +501,7 @@ for (i = 0; i < dataPts; i++)
 //Test: set the start highlight state of 0 index by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
-handleSelectionChanged({labelIndex: "Post"});
+handleSelectionChanged({selectKey: "Post"});
 
 	
 	eventManager.subscribe(newLabels.selectedEventId,
@@ -529,8 +529,8 @@ handleSelectionChanged({labelIndex: "Post"});
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		newLabels.lite(eventDetails.labelIndex);
-		phases.calloutSwap(eventDetails.labelIndex);
+		newLabels.lite(eventDetails.selectKey);
+		phases.calloutSwap(eventDetails.selectKey);
 		
 	}
 </script>
