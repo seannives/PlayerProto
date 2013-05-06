@@ -18,7 +18,8 @@
 ================================================== */
 svg g.widgetImage>rect.background
 {
-	fill:	#efefef;
+	fill:			#efefef;
+	stroke-width:	0;
 }
 svg g.widgetImage>rect.highlight
 {

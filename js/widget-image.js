@@ -180,7 +180,7 @@ Image.prototype.draw = function(container, size)
 			.attr("x", hilightWidth / 2)
 			.attr("y", hilightWidth / 2);
 
-	this.widgetGroup = imageGroup;
+	this.lastdrawn.widgetGroup = imageGroup;
 
 }; // end of Image.draw()
 

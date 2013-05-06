@@ -64,6 +64,8 @@
  ****************************************************************************/
 function Carousel(config, eventManager)
 {
+	var that = this;
+	
 	/**
 	 * A unique id for this instance of the image widget
 	 * @type {string}
@@ -120,9 +122,13 @@ function Carousel(config, eventManager)
 	/**
 	 * The event details for this.selectedEventId events
 	 * @typedef {Object} SelectedEventDetails
-	 * @property {string} itemKey	-The key associated with the selected item.
+	 * @property {string} selectKey	-The key associated with the selected item.
 	 */
-	
+
+	// TODO: Using the selection event may not be the way we want to set highlighting internally
+	// because I'm not sure if 2 items have the same key we still want to highlight both?
+	eventManager.subscribe(this.selectedEventId, function (eventDetails) {that.lite(eventDetails.selectKey);});
+	 
 	/**
 	 * Information about the last drawn instance of this image (from the draw method)
 	 * @type {Object}
@@ -208,7 +214,7 @@ Carousel.prototype.draw = function(container, size)
 	itemGroups.on('click',
 				  function (d)
 				  {
-					  that.eventManager.publish(that.selectedEventId, {itemKey: d.key});
+					  that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
 				  });
 				
 	this.widgetGroup = widgetGroup;
@@ -246,10 +252,29 @@ Carousel.prototype.assignMissingItemKeys_ = function ()
 {
 	this.items.forEach(function (item, i)
 					   {
-						   if (!('key' in item))
+						   // A falsy key is invalid, set it to the index
+						   if (!item.key)
 						   {
 							   item.key = i.toString();
 						   }
 					   });
 };
+
+/* **************************************************************************
+ * Carousel.lite                                                        *//**
+ *
+ * Highlight the label(s) associated w/ the given liteKey (key) and
+ * remove any highlighting on all other labels.
+ *
+ * @param {string|number}	liteKey	-The key associated with the label(s) to be highlighted.
+ *
+ ****************************************************************************/
+Carousel.prototype.lite = function (liteKey)
+{
+	console.log("called Carousel.lite( " + liteKey + " )");
+
+	// todo: this works well when all the items are Images but not so well for other widget types
+	this.items.forEach(function (item) {item.lite(liteKey);});
+	
+}; // end of Carousel.lite()
 
