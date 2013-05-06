@@ -22,6 +22,7 @@ svg g.widgetImage>rect.background
 }
 svg g.widgetImage>rect.highlight
 {
+	fill: none;
 	fill-opacity:	0.0;
 	stroke-opacity:	0.0;	
 }
@@ -54,6 +55,14 @@ svg g.widgetLabel.lit>text
 {
 	fill:			#1d95ae;
 }
+
+svg g.widgetLabel.lit .descLabel
+{
+	color: #1d95ae;
+	font-weight: 600;
+	background-color: #e3effe;
+}
+
 
 /* Math and questions
 ================================================== */
@@ -203,7 +212,7 @@ table.questionTable td {
 }
 
 .stepBadge {
-   /* background: radial-gradient( 5px -9px, circle, white 8%, black 26px ); */
+     /* background: radial-gradient( 5px -9px, circle, white 8%, black 26px ); */
     background-color: black;
     border: 2px solid white;
     border-radius: 14px; /* one half of ( (border * 2) + height + padding ) */
@@ -214,8 +223,10 @@ table.questionTable td {
     height: 16px; 
     min-width: 16px;
     padding: 4px 3px 3px 3px;
-  margin: 4px 3px 3px 3px;
+  	margin: 4px 11px 3px 0px;
     text-align: center;
+	display: block;
+	float: left;
 }
 
 

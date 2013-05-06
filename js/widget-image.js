@@ -170,6 +170,7 @@ Image.prototype.draw = function(container, size)
 				.text(this.caption);
 
 	// Rect to highlight this image when needed	
+
 	var hilightWidth = 6;
 	imageGroup
 		.append("rect")
@@ -179,7 +180,7 @@ Image.prototype.draw = function(container, size)
 			.attr("stroke-width", hilightWidth)
 			.attr("x", hilightWidth / 2)
 			.attr("y", hilightWidth / 2);
-
+	
 	this.widgetGroup = imageGroup;
 
 }; // end of Image.draw()

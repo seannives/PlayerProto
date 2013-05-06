@@ -201,14 +201,15 @@ LabelGroup.prototype.draw = function(container, size)
 		
 	this.lastdrawn.widgetGroup = labelsContainer;
 
-	//this filter can be used to add dropshadows to highlighted labels and bullets
+	/*this filter can be used to add dropshadows to highlighted labels and bullets
 	var filter = labelsContainer.append("defs").append("filter").attr("id", "drop-shadow");
 	filter.append("feGaussianBlur").attr("in", "SourceAlpha").attr("stdDeviation", 2).attr("result", "blur");
 	filter.append("feOffset").attr("in", "blur").attr("dx", 2).attr("dy", 2).attr("result", "offsetBlur");
  	var merge = filter.append("feMerge");
 	merge.append("feMergeNode").attr("in", "offsetBlur");
 	merge.append("feMergeNode").attr("in", "SourceGraphic");
-
+	*/
+	
 	// bind the label group collection to the label data
 	// the collection is used to highlight and unhighlight
 	var labelCollection = labelsContainer.selectAll("g.widgetLabel").data(this.labels);
@@ -315,7 +316,7 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
  ****************************************************************************/
 LabelGroup.prototype.lite = function (liteKey)
 {
-	console.log("TODO: fired LabelLite log " + liteKey);
+	console.log("TODO: log fired Label highlite " + liteKey);
 	
 	// Turn off all current highlights
 	var allLabels = this.lastdrawn.widgetGroup.selectAll("g.widgetLabel");
