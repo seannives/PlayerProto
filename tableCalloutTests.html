@@ -288,7 +288,7 @@ endoCallouts.draw(d3.select("#endoCall"));
 //Test: set the start highlight state by calling the stepped diagram
 //handler with a hard-set index of 0.  This should result in the
 //label with key 0 getting highlighted and the first table line displayed.
-	handleSelectionChanged0({selectKey: 0});
+	handleSelectionChanged0({selectKey: '0'});
  
 
 /************************************************************************
@@ -310,7 +310,7 @@ endoCallouts.draw(d3.select("#endoCall"));
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
 		newLabels.lite(eventDetails.selectKey);
-		callEm.calloutSwap(eventDetails.selectKey);
+		callEm.lite(eventDetails.selectKey);
 		
 	}
 	
@@ -335,7 +335,7 @@ endoCallouts.draw(d3.select("#endoCall"));
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
 		glandLabels.lite(eventDetails.selectKey);
-		endoCallouts.calloutSwap(eventDetails.selectKey);
+		endoCallouts.lite(eventDetails.selectKey);
 		
 	}
 </script>

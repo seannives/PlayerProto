@@ -171,7 +171,7 @@ someCalls.draw(d3.select("#description"));
 //Test: set the start highlight state of 0 key by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
-handleSelectionChanged({selectKey: 0});
+handleSelectionChanged({selectKey: '0'});
 
 	
 eventManager.subscribe(clicks.selectedEventId, handleSelectionChanged);
@@ -198,7 +198,7 @@ eventManager.subscribe(newLabels.selectedEventId, handleSelectionChanged);
 		//lite should be a part of the interface for each widget
 		clicks.lite(eventDetails.selectKey);
 		newLabels.lite(eventDetails.selectKey);	
-		someCalls.calloutSwap(eventDetails.selectKey);
+		someCalls.lite(eventDetails.selectKey);
 		
 	}
 </script>

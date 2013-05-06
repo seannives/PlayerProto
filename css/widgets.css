@@ -64,6 +64,23 @@ svg g.widgetLabel.lit .descLabel
 	background-color: #e3effe;
 }
 
+ 
+/* sketches
+================================================== */
+
+.shape {
+	fill: none;
+	stroke: #666;
+	stroke-width: 2;
+}
+
+.shape.lit {
+	fill: #e3effe;
+	stroke: #1d95ae;
+	stroke-width:3;
+	opacity: 0.5;
+}
+
 
 /* Math and questions
 ================================================== */
@@ -130,23 +147,7 @@ table.questionTable td {
 .wrong {
   color: #8C1717; }
   
-  
-/* sketches
-================================================== */
-
-.sketch {
-	fill: none;
-	stroke: #666;
-	stroke-width: 2;
-}
-
-.sketch.lit {
-	fill: #e3effe;
-	stroke: #1d95ae;
-	stroke-width:3;
-	opacity: 0.5;
-}
-
+ 
 
 
 /* title and captions and feedback messages
