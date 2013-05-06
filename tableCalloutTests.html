@@ -29,7 +29,7 @@
 			<div class="span6 rightCol">
 				<div id="imgReactor"><p>4. Stepped image (auto numbered callouts - labels fire table, table fires labels)</p>
                 </div>
-				<div id="Endocrine"><p>5. Labels fire single callouts using Keys not numerical index (below image)</p>
+				<div id="Endocrine"><p>5. Labels fire single callouts using Keys not numerical index (below image) <div style="color: 'red'">BUG: labels aren't highlighting at the moment since swapover to new framework</div></p>
                 </div>
                 <div id="endoCall">
                 </div>
@@ -45,9 +45,11 @@
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v3.min.js"></script>
-    
-	<script src="js/widgets.js"></script>   
+       
+    <script src="js/widget-base.js"></script>
     <script src="js/widget-callouts.js"></script>
+    <script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-image.js"></script>
 	<script src="js/eventmanager.js"></script>
 <script>
 
@@ -108,49 +110,55 @@ textChunks.draw(d3.select("#optionsOff"));
 
 		//	<div id="stepped"><p>Stepped Image</p></div>
 
-var svgImg = new MakeSVGContainer(
+	var imgConfig0 =
+		{
+			id: "imgReactor",
+			URI: 'img/reactor.jpg',
+			caption: "Nuclear Reactor Schematic Diagram",
+			actualSize: {height: 310, width: 680}
+		};
+
+	var cimgConfig0 =
+		{
+			id: "cimg0n",
+			image: new Image(imgConfig0),
+			captionPosition: "below"
+		};
+	
+	var cntrSize = Size.matchRatioWithHeight(350 - 40, imgConfig0.actualSize);
+
+	var cntrConfig0 = 
 		{
 			node: d3.select("#imgReactor"),
-			maxWid: 750,
-			maxHt: 390
-		});
-
-svgImg.Axes( 
-		{
-			
-			xPosPerc: 0, yPosPerc:0,
-			xPerc: 1, yPerc: 1,
-			xaxisType: "linear", yaxisType: "linear",
-			xTicks: 0,
-			xOrient: "bottom",
-			yOrient: "left",
-			xLabel: "Nuclear Reactor Schematic"
-		});
-
+			maxSize: cntrSize,
+			maxWid: cntrSize.width, //550,
+			maxHt: 350
+		};
 		
-svgImg.ScalableImage({
-		images: [
-		{URI: "img/reactor.jpg", caption: "Nuclear Reactor schematic"}
-		],
-		});//this doesn't have an eventmanager argument, because it isn't
-	//emitting events in this page.  
-
-// I include the content on these labels for my own visual reference. 
-// The width of 0 means it's never displayed.  Since it's type is numbered,
-// the numbered bullets are all you see. - lb
-svgImg.Labels (
-		{type: "numbered",
-		labels: 	
-		  [
-		{content: "1", xyPos: [.025,.17], width: 0},
-		{content: "2", xyPos: [.08,.38], width: 0},
-		{content: "3" , xyPos: [.325,.64], width: 0},
-		{content: "4" , xyPos: [.645,.58], width: 0},
-		{content: "5" , xyPos: [.69,.095], width: 0}
-		]}, eventManager);
-
+	var cntr0 = new SVGContainer(cntrConfig0);
+	var cimg0 = new CaptionedImage(cimgConfig0);
 	
-// Create the callout array.  
+	cntr0.append(cimg0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+
+// Create the numbered label array.  
+
+var newLabels = new LabelGroup(
+		{id: "reactorNum",
+		type: "numbered",
+		labels: 	
+		  [	
+			{content: "1", xyPos: [.025,.25], width: 0},
+			{content: "2", xyPos: [.08,.45], width: 0},
+			{content: "3" , xyPos: [.325,.7], width: 0},
+			{content: "4" , xyPos: [.645,.64], width: 0},
+			{content: "5" , xyPos: [.69,.2], width: 0}
+	  ]
+		}, eventManager);
+		
+cntr0.append(newLabels, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+//cimg0.append(newLabels);
+		
 var callEm = new Callouts({
 	id: "callme",
 	show: "all",
@@ -164,44 +172,54 @@ callEm.draw(d3.select("#numbered"));
  
 	
 	
-	//	<div id="widgetTarget80"><p>6. labels fire callouts (events)</p></div>
-	var svg5 = new MakeSVGContainer(
-		{node: d3.select("#Endocrine"),
-		maxWid: 550,
-		maxHt:680
-		}
-	);
-	svg5.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc:1, yPerc: 1,//full height and width
-		xaxisType: "linear",
-		xOrient: "bottom",
-		xLabel: "caption",
-		yaxisType: "linear",
-		yOrient: "left",
-	});
+	//	<div id="widgetTarget80"><p>5. labels fire callouts (events)</p></div>
+var imgBodyCfg = {
+				id: "endoBody",
+				URI: 'img/endocrineSystem.jpg',
+				caption: "Human Glands",
+				actualSize: {height: 500, width: 430}
+				};
+
+var imgContBodyCfg =
+		{
+			id: "endoBody1",
+			image: new Image(imgBodyCfg),
+			captionPosition: "below"
+		};
 	
+	var cntrSize1 = Size.matchRatioWithHeight(540 - 40, imgContBodyCfg.image.actualSize);
+		
+	var svg5 = new SVGContainer({
+			node: d3.select("#Endocrine"),
+			maxSize: cntrSize1,
+			maxWid: cntrSize1.width, //550,
+			maxHt: 540
+		});
+		
+	var glands = new CaptionedImage(imgContBodyCfg);
 	
-	svg5.ScalableImage(
-		{images: [
-				{URI:'img/endocrineSystem.jpg', caption: "Human Glands"}
-				]});
-	
-	svg5.Labels(
-		{labels: 	
+	svg5.append(glands, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+
+	var glandLabels = new LabelGroup(
+		{id: "secrete",
+		labels: 	
 		  [
 		{content: "Hypothalamus", xyPos: [0,1], width: 100	},
 		{key: "Pituitary", content: "Pituitary gland" , xyPos: [0,.8], width: 80	},
 		{key: "Pineal", content: "Pineal gland (epiphysis)", xyPos: [.15,.75], width: 100	},
 		{key: "Thyroid", content: "Thyroid gland", xyPos: [.5,.98], width: 100},
-		{key: "Parathyroid", content: "Parathyroid gland", xyPos: [.8,.9], width: 90},
-		{key: "Adrenal", content: "Adrenal (surparenal)", xyPos: [.82,.8], width: 80},
-		{key: "Pancreas", content: "Pancreas", xyPos: [.85,.52], width: 100},
-		{key: "Ovaries", content: "Ovaries", xyPos: [.65,.38], width: 70},
-		{key: "Testes", content: "Testicles", xyPos: [.7,.02], width: 70}
+		{key: "Parathyroid", content: "Parathyroid gland", xyPos: [.8,.9], width: 80},
+		{key: "Adrenal", content: "Adrenal (surparenal)", xyPos: [.78,.8], width: 80},
+		{key: "Pancreas", content: "Pancreas", xyPos: [.82,.6], width: 100},
+		{key: "Ovaries", content: "Ovaries", xyPos: [.65,.45], width: 70},
+		{key: "Testes", content: "Testicles", xyPos: [.7,.1], width: 70}
 		]
 	}, eventManager);
 	
+	
+	svg5.append(glandLabels, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 
 	var endoCallouts = new Callouts ({
 		id: "glandEffect",
@@ -250,17 +268,17 @@ endoCallouts.draw(d3.select("#endoCall"));
 //events
 	
 // Handle changes of the label selection
-	eventManager.subscribe(svg5.selectedEventId,
+	eventManager.subscribe(glandLabels.selectedEventId,
 						   handleSelectionChanged);
 
 //Test: set the start highlight state by calling the 
 //handler with a hard-set index of Thyroid.  This should result in the
 //label with key Thyroid getting highlighted and the first callout 
 //being displayed.
-	handleSelectionChanged({labelIndex: "Thyroid"});
+	handleSelectionChanged({selectKey: "Thyroid"});
 
 	
-	eventManager.subscribe(svgImg.selectedEventId,
+	eventManager.subscribe(newLabels.selectedEventId,
 						   handleSelectionChanged0);
 	eventManager.subscribe(callEm.selectedEventId,
 						   handleSelectionChanged0);
@@ -269,7 +287,7 @@ endoCallouts.draw(d3.select("#endoCall"));
 //Test: set the start highlight state by calling the stepped diagram
 //handler with a hard-set index of 0.  This should result in the
 //label with key 0 getting highlighted and the first table line displayed.
-	handleSelectionChanged0({labelIndex: 0});
+	handleSelectionChanged0({selectKey: 0});
  
 
 /************************************************************************
@@ -290,8 +308,8 @@ endoCallouts.draw(d3.select("#endoCall"));
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		lite(svgImg,eventDetails.labelIndex);
-		callEm.calloutSwap(eventDetails.labelIndex);
+		newLabels.lite(eventDetails.selectKey);
+		callEm.calloutSwap(eventDetails.selectKey);
 		
 	}
 	
@@ -315,8 +333,8 @@ endoCallouts.draw(d3.select("#endoCall"));
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		lite(svg5,eventDetails.labelIndex);
-		endoCallouts.calloutSwap(eventDetails.labelIndex);
+		glandLabels.lite(eventDetails.selectKey);
+		endoCallouts.calloutSwap(eventDetails.selectKey);
 		
 	}
 </script>

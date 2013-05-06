@@ -730,7 +730,7 @@ MakeSVGContainer.prototype.Labels = function(config, eventManager)
 	this.labelCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex: (d.key ? d.key : i)});
+					that.eventManager.publish(that.selectedEventId, {selectKey: (d.key ? d.key : i)});
 				});
 	
 

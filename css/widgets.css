@@ -86,13 +86,13 @@ table.questionTable td {
 .sketch {
 	fill: none;
 	stroke: #666;
-	stroke-width: 1;
+	stroke-width: 2;
 }
 
 .sketch.lit {
 	fill: #e3effe;
 	stroke: #1d95ae;
-	stroke-width:2;
+	stroke-width:3;
 	opacity: 0.5;
 }
 
