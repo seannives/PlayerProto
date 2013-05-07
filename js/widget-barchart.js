@@ -273,13 +273,16 @@ BarChart.prototype.draw = function(container, size)
 	bars.enter()
 		.append("g")
 			.attr("class", "bar")
-			.attr("id", function(d, i) {return 'key' in d ? (barsId + "bar" + d.key) : null;})
-			//if a key has been specified for the bar, put it on the ID, for highlighting
-			//otherwise, don't put an ID
-			//can't use the y label because it might contain spaces. -lb
 			//todo: check the dom to verify that a null value for an attribute does not create that attribute -mjl
 			.append("rect")
 			;
+			
+	// autokey entries which have no key with the data index for highlighting
+	// can't use the y label because it might contain spaces. -lb
+	bars.each(function (d, i) { 
+					// if there is no key assigned, make one from the index
+					d.key = 'key' in d ? d.key : i.toString();
+					});
 
 	bars.attr("transform",
 				  function(d)

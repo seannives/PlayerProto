@@ -184,7 +184,7 @@ LineGraph.prototype.draw = function(container, size)
 	var clipId = linesId + "_clip";
 
 	var graph = axesDrawn.group.append("g") //make a group to hold new lines
-		.attr("id", linesId);
+		.attr("class","widgetLineGraph").attr("id", linesId);
 	
 	
 	graph.append("defs")
@@ -306,6 +306,12 @@ LineGraph.prototype.drawData_ = function ()
 		// get rid of any trace groups without data
 		traces.exit().remove();
 
+		// autokey entries which have no key with the data index
+		traces.each(function (d, i) { 
+					// if there is no key assigned, make one from the index
+					d.key = 'key' in d ? d.key : i.toString();
+					});
+					
 		// create trace groups for trace data that didn't exist when we last bound the data
 		traces.enter().append("g")
 			.attr("class", "traces")
@@ -343,10 +349,11 @@ LineGraph.prototype.drawData_ = function ()
 			.attr("class", function (d, i) {return "series fill" + i;})
 			.attr("clip-path", "url(#" + clipId + ")");
 			
-		if (this.liteKey)
-		{
-			series.attr("id", function(d, i) {return linesId + "_" + this.liteKey[i];})
-		}
+		// autokey entries which have no key with the data index
+		series.each(function (d, i) { 
+					// if there is no key assigned, make one from the index
+					d.key = 'key' in d ? d.key : i.toString();
+					});
 
 		// rebind the point data of each series to the point groups
 		// (the data of the series is an array of point data)

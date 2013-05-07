@@ -226,11 +226,15 @@ Sketch.prototype.redraw = function ()
 	
 	// on the enter selection (create new ones from drawStuff) make
 	// the groups. This is useful in case you want to pack more than just the
-	// text label into the graup with the same relative positioning.  
+	// shape into the graup with the same relative positioning, like a label.  
 	drawCollection.enter()
 		.append("g")
-		.attr("class","shape");
+		.attr("class","shape")
+			;
 		
+	// get rid of any shapes without data
+	drawCollection.exit().remove();
+
 	// autokey entries which have no key with the data index
 	drawCollection.each(function (d, i) { 
 					// if there is no key assigned, make one from the index
@@ -240,36 +244,60 @@ Sketch.prototype.redraw = function ()
 	// move the sketch objects into position, but do it on the data collection, which 
 	// includes both the update and the enter selections, so you can drag them around
 	// on a suitable event or redraw.
+
+				  
+	var rectangles = drawCollection.selectAll("rect").data(function (d,i) {return d.shape == "rectangle"? d.data : [];});
+	rectangles.enter().append("rect");
+	rectangles.exit().remove();
+	// update the properties on all new or changing rectangles
+	rectangles.attr("width", function(d) { return xScale(d.width)})
+			  .attr("height", function(d) { console.log("height", d.height, yScale(d.height));
+			  								
+											return yScale(0) - yScale(d.height)});
 	
- 
-	drawCollection.attr("transform", function (d, i)  {
+	// move the rectangles into starting graph coordinate position (bottom left)
+	rectangles.attr("transform", function (d, i)  {
 					return attrFnVal("translate", xScale(d.xyPos[0]), yScale(d.xyPos[1]));
 				  });
-
 	// TODO: we're likely going to want to label the drawBits, but 
 	// I don't need it now, and it's not clear if we should just layer a labelGroup
 	// on it or make them part of the groups that hold each thing.
 	
-
-	drawCollection.filter(function (d, i) { return d.shape === "circle"; })
-		.append("circle")
-			.attr("r", function(d) { return xScale(d.radius)})
-			.attr("cx", 0).attr("cy", 0);
+	var circles = drawCollection.selectAll("circle").data(function (d,i) {return d.shape == "circle"? d.data : [];});
 	
+	//var circles = drawCollection.filter(function (d, i) { return d.shape === "circle"; }).data(function (d,i) {return d});
+	circles.enter().append("circle");
+	circles.exit().remove();
+	// update the properties on all new or changing rectangles
+	// unclear how to scale the radius, with x or y scale ? -lb
+	circles.attr("r", function(d) { return xScale(d.radius)})
+			.attr("cx", function(d) { return xScale(d.xyPos[0]);} )
+			.attr("cy", function(d) { return yScale(d.xyPos[1]);} );
+	
+	/*circles.attr("transform", function (d, i)  {
+					return attrFnVal("translate", xScale(d.xyPos[0]), yScale(d.xyPos[1]));
+				  });*/
 
-	drawCollection.filter(function (d, i) { return d.shape === "rectangle"; })
-		.append("rect")
-			.attr("width", function(d) { return xScale(d.width)})
-			.attr("height", function(d) { return yScale(d.height)});
 
-	drawCollection.filter(function (d) { return d.shape === "hexagon"; })
-		.append("polygon")
-			.attr("points","10,12 17,24 33,24 40,12 33,0 17,0");
+	var hexagons = drawCollection.selectAll("polygon.hex")
+		.data(function (d) { return d.shape == "hexagon"? d.data : []; });
+	hexagons.enter().append("polygon")
+			.attr("class","hex");
+	hexagons.exit().remove();
+	hexagons.attr("points",".10,.12 .17,.24 .33,.24 .40,.12 .33,0 .17,0")
+		    .attr("transform",function(d) { return "scale(" +  xScale(d.side) + "," + xScale(d.side) + ")"; } );
 
-	drawCollection.filter(function (d) { return d.shape === "line"; })
-		.append("line")
-			.attr("x2",function(d) { return xScale(d.xyEnd[0])})
-			.attr("y2",function(d) { return yScale(d.xyEnd[1])});
+	//hexagons.attr("points","10,12 17,24 33,24 40,12 33,0 17,0");
+
+	var lines = drawCollection.selectAll("lines")
+	.data(function (d) { return d.shape == "line"? d.data : []; });
+	lines.enter().append("line");
+	lines.exit().remove();
+	lines
+		.attr("x1",function(d) { return xScale(d.xyPos[0])})
+		.attr("x2",function(d) { return yScale(d.xyPos[1])})		
+		.attr("x2",function(d) { return xScale(d.length * Math.cos(d.angle))})
+		.attr("y2",function(d) { return yScale(d.length * Math.sin(d.angle))});
 
 
 	drawCollection.on('click',

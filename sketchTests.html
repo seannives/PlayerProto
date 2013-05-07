@@ -64,11 +64,10 @@ var svgRect = new SVGContainer(
 	
 var rect0 = new Sketch({
 			id: "rect0",
-			drawShape: 	
-			[	
-				{ shape: "rectangle",	xyPos: [ 0.25, 0.75], width: 0.5, height: 0.5 },
-			],
-		});
+			drawShape: [	
+				{shape: "rectangle", data: [{ xyPos: [ 0.1, 0.3], width: 0.75, height:.2 }]}
+				]
+			});
 svgRect.append(rect0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 // Case 1 circle
@@ -83,9 +82,9 @@ var circ0 = new Sketch({
 			id: "circle0",
 			drawShape: 	
 			[	
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .5 },
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .25 },
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .15 },
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .5 }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .25 }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .15 }]},
 
 			],
 		});
@@ -103,8 +102,11 @@ var mole = new Sketch({
 			id: "carbon",
 			drawShape: 	
 			[	
-				{ shape: "hexagon",	xyPos: [0, 0.5], radius: .25 },
-				{ shape: "line",	xyPos: [0.25, 0.5], xyEnd: [0.5,1] },
+				{ shape: "hexagon",	data: [{xyPos: [0, 0], side: .2 }]},
+				{ shape: "line",	data: [{xyPos: [0.4, 0.2], length: .2, angle: 60 }] },
+				{ shape: "line",	data: [{xyPos: [0.5, 0.5], length: .1, angle: 0 }] },
+				{ shape: "line",	data: [{xyPos: [0.4, 0.2], length: .2, angle: 90 }] },
+				{ shape: "line",	data: [{xyPos: [0.4, 0.2], length: .2, angle: 120 }] },
 
 			],
 		});
@@ -122,10 +124,10 @@ var svgLabel = new SVGContainer(
 var clicks = new Sketch({
 			id: "shapes",
 			drawShape: 	
-			[	{ shape: "rectangle",	xyPos: [0, .5], width: .25, height: .5 },
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .1 },
-				{ shape: "hexagon",	xyPos: [0, 0.5], radius: .25 },
-				{ shape: "line",	xyPos: [0, 1], xyEnd: [1,0] },
+			[	{ shape: "rectangle", data: [{xyPos: [0, .5], width: .25, height: .5 }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .1 }]},
+				{ shape: "hexagon",	data: [{xyPos: [0, 0.5], side: .25 }]},
+				{ shape: "line",	data: [{xyPos: [0, 1], length: 1.4, angle: -45 }]},
 
 			],
 		},eventManager);
