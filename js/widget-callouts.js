@@ -111,10 +111,10 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 	//use the event handlers
 	this.rootEl = this.node.append("div").attr("id", this.id);
 	
-	var table = this.rootEl.append("table").attr("class", "data");
+	var table = this.rootEl.append("table").attr("class", "widgetCallout");
 		
 	if(this.headers){
-		var headRow = table.append("thead").attr("class", "data").append("tr");
+		var headRow = table.append("thead").append("tr");
 			headRow.selectAll("td").data(this.headers).enter()
 				.append("td")
 					.html(function(d) {
@@ -122,10 +122,10 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 							});
 		}
 	//Show the data in a table
-	this.calloutCollection = table.append("tbody").selectAll("tr")
+	this.calloutCollection = table.append("tbody").selectAll("tr.widgetCallout")
 		.data(this.textBits);
 					
-	this.rows = this.calloutCollection.enter().append("tr");
+	this.rows = this.calloutCollection.enter().append("tr").attr("class","widgetCallout");
 	//creates as many rows as there are elements in textBits
 	//	.attr("id", function(d,i) {
 			//if a key is specified, append that to the ID for the row,
@@ -195,12 +195,10 @@ Callouts.prototype.lite = function (lite)
 		
 		var unset = this.calloutCollection;
 		//remove all special formatting
-		unset
-		.style("color",null)
-		.style("border",null)
-		.style("background-color",null);
+		unset.classed("lit",false);
 		
-		//if individually shown, hide all 
+		// if individually shown, hide all.  This is part of functionality
+		// so I didn't put this in the CSS -lb
 		if(this.show != "all"){
 			unset
 			.style("display","none");}
@@ -212,30 +210,14 @@ Callouts.prototype.lite = function (lite)
 	var selectionToLite = this.calloutCollection.filter(matchesLabelIndex);
 
 	// Highlight the labels w/ the matching key
+	selectionToLite.style("display",null);
+	
 	selectionToLite
-		.style("font-weight", "500")
-		//this slight bolding works in svg text, but is not really visible
-		//in table text. On the up side, it doesn't change width so much,
-		//so the letter spacing isn't necessary.
-		//.style("letter-spacing","-.07em")
-			.style("color", "#1d456e")
-			.style("border", "2px solid #bce8f1")
-			.style("background-color", "#E3EFFE");
+		.classed("lit",true);
 
 	if (selectionToLite.empty())
 	{
 		console.log("No key '" + lite + "' in Labels group " + this.id );
 	}
-		//Show and highlight just the currently selected key
-		var set = d3.selectAll("#" + this.id + lite);
-		set.style("display",null);
-		
-		set.style("font-weight", "500")
-		//this slight bolding works in svg text, but is not really visible
-		//in table text. On the up side, it doesn't change width so much,
-		//so the letter spacing isn't necessary.
-		//.style("letter-spacing","-.07em")
-			.style("color", "#1d456e")
-			.style("border", "2px solid #bce8f1")
-			.style("background-color", "#E3EFFE");
+	
 	} //end Callouts.lite method
