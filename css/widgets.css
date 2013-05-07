@@ -34,6 +34,11 @@ svg g.widgetImage.lit>rect.highlight
 	stroke-opacity:	0.8;	
 }
 
+svg g.widgetCaptionedImage div.widgetImageCaption
+{
+	text-align:		center;
+}
+
 /* Labels
 ================================================== */
 svg g.widgetLabel>circle
