@@ -281,23 +281,29 @@ Sketch.prototype.redraw = function ()
 
 	var hexagons = drawCollection.selectAll("polygon.hex")
 		.data(function (d) { return d.shape == "hexagon"? d.data : []; });
-	hexagons.enter().append("polygon")
-			.attr("class","hex");
+	hexagons.enter().append("polygon");
+			//.attr("class","hex");
 	hexagons.exit().remove();
+	// hexagons are drawn off a base shape of size 1% of the width
+	// then scaled and centered around the xyPosition, like circles
 	hexagons.attr("points",".10,.12 .17,.24 .33,.24 .40,.12 .33,0 .17,0")
-		    .attr("transform",function(d) { return "scale(" +  xScale(d.side) + "," + xScale(d.side) + ")"; } );
+			.style("fill","#fff")
+			.attr("transform", function (d, i)  {
+					return attrFnVal("translate", xScale(d.xyPos[0]), yScale(d.xyPos[1])) + "," +
+		    			   attrFnVal("scale", xScale(d.side),xScale(d.side)); } );
 
-	//hexagons.attr("points","10,12 17,24 33,24 40,12 33,0 17,0");
 
 	var lines = drawCollection.selectAll("lines")
 	.data(function (d) { return d.shape == "line"? d.data : []; });
 	lines.enter().append("line");
 	lines.exit().remove();
 	lines
-		.attr("x1",function(d) { return xScale(d.xyPos[0])})
-		.attr("x2",function(d) { return yScale(d.xyPos[1])})		
-		.attr("x2",function(d) { return xScale(d.length * Math.cos(d.angle))})
-		.attr("y2",function(d) { return yScale(d.length * Math.sin(d.angle))});
+		.attr("x1",function(d) { return xScale(d.xyPos[0]);})
+		.attr("y1",function(d) { return yScale(d.xyPos[1]);})		
+		.attr("x2",function(d) { 
+					console.log("x2", d.length* Math.cos(d.angle));
+					return xScale(d.length * Math.cos(d.angle));})
+		.attr("y2",function(d) { return yScale(d.length * Math.sin(d.angle));});
 
 
 	drawCollection.on('click',
