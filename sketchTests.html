@@ -16,17 +16,18 @@
 		<div class="row-fluid">
 			<div class="span6 leftCol">
                 <h2 class="setTitle"></h2>
-				<div id="rectTest"><p>0. Rectangle 	{ shape: "rectangle",	xyPos: [ 0.25, .75], width: 0.5, height: 0.5 } half the width and height of the box, starting at left edge halfway up.
+				<div id="rectTest"><p>0. Rectangle 	{ shape: "rectangle",	xyPos: [ 0.1, .1], width: 0.75, height: 0.2 } half the width and height of the box, starting at left edge halfway up.
 	</p></div>
 				<div id="circTest"><p>1. Three concentric circles centered on space { shape: "circle",	xyPos: [0.5, 0.5], radius: .5 },</p></div>
 				<div id="molecule"><p>2. hexagon and lines</p></div>
+				<div id="compass"><p>3. compass rose (vector precursor)</p></div>
 				 
 				
 			</div>
 			<div class="span6 rightCol">
-				<div id="hotSpot"><p>Click the shapes to lite the label</p></div>
+				<div id="hotSpot"><p>4.Click the shapes to lite the label</p></div>
                 <div id="description"></div>
-                <div id="redraw"><p>Slide the size</p></div>
+                <div id="redraw"><p>5. Slide the size</p></div>
 			</div>
 		</div>
 	</div>
@@ -64,11 +65,10 @@ var svgRect = new SVGContainer(
 	
 var rect0 = new Sketch({
 			id: "rect0",
-			drawShape: 	
-			[	
-				{ shape: "rectangle",	xyPos: [ 0.25, 0.75], width: 0.5, height: 0.5 },
-			],
-		});
+			drawShape: [	
+				{shape: "rectangle", data: [{ xyPos: [ 0.1, 0.3], width: 0.75, height:.2 }]}
+				]
+			});
 svgRect.append(rect0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 // Case 1 circle
@@ -83,9 +83,9 @@ var circ0 = new Sketch({
 			id: "circle0",
 			drawShape: 	
 			[	
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .5 },
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .25 },
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .15 },
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .5 }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .25 }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: .15 }]},
 
 			],
 		});
@@ -94,24 +94,51 @@ svgCirc.append(circ0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent:
 // Case 2 circle
 var svgMole = new SVGContainer(
 		{node: d3.select("#molecule"),
-		maxWid: 200,
-		maxHt: 200
+		maxWid: 100,
+		maxHt: 100
 		}
 	);
+	
 	
 var mole = new Sketch({
 			id: "carbon",
 			drawShape: 	
 			[	
-				{ shape: "hexagon",	xyPos: [0, 0.5], radius: .25 },
-				{ shape: "line",	xyPos: [0.25, 0.5], xyEnd: [0.5,1] },
-
+				{ shape: "hexagon",	data: [{xyPos: [.1, .5], side: .3 }]},
+				{ shape: "line",	data: [{xyPos: [.44, .42], length: .17, angle: Math.PI/5}] },
+				{ shape: "line",	data: [{xyPos: [0.58, 0.51], length: .17, angle: -Math.PI/5}] },
+				{ shape: "line",	data: [{xyPos: [.72, .42], length: .17, angle: Math.PI/5}] },
+				{ shape: "line",	data: [{xyPos: [0.86, 0.51], length: .17, angle: -Math.PI/5}] },
 			],
 		});
 svgMole.append(mole, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
+// Case 3 compass rose
+var svgcompass = new SVGContainer(
+		{node: d3.select("#compass"),
+		maxWid: 200,
+		maxHt: 200
+		}
+	);
+	
+	
+var roseLines = new Sketch({
+			id: "rose",
+			drawShape: 	
+			[	
+			{ shape: "line",	data: [{xyPos: [.5, 0], length: .5, angle: 0}] },
+			{ shape: "line",	data: [{xyPos: [.5, 0], length: .5, angle: Math.PI/4}] },
+			{ shape: "line",	data: [{xyPos: [.5, 0], length: .5, angle: Math.PI/2}] },
+			{ shape: "line",	data: [{xyPos: [.5, 0], length: .5, angle: 2*Math.PI/3}] },
+			{ shape: "line",	data: [{xyPos: [.5, 0], length: .5, angle: 5*Math.PI/6}] },
+			{ shape: "line",	data: [{xyPos: [.5, 0], length: .5, angle: Math.PI}] },
+			
+			],
+		});
+svgcompass.append(roseLines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
 
-// Case 3 highlight events with labels
+// Case 4 highlight events with labels
 var svgLabel = new SVGContainer(
 		{node: d3.select("#hotSpot"),
 		maxWid: 400,
@@ -122,10 +149,10 @@ var svgLabel = new SVGContainer(
 var clicks = new Sketch({
 			id: "shapes",
 			drawShape: 	
-			[	{ shape: "rectangle",	xyPos: [0, .5], width: .25, height: .5 },
-				{ shape: "circle",	xyPos: [0.5, 0.5], radius: .1 },
-				{ shape: "hexagon",	xyPos: [0, 0.5], radius: .25 },
-				{ shape: "line",	xyPos: [0, 1], xyEnd: [1,0] },
+			[	{ shape: "rectangle", data: [{xyPos: [0, .5], width: .25, height: .5 }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.8], radius: .1 }]},
+				{ shape: "hexagon",	data: [{xyPos: [0.3, 0.5], side: .15 }]},
+				{ shape: "line",	data: [{xyPos: [0, 1], length: 1.4, angle: -45 }]},
 
 			],
 		},eventManager);

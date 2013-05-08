@@ -175,7 +175,8 @@
 	}
 	
 	var factor = 100;
-	var diam = 2 * Math.sqrt(ASlide.getValue() / Math.PI);
+	var diam = 2 * Math.abs(Math.sqrt(ASlide.getValue() / Math.PI));
+	console.log("diameter",diam);
 	var maxDiam = 2*Math.sqrt(AExtent[1]/Math.PI);
 	var electrons = randomXYData({
 			pts: Math.floor(factor * rhoSlide.getValue()),
@@ -207,7 +208,7 @@
 			id: "wire",
 			drawShape: 	
 			[	
-				{ shape: "rectangle", xyPos: [0, maxDiam - diam], width: LSlide.getValue(), height: diam },
+				{ shape: "rectangle", data: [{xyPos: [0, diam], width: LSlide.getValue(), height: diam }]},
 			],
 		});
 
@@ -255,10 +256,8 @@
 			
 		// update the linegraph w/ the new data
 		dots.data[0] = electrons;
-		rect.drawShape =  	
-			[	
-				{ shape: "rectangle",	xyPos: [0, maxDiam - diam], width: LSlide.getValue(), height: diam },
-			];	
+		rect.drawShape[0].data =  	
+			[{xyPos: [0, diam], width: LSlide.getValue(), height: diam }];	
 		//redraw the dots
 		dots.redraw();
 	}
