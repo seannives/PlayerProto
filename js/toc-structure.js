@@ -109,6 +109,12 @@ var bookConfig = {
 				id: "n.2.9",
 				title: "Slider and Readout Tests"
 			},
+			{
+				type: "objective",
+				url: "buttonTests.html",
+				id: "n.2.10",
+				title: "Button Tests"
+			},
             ]
         },
 		    {
