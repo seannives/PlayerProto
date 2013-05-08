@@ -168,8 +168,8 @@ Carousel.prototype.draw = function(container, size)
 	// Carve the width up for the n items
 	var itemCnt = this.items.length;
 	var itemSize = {height: size.height - (itemMargin.top + itemMargin.bottom),
-					width: d3.round(size.width / (itemCnt ? itemCnt : 1)
-									- (itemMargin.left + itemMargin.right))};
+					width: size.width / (itemCnt ? itemCnt : 1)
+									- (itemMargin.left + itemMargin.right)};
 
 	// function used to place each item into its correct position
 	var translateItem =
@@ -192,9 +192,9 @@ Carousel.prototype.draw = function(container, size)
 	// Rect for the background of the carousel
 	widgetGroup
 		.append("rect")
+			.attr("class", "background")
 			.attr("width", size.width)
-			.attr("height", size.height)
-			.attr("fill", "#efefef");	// TODO: move this to css selector: 'g.widgetCarousel>rect' -mjl
+			.attr("height", size.height);
 
 	// Create a group for each item then draw the item in that group
 	itemGroups = widgetGroup.selectAll("g.widgetItem").data(this.items);
