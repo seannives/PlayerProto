@@ -103,12 +103,12 @@ var bookConfig = {
                 id: "n.2.x",
                 title: "Sketch Tests"
             },
-			/*{
+			{
 				type: "objective",
 				url: "sliderTests.html",
 				id: "n.2.9",
 				title: "Slider and Readout Tests"
-			},*/
+			},
             ]
         },
 		    {
