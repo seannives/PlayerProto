@@ -110,11 +110,34 @@ function Image(config, eventManager)
 	this.key = config.key;
 
 	/**
+	 * List of child widgets which are to be drawn in this Image's container area.
+	 * Child widgets are added using Image.append.
+	 * @type {Array.<IWidget>}
+	 */
+	this.childWidgets = [];
+	
+	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
 	 */
 	this.eventManager = eventManager;
 
+	/**
+	 * The scale functions set explicitly for this Image using setScale.
+	 * Image doesn't use scale functions, but they may get used in a widget chain.
+	 * Otherwise a data extent of [0,1] will be mapped to the given
+	 * container area.
+	 * @type Object
+	 * @property {function(number): number}
+	 *						xScale	-function to convert a horizontal data offset
+	 *								 to the pixel offset into the data area.
+	 * @property {function(number): number}
+	 *						yScale	-function to convert a vertical data offset
+	 *								 to the pixel offset into the data area.
+	 * @private
+	 */
+	this.explicitScales_ = {xScale: null, yScale: null};
+	
 	/**
 	 * Information about the last drawn instance of this image (from the draw method)
 	 * @type {Object}
@@ -145,6 +168,8 @@ Image.prototype.draw = function(container, size)
 	this.lastdrawn.size = size;
 	this.lastdrawn.URI = this.URI;
 	this.lastdrawn.caption = this.caption;
+
+	this.setLastdrawnScaleFns2ExplicitOrDefault_(size);
 	
 	// make a group to hold the image
 	var imageGroup = container.append("g")
@@ -182,6 +207,9 @@ Image.prototype.draw = function(container, size)
 
 	this.lastdrawn.widgetGroup = imageGroup;
 
+	// Draw any child widgets that got appended before draw was called
+	this.childWidgets.forEach(this.drawWidget_, this);
+	
 }; // end of Image.draw()
 
 /* **************************************************************************
@@ -200,6 +228,43 @@ Image.prototype.redraw = function ()
 	
 	var desc = image.select("desc");
 	desc.text(this.caption);
+	
+	this.childWidgets.forEach(this.redrawWidget_, this);
+};
+
+/* **************************************************************************
+ * Image.drawWidget_                                                    *//**
+ *
+ * Draw the given child widget in this image's area.
+ * This image must have been drawn BEFORE this method is called or
+ * bad things will happen.
+ *
+ * @private
+ *
+ * @todo implement some form of error handling! -mjl
+ *
+ ****************************************************************************/
+Image.prototype.drawWidget_ = function (widget)
+{
+	widget.setScale(this.lastdrawn.xScale, this.lastdrawn.yScale);
+	widget.draw(this.lastdrawn.widgetGroup, this.lastdrawn.size);
+};
+
+/* **************************************************************************
+ * Image.redrawWidget_                                                  *//**
+ *
+ * Redraw the given child widget.
+ * This line graph and this child widget must have been drawn BEFORE this
+ * method is called or bad things will happen.
+ *
+ * @private
+ *
+ * @todo implement some form of error handling! -mjl
+ *
+ ****************************************************************************/
+Image.prototype.redrawWidget_ = function (widget)
+{
+	widget.redraw();
 };
 
 /* **************************************************************************
@@ -232,7 +297,6 @@ Image.prototype.changeImage = function (URI, opt_caption)
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
  * to use the scaling/data area calculated by another widget.
- * Images don't have a scale, so this method does nothing.
  *
  * @param {function(number): number}
  *						xScale	-function to convert a horizontal data offset
@@ -244,7 +308,55 @@ Image.prototype.changeImage = function (URI, opt_caption)
  ****************************************************************************/
 Image.prototype.setScale = function (xScale, yScale)
 {
+	this.explicitScales_.xScale = xScale;
+	this.explicitScales_.yScale = yScale;
 };
+
+/* **************************************************************************
+ * Image.append                                                         *//**
+ *
+ * Append the widget or widgets to this image and draw it/them on top
+ * of the image and any widgets appended earlier. If append
+ * is called before draw has been called, then the appended widget(s) will be
+ * drawn when draw is called.
+ *
+ * @param {!IWidget|Array.<IWidget>}
+ * 						svgWidgets	-The widget or array of widgets to be drawn in
+ *									 this image's area.
+ *
+ ****************************************************************************/
+Image.prototype.append = function(svgWidgets)
+{
+	if (!$.isArray(svgWidgets))
+	{
+		this.append_one_(svgWidgets);
+	}
+	else
+	{
+		svgWidgets.forEach(this.append_one_, this);
+	}
+		
+}; // end of Image.append()
+
+/* **************************************************************************
+ * Image.append_one_                                                    *//**
+ *
+ * Helper for append that does the work needed to append a single widget.
+ *
+ * @param {!IWidget}	widget	-The widget which is to be drawn in this image's
+ *								 area.
+ *
+ * @private
+ *
+ ****************************************************************************/
+Image.prototype.append_one_ = function(widget)
+{
+	this.childWidgets.push(widget);
+	
+	if (this.lastdrawn.container !== null)
+		this.drawWidget_(widget);
+		
+}; // end of Image.append_one_()
 
 /* **************************************************************************
  * Image.lite                                                           *//**
@@ -259,6 +371,40 @@ Image.prototype.lite = function (liteKey)
 	var shouldHilight = liteKey === this.key;
 	this.lastdrawn.widgetGroup.classed('lit', shouldHilight);
 };
+
+/* **************************************************************************
+ * Image.setLastdrawnScaleFns2ExplicitOrDefault_                        *//**
+ *
+ * Set this.lastdrawn.xScale and yScale to those stored in explicitScales
+ * or to the default scale functions w/ a data domain of [0,1].
+ *
+ * @param {Size}	cntrSize	-The pixel size of the container given to draw().
+ * @private
+ *
+ ****************************************************************************/
+Image.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSize)
+{
+	if (this.explicitScales_.xScale !== null)
+	{
+		this.lastdrawn.xScale = this.explicitScales_.xScale;
+	}
+	else
+	{
+		// map the default x data domain [0,1] to the whole width of the container
+		this.lastdrawn.xScale = d3.scale.linear().rangeRound([0, cntrSize.width]);
+	}
+	
+	if (this.explicitScales_.yScale !== null)
+	{
+		this.lastdrawn.yScale = this.explicitScales_.yScale;
+	}
+	else
+	{
+		// map the default y data domain [0,1] to the whole height of the container
+		// but from bottom to top
+		this.lastdrawn.yScale = d3.scale.linear().rangeRound([cntrSize.height, 0]);
+	}
+}; // end of Image.setLastdrawnScaleFns2ExplicitOrDefault_()
 
 /* **************************************************************************
  * CaptionedImage                                                       *//**
@@ -409,4 +555,44 @@ CaptionedImage.prototype.changeImage = function (URI, opt_caption)
 {
 	this.image.changeImage(URI, opt_caption);
 };
+
+/* **************************************************************************
+ * CaptionedImage.setScale                                              *//**
+ *
+ * Called to preempt the normal scale definition which is done when the
+ * widget is drawn. This is usually called in order to force one widget
+ * to use the scaling/data area calculated by another widget.
+ * This will actually set the scale of the encapsulated Image, not of
+ * the CaptionedImage itself, as appended widgets will also be appended
+ * to the encapsulated Image.
+ *
+ * @param {function(number): number}
+ *						xScale	-function to convert a horizontal data offset
+ *								 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						yScale	-function to convert a vertical data offset
+ *								 to the pixel offset into the data area.
+ *
+ ****************************************************************************/
+CaptionedImage.prototype.setScale = function (xScale, yScale)
+{
+	this.image.setScale(xScale, yScale);
+};
+
+/* **************************************************************************
+ * CaptionedImage.append                                                *//**
+ *
+ * Append the widget or widgets to the encapsulated image.
+ *
+ * @param {!IWidget|Array.<IWidget>}
+ * 						svgWidgets	-The widget or array of widgets to be drawn in
+ *									 this encapsulated image's area.
+ *
+ ****************************************************************************/
+CaptionedImage.prototype.append = function(svgWidgets)
+{
+	this.image.append(svgWidgets);
+		
+}; // end of CaptionedImage.append()
+
 
