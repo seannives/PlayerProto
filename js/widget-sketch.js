@@ -119,7 +119,7 @@ function Sketch(config, eventManager)
 	 * @private
 	 */
 	this.explicitScales_ = {xScale: null, yScale: null};
-	
+
 	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
 	 * @type {Object}
@@ -220,6 +220,19 @@ Sketch.prototype.redraw = function ()
 	var xScale = this.lastdrawn.xScale;
 	var yScale = this.lastdrawn.yScale;
 	
+	// definition of arrowheads if you need 'em
+	sketchContainer.append("defs").append("marker")
+		.attr("id","triangle")
+		.attr("viewBox","0 0 10 10")
+		.attr("refX","0")
+		.attr("refY","5")
+		.attr("markerUnits","strokeWidth")
+		.attr("markerWidth","4")
+		.attr("markerHeight","3")
+		.attr("orient","auto")
+			.append("path")
+			.attr("d","M 0 0 L 10 5 L 0 10 z");
+			
 	// bind the sketch group collection to the data
 	// the collection is used to highlight and unhighlight
 	var drawCollection = sketchContainer.selectAll("g.shape").data(this.drawShape);
@@ -250,10 +263,8 @@ Sketch.prototype.redraw = function ()
 	rectangles.enter().append("rect");
 	rectangles.exit().remove();
 	// update the properties on all new or changing rectangles
-	rectangles.attr("width", function(d) { return xScale(d.width)})
-			  .attr("height", function(d) { console.log("height", d.height, yScale(d.height));
-			  								
-											return yScale(0) - yScale(d.height)});
+	rectangles.attr("width", function(d) {  return xScale(d.width)})
+			  .attr("height", function(d) { return yScale(0) - yScale(d.height)});
 	
 	// move the rectangles into starting graph coordinate position (bottom left)
 	rectangles.attr("transform", function (d, i)  {
@@ -302,12 +313,18 @@ Sketch.prototype.redraw = function ()
 		.attr("x1",function(d) { return xScale(d.xyPos[0]);})
 		.attr("y1",function(d) { return yScale(d.xyPos[1]);})		
 		// calculate the endpoint, find the new endpoints given the length and angle
-		// there's some oddity about rotation defined in Javascripts trig functions, where
-		// second quadrant angles get negative vals
 		
 		.attr("x2",function(d) { 
 					return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);})
-		.attr("y2",function(d) { return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);});
+		.attr("y2",function(d) { return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);})
+		;
+	
+	lines.each(function (d, i) { 
+					// if type is a vector, put a triangle on the end
+					if(d.type == "vector"){
+						lines.attr("marker-end","url(#triangle)");
+							}
+						});
 
 
 	drawCollection.on('click',
