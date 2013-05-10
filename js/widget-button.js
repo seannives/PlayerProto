@@ -1,10 +1,11 @@
 /* **************************************************************************
- * $Workfile:: widget-button.js                                          $
+ * $Workfile:: widget-button.js                                             $
  * **********************************************************************//**
  *
  * @fileoverview Implementation of the button widget.
  *
- * The button widget creates an HTML5 button for setting numerical values.
+ * The button widget creates an HTML5 button which publishes (fires) an
+ * event when clicked using the event manager.
  *
  * Created on		May 8, 2013
  * @author			Jordan Vishniac
@@ -31,8 +32,8 @@
  * The button widget creates a clickable button that publishes events.
  *
  * @param {Object}		config		-The settings to configure this button
- * @param {String}		config.id	-String to uniquely identify this button
- * @param {String}		config.text	-The text to be displayed on the button
+ * @param {string}		config.id	-String to uniquely identify this button
+ * @param {string}		config.text	-The text to be displayed on the button
  *
  * @param {Object}		eventManager
  *
@@ -48,8 +49,12 @@ function Button(config, eventManager)
 	 */
 	this.id = config.id;
 	
-	if (config.text == null) this.text = "Default text";
-	else this.text = config.text;
+	/**
+	 * The text to be displayed on the button, if undefined the text
+	 * will be set to "Default text"
+	 * @type {string}
+	 */
+	this.text = config.text !== undefined ? config.text : "Default text";
 	
 	this.eventManager = eventManager;
 	
