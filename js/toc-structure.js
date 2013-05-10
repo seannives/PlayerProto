@@ -11,8 +11,8 @@ var bookConfig = {
         ordinal: "n",
         title: "Player Test Book - Chapter Opener",
         children: [
-
-        {   type: "module",
+        {
+            type: "module",
             url: "module_n.1.html",
             id: "n.1",
             title: "Module Opener",
@@ -79,7 +79,7 @@ var bookConfig = {
                 id: "n.2.5",
                 title: "Label and Callout Tests"
             },
-			  {
+            {
                 type: "objective",
                 url: "tableCalloutTests.html",
                 id: "n.2.6",
@@ -97,15 +97,26 @@ var bookConfig = {
                 id: "n.2.8",
                 title: "Button and Slider Tests"
             },
-			  {
+            {
                 type: "objective",
                 url: "sketchTests.html",
                 id: "n.2.x",
                 title: "Sketch Tests"
             },
+            {
+                type: "objective",
+                url: "sliderTests.html",
+                id: "n.2.9",
+                title: "Slider and Readout Tests"
+            },
+            {
+                type: "objective",
+                url: "buttonTests.html",
+                title: "Button Tests"
+            },
             ]
         },
-		    {
+        {
             type: "module",
             url: "module_n.3.html",
             id: "n.3",
@@ -123,25 +134,25 @@ var bookConfig = {
                 id: "n.3.2",
                 title: "Neff Reactor Stepped Image"
             },
-			{
+            {
                 type: "objective",
                 url: "PhysicsResistance.html",
                 id: "n.3.3",
                 title: "Resistance: Randomized Scatter Data and slider events"
             }, 
-			{
+            {
                 type: "objective",
                 url: "NeffPopPredictions.html",
                 id: "n.3.4",
                 title: "Neff Population Predictions Updating Lines"
             },
-			{
+            {
                 type: "objective",
                 url: "RitterImages.html",
                 id: "n.3.5",
                 title: "Ritter Image Carousel and Callouts"
             },
-			]
+            ]
 		}
         ]
     }
@@ -228,5 +239,3 @@ function determineCurrentTier(config) {
 massageBookConfig(bookConfig);
 var thisTier = determineCurrentTier(bookConfig); // global scope for use in subsequent js
 //alert(thisTier.title);
-
-
