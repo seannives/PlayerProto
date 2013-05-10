@@ -153,7 +153,7 @@ After oil has been transported, it has to be converted at refineries into second
 //TEST: set the start highlight state of 0 index by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
-	handleSelectionChanged({labelIndex: 0});
+	handleSelectionChanged({selectKey: 0});
 /************************************************************************
 * handleSelectionChanged                                            *//**
 *
@@ -172,8 +172,8 @@ After oil has been transported, it has to be converted at refineries into second
 		//each widget will have it's own way of responding  
 		//LabelLite should be a method of Labels, once Labels
 		//is written as a constructor
-		labelLite(svgImg,eventDetails.labelIndex);
-		callEm.calloutSwap(eventDetails.labelIndex);
+		lite(svgImg,eventDetails.selectKey);
+		callEm.calloutSwap(eventDetails.selectKey);
 		
 	}
 	

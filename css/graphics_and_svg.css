@@ -127,6 +127,19 @@ table.questionTable td {
   stroke-width: 1px;
 }
 
+svg .label {
+	padding: 0;
+	font-weight: inherit;
+	font-size: inherit;
+	text-shadow: none;
+	vertical-align: inherit;
+	white-space: inherit;
+}
+
+svg .label text {
+	font-size: 15px;
+}
+
 .steps {
  fill: black;
  stroke: white;
@@ -151,8 +164,10 @@ table.questionTable td {
     height: 16px; 
     min-width: 16px;
     padding: 4px 3px 3px 3px;
-  margin: 4px 3px 3px 3px;
+  margin: 4px 11px 3px 0px;
     text-align: center;
+	display: block;
+	float: left;
 }
 
 /* Axes

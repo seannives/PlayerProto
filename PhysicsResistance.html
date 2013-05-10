@@ -65,8 +65,8 @@
 	<script src="js/widget-linegraph.js"></script>
     <script src="js/widget-slider.js"></script>
     <script src="js/widget-callouts.js"></script>
-    <script src="js/widget-button.js"></script>
     <script src="js/widget-numeric.js"></script>
+    <script src="js/widget-sketch.js"></script>
 	<script src="js/eventmanager.js"></script>
 
 	<script>
@@ -175,10 +175,13 @@
 	}
 	
 	var factor = 100;
+	var diam = 2 * Math.abs(Math.sqrt(ASlide.getValue() / Math.PI));
+	console.log("diameter",diam);
+	var maxDiam = 2*Math.sqrt(AExtent[1]/Math.PI);
 	var electrons = randomXYData({
 			pts: Math.floor(factor * rhoSlide.getValue()),
 			amplitudeX: LSlide.getValue(),
-			amplitudeY: 2 * Math.sqrt(ASlide.getValue() / Math.PI),
+			amplitudeY: diam,
 		});
 
 	var cont1 = new SVGContainer({
@@ -197,9 +200,19 @@
 			yAxisFormat: { type: "linear",
 						   orientation: "right",
 						   label: "wire height",
-						    ticks: [0,2*Math.sqrt(AExtent[1]/Math.PI)],
+						    ticks: [0,maxDiam],
 						    },
 		});		
+	
+	var rect = new Sketch({
+			id: "wire",
+			drawShape: 	
+			[	
+				{ shape: "rectangle", data: [{xyPos: [0, diam], width: LSlide.getValue(), height: diam }]},
+			],
+		});
+
+	dots.append(rect);
 	cont1.append(dots, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 	
@@ -234,6 +247,7 @@
 		//write that resistance to the readout
 		resReadout.setValue(newRes);
 		//recalculate the data
+		var diam = 2 * Math.sqrt(ASlide.getValue() / Math.PI);
 		var electrons = randomXYData({
 			pts: Math.floor(factor * rhoSlide.getValue()),
 			amplitudeX: LSlide.getValue(),
@@ -242,7 +256,8 @@
 			
 		// update the linegraph w/ the new data
 		dots.data[0] = electrons;
-
+		rect.drawShape[0].data =  	
+			[{xyPos: [0, diam], width: LSlide.getValue(), height: diam }];	
 		//redraw the dots
 		dots.redraw();
 	}

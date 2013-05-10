@@ -39,6 +39,28 @@ function logFormat(d)
 	return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ? d3.round(Math.log(d)/Math.log(10)) : "";
 }
 
+
+/* **************************************************************************
+ * attrFnVal                                                            *//**
+ *
+ * Utility method that constructs a string function call given the
+ * function name and arguments.
+ *
+ * @param {string}		fnName		-Function name that will be called.
+ * @param {...[number]} arguments	-Arguments for the function call.
+ ****************************************************************************/
+function attrFnVal(fnName)
+{
+	// get the fn args into an Array
+	var args = Array.prototype.slice.call(arguments, 1);
+
+	var fnCallStr = fnName + '(';
+	fnCallStr += args.join(',');
+	fnCallStr += ')';
+	
+	return fnCallStr;
+}
+
 //Tests for logFormat function
 console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(Math.pow(10, -2)) == -2);
 console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
@@ -176,6 +198,62 @@ Rect.makeRect = function (definedBy)
 	return new Rect(left, top, width, height);
 }; // end Rect.makeRect
 
+/* **************************************************************************
+ * Size                                                                 *//**
+ *
+ * Size defines a 2 dimensional area. It has a height and a width in some
+ * common unit such as pixels.
+ *
+ * @param {number}	height	-The vertical dimension in the common units
+ * @param {number}	width	-The horizontal dimension in the common units
+ ****************************************************************************/
+function Size(height, width)
+{
+	/**
+	 * The number of units that measures the vertical dimension.
+	 * @type {number}
+	 */
+	this.height = height;
+
+	/**
+	 * The number of units that measures the horizontal dimension.
+	 * @type {number}
+	 */
+	this.width = width;
+}
+ 
+/* **************************************************************************
+ * Size.matchRatioWithHeight                                            *//**
+ *
+ * Return a Size with the specified height whose aspect ratio is the same as
+ * that of the given size.
+ *
+ * @param {number}	desiredHeight	-The vertical dimension of the Size to be returned.
+ * @param {Size}	desiredRatio	-A Size whose ratio should be preserved in the returned Size.
+ * @return {Size}
+ ****************************************************************************/
+Size.matchRatioWithHeight = function (desiredHeight, desiredRatio)
+{
+	return {height: desiredHeight,
+			width: desiredRatio.width * desiredHeight / desiredRatio.height};
+};
+
+/* **************************************************************************
+ * Size.matchRatioWithWidth                                             *//**
+ *
+ * Return a Size with the specified width whose aspect ratio is the same as
+ * that of the given size.
+ *
+ * @param {number}	desiredWidth	-The horizontal dimension of the Size to be returned.
+ * @param {Size}	desiredRatio	-A Size whose ratio should be preserved in the returned Size.
+ * @return {Size}
+ ****************************************************************************/
+Size.matchRatioWithWidth = function (desiredWidth, desiredRatio)
+{
+	return {height: desiredRatio.height * desiredWidth / desiredRatio.width,
+			width: desiredWidth};
+};
+
 
 /* **************************************************************************
  * Interfaces
@@ -228,6 +306,19 @@ IWidget.prototype.redraw = function () {};
  *								 to the pixel offset into the data area.
  ****************************************************************************/
 IWidget.prototype.setScale = function (xScale, yScale) {};
+
+/* **************************************************************************
+ * IWidget.lite                                                         *//**
+ *
+ * Highlight the area identified by the given key, unlighting all other
+ * liteable areas.
+ * Note that how the individual widget associates a given key with a particular
+ * area is up to the widget implementation.
+ *
+ * @param {string}	liteKey	-The key associated with the area to be highlighted.
+ *
+ ****************************************************************************/
+IWidget.prototype.lite = function (liteKey) {};
 
 /* **************************************************************************
  * IWidget.xScale                                                       *//**
@@ -403,7 +494,7 @@ SVGContainer.prototype.append = function(svgWidgets, location)
 SVGContainer.prototype.append_one_ = function(svgWidget, location)
 {
 	// create a group for the widget to draw into that we can then position
-	var g = this.svgObj.append('g').attr("class","widget");
+	var g = this.svgObj.append('g').attr("class", "widget");
 	var h = d3.round(location.heightPercent * this.maxHt);
 	var w = d3.round(location.widthPercent * this.maxWid);
 	svgWidget.draw(g, {height: h, width: w});
@@ -411,7 +502,10 @@ SVGContainer.prototype.append_one_ = function(svgWidget, location)
 	// position the widget
 	var top = d3.round(location.topPercentOffset * this.maxHt);
 	var left = d3.round(location.leftPercentOffset * this.maxWid);
-	g.attr('transform', 'translate(' + left + ',' + top + ')');
+	if (top !== 0 || left !== 0)
+	{
+		g.attr('transform', 'translate(' + left + ',' + top + ')');
+	}
 };
 
 /**

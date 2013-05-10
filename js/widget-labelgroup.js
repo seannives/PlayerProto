@@ -119,7 +119,7 @@ function LabelGroup(config, eventManager)
 	/**
 	 * The event details for this.selectedEventId events
 	 * @typedef {Object} SelectedEventDetails
-	 * @property {string|number} labelIndex	-The key associated with the selected label if it has one,
+	 * @property {string|number} selectKey	-The key associated with the selected label if it has one,
 	 *										 otherwise the label's index within the group.
 	 */
 	
@@ -148,6 +148,7 @@ function LabelGroup(config, eventManager)
 			container: null,
 			size: {height: 0, width: 0},
 			labelsId: this.id + 'Labels',
+			widgetGroup: null,
 			xScale: null,
 			yScale: null,
 		};
@@ -195,44 +196,48 @@ LabelGroup.prototype.draw = function(container, size)
 	var numLabels = this.labels.length;
 
 	var labelsContainer = container.append("g") //make a group to hold labels
-		.attr("class", "labels")
+		.attr("class", "widgetLabelGroup")
 		.attr("id", this.id);
+		
+	this.lastdrawn.widgetGroup = labelsContainer;
 
-	//this filter can be used to add dropshadows to highlighted labels and bullets
+	/*this filter can be used to add dropshadows to highlighted labels and bullets
 	var filter = labelsContainer.append("defs").append("filter").attr("id", "drop-shadow");
 	filter.append("feGaussianBlur").attr("in", "SourceAlpha").attr("stdDeviation", 2).attr("result", "blur");
 	filter.append("feOffset").attr("in", "blur").attr("dx", 2).attr("dy", 2).attr("result", "offsetBlur");
  	var merge = filter.append("feMerge");
 	merge.append("feMergeNode").attr("in", "offsetBlur");
 	merge.append("feMergeNode").attr("in", "SourceGraphic");
-
+	*/
+	
 	// bind the label group collection to the label data
 	// the collection is used to highlight and unhighlight
-	this.labelCollection = labelsContainer.selectAll("g.label").data(this.labels);
+	var labelCollection = labelsContainer.selectAll("g.widgetLabel").data(this.labels);
 	
 	// on the enter selection (create new ones from data labels) make
 	// the groups. This is useful in case you want to pack more than just the
 	// text label into the graup with the same relative positioning.  
-	this.labelCollection.enter()
-		.append("g");
+	labelCollection.enter()
+		.append("g")
+		.attr("class","widgetLabel");
 		
 	// autokey entries which have no key with the data index
-	this.labelCollection.each(function (d, i) { 
+	labelCollection.each(function (d, i) { 
 					// if there is no key assigned, make one from the index
-					d.key = 'key' in d ? d.key : i;
+					d.key = 'key' in d ? d.key : i.toString();
 					});
 					
 	// move the labels into position, but do it on the data collection, which 
 	// includes both the update and the enter selections, so you can drag them around
 	// on a suitable event or redraw.
-	this.labelCollection.attr("transform", function (d, i)  {
-					return "translate(" + that.lastdrawn.xScale(d.xyPos[0]) + "," 
-						+ that.lastdrawn.yScale(d.xyPos[1]) + ")";
+	labelCollection.attr("transform", function (d, i)  {
+					return attrFnVal("translate", that.lastdrawn.xScale(d.xyPos[0]),
+												  that.lastdrawn.yScale(d.xyPos[1]));
 				  });
 
 	// write each label text as a foreignObject, to get wrapping and full HTML
 	// rendering support
-	this.labelCollection.append("foreignObject")
+	labelCollection.append("foreignObject")
 		.attr("x", 0)
 		.attr("y", 0)
 		.attr("width", function (d) { return d.width; })
@@ -251,7 +256,7 @@ LabelGroup.prototype.draw = function(container, size)
 	// a precursor to hotspot answertypes
 	if (this.type == "bullets" || this.type == "numbered")
 	{
-		this.labelCollection.append("circle")
+		labelCollection.append("circle")
 			.attr("class", "numSteps")
 			.attr("r", 16).attr("cx", 0).attr("cy", 0);
 	}
@@ -263,18 +268,19 @@ LabelGroup.prototype.draw = function(container, size)
 	
 	if (this.type == "numbered")
 	{
-		this.labelCollection.append("text")
-			.style("fill", "white")
+		labelCollection.append("text")
 			.attr("text-anchor", "middle")
 			.attr("alignment-baseline", "middle")
 			.text(function (d, i) { return i + 1; });
 	}
 	
-	this.labelCollection.on('click',
+	labelCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex:d.key});
+					that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
 				});
+				
+	this.lastdrawn.labelCollection = labelsContainer.selectAll("g.widgetLabel");
 
 }; // end of LabelGroup.draw()
 
@@ -300,55 +306,36 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * LabelGroup.labelLite                                                 *//**
+ * LabelGroup.lite                                                      *//**
  *
- * Highlight the label(s) associated w/ the given labelIndex (key) and
+ * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
  *
- * @param {string|number}	labelIndex	-The key associated with the label(s) to be highlighted.
+ * @param {string|number}	liteKey	-The key associated with the label(s) to be highlighted.
  *
  ****************************************************************************/
-
-
-LabelGroup.prototype.labelLite = function (liteKey)
+LabelGroup.prototype.lite = function (liteKey)
 {
-	console.log("TODO: fired LabelLite log " + liteKey);
+	console.log("TODO: log fired Label highlite " + liteKey);
 	
-	// return all styles to normal on all the labels and numbers
-	this.labelCollection.selectAll(".descLabel")
-		.classed('lit', false);
-		//In the case of numbered type, turn all the text back to white, and circles to black
-	this.labelCollection.selectAll("text")
-		.style("fill", "white");
-	this.labelCollection.selectAll("circle")
-		.attr("class","numSteps");
-	
+	// Turn off all current highlights
+	var allLabels = this.lastdrawn.widgetGroup.selectAll("g.widgetLabel");
+	allLabels
+		.classed("lit", false);
 	
 	// create a filter function that will match all instances of the liteKey
 	// then find the set that matches
 	var matchesLabelIndex = function (d, i) { return d.key === liteKey; };
 	
-	var set = this.labelCollection.filter(matchesLabelIndex);
-	
-	// if any are found, highlight the selected label(s)
-	if (set[0][0]) 
-	{
-		// for numbered labels, highlight the selected circle and any others
-		// with the same liteKey
-		set.selectAll("circle")
-			.attr("class", "numStepsLit");
-		set.selectAll("text").style("fill", "#1d95ae");
-		
-		set.selectAll(".descLabel")
-			//.transition().duration(100)
-			// TODO: transitions render badly from Chrome refresh bug
-			// we'll have to figure out how to get transitions
-			// back in - maybe just foreign objects?
-			.classed('lit', true);
-	} 
-	else
+	var labelsToLite = allLabels.filter(matchesLabelIndex);
+
+	// Highlight the labels w/ the matching key
+	labelsToLite
+		.classed("lit", true);
+
+	if (labelsToLite.empty())
 	{
 		console.log("No key '" + liteKey + "' in Labels group " + this.id );
 	}
-}; // end of LabelGroup.labelLite()
+}; // end of LabelGroup.lite()
 

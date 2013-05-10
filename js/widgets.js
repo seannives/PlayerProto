@@ -730,20 +730,20 @@ MakeSVGContainer.prototype.Labels = function(config, eventManager)
 	this.labelCollection.on('click',
 				function (d, i)
 				{
-					that.eventManager.publish(that.selectedEventId, {labelIndex: (d.key ? d.key : i)});
+					that.eventManager.publish(that.selectedEventId, {selectKey: (d.key ? d.key : i)});
 				});
 	
 
 } //end MakeLabels object generator function
 
 /* **************************************************************************
- * labelLite                                                            *//**
+ * lite                                                            *//**
  *
  * Updates the labels widget highlight to match the currently
  * selected index, lite.
  *
  **********************************************************************/
-function labelLite(Obj, lite)
+function lite(Obj, lite)
 {
 	console.log("TODO: fired LabelLite log");
 	//return all styles to normal on all the labels
