@@ -34,6 +34,18 @@ svg g.widgetImage.lit>rect.highlight
 	stroke-opacity:	0.8;	
 }
 
+svg g.widgetCaptionedImage div.widgetImageCaption
+{
+	text-align:		center;
+}
+
+svg g.widgetCarousel>rect.background
+{
+	fill:			#4f00ef;
+	fill-opacity:	0.0;
+}
+
+
 /* Labels
 ================================================== */
 svg g.widgetLabel>circle

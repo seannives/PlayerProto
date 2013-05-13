@@ -124,19 +124,21 @@
 */
 //put numbered highlightable bullets on the image
 	var numLabels = new LabelGroup(
-		{id: "reactorNum",
-		type: "numbered",
-		labels: 	
-		  [	
-			{content: "1", xyPos: [.025,.25], width: 0},
-			{content: "2", xyPos: [.08,.45], width: 0},
-			{content: "3" , xyPos: [.325,.7], width: 0},
-			{content: "4" , xyPos: [.645,.64], width: 0},
-			{content: "5" , xyPos: [.69,.2], width: 0}
-	  ]
+		{
+			id: "reactorNum",
+			type: "numbered",
+			labels: 	
+			[	
+				{content: "1", xyPos: [0.025, 0.17], width: 0},
+				{content: "2", xyPos: [0.075, 0.37], width: 0},
+				{content: "3", xyPos: [0.325, 0.64], width: 0},
+				{content: "4", xyPos: [0.648, 0.59], width: 0},
+				{content: "5", xyPos: [0.690, 0.10], width: 0}
+			]
 		}, eventManager);
-		
-	cntr0.append(numLabels, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	cimg0.append(numLabels);
+
 	// Create the callout array, which also emits events so you 
 	//can click on the table row to highlight the labels.  
 	var callEm = new Callouts({
