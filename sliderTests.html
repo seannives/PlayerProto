@@ -120,6 +120,15 @@
 					</div>
 				</div>
 				
+				<div class="text">
+					<p>Test 10: One slider changing another</p>
+					<div id="t10sliders">
+						<span id="t10_1slider"></span>
+						<span id="t10_2slider"></span>
+					</div>
+					<p><span id="t10_1val"></span> + <span id="t10_2val"></span> = 100</p>
+				</div>
+				
 			</div>
 		</div>
     </div>
@@ -518,6 +527,74 @@
 		}, eventManager);
 		
 	t9_2Slide.draw(d3.select("#t9_2slider"));
+	
+	/////////////////////////////////////////////////
+	
+	// Test 10: One slider controlling another
+	var t10_1Extent = [0, 100],
+		t10_2Extent = [0, 100];
+		
+	var t10_1Slide = new Slider ({
+			id: "t10_1Val",
+			startVal: 50,
+			minVal: t10_1Extent[0],
+			maxVal: t10_1Extent[1],
+			stepVal: 1,
+			label: "Test 10 slider 1",
+			format: d3.format('5.2f'),
+		}, eventManager);
+		
+	t10_1Slide.draw(d3.select("#t10_1slider"));
+	
+	var t10_1Readout = new Readout ({
+			node: d3.select("#t10_1val"),
+			id: "t10_1Read",
+			startVal: test10function(t10_1Slide.getValue()),
+			readOnly: true,
+			size: 10
+		}, eventManager);
+	
+	var t10_2Slide = new Slider ({
+			id: "t10_2Val",
+			startVal: 50,
+			minVal: t10_2Extent[0],
+			maxVal: t10_2Extent[1],
+			stepVal: 1,
+			label: "Test 10 slider 2",
+			format: d3.format('5.2f'),
+		}, eventManager);
+		
+	t10_2Slide.draw(d3.select("#t10_2slider"));
+	
+	var t10_2Readout = new Readout ({
+			node: d3.select("#t10_2val"),
+			id: "t10_2Read",
+			startVal: test10function(t10_2Slide.getValue()),
+			readOnly: true,
+			size: 10
+		}, eventManager);
+	
+	function test10function (input)
+	{
+		return d3.round(input, 2);
+	}
+	
+	eventManager.subscribe(t10_1Slide.changedValueEventId, handleInputValueChanged1);
+	eventManager.subscribe(t10_2Slide.changedValueEventId, handleInputValueChanged2);
+		
+	function handleInputValueChanged1()
+	{
+		t10_2Slide.setValue(test10function(100 - t10_1Slide.getValue()));
+		t10_2Readout.setValue(test10function(t10_2Slide.getValue()));
+		t10_1Readout.setValue(test10function(t10_1Slide.getValue()));
+	}
+	
+	function handleInputValueChanged2()
+	{
+		t10_1Slide.setValue(test10function(100 - t10_2Slide.getValue()));
+		t10_1Readout.setValue(test10function(t10_1Slide.getValue()));
+		t10_2Readout.setValue(test10function(t10_2Slide.getValue()));
+	}
 
 </script>
 </body>
