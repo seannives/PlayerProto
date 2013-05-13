@@ -114,7 +114,6 @@ svg g.widgetSketch .shape {
 
 svg g.widgetSketch .shape > .hex {
 	fill: none;
-	color: #fff;
 	stroke: #666;
 	stroke-width: 2;
 }
