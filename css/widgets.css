@@ -361,43 +361,42 @@ table.questionTable td {
   stroke-width: 1px; }
 
 
-/* LineGraph highlights and styles
+/* LineGraph and legends highlights and styles
 ================================================== */
 
-svg g.widgetLineGraph.traces > path
+svg g.widgetLineGraph .traces 
 {
   fill: none;
-  stroke-width: 2px; }
-
+  stroke-width: 3px; 
 }
 
-svg g.widgetLineGraph.traces.lit > path
+svg g.widgetLineGraph .traces .lit  
 {
 	opacity:		0.5;
-	stroke-width:	4px;
+	stroke-width:	8px;
 	stroke: #f49524;
 }
 
-svg g.widgetLineGraph .stroke0 {
+svg g .stroke0 {
     fill: none;
   stroke: #2C6CB8; }
 
-svg g.widgetLineGraph .stroke1 {
+svg g .stroke1 {
   stroke: #66A62E; }
 
-svg g.widgetLineGraph .stroke2 {
+svg g .stroke2 {
   stroke: #E8B12E; }
 
-svg g.widgetLineGraph .stroke3 {
+svg g .stroke3 {
   stroke: #6B4FB8; }
 
-svg g.widgetLineGraph .stroke4 {
+svg g .stroke4 {
   stroke: #D44C17; }
 
-svg g.widgetLineGraph .stroke5 {
+svg g .stroke5 {
   stroke: #E39014; }
 
-svg g.widgetLineGraph .stroke6 {
+svg g .stroke6 {
   stroke: #666666; }
 
 /* bars, lines and points
