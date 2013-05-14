@@ -8,11 +8,6 @@
 /* highlights                                      
 ===================================================*/
 
-.lit {
-  fill: none;
-  stroke-width: 4px;
-  stroke: #f49524;
-}
 
 /* Images
 ================================================== */
@@ -75,6 +70,7 @@ svg g.widgetLabel.lit .descLabel
 	font-weight: 600;
 	background-color: #e3effe;
 }
+
 
 /* tables of callouts
 ================================================== */
@@ -364,14 +360,51 @@ table.questionTable td {
   stroke: #3A87AD;
   stroke-width: 1px; }
 
+
+/* LineGraph highlights and styles
+================================================== */
+
+svg g.widgetLineGraph.traces > path
+{
+  fill: none;
+  stroke-width: 2px; }
+
+}
+
+svg g.widgetLineGraph.traces.lit > path
+{
+	opacity:		0.5;
+	stroke-width:	4px;
+	stroke: #f49524;
+}
+
+svg g.widgetLineGraph .stroke0 {
+    fill: none;
+  stroke: #2C6CB8; }
+
+svg g.widgetLineGraph .stroke1 {
+  stroke: #66A62E; }
+
+svg g.widgetLineGraph .stroke2 {
+  stroke: #E8B12E; }
+
+svg g.widgetLineGraph .stroke3 {
+  stroke: #6B4FB8; }
+
+svg g.widgetLineGraph .stroke4 {
+  stroke: #D44C17; }
+
+svg g.widgetLineGraph .stroke5 {
+  stroke: #E39014; }
+
+svg g.widgetLineGraph .stroke6 {
+  stroke: #666666; }
+
 /* bars, lines and points
 ================================================== */
 .bar {
   opacity: 0.8; }
 
-.trace {
-  fill: none;
-  stroke-width: 4px; }
 
 .fill0 {
   fill: #2C6CB8; }
@@ -398,26 +431,6 @@ table.questionTable td {
   fill: #fff;
 }
 
-.stroke0 {
-  stroke: #2C6CB8; }
-
-.stroke1 {
-  stroke: #66A62E; }
-
-.stroke2 {
-  stroke: #E8B12E; }
-
-.stroke3 {
-  stroke: #6B4FB8; }
-
-.stroke4 {
-  stroke: #D44C17; }
-
-.stroke5 {
-  stroke: #E39014; }
-
-.stroke6 {
-  stroke: #666666; }
 
 /* zoom and pan widget 
 ================================================== */
