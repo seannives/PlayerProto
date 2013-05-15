@@ -8,11 +8,6 @@
 /* highlights                                      
 ===================================================*/
 
-.lit {
-  fill: none;
-  stroke-width: 4px;
-  stroke: #f49524;
-}
 
 /* Images
 ================================================== */
@@ -76,6 +71,7 @@ svg g.widgetLabel.lit .descLabel
 	background-color: #e3effe;
 }
 
+
 /* tables of callouts
 ================================================== */
 table.widgetCallout {
@@ -114,7 +110,6 @@ svg g.widgetSketch .shape {
 
 svg g.widgetSketch .shape > .hex {
 	fill: none;
-	color: #fff;
 	stroke: #666;
 	stroke-width: 2;
 }
@@ -365,14 +360,50 @@ table.questionTable td {
   stroke: #3A87AD;
   stroke-width: 1px; }
 
+
+/* LineGraph and legends highlights and styles
+================================================== */
+
+svg g.widgetLineGraph .traces 
+{
+  fill: none;
+  stroke-width: 3px; 
+}
+
+svg g.widgetLineGraph .traces .lit  
+{
+	opacity:		0.5;
+	stroke-width:	8px;
+	stroke: #f49524;
+}
+
+svg g .stroke0 {
+    fill: none;
+  stroke: #2C6CB8; }
+
+svg g .stroke1 {
+  stroke: #66A62E; }
+
+svg g .stroke2 {
+  stroke: #E8B12E; }
+
+svg g .stroke3 {
+  stroke: #6B4FB8; }
+
+svg g .stroke4 {
+  stroke: #D44C17; }
+
+svg g .stroke5 {
+  stroke: #E39014; }
+
+svg g .stroke6 {
+  stroke: #666666; }
+
 /* bars, lines and points
 ================================================== */
 .bar {
   opacity: 0.8; }
 
-.trace {
-  fill: none;
-  stroke-width: 4px; }
 
 .fill0 {
   fill: #2C6CB8; }
@@ -399,26 +430,6 @@ table.questionTable td {
   fill: #fff;
 }
 
-.stroke0 {
-  stroke: #2C6CB8; }
-
-.stroke1 {
-  stroke: #66A62E; }
-
-.stroke2 {
-  stroke: #E8B12E; }
-
-.stroke3 {
-  stroke: #6B4FB8; }
-
-.stroke4 {
-  stroke: #D44C17; }
-
-.stroke5 {
-  stroke: #E39014; }
-
-.stroke6 {
-  stroke: #666666; }
 
 /* zoom and pan widget 
 ================================================== */

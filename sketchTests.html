@@ -27,7 +27,9 @@
 			<div class="span6 rightCol">
 				<div id="hotSpot"><p>4.Click the shapes to lite the label</p></div>
                 <div id="description"></div>
-                <div id="redraw"><p>5. Slide the size</p></div>
+                <div id="redraw"><p>5. Slide the size <span style="color: red">BUG: Line lengths don't update, although they should.</span></p>
+                 
+                </div>
 			</div>
 		</div>
 	</div>
@@ -46,6 +48,8 @@
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
 	<script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-slider.js"></script>
+    <script src="js/widget-numeric.js"></script>
     <script src="js/widget-callouts.js"></script>
 	<script src="js/widget-sketch.js"></script>
 	
@@ -186,6 +190,8 @@ var newLabels = new LabelGroup(
 			},
 			]
 	});
+	
+	someCalls.draw(d3.select("#description"));
 
 // TODO: there is a bug here that prevents me from stacking up both the sketch and the newLabels in an
 // array in the svg append function.  One expects the other to have axes, or something. Need mjl 
@@ -193,8 +199,38 @@ var newLabels = new LabelGroup(
 svgLabel.append([clicks], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 svgLabel.append([newLabels], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
-someCalls.draw(d3.select("#description"));
+//case 5 update the size of a sketch object on a slider
+var sizeSlide = new Slider ({
+			id: "setSize",
+			startVal: 0.5,
+			minVal: .1,
+			maxVal: .9,
+			stepVal: .1,
+			unit: "unitless",
+			label: "Size =",
+			format:  d3.format('5.2f'),
+		}, eventManager);
+		
+sizeSlide.draw(d3.select("#redraw"));
 
+var updateMe = new SVGContainer(
+		{node: d3.select("#redraw"),
+		maxWid: 300,
+		maxHt: 300
+		}
+	);
+	
+var shapeIt = new Sketch({
+			id: "shapes",
+			drawShape: 	
+			[	{ shape: "rectangle", data: [{xyPos: [.5, .5], width: sizeSlide.getValue(), height: sizeSlide.getValue() }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: sizeSlide.getValue() }]},
+				{ shape: "line",	data: [{xyPos: [0.5, 0.5], length: sizeSlide.getValue(), angle: 45 }]},
+
+			],
+		});
+		
+updateMe.append([shapeIt], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 //Test: set the start highlight state of 0 key by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
@@ -203,8 +239,39 @@ handleSelectionChanged({selectKey: '0'});
 	
 eventManager.subscribe(clicks.selectedEventId, handleSelectionChanged);
 eventManager.subscribe(newLabels.selectedEventId, handleSelectionChanged);
+eventManager.subscribe(sizeSlide.changedValueEventId, 
+							handleChangedValue);
 
+/* **************************************************************************
+ * handleChangedValue	                                              *//**
+ *
+ * handleInputValueChanged is called from the event handler for one of
+ * the input widgets when the user changes its value. It updates the
+ * given matching input widget's value to match the new value and then
+ * updates the bar chart.
+ *
+ * @param {NumericInput} otherInputWidget -This is the other input widget
+ *                                         whose value needs to be updated
+ *                                         to match the user changed widget.
+ * @param {number} newValue - The value of the widget that was changed.
+ *
+ ****************************************************************************/
+function handleChangedValue(newValue)
+	{
 		
+		shapeIt.drawShape =  	
+			[	{ shape: "rectangle", data: [{xyPos: [.5, .5], width: sizeSlide.getValue(), height: sizeSlide.getValue() }]},
+				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: sizeSlide.getValue() }]},
+				{ shape: "line",	data: [{xyPos: [0.5, 0.5], length: sizeSlide.getValue(), angle: 45 }]},
+
+			],	
+		//redraw the dots
+		shapeIt.redraw();
+	}
+	
+
+	
+	
 	
 /************************************************************************
 * handleSelectionChanged                                            *//**

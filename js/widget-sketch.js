@@ -177,6 +177,20 @@ Sketch.prototype.draw = function(container, size)
 		.attr("id", this.lastdrawn.sketchId)
 		.attr("class","widgetSketch");
 	
+	
+	// definition of arrowheads if you need 'em
+	sketchContainer.append("defs").append("marker")
+		.attr("id","triangle")
+		.attr("viewBox","0 0 10 10")
+		.attr("refX","0")
+		.attr("refY","5")
+		.attr("markerUnits","strokeWidth")
+		.attr("markerWidth","4")
+		.attr("markerHeight","3")
+		.attr("orient","auto")
+			.append("path")
+			.attr("d","M 0 0 L 10 5 L 0 10 z");
+			
 	this.lastdrawn.widgetGroup = sketchContainer;
 
 	this.redraw();
@@ -220,19 +234,6 @@ Sketch.prototype.redraw = function ()
 	var xScale = this.lastdrawn.xScale;
 	var yScale = this.lastdrawn.yScale;
 	
-	// definition of arrowheads if you need 'em
-	sketchContainer.append("defs").append("marker")
-		.attr("id","triangle")
-		.attr("viewBox","0 0 10 10")
-		.attr("refX","0")
-		.attr("refY","5")
-		.attr("markerUnits","strokeWidth")
-		.attr("markerWidth","4")
-		.attr("markerHeight","3")
-		.attr("orient","auto")
-			.append("path")
-			.attr("d","M 0 0 L 10 5 L 0 10 z");
-			
 	// bind the sketch group collection to the data
 	// the collection is used to highlight and unhighlight
 	var drawCollection = sketchContainer.selectAll("g.shape").data(this.drawShape);
@@ -312,12 +313,13 @@ Sketch.prototype.redraw = function ()
 	lines
 		.attr("x1",function(d) { return xScale(d.xyPos[0]);})
 		.attr("y1",function(d) { return yScale(d.xyPos[1]);})		
-		// calculate the endpoint, find the new endpoints given the length and angle
-		
+		// calculate the endpoint given the length and angle
 		.attr("x2",function(d) { 
-					return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);})
-		.attr("y2",function(d) { return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);})
-		;
+					return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+					})
+		.attr("y2",function(d) { 
+					return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+					});
 	
 	lines.each(function (d, i) { 
 					// if type is a vector, put a triangle on the end

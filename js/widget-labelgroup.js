@@ -310,7 +310,7 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
  * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
  *
- * @param {string|number}	liteKey	-The key associated with the label(s) to be highlighted.
+ * @param {string}	liteKey	-The key associated with the label(s) to be highlighted.
  *
  ****************************************************************************/
 LabelGroup.prototype.lite = function (liteKey)
@@ -318,7 +318,7 @@ LabelGroup.prototype.lite = function (liteKey)
 	console.log("TODO: log fired Label highlite " + liteKey);
 	
 	// Turn off all current highlights
-	var allLabels = this.lastdrawn.widgetGroup.selectAll("g.widgetLabel");
+	var allLabels = this.lastdrawn.labelCollection;
 	allLabels
 		.classed("lit", false);
 	
