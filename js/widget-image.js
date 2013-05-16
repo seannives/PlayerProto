@@ -51,7 +51,9 @@
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this Image
- * @param {string}		config.id		-String to uniquely identify this Image.
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this Image.
+ * 										 if undefined a unique id will be assigned.
  * @param {string}		config.URI		-The URI of the image resource to be displayed.
  * @param {string}		config.caption	-The caption for the image.
  * @param {string}		config.preserveAspectRatio
@@ -70,7 +72,7 @@ function Image(config, eventManager)
 	 * A unique id for this instance of the image widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, Image);
 
 	/**
 	 * The URI where the image resource is located.
@@ -149,6 +151,13 @@ function Image(config, eventManager)
 			widgetGroup: null,
 		};
 } // end of Image constructor
+
+/**
+ * Prefix to use when generating ids for instances of Image.
+ * @const
+ * @type {string}
+ */
+Image.autoIdPrefix = "img_auto_";
 
 /* **************************************************************************
  * Image.draw                                                           *//**
@@ -415,7 +424,9 @@ Image.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSize)
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this Image
- * @param {string}		config.id		-String to uniquely identify this Image.
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this Image.
+ * 										 if undefined a unique id will be assigned.
  * @param {Image}		config.image	-Image widget to be drawn w/ a caption.
  * @param {string}		config.captionPosition
  *										-Where the caption should be placed in
@@ -428,7 +439,7 @@ function CaptionedImage(config, eventManager)
 	 * A unique id for this instance of the captioned image widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, CaptionedImage);
 
 	/**
 	 * The Image which is to be drawn with a caption.
@@ -464,6 +475,13 @@ function CaptionedImage(config, eventManager)
 			widgetGroup: null,
 		};
 } // end of CaptionedImage constructor
+
+/**
+ * Prefix to use when generating ids for instances of CaptionedImage.
+ * @const
+ * @type {string}
+ */
+CaptionedImage.autoIdPrefix = "cimg_auto_";
 
 /* **************************************************************************
  * CaptionedImage.draw                                                  *//**

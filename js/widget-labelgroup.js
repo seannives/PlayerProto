@@ -83,7 +83,7 @@ function LabelGroup(config, eventManager)
 	 * A unique id for this instance of the labelgroup widget
 	 * @type {string}
 	 */
-	this.id = 'id' in config ? config.id : LabelGroup.getNextAutoId();
+	this.id = getIdFromConfigOrAuto(config, LabelGroup);
 
 	/**
 	 * Array of traces to be graphed, where each trace is an array of points and each point is an
@@ -156,21 +156,12 @@ function LabelGroup(config, eventManager)
 		};
 } // end of Label constructor
 
-/* **************************************************************************
- * LabelGroup.getNextAutoId - static                                    *//**
- *
- * Get a unique ID for a LabelGroup widget.
- *
- ****************************************************************************/
-LabelGroup.getNextAutoId = function ()
-{
-	if (!('autoIdCount_' in LabelGroup))
-	{
-		LabelGroup.autoIdCount_ = 0;
-	}
-
-	return "lg_auto_" + (++LabelGroup.autoIdCount_);
-};
+/**
+ * Prefix to use when generating ids for instances of LabelGroup.
+ * @const
+ * @type {string}
+ */
+LabelGroup.autoIdPrefix = "lblg_auto_";
 
 /* **************************************************************************
  * LabelGroup.draw                                                      *//**

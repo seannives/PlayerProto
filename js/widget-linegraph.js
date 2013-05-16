@@ -43,7 +43,9 @@
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this LineGraph
- * @param {string}		config.id		-String to uniquely identify this LineGraph.
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this LineGraph.
+ * 										 if undefined a unique id will be assigned.
  * @param {Array.<Array.<{x: number, y: number}>}
  *						config.Data		-An array of traces (lines on the graph);
  *										 each trace is an array of points defining that trace.
@@ -64,7 +66,7 @@ function LineGraph(config)
 	 * A unique id for this instance of the line graph widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, LineGraph);
 
 	/**
 	 * Array of traces to be graphed, where each trace is an array of points and each point is an
@@ -121,6 +123,13 @@ function LineGraph(config)
 			series: null,
 		};
 } // end of LineGraph constructor
+
+/**
+ * Prefix to use when generating ids for instances of LineGraph.
+ * @const
+ * @type {string}
+ */
+LineGraph.autoIdPrefix = "lgrf_auto_";
 
 
 /* **************************************************************************
