@@ -49,13 +49,6 @@ function Button(config, eventManager)
 	this.id = config.id;
 	
 	/**
-	 * The text to be displayed on the button, if undefined the text
-	 * will be set to "Default text"
-	 * @type {string}
-	 */
-	this.text = config.text !== undefined ? config.text : "Default text";
-	
-	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
 	 */
@@ -68,6 +61,8 @@ function Button(config, eventManager)
 	 */
 	this.pressedEventId = this.id + '_Pressed';
 	
+	var text = config.text !== undefined ? config.text : "Default text";
+	
 	/**
 	 * The root element of the element tree for this button. It should
 	 * be appended into the document where it is expected to be displayed.
@@ -75,7 +70,7 @@ function Button(config, eventManager)
 	 * @private
 	 *
 	 */
-	this.rootEl_ = $('<div><button type="button">' + this.text + '</button></div>');
+	this.rootEl_ = $('<div><button type="button">' + text + '</button></div>');
 	
 	// publish events when clicked
 	var that = this;

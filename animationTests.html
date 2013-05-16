@@ -26,7 +26,7 @@
 	</style>
 
     </head>
-<body>
+<body onload="test1();">
 
 	<!-- Body Content -->
 	<div class="container-fluid">
@@ -35,15 +35,41 @@
 			<div class="span6 leftCol">
 				
 				<div class="test">
-					<p>Test 0: </p>
+					<p>Test 0: Draw shapes</p>
 					<div id="test0"></div>
 				</div>
 				
+				<div class="test">
+					<p>Test 1: Repeating animation (Only plays once upon loading the page)</p>
+					<div id="test1"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 2: Button-controlled animation</p>
+					<span id="button2"></span>
+					<div id="test2"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 3: Slider-controlled animation</p>
+					<span id="slider3"></span>
+					<div id="test3"></div>
+				</div>
 				
 			</div>
 			<div class="span6 rightCol">
 				
+				<div class="test">
+					<p>Test 4: Multi-shape animation</p>
+					<span id="button4"></span>
+					<div id="test4"></div>
+				</div>
 				
+				<div class="test">
+					<p>Test 5: Multi-sketch animation</p>
+					<span id="button5"></span>
+					<div id="test5"></div>
+				</div>
 				
 			</div>
 		</div>
@@ -57,16 +83,13 @@
     <script src="js/eCourse-master.js"></script>    
     <script src="js/d3.v3.min.js"></script>
 
+    <script src="js/eventmanager.js"></script>
+
 	<script src="js/widget-base.js"></script>
+	<script src="js/widget-button.js"></script>
 	<script src="js/widget-slider.js"></script>
 	<script src="js/widget-sketch.js"></script>
-	<script src="js/widget-button.js"></script>
-	<script src="js/widget-linegraph.js"></script>
-	<script src="js/widget-labelgroup.js"></script>
-    <script src="js/widgets.js"></script>
-    <script src="js/widget-callouts.js"></script>
-
-    <script src="js/eventmanager.js"></script>
+	<script src="js/widget-numeric.js"></script>
 
 <script>
 
@@ -75,29 +98,239 @@
 	
 	////////////////////////////////////////
 	
-	// Test 0: 
-	// make svg container to hold sketch
+	// Test 0: Draw shapes
 	var test0Box = new SVGContainer({
 			node: d3.select("#test0"),
-			maxWid: 300,
-			maxHt: 300
+			maxWid: 200,
+			maxHt: 200
 		});
 		
-	// make molecule sketch
 	var sketch0 = new Sketch({
 			id: "sketch0",
 			drawShape: 	
 			[	
-				{ shape: "circle",	data: [{ xyPos: [0, 1], radius: .2 }]},
-				{ shape: "rectangle", data: [{ xyPos: [.3, 1.1], width: .4, height: .2 }]},
-				{ shape: "line", data: [{ xyPos: [.8, 1], xyEnd: [1.2, 1] }]},
-				{ shape: "hexagon", data: [{ xyPos: [1.5, 1], side: .2 }]},
-				{ shape: "triangle", data: [{ xyPos: [2, 1], side: .4 }]},
+				{ shape: "circle",	data: [{ xyPos: [.1, .9], radius: .05 }]},
+				{ shape: "rectangle", data: [{ xyPos: [.2, .925], width: .1, height: .05 }]},
+				{ shape: "line", data: [{ xyPos: [.35, .9], xyEnd: [.55, .9] }]},
+				{ shape: "hexagon", data: [{ xyPos: [.65, .9], side: .05 }]},
+				{ shape: "triangle", data: [{ xyPos: [.8, .9], side: .1 }]},
 			],
 		});
 		
-	// draw the molecule inside the svg container
-	test0Box.append(sketch0, {topPercentOffset: .2, leftPercentOffset: .1, heightPercent: .2, widthPercent: .2});
+	test0Box.append(sketch0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	////////////////////////////////////////
+	
+	// Test 1: Repeating animation
+	var test1Box = new SVGContainer({
+			node: d3.select("#test1"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch1 = new Sketch({
+			id: "sketch1",
+			drawShape: 	
+			[	
+				{ shape: "circle",	data: [{ xyPos: [.1, .9], radius: .05 }]},
+			],
+		});
+		
+	test1Box.append(sketch1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	//window.setInterval(function() {test1();}, 8000);
+	/*	
+		TODO: Repeating animations are costly. We might want to store polygon
+		points as arrays instead of recalculating them each time they move.
+	*/
+	
+	function test1()
+	{
+		sketch1.move(0, 0, 500, 0);
+		sketch1.move(.8, 0, 1500, 500);
+		sketch1.move(0, 0, 500, 2000)
+		sketch1.move(-.8, 0, 1500, 2500);
+	}
+	
+	//////////////////////////////////////
+	
+	// Test 2: Button-controlled animation
+	var test2Box = new SVGContainer({
+			node: d3.select("#test2"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch2 = new Sketch({
+			id: "sketch2",
+			drawShape: 	
+			[	
+				{ shape: "hexagon",	data: [{ xyPos: [.5, .9], side: .05 }]},
+			],
+		});
+		
+	test2Box.append(sketch2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button2 = new Button ({
+			id: "b2",
+			text: "Click"
+		}, eventManager);
+
+	$('#button2').append(button2.getRootEl());
+
+	eventManager.subscribe(button2.pressedEventId, handleClick2);
+
+	function handleClick2()
+	{
+		sketch2.move(.4, -.4, 1000, 0);
+		sketch2.move(-.4, -.4, 1000, 1000);
+		sketch2.move(-.4, .4, 1000, 2000);
+		sketch2.move(.4, .4, 1000, 3000);
+	}
+	
+	/////////////////////////////////////
+	
+	// Test 3: Slider-controlled animation
+	var test3Box = new SVGContainer({
+			node: d3.select("#test3"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch3 = new Sketch({
+			id: "sketch3",
+			drawShape: 	
+			[	
+				{ shape: "rectangle", data: [{ xyPos: [.5, .9], width: .1, height: .05 }]},
+			],
+		});
+		
+	test3Box.append(sketch3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var slider3 = new Slider ({
+			id: "val3",
+			startVal: 0.5,
+			minVal: 0.2,
+			maxVal: 0.8,
+			stepVal: 0.01,
+			label: "Test 3 slider",
+			format: d3.format('5.2f'),
+		}, eventManager);
+
+	slider3.draw(d3.select("#slider3"));
+
+	eventManager.subscribe(slider3.changedValueEventId, handleChangedValue3);
+
+	function handleChangedValue3(newValue)
+	{
+		sketch3.drawShape = 
+			[
+				{shape: "rectangle", data: [{ xyPos: [slider3.getValue(), .9], width: .1, height: .05 }]},
+			];
+			
+		sketch3.redraw();
+	}
+	
+	/////////////////////////////////////
+	
+	// Test 4: Multi-shape animation
+	var test4Box = new SVGContainer({
+			node: d3.select("#test4"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch4 = new Sketch({
+			id: "sketch4",
+			drawShape: 	
+			[	
+				{ shape: "circle",	data: [{ xyPos: [.5, .772], radius: .056 }]},
+				{ shape: "line", data: [{ xyPos: [.5, .71], xyEnd: [.5, .88] }]},
+				{ shape: "triangle", data: [{ xyPos: [.5, .8], side: .2 }]},
+			],
+		});
+		
+	test4Box.append(sketch4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button4 = new Button ({
+			id: "b4",
+			text: "Click"
+		}, eventManager);
+
+	$('#button4').append(button4.getRootEl());
+
+	eventManager.subscribe(button4.pressedEventId, handleClick4);
+
+	function handleClick4()
+	{
+		sketch4.move(.4, -.4, 1000, 0);
+		sketch4.move(-.4, -.4, 1000, 1000);
+		sketch4.move(-.4, .4, 1000, 2000);
+		sketch4.move(.4, .4, 1000, 3000);
+	}
+	
+	////////////////////////////////
+	
+	// Test 5: Multi-sketch animation
+	var test5Box = new SVGContainer({
+			node: d3.select("#test5"),
+			maxWid: 400,
+			maxHt: 400
+		});
+		
+	var sketch5_1 = new Sketch({
+			id: "sketch5_1",
+			drawShape: 	
+			[	
+				{ shape: "line", data: [{ xyPos: [.45, .4], xyEnd: [.45, .8] }]},
+				{ shape: "line", data: [{ xyPos: [.45, .8], xyEnd: [.55, .9] }]},
+				{ shape: "line", data: [{ xyPos: [.55, .9], xyEnd: [.55, .5] }]},
+				{ shape: "line", data: [{ xyPos: [.55, .5], xyEnd: [.45, .4] }]},
+				{ shape: "line", data: [{ xyPos: [.45, .6], xyEnd: [.55, .7] }]},
+				{ shape: "line", data: [{ xyPos: [.5, .85], xyEnd: [.5, .45] }]},
+			],
+		});
+		
+	var sketch5_2 = new Sketch({
+			id: "sketch5_2",
+			drawShape: 	
+			[	
+				{ shape: "circle",	data: [{ xyPos: [.1, .55], radius: .05 }]},
+			],
+		});
+		
+	var sketch5_3 = new Sketch({
+			id: "sketch5_3",
+			drawShape: 	
+			[	
+				{ shape: "circle",	data: [{ xyPos: [.9, .75], radius: .05 }]},
+			],
+		});
+		
+	test5Box.append(sketch5_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	test5Box.append(sketch5_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	test5Box.append(sketch5_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button5 = new Button ({
+			id: "b5",
+			text: "Click"
+		}, eventManager);
+
+	$('#button5').append(button5.getRootEl());
+
+	eventManager.subscribe(button5.pressedEventId, handleClick5);
+
+	function handleClick5()
+	{
+		sketch5_2.move(.8, 0, 1000, 0);
+		sketch5_3.move(-.8, 0, 1000, 0);
+		sketch5_2.move(0, 0, 500, 1000);
+		sketch5_3.move(0, 0, 500, 1000);
+		sketch5_2.move(-.8, 0, 1000, 1200);
+		sketch5_3.move(.8, 0, 1000, 1200);
+	}
 
 </script>
 </body>
