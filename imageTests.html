@@ -19,7 +19,7 @@
                 <h2 class="setTitle"></h2>
 				<div id="widgetTarget0n"><p>0n. Single image</p></div>
 				<div id="widgetTarget0"><p>0. Single image</p></div>
-				<div id="widgetTarget1n"><p>1n. Multiple images with autoCarousel (events)</p></div>
+				<div id="widgetTarget1n"><p>1n. Multiple images in 2 Carousels the top one gets lite events, the bottom doesn't</p></div>
 				<div id="widgetTarget1"><p>1. Multiple images with autoCarousel (events)</p></div>
 				<div id="widgetTarget2"><p>2. Image with graph overlay on local coordinate system (set by data in graph)</p></div>
 				
@@ -132,42 +132,38 @@
 	var imgConfig1 =
 		[
 			{
-				id: "img10n",
 				URI: 'img/ch4_0_1.png',
 				caption: "Earth's atmosphere. &copy;NASA http://www.nasa.gov/multimedia/imagegallery/ image_feature_1529.html",
 				preserveAspectRatio: "xMidYMid",
 				actualSize: {height: 710, width: 946}
 			},
 			{
-				id: "img11n",
 				URI: 'img/ch4_03.jpg',
 				caption: "The seasons",
 				preserveAspectRatio: "xMidYMid",
 				actualSize: {height: 366, width: 443}
 			},
 			{
-				id: "img12n",
 				URI: 'img/ch4_0_2.jpg',
 				caption: "Heat transfer mechanisms",
 				preserveAspectRatio: "xMidYMid",
-				actualSize: {height: 443, width: 160}
+				actualSize: {height: 443, width: 160},
+				key: 'foo'
 			},
 			{
-				id: "img13n",
 				URI: 'img/ch4_1.jpg',
 				caption: "The Whitewater-Baldy Complex wildfire.",
 				preserveAspectRatio: "xMidYMid",
 				actualSize: {height: 960, width: 1280}
 			},
 			{
-				id: "img14n",
 				URI: 'img/ch4_2.jpg',
 				caption: "Aerial image near downtown West Liberty, Kentucky.",
 				preserveAspectRatio: "xMidYMid",
-				actualSize: {height: 550, width: 550}
+				actualSize: {height: 550, width: 550},
+				key: 'foo'
 			},
 			{
-				id: "img15n",
 				URI: 'img/ch4_4.jpg',
 				caption: "Seaside Heights, NJ after Hurricane Sandy.",
 				preserveAspectRatio: "xMidYMid",
@@ -177,7 +173,6 @@
 
 	var crslConfig1 =
 		{
-			id: "crsl1",
 			items:
 				[
 					new Image(imgConfig1[0]),
@@ -193,17 +188,38 @@
 			scrollMode: "nowrap"
 		};
 		
+	var crslConfig2 =
+		{
+			items:
+				[
+					new Image(imgConfig1[5]),
+					new Image(imgConfig1[4]),
+					new Image(imgConfig1[3]),
+					new Image(imgConfig1[2]),
+					new Image(imgConfig1[1]),
+					new Image(imgConfig1[0])
+				],
+			layout: "horizontal",
+			itemMargin: {top: 4, bottom: 4, left: 2, right: 2},
+			presentation: "scaleToFit", // or "scroll"
+			scrollMode: "nowrap"
+		};
+		
 	var cntrConfig1 = 
 		{
 			node: d3.select("#widgetTarget1n"),
 			maxWid: 400,
-			maxHt: 75
+			maxHt: 160
 		};
 
 	var cntr1 = new SVGContainer(cntrConfig1);
 	var crsl1 = new Carousel(crslConfig1, eventManager);
+	var crsl2 = new Carousel(crslConfig2, eventManager);
 	
-	cntr1.append(crsl1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cntr1.append(crsl1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 0.45, widthPercent: 1});
+	cntr1.append(crsl2, {topPercentOffset: 0.55, leftPercentOffset: 0, heightPercent: 0.45, widthPercent: 1});
+
+	eventManager.subscribe(crsl1.selectedEventId, function (eventDetails) {crsl1.lite(eventDetails.selectKey);});
 
 // Old widgets code test for widget 1
 	var svg1 = new MakeSVGContainer(
