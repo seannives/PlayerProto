@@ -105,7 +105,7 @@ function LineGraph(config)
 			container: null,
 			size: {height: 0, width: 0},
 			dataRect: new Rect(0, 0, 0, 0),
-			linesId: this.id + 'lines',
+			linesId: this.id + '_lines',
 			axes: null,
 			xScale: null,
 			yScale: null,
@@ -178,7 +178,6 @@ LineGraph.prototype.draw = function(container, size)
 	this.lastdrawn.xScale = axesDrawn.xScale;
 	this.lastdrawn.yScale = axesDrawn.yScale;
 
-	this.lastdrawn.linesId = this.id + '_lines';
 	var linesId = this.lastdrawn.linesId;
 
 	var clipId = linesId + "_clip";
