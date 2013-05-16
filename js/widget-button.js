@@ -61,7 +61,7 @@ function Button(config, eventManager)
 	 */
 	this.pressedEventId = this.id + '_Pressed';
 	
-	config.text = config.text !== undefined ? config.text : "Default text";
+	var text = config.text !== undefined ? config.text : "Default text";
 	
 	/**
 	 * The root element of the element tree for this button. It should
@@ -70,7 +70,7 @@ function Button(config, eventManager)
 	 * @private
 	 *
 	 */
-	this.rootEl_ = $('<div><button type="button">' + config.text + '</button></div>');
+	this.rootEl_ = $('<div><button type="button">' + text + '</button></div>');
 	
 	// publish events when clicked
 	var that = this;
