@@ -43,13 +43,12 @@
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this LineGraph
- * @param {string}		config.id		-String to uniquely identify this LineGraph.
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this LineGraph.
+ * 										 if undefined a unique id will be assigned.
  * @param {Array.<Array.<{x: number, y: number}>}
  *						config.Data		-An array of traces (lines on the graph);
  *										 each trace is an array of points defining that trace.
- * @param {Array.<number>}
- *						config.liteKey  -Array of integers to provide correspondance between traces
- *										 on this LineGraph with elements in other widgets.
  * @param {string		config.type		-String specifying "lines", "points", or
  *										 "lines+points" for traces.
  * @param {AxisFormat}	config.xAxisFormat -Format of the x axis of the graph.
@@ -64,7 +63,7 @@ function LineGraph(config)
 	 * A unique id for this instance of the line graph widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, LineGraph);
 
 	/**
 	 * Array of traces to be graphed, where each trace is an array of points and each point is an
@@ -98,12 +97,6 @@ function LineGraph(config)
 	this.childWidgets = [];
 	
 	/**
-	 * highlight key is an array of integers relating the traces to other selectable things on the page, optional
-	 * @type Array.<number>|undefined
-	 */
-	this.liteKey = config.liteKey;
-	
-	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
 	 * @type {Object}
 	 */
@@ -112,7 +105,7 @@ function LineGraph(config)
 			container: null,
 			size: {height: 0, width: 0},
 			dataRect: new Rect(0, 0, 0, 0),
-			linesId: 'lines',
+			linesId: this.id + '_lines',
 			axes: null,
 			xScale: null,
 			yScale: null,
@@ -121,6 +114,13 @@ function LineGraph(config)
 			series: null,
 		};
 } // end of LineGraph constructor
+
+/**
+ * Prefix to use when generating ids for instances of LineGraph.
+ * @const
+ * @type {string}
+ */
+LineGraph.autoIdPrefix = "lgrf_auto_";
 
 
 /* **************************************************************************
@@ -178,7 +178,6 @@ LineGraph.prototype.draw = function(container, size)
 	this.lastdrawn.xScale = axesDrawn.xScale;
 	this.lastdrawn.yScale = axesDrawn.yScale;
 
-	this.lastdrawn.linesId = this.id + '_lines';
 	var linesId = this.lastdrawn.linesId;
 
 	var clipId = linesId + "_clip";

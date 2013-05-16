@@ -63,7 +63,9 @@
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this LabelGroup
- * @param {string}		config.id		-String to uniquely identify this LabelGroup.
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this LabelGroup.
+ * 										 if undefined a unique id will be assigned.
  * @param {Array.<LabelConfig>}
  *						config.labels	-An array describing each label in the group.
  *										 each trace is an array of points defining that trace.
@@ -81,7 +83,7 @@ function LabelGroup(config, eventManager)
 	 * A unique id for this instance of the labelgroup widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, LabelGroup);
 
 	/**
 	 * Array of traces to be graphed, where each trace is an array of points and each point is an
@@ -153,6 +155,13 @@ function LabelGroup(config, eventManager)
 			yScale: null,
 		};
 } // end of Label constructor
+
+/**
+ * Prefix to use when generating ids for instances of LabelGroup.
+ * @const
+ * @type {string}
+ */
+LabelGroup.autoIdPrefix = "lblg_auto_";
 
 /* **************************************************************************
  * LabelGroup.draw                                                      *//**

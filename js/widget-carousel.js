@@ -42,7 +42,9 @@
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this Carousel
- * @param {string}		config.id		-String to uniquely identify this Carousel.
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this Carousel.
+ * 										 if undefined a unique id will be assigned.
  * @param {Array.<IWidget>}
  *						config.items	-The list of widgets to be presented by the Carousel.
  * @param {string}		config.layout	-How the carousel will layout the items (vertical or horizontal).
@@ -67,10 +69,10 @@ function Carousel(config, eventManager)
 	var that = this;
 	
 	/**
-	 * A unique id for this instance of the image widget
+	 * A unique id for this instance of the carousel widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, Carousel);
 
 	/**
 	 * The list of widgets presented by the Carousel.
@@ -140,6 +142,13 @@ function Carousel(config, eventManager)
 			widgetGroup: null,
 		};
 } // end of Image constructor
+
+/**
+ * Prefix to use when generating ids for instances of LabelGroup.
+ * @const
+ * @type {string}
+ */
+Carousel.autoIdPrefix = "crsl_auto_";
 
 /* **************************************************************************
  * Carousel.draw                                                        *//**
