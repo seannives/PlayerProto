@@ -61,6 +61,13 @@
 					<p>Value: <span id="t3val"></span></p>
 				</div>
 				
+				<div class="test">
+					<p>Test 4: One button changes text on another button</p>
+					<span id="t4_1button"></span>
+					<p>Click button 1 to change text on button 2</p>
+					<span id="t4_2button"></span>
+				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -161,7 +168,7 @@
 		}, eventManager);
 		
 	eventManager.subscribe(t3_1Button.pressedEventId, t3_1handleClick);
-	eventManager.subscribe(t3_2Button.pressedEventId, t3_2handleClick)
+	eventManager.subscribe(t3_2Button.pressedEventId, t3_2handleClick);
 	
 	function t3_1handleClick()
 	{
@@ -171,6 +178,31 @@
 	function t3_2handleClick()
 	{
 		t3Readout.setValue(parseInt(t3Readout.getValue()) - 1);
+	}
+	
+	//////////////////////////////////////////////
+	
+	// Test 4: Button changes text on another button
+	
+	var t4_1Button = new Button ({
+			id: "t4_1",
+			text: "Test 4 Button 1"
+		}, eventManager);
+		
+	$('#t4_1button').append(t4_1Button.getRootEl());
+	
+	var t4_2Button = new Button ({
+			id: "t4_2",
+			text: "Blah"
+		}, eventManager);
+		
+	$('#t4_2button').append(t4_2Button.getRootEl());
+	
+	eventManager.subscribe(t4_1Button.pressedEventId, t4handleClick);
+	
+	function t4handleClick()
+	{
+		t4_2Button.setText(t4_2Button.getText() + " blah");
 	}
 	
 	

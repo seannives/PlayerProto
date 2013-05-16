@@ -96,12 +96,11 @@ function Button(config, eventManager)
  *
  **************************************************************************/
 Button.prototype.setText = function(text)
-{
-	// update the object property
-	this.text = text;
-	
-	// Make the DOM in getRootEl match the new property value
-	this.rootEl_ = $('<div><button type="button">' + this.text + '</button></div>');
+{	
+	// Update the DOM in getRootEl
+	var b = $("button", this.rootEl_);
+	var t = b.text();
+	$("button", this.rootEl_).text(text);
 }
 
 /* **************************************************************************

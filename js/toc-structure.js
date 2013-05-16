@@ -100,18 +100,19 @@ var bookConfig = {
             {
                 type: "objective",
                 url: "sketchTests.html",
-                id: "n.2.x",
+                id: "n.2.9",
                 title: "Sketch Tests"
             },
             {
                 type: "objective",
                 url: "sliderTests.html",
-                id: "n.2.9",
+                id: "n.2.10",
                 title: "Slider and Readout Tests"
             },
             {
                 type: "objective",
                 url: "buttonTests.html",
+				id: "n.2.11",
                 title: "Button Tests"
             },
             ]

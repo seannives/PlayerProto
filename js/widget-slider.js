@@ -165,6 +165,6 @@ Slider.prototype.draw = function(container)
 	{
 		// The value is set in the input element which was given an id
 		$("#" + this.id)[0].value = newValue;
-		this.display.setValue($("#" + this.id)[0].value);
+		this.display.setValue(this.format($("#" + this.id)[0].value));
 
 	}
