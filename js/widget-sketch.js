@@ -239,17 +239,11 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 	
 	var sketchContainer = this.lastdrawn.widgetGroup;
 	
-	// bind the sketch group collection to the data
-	// the collection is used to highlight and unhighlight
-	var drawCollection = sketchContainer.selectAll("g.shape").data(this.drawShape);
-					
-	// move the sketch objects into position, but do it on the data collection, which 
-	// includes both the update and the enter selections, so you can drag them around
-	// on a suitable event or redraw.
+	// get the collection of shapes
+	var drawCollection = sketchContainer.selectAll("g.shape");
 
 	// get collection of rectangles			  
-	var rectangles = drawCollection.selectAll("rect")
-		.data(function (d,i) {return d.shape == "rectangle"? d.data : []; });
+	var rectangles = drawCollection.selectAll("rect");
 	// add the given offset to the x and y positions
 	rectangles.transition()
 		.attr("x", function(d) { d.xyPos[0] = d.xyPos[0] + xOffset;
@@ -259,8 +253,7 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 		.duration(duration).delay(delay);
 	
 	// get collection of circles
-	var circles = drawCollection.selectAll("circle")
-		.data(function (d,i) {return d.shape == "circle"? d.data : []; });
+	var circles = drawCollection.selectAll("circle");
 	// add the given offset to the x and y positions
 	circles.transition()
 		.attr("cx", function(d) { d.xyPos[0] = d.xyPos[0] + xOffset;
@@ -271,8 +264,7 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 	
 	
 	// get collection of hexagons
-	var hexagons = drawCollection.selectAll("polygon.hex")
-		.data(function (d) { return d.shape == "hexagon"? d.data : []; });
+	var hexagons = drawCollection.selectAll("polygon.hex");
 	// translate the points based on the given offset
 	hexagons.transition()
 		.attr("points",
@@ -308,8 +300,7 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 		.duration(duration).delay(delay);
 	
 	// get collection of triangles
-	var triangles = drawCollection.selectAll("polygon.tri")
-		.data(function (d) { return d.shape == "triangle"? d.data : []; });
+	var triangles = drawCollection.selectAll("polygon.tri");
 	// translate the points based on the given offset
 	triangles.transition()
 		.attr("points",
@@ -343,8 +334,7 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 	
 	
 	// get collection of lines
-	var lines = drawCollection.selectAll("line")
-		.data(function (d) { return d.shape == "line"? d.data : []; });
+	var lines = drawCollection.selectAll("line");
 	// add the given offset to the x and y positions of both endpoints
 	lines.transition()
 		.attr("x1", function(d) { d.xyPos[0] = d.xyPos[0] + xOffset; 
