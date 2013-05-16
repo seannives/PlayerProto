@@ -47,9 +47,6 @@
  * @param {Array.<Array.<{x: number, y: number}>}
  *						config.Data		-An array of traces (lines on the graph);
  *										 each trace is an array of points defining that trace.
- * @param {Array.<number>}
- *						config.liteKey  -Array of integers to provide correspondance between traces
- *										 on this LineGraph with elements in other widgets.
  * @param {string		config.type		-String specifying "lines", "points", or
  *										 "lines+points" for traces.
  * @param {AxisFormat}	config.xAxisFormat -Format of the x axis of the graph.
@@ -98,12 +95,6 @@ function LineGraph(config)
 	this.childWidgets = [];
 	
 	/**
-	 * highlight key is an array of integers relating the traces to other selectable things on the page, optional
-	 * @type Array.<number>|undefined
-	 */
-	this.liteKey = config.liteKey;
-	
-	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
 	 * @type {Object}
 	 */
@@ -112,7 +103,7 @@ function LineGraph(config)
 			container: null,
 			size: {height: 0, width: 0},
 			dataRect: new Rect(0, 0, 0, 0),
-			linesId: 'lines',
+			linesId: this.id + 'lines',
 			axes: null,
 			xScale: null,
 			yScale: null,
