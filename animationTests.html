@@ -26,7 +26,7 @@
 	</style>
 
     </head>
-<body>
+<body onload="test1();">
 
 	<!-- Body Content -->
 	<div class="container-fluid">
@@ -35,15 +35,28 @@
 			<div class="span6 leftCol">
 				
 				<div class="test">
-					<p>Test 0: </p>
+					<p>Test 0: Draw shapes</p>
 					<div id="test0"></div>
 				</div>
 				
+				<div class="test">
+					<p>Test 1: Repeating animation (Only plays once upon loading the page)</p>
+					<div id="test1"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 2: Button-controlled animation</p>
+					<span id="button2"></span>
+					<div id="test2"></div>
+				</div>
 				
 			</div>
 			<div class="span6 rightCol">
 				
-				
+				<div class="test">
+					<p>Test 3: Slider-controlled animation</p>
+					<div id="test3"><span id="slider3"></span></div>
+				</div>
 				
 			</div>
 		</div>
@@ -69,29 +82,139 @@
 	
 	////////////////////////////////////////
 	
-	// Test 0: 
-	// make svg container to hold sketch
+	// Test 0: Draw shapes
 	var test0Box = new SVGContainer({
 			node: d3.select("#test0"),
-			maxWid: 300,
-			maxHt: 300
+			maxWid: 200,
+			maxHt: 200
 		});
 		
-	// make molecule sketch
 	var sketch0 = new Sketch({
 			id: "sketch0",
 			drawShape: 	
 			[	
-				{ shape: "circle",	data: [{ xyPos: [0, 1], radius: .2 }]},
-				{ shape: "rectangle", data: [{ xyPos: [.3, 1.1], width: .4, height: .2 }]},
-				{ shape: "line", data: [{ xyPos: [.8, 1], xyEnd: [1.2, 1] }]},
-				{ shape: "hexagon", data: [{ xyPos: [1.5, 1], side: .2 }]},
-				{ shape: "triangle", data: [{ xyPos: [2, 1], side: .4 }]},
+				{ shape: "circle",	data: [{ xyPos: [.1, .9], radius: .05 }]},
+				{ shape: "rectangle", data: [{ xyPos: [.2, .925], width: .1, height: .05 }]},
+				{ shape: "line", data: [{ xyPos: [.35, .9], xyEnd: [.55, .9] }]},
+				{ shape: "hexagon", data: [{ xyPos: [.65, .9], side: .05 }]},
+				{ shape: "triangle", data: [{ xyPos: [.8, .9], side: .1 }]},
 			],
 		});
 		
-	// draw the molecule inside the svg container
-	test0Box.append(sketch0, {topPercentOffset: .2, leftPercentOffset: .1, heightPercent: .2, widthPercent: .2});
+	test0Box.append(sketch0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	////////////////////////////////////////
+	
+	// Test 1: Repeating animation
+	var test1Box = new SVGContainer({
+			node: d3.select("#test1"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch1 = new Sketch({
+			id: "sketch1",
+			drawShape: 	
+			[	
+				{ shape: "circle",	data: [{ xyPos: [.1, .9], radius: .05 }]},
+			],
+		});
+		
+	test1Box.append(sketch1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	//window.setInterval(function() {test1();}, 8000);
+	/*	
+		TODO: Repeating animations are costly. We might want to store polygon
+		points as arrays instead of recalculating them each time they move.
+	*/
+	
+	function test1()
+	{
+		sketch1.move(0, 0, 500, 0);
+		sketch1.move(.8, 0, 1500, 500);
+		sketch1.move(0, 0, 500, 2000)
+		sketch1.move(-.8, 0, 1500, 2500);
+	}
+	
+	//////////////////////////////////////
+	
+	// Test 2: Button-controlled animation
+	var test2Box = new SVGContainer({
+			node: d3.select("#test2"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch2 = new Sketch({
+			id: "sketch2",
+			drawShape: 	
+			[	
+				{ shape: "hexagon",	data: [{ xyPos: [.5, .9], side: .05 }]},
+			],
+		});
+		
+	test2Box.append(sketch2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button2 = new Button ({
+			id: "b2",
+			text: "Click"
+		}, eventManager);
+
+	$('#button2').append(button2.getRootEl());
+
+	eventManager.subscribe(button2.pressedEventId, handleClick2);
+
+	function handleClick2()
+	{
+		sketch2.move(.4, -.4, 1000, 0);
+		sketch2.move(-.4, -.4, 1000, 1000);
+		sketch2.move(-.4, .4, 1000, 2000);
+		sketch2.move(.4, .4, 1000, 3000);
+	}
+	
+	/////////////////////////////////////
+	
+	// Test 3: Slider-controlled animation
+	var test3Box = new SVGContainer({
+			node: d3.select("#test3"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch3 = new Sketch({
+			id: "sketch3",
+			drawShape: 	
+			[	
+				{ shape: "rectangle", data: [{ xyPos: [.5, .9], width: .1, height: .05 }]},
+			],
+		});
+		
+	test3Box.append(sketch3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var slider3 = new Slider ({
+			id: "val3",
+			startVal: .5,
+			minVal: .1,
+			maxVal: .9,
+			stepVal: .05,
+			label: "Test 3 slider",
+			format: d3.format('5.2f'),
+		}, eventManager);
+
+	slider3.draw(d3.select("#slider3"));
+
+	eventManager.subscribe(slider3.changedValueEventId, handleChangedValue3);
+
+	function handleChangedValue3(newValue)
+	{
+		sketch3.drawShape = 
+			[
+				{shape: "rectangle", data: [{ xyPos: [slider3.getValue(), 1], width: .4, height: .2 }]},
+			];
+			
+		sketch3.redraw();
+	}
+	
 
 </script>
 </body>
