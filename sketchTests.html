@@ -27,7 +27,7 @@
 			<div class="span6 rightCol">
 				<div id="hotSpot"><p>4.Click the shapes to lite the label</p></div>
                 <div id="description"></div>
-                <div id="redraw"><p>5. Slide the size <span style="color: red">BUG: Line lengths don't update, although they should.</span></p>
+                <div id="redraw"><p>5. Slide the size</p>
                  
                 </div>
 			</div>
@@ -70,7 +70,7 @@ var svgRect = new SVGContainer(
 var rect0 = new Sketch({
 			id: "rect0",
 			drawShape: [	
-				{shape: "rectangle", data: [{ xyPos: [ 0.1, 0.3], width: 0.75, height:.2 }]}
+				{shape: "rectangle", data: [{ xyPos: [ .1, .9], width: 0.75, height:.2 }]}
 				]
 			});
 svgRect.append(rect0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
@@ -95,11 +95,11 @@ var circ0 = new Sketch({
 		});
 svgCirc.append(circ0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
-// Case 2 circle
+// Case 2 hexagon and lines
 var svgMole = new SVGContainer(
 		{node: d3.select("#molecule"),
-		maxWid: 100,
-		maxHt: 100
+		maxWid: 200,
+		maxHt: 200
 		}
 	);
 	
@@ -108,55 +108,58 @@ var mole = new Sketch({
 			id: "carbon",
 			drawShape: 	
 			[	
-				{ shape: "hexagon",	data: [{xyPos: [.1, .5], side: .3 }]},
-				{ shape: "line",	data: [{xyPos: [.44, .42], length: .17, angle: Math.PI/5}] },
-				{ shape: "line",	data: [{xyPos: [0.58, 0.51], length: .17, angle: -Math.PI/5}] },
-				{ shape: "line",	data: [{xyPos: [.72, .42], length: .17, angle: Math.PI/5}] },
-				{ shape: "line",	data: [{xyPos: [0.86, 0.51], length: .17, angle: -Math.PI/5}] },
+				{ shape: "hexagon",	data: [{xyPos: [.1, .5], side: .1 }]},
+				{ shape: "line",	data: [{xyPos: [.18, .55], xyEnd: [.27, .6] }]},
+				{ shape: "line",	data: [{xyPos: [.27, .6], xyEnd: [.36, .55] }]},
+				{ shape: "line",	data: [{xyPos: [.36, .55], xyEnd: [.45, .6] }]},
 			],
 		});
 svgMole.append(mole, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 // Case 3 compass rose
-var svgcompass = new SVGContainer(
-		{node: d3.select("#compass"),
+var svgCompass = new SVGContainer({
+		node: d3.select("#compass"),
 		maxWid: 200,
-		maxHt: 200
-		}
-	);
-	
+		maxHt: 200	
+	});
+
+var length = .5;
+var width1 = length*Math.cos(30*Math.PI/180);
+var height1 = length*Math.sin(30*Math.PI/180);
+var width2 = length*Math.cos(60*Math.PI/180);
+var height2 = length*Math.sin(60*Math.PI/180);
 	
 var roseLines = new Sketch({
 			id: "rose",
 			drawShape: 	
 			[	
-			{ shape: "line",  data: [{xyPos: [.5, 0], length: .5, angle: 0, type: "vector",}] },
-			{ shape: "line", type: "vector", data: [{xyPos: [.5, 0], length: .5, angle: Math.PI/4}] },
-			{ shape: "line", type: "vector", data: [{xyPos: [.5, 0], length: .5, angle: Math.PI/2}] },
-			{ shape: "line", type: "vector", data: [{xyPos: [.5, 0], length: .5, angle: 2*Math.PI/3}] },
-			{ shape: "line", type: "vector", data: [{xyPos: [.5, 0], length: .5, angle: 5*Math.PI/6}] },
-			{ shape: "line", type: "vector", data: [{xyPos: [.5, 0], length: .5, angle: Math.PI}] },
-			
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 - length, .5] }]},
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 - width1, .5 + height1] }]},
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 - width2, .5 + height2] }]},
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5, .5 + length] }]},
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + width2, .5 + height2] }]},
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + width1, .5 + height1] }]},
+			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + length, .5] }]},
 			],
 		});
-svgcompass.append(roseLines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+		
+svgCompass.append(roseLines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 
 // Case 4 highlight events with labels
-var svgLabel = new SVGContainer(
-		{node: d3.select("#hotSpot"),
+var svgLabel = new SVGContainer({
+		node: d3.select("#hotSpot"),
 		maxWid: 400,
 		maxHt: 300
-		}
-	);
+	});
 	
 var clicks = new Sketch({
 			id: "shapes",
 			drawShape: 	
-			[	{ shape: "rectangle", data: [{xyPos: [0, .5], width: .25, height: .5 }]},
-				{ shape: "circle",	data: [{xyPos: [0.5, 0.8], radius: .1 }]},
-				{ shape: "hexagon",	data: [{xyPos: [0.3, 0.5], side: .15 }]},
-				{ shape: "line",	data: [{xyPos: [0, 1], length: 1.4, angle: -45 }]},
+			[	{ shape: "rectangle", data: [{ xyPos: [0, .5], width: .25, height: .5 }]},
+				{ shape: "circle",	data: [{ xyPos: [0.5, 0.8], radius: .1 }]},
+				{ shape: "hexagon",	data: [{ xyPos: [0.3, 0.5], side: .15 }]},
+				{ shape: "line",	data: [{ xyPos: [.2, .15], xyEnd: [.6, .3] }]},
 
 			],
 		},eventManager);
@@ -203,9 +206,9 @@ svgLabel.append([newLabels], {topPercentOffset: 0, leftPercentOffset: 0, heightP
 var sizeSlide = new Slider ({
 			id: "setSize",
 			startVal: 0.5,
-			minVal: .1,
-			maxVal: .9,
-			stepVal: .1,
+			minVal: .05,
+			maxVal: .5,
+			stepVal: .05,
 			unit: "unitless",
 			label: "Size =",
 			format:  d3.format('5.2f'),
@@ -220,12 +223,16 @@ var updateMe = new SVGContainer(
 		}
 	);
 	
+var length = sizeSlide.getValue();
+var width = length*Math.cos(45*Math.PI/180);
+var height = length*Math.sin(45*Math.PI/180);
+	
 var shapeIt = new Sketch({
 			id: "shapes",
 			drawShape: 	
 			[	{ shape: "rectangle", data: [{xyPos: [.5, .5], width: sizeSlide.getValue(), height: sizeSlide.getValue() }]},
 				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: sizeSlide.getValue() }]},
-				{ shape: "line",	data: [{xyPos: [0.5, 0.5], length: sizeSlide.getValue(), angle: 45 }]},
+				{ shape: "line", data: [{xyPos: [0.5, 0.5], xyEnd: [.5+width, .5+height]}]},
 
 			],
 		});
@@ -258,11 +265,14 @@ eventManager.subscribe(sizeSlide.changedValueEventId,
  ****************************************************************************/
 function handleChangedValue(newValue)
 	{
+		var length = sizeSlide.getValue();
+		var width = length*Math.cos(45*Math.PI/180);
+		var height = length*Math.sin(45*Math.PI/180);
 		
 		shapeIt.drawShape =  	
 			[	{ shape: "rectangle", data: [{xyPos: [.5, .5], width: sizeSlide.getValue(), height: sizeSlide.getValue() }]},
 				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: sizeSlide.getValue() }]},
-				{ shape: "line",	data: [{xyPos: [0.5, 0.5], length: sizeSlide.getValue(), angle: 45 }]},
+				{ shape: "line", data: [{xyPos: [0.5, 0.5], xyEnd: [.5+width, .5+height]}]},
 
 			],	
 		//redraw the dots
