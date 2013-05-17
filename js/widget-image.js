@@ -232,7 +232,7 @@ Image.prototype.redraw = function ()
 {
 	// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
 	//       by doing nothing? -mjl
-	var image = this.widgetGroup.select("image");
+	var image = this.lastdrawn.widgetGroup.select("image");
 	image.attr("xlink:href", this.URI);
 	
 	var desc = image.select("desc");
@@ -554,7 +554,10 @@ CaptionedImage.prototype.redraw = function ()
 	//       by doing nothing? -mjl
 	this.image.redraw();
 
-	var captionDiv = this.lastdrawn.widgetGroup.select("g foreignObject div")
+	// NOTE: for some reason foreignObject in a d3 selector doesn't work
+	//       but body does.
+	// TODO: updating the html isn't causing it to be re-rendered (at least in Chrome)
+	var captionDiv = this.lastdrawn.widgetGroup.select("g body div")
 		.html(this.image.caption);
 };
 

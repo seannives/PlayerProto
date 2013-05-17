@@ -40,6 +40,20 @@ svg g.widgetCarousel>rect.background
 	fill-opacity:	0.0;
 }
 
+svg g.widgetCarousel>g.widgetItem>rect.selection
+{
+	fill:			#4f00ef;
+	fill-opacity:	0.0;
+	stroke:			blue;
+	stroke-opacity:	0.0;	
+}
+
+svg g.widgetCarousel>g.widgetItem.selected>rect.selection
+{
+	fill-opacity:	0.1;
+	stroke-opacity:	0.8;	
+}
+
 
 /* Labels
 ================================================== */

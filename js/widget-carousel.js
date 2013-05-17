@@ -127,10 +127,6 @@ function Carousel(config, eventManager)
 	 * @property {string} selectKey	-The key associated with the selected item.
 	 */
 
-	// TODO: Using the selection event may not be the way we want to set highlighting internally
-	// because I'm not sure if 2 items have the same key we still want to highlight both?
-	eventManager.subscribe(this.selectedEventId, function (eventDetails) {that.lite(eventDetails.selectKey);});
-	 
 	/**
 	 * Information about the last drawn instance of this image (from the draw method)
 	 * @type {Object}
@@ -214,19 +210,26 @@ Carousel.prototype.draw = function(container, size)
 			.each(function (d)
 				  {
 					  d.draw(d3.select(this), itemSize);
-				  });
+				  })
+			.append("rect")
+				.attr("class", "selection")
+				.attr("width", itemSize.width + 2)
+				.attr("height", itemSize.height + 2)
+				.attr("stroke-width", 2)
+				.attr("x", -1)
+				.attr("y", -1);
 	
 	// position each item
 	itemGroups
 		.attr("transform", translateItem);
 
 	itemGroups.on('click',
-				  function (d)
+				  function (d, i)
 				  {
-					  that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
+					  that.selectItemAtIndex(i);
 				  });
 				
-	this.widgetGroup = widgetGroup;
+	this.lastdrawn.widgetGroup = widgetGroup;
 
 }; // end of Carousel.draw()
 
@@ -246,6 +249,38 @@ Carousel.prototype.redraw = function ()
 	
 	var desc = image.select("desc");
 	desc.text(this.caption);
+};
+
+/* **************************************************************************
+ * Carousel.selectedItem                                                *//**
+ *
+ * Return the selected item in the carousel.
+ *
+ * @return {Object} the carousel item which is currently selected.
+ *
+ ****************************************************************************/
+Carousel.prototype.selectedItem = function ()
+{
+	return this.lastdrawn.widgetGroup.select("g.widgetItem.selected").datum();
+};
+
+/* **************************************************************************
+ * Carousel.selectItemAtIndex                                           *//**
+ *
+ * Select the item in the carousel at the given index.
+ *
+ * @param {number}	index	-the 0-based index of the item to flag as selected.
+ *
+ ****************************************************************************/
+Carousel.prototype.selectItemAtIndex = function (index)
+{
+	var itemGroups = this.lastdrawn.widgetGroup.selectAll("g.widgetItem");
+	itemGroups.classed("selected", false);
+
+	var selectedItemGroup = d3.select(itemGroups[0][index]);
+	selectedItemGroup.classed("selected", true);
+
+	this.eventManager.publish(this.selectedEventId, {selectKey: selectedItemGroup.datum().key});
 };
 
 /* **************************************************************************
