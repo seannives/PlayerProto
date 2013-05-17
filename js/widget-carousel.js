@@ -252,6 +252,19 @@ Carousel.prototype.redraw = function ()
 };
 
 /* **************************************************************************
+ * Carousel.selectedItem                                                *//**
+ *
+ * Return the selected item in the carousel.
+ *
+ * @return {Object} the carousel item which is currently selected.
+ *
+ ****************************************************************************/
+Carousel.prototype.selectedItem = function ()
+{
+	return this.lastdrawn.widgetGroup.select("g.widgetItem.selected").datum();
+};
+
+/* **************************************************************************
  * Carousel.selectItemAtIndex                                           *//**
  *
  * Select the item in the carousel at the given index.

@@ -20,6 +20,7 @@
 				<div id="widgetTarget0n"><p>0n. Single image</p></div>
 				<div id="widgetTarget0"><p>0. Single image</p></div>
 				<div id="widgetTarget1n"><p>1n. Multiple images in 2 Carousels the top one gets lite events, the bottom doesn't</p></div>
+				<div id="widgetTarget1an"><p>1an. Multiple image carousel selection shown larger.</p></div>
 				<div id="widgetTarget1"><p>1. Multiple images with autoCarousel (events)</p></div>
 				<div id="widgetTarget2"><p>2. Image with graph overlay on local coordinate system (set by data in graph)</p></div>
 				
@@ -220,6 +221,50 @@
 	cntr1.append(crsl2, {topPercentOffset: 0.55, leftPercentOffset: 0, heightPercent: 0.45, widthPercent: 1});
 
 	eventManager.subscribe(crsl1.selectedEventId, function (eventDetails) {crsl1.lite(eventDetails.selectKey);});
+
+	var crslConfig3 =
+		{
+			items:
+				[
+					new Image(imgConfig1[0]),
+					new Image(imgConfig1[1]),
+					new Image(imgConfig1[2]),
+					new Image(imgConfig1[3]),
+					new Image(imgConfig1[4]),
+					new Image(imgConfig1[5])
+				],
+			layout: "horizontal",
+			itemMargin: {top: 4, bottom: 4, left: 2, right: 2},
+			presentation: "scaleToFit", // or "scroll"
+			scrollMode: "nowrap"
+		};
+
+	var cimgConfig3 =
+		{
+			image: new Image(imgConfig1[0])
+		};
+
+	var cntrConfig3 = 
+		{
+			node: d3.select("#widgetTarget1an"),
+			maxWid: 400,
+			maxHt: 400
+		};
+
+	var cntr3 = new SVGContainer(cntrConfig3);
+	var crsl3 = new Carousel(crslConfig3, eventManager);
+	var cimg3 = new CaptionedImage(cimgConfig3, eventManager);
+	
+	cntr3.append(crsl3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 0.20, widthPercent: 1});
+	cntr3.append(cimg3, {topPercentOffset: 0.20, leftPercentOffset: 0, heightPercent: 0.75, widthPercent: 1});
+	 
+	var handleImageView = function (eventDetails)
+	{
+		cimg3.changeImage(crsl3.selectedItem().URI, crsl3.selectedItem().caption);
+		cimg3.redraw();
+	};
+
+	eventManager.subscribe(crsl3.selectedEventId, handleImageView);
 
 // Old widgets code test for widget 1
 	var svg1 = new MakeSVGContainer(
