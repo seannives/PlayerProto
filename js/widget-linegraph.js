@@ -308,10 +308,10 @@ LineGraph.prototype.drawData_ = function ()
 					
 		// create trace groups for trace data that didn't exist when we last bound the data
 		traces.enter().append("g")
-			.attr("class", "traces")
+			.attr("class", function(d, i) {return "traces stroke" + i;})
 			.append("path")
 			//pick the colors sequentially off the list
-				.attr("class", function(d, i) {return "stroke" + i;})
+				
 				.attr("clip-path", "url(#" + clipId + ")");
 			
 		// update the data on all traces, new and old

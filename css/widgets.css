@@ -366,19 +366,18 @@ table.questionTable td {
 
 svg g.widgetLineGraph .traces 
 {
+  opacity:		0.8;
   fill: none;
-  stroke-width: 3px; 
+  stroke-width: 3; 
 }
 
-svg g.widgetLineGraph .traces .lit  
+svg g.widgetLineGraph .traces.lit  
 {
-	opacity:		0.5;
-	stroke-width:	8px;
-	stroke: #f49524;
+	opacity:		1;
+	stroke-width:	5;
 }
 
 svg g .stroke0 {
-    fill: none;
   stroke: #2C6CB8; }
 
 svg g .stroke1 {
@@ -405,28 +404,28 @@ svg g .stroke6 {
   opacity: 0.8; }
 
 
-.fill0 {
+svg g .fill0 {
   fill: #2C6CB8; }
 
-.fill1 {
+svg g .fill1 {
   fill: #66A62E; }
 
-.fill2 {
+svg g .fill2 {
   fill: #E8B12E; }
 
-.fill3 {
+svg g .fill3 {
   fill: #6B4FB8; }
 
-.fill4 {
+svg g .fill4 {
   fill: #D44C17; }
 
-.fill5 {
+svg g .fill5 {
   fill: #E39014; }
 
-.fill6 {
+svg g .fill6 {
   fill: #666666; }
 
-.fillWhite {
+svg g .fillWhite {
   fill: #fff;
 }
 
