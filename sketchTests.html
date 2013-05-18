@@ -16,20 +16,20 @@
 		<div class="row-fluid">
 			<div class="span6 leftCol">
                 <h2 class="setTitle"></h2>
-				<div id="rectTest"><p>0. Rectangle 	{ shape: "rectangle",	xyPos: [ 0.1, .1], width: 0.75, height: 0.2 } half the width and height of the box, starting at left edge halfway up.
-	</p></div>
-				<div id="circTest"><p>1. Three concentric circles centered on space { shape: "circle",	xyPos: [0.5, 0.5], radius: .5 },</p></div>
+				<div id="rectTest"><p>0. Rectangle 	{ shape: "rectangle",	xyPos: [ 0.1, .1], width: 0.75, height: 0.2 }.
+	</p>
+    			</div>
+				<div id="circTest"><p>1. Three concentric circles centered on space { shape: "circle",	xyPos: [0.5, 0.5], radius: .5 }</p>
+                </div>
 				<div id="molecule"><p>2. hexagon and lines</p></div>
 				<div id="compass"><p>3. compass rose (vector precursor)</p></div>
-				 
 				
 			</div>
 			<div class="span6 rightCol">
 				<div id="hotSpot"><p>4.Click the shapes to lite the label</p></div>
                 <div id="description"></div>
-                <div id="redraw"><p>5. Slide the size</p>
-                 
-                </div>
+                <div id="redraw"><p>5. Slide the size</p></div>
+                <div id="someText"><p>6. Text in Sketch (SVG text)</p></div>
 			</div>
 		</div>
 	</div>
@@ -238,6 +238,28 @@ var shapeIt = new Sketch({
 		});
 		
 updateMe.append([shapeIt], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+// 6. Text test
+
+var svgText = new SVGContainer({
+		node: d3.select("#someText"),
+		maxWid: 200,
+		maxHt: 200	
+	});
+ 
+var textLines = new Sketch({
+			id: "thing",
+			drawShape: 	
+			[	
+				{ shape: "line", 	data: [{ xyPos: [.5, .5], xyEnd: [0, .5] }]},
+			 	{ shape: "textBit", data: [{ xyPos: [.5, .5], 
+					text: 'e = mc<tspan baseline-shift="super">2</tspan>'}]},
+			  	{ shape: "textBit", data: [{ xyPos: [.1, .1], text: 'more text over here'}]},
+			],
+		});
+		
+svgText.append(textLines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
 //Test: set the start highlight state of 0 key by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.

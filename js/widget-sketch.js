@@ -491,6 +491,15 @@ Sketch.prototype.redraw = function ()
 		.attr("y2", function(d) { return yScale(d.xyEnd[1]); });
 
 
+	var textBits = drawCollection.selectAll("textBits")
+		.data(function (d) { return d.shape == "textBit"? d.data : []; });
+	textBits.enter().append("text");
+	textBits.exit().remove();
+	textBits.attr("x", function(d) { return xScale(d.xyPos[0]); })
+		.attr("y", function(d) { return yScale(d.xyPos[1]); })
+		.text(function(d) { return d.text;});
+
+
 	drawCollection.on('click',
 				function (d, i)
 				{

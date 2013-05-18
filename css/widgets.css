@@ -135,6 +135,12 @@ svg g.widgetSketch .shape.lit {
 	opacity: 0.5;
 }
 
+svg g.widgetSketch .shape>text {
+	fill: #333;
+	stroke: none;
+	font: bold italic 1.1em Times, serif;
+  
+}
 
 /* Math and questions
 ================================================== */
