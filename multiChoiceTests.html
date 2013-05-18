@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title class="setTitle"></title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="eCourses Author, Title" name="description">   	
+    <!-- Bootstrap -->
+  
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
+	<link href="css/widgets.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/module-opener.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+
+	</head>
+	<body>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+                <h2 class="setTitle"></h2>
+				<div id="radioRnd"><p>0. Multiple Choice question, randomized</p></div>
+				<div id="radioOrd"><p>1. Multiple Choice question, nonrandomized</p></div>
+			</div>
+			<div class="span6 rightCol">
+				<div id="graphIn"><p>3. Graphs as responses</p></div>
+				
+			</div>
+		</div>
+	</div>
+    
+    
+	<script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/toc-structure.js"></script>
+	<script src="js/eCourse-master.js"></script>
+    <script src="js/eventmanager.js"></script>
+	<script src="js/d3.v3.min.js"></script>
+	<script src="js/widget-radio.js"></script>
+
+	<!--script src="js/goog.base.js"></script>
+	<script src="js/widget-axes.js"></script-->
+
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
+    <script src="js/widget-legend.js"></script>
+    <script src="js/widget-labelgroup.js"></script>
+
+<script>
+
+	var eventManager = new EventManager();
+
+	var QData = {
+	answer: [
+		{
+			content: "Because as the population increases, the absolute number of births increases even though the growth rate stays constant.",
+			response: "Growth rate stays constant."
+		}],
+	distractors:[
+		{
+			content: "Because the growth rate increases as the population rises.",
+			response: "Does the growth rate change with population size?"
+		},
+		{
+			content: "Because the total fertility rate increases with population.",
+			response: "Does the fertility rate change with population size?"
+		},
+		{
+			content: "Because social behaviors change and people decide to have more children.",
+			response: "This might happen but is it something is necessarily occurs?"
+		}
+		]};
+	//<div id="radioRnd"><p>0. Multiple Choice question, randomized</p></div>
+	
+	var radioButtons = new RadioGroup({
+			id: "Q0",
+			data: QData,
+			type: "randomized", //default, even if not specified
+		});
+
+	radioButtons.draw(d3.select("#radioRnd"));
+	
+	//<div id="radioOrd"><p>1. Multiple Choice question, nonrandomized</p></div>
+
+	var radioOrdinal = new RadioGroup({
+			id: "Q1",
+			data: QData,
+			type: "ordered", 
+		});
+
+	radioOrdinal.draw(d3.select("#radioOrd"));
+ 
+
+    //  <div id="graphIn"><p>Graphs as content</p></div>
+	 
+var NorthAmerica = [
+	{x: 1500, y: 0.01075},
+	{x: 1600, y: 0.01378},
+	{x: 1700, y: 0.01542},
+	{x: 1750, y: 0.02000},
+	{x: 1800, y: 0.07000},
+	{x: 1850, y: 0.02600},
+	{x: 1900, y: 0.082000},
+	{x: 1910, y: 0.099923},
+	{x: 1920, y: 0.117330},
+	{x: 1930, y: 0.134728},
+	{x: 1940, y: 0.151627},
+	{x: 1950, y: 0.171615},
+	{x: 1955, y: 0.186960},
+	{x: 1960, y: 0.204318},
+	{x: 1965, y: 0.219224},
+	{x: 1970, y: 0.231284},
+	{x: 1975, y: 0.242360},
+	{x: 1980, y: 0.254097},
+	{x: 1985, y: 0.266572},
+	{x: 1990, y: 0.282688},
+	{x: 1995, y: 0.300073},
+	{x: 2000, y: 0.318654},
+	{x: 2005, y: 0.335175},
+	{x: 2010, y: 0.351659}];
+
+var LatinAmerica = [
+	{x: 1500, y: 0.008597},
+	{x: 1600, y: 0.011024},
+	{x: 1700, y: 0.012339},
+	{x: 1750, y: 0.016000},
+	{x: 1800, y: 0.024000},
+	{x: 1850, y: 0.038000},
+	{x: 1900, y: 0.074000},
+	{x: 1910, y: 0.092661},
+	{x: 1920, y: 0.112448},
+	{x: 1930, y: 0.133889},
+	{x: 1940, y: 0.157552},
+	{x: 1950, y: 0.167307},
+	{x: 1955, y: 0.191596},
+	{x: 1960, y: 0.219651},
+	{x: 1965, y: 0.252204},
+	{x: 1970, y: 0.286472},
+	{x: 1975, y: 0.323323},
+	{x: 1980, y: 0.362655},
+	{x: 1985, y: 0.402103},
+	{x: 1990, y: 0.442310},
+	{x: 1995, y: 0.482265},
+	{x: 2000, y: 0.521228},
+	{x: 2005, y: 0.556512},
+	{x: 2010, y: 0.588649}];
+	
+var Asia = [
+		{x: 1500, y: 0.269722},
+	{x: 1600, y: 0.345879},
+	{x: 1700, y: 0.387130},
+	{x: 1750, y: 0.502000},
+	{x: 1800, y: 0.635000},
+	{x: 1850, y: 0.809000},
+	{x: 1900, y: 0.947000},
+	{x: 1910, y: 1.038177},
+	{x: 1920, y: 1.138897},
+	{x: 1930, y: 1.249916},
+	{x: 1940, y: 1.377124},
+	{x: 1950, y: 1.402887},
+	{x: 1955, y: 1.541775},
+	{x: 1960, y: 1.693992},
+	{x: 1965, y: 1.885955},
+	{x: 1970, y: 2.125393},
+	{x: 1975, y: 2.379374},
+	{x: 1980, y: 2.622565},
+	{x: 1985, y: 2.889608},
+	{x: 1990, y: 3.178810},
+	{x: 1995, y: 3.448034},
+	{x: 2000, y: 3.698296},
+	{x: 2005, y: 3.936536},
+	{x: 2010, y: 4.166741}];
+
+	
+var Africa = [
+	{x: 1500, y: 0.056953},
+	{x: 1600, y: 0.073034},
+	{x: 1700, y: 0.081745},
+	{x: 1750, y: 0.106000},
+	{x: 1800, y: 0.107000},
+	{x: 1850, y: 0.111000},
+	{x: 1900, y: 0.133000},
+	{x: 1910, y: 0.151854},
+	{x: 1920, y: 0.172163},
+	{x: 1930, y: 0.194740},
+	{x: 1940, y: 0.220254},
+	{x: 1950, y: 0.227270},
+	{x: 1955, y: 0.253397},
+	{x: 1960, y: 0.285049},
+	{x: 1965, y: 0.322309},
+	{x: 1970, y: 0.366792},
+	{x: 1975, y: 0.418765},
+	{x: 1980, y: 0.482236},
+	{x: 1985, y: 0.556131},
+	{x: 1990, y: 0.638729},
+	{x: 1995, y: 0.726285},
+	{x: 2000, y: 0.819462},
+	{x: 2005, y: 0.921073},
+	{x: 2010, y: 1.033043}];
+
+	var Africalg = {
+			Data: [Africa],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   ticks: 8,
+						   orientation: "left",
+						   label: "Human Population (Billions)" },
+		};
+	
+	var Asialg = {
+			Data: [Asia],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   ticks: 8,
+						   orientation: "left",
+						   label: "Human Population (Billions)" },
+		};
+
+	var NAlg = {
+			Data: [NorthAmerica],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   ticks: 8,
+						   orientation: "left",
+						   label: "Human Population (Billions)" },
+		};
+	var LAlg = {
+			Data: [LatinAmerica],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   ticks: 8,
+						   orientation: "left",
+						   label: "Human Population (Billions)" },
+		};
+		
+
+	var QData = {
+	answer: [
+		{
+			content: new LineGraph(Asialg),
+			response: "Asia currently has a population over 4 Billion, and is the most populous continent on the earth."
+		}],
+	distractors:[
+		{
+			content: new LineGraph(LAlg),
+			response: "Asia currently has a larger population, and it's population is still growing, not leveling off."
+		},
+		{
+			content:  new LineGraph(Africalg),
+			response: "Although the overall shape is right, Asia has a larger current population even than Africa."
+		},
+		{
+			content: new LineGraph(NAlg),
+			response: "Asia currently has a larger population, this is the curve for North America."
+		}
+		]};
+	
+	 
+	eventManager.subscribe(radioButtons.submitEventId,
+						   handleSubmit);
+	
+/************************************************************************
+* handleSubmit	                                           *//**
+*
+* handleSubmit is called from the event handler for one of
+* the input widgets when the user submits an answer. It scores
+* the triggering widget and returns any answer response.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a submission.
+*************************************************************************/
+	function handleSsubmit(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		eventDetails.id.score(eventDetails.selectKey);
+		
+	}
+
+</script>
+</body>
+</html>

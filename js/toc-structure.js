@@ -154,7 +154,33 @@ var bookConfig = {
                 title: "Ritter Image Carousel and Callouts"
             },
             ]
-		}
+		},
+		{
+            type: "module",
+            url: "module_n.4.html",
+            id: "n.4",
+            title: "Widget Assessment Tests",
+            children: [
+            {
+                type: "objective",
+                url: "multiChoiceTests.html",
+                id: "n.4.1",
+                title: "Multiple Choice Tests"
+            },
+            {
+                type: "objective",
+                url: "labelScoreTests.html",
+                id: "n.4.2",
+                title: "Labeling Assessment Tests"
+            },
+            {
+                type: "objective",
+                url: "hotSpotTests.html",
+                id: "n.4.3",
+                title: "Hot Spot Assessment Tests"
+            },
+            ]
+        },
         ]
     }
     ]
