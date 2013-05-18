@@ -4,11 +4,10 @@
  *
  * @fileoverview Implementation of the Carousel widget.
  *
- * The Image widget draws a scaled image in an SVGContainer.
- * The CaptionedImage widget draws a caption next to an Image.
+ * The Carousel widget draws a collection of images in an SVGContainer and
+ * allows one of them to be selected.
  *
  * Created on		May 04, 2013
- * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
  * Copyright (c) 2013 Pearson, All rights reserved.
@@ -33,10 +32,8 @@
 /* **************************************************************************
  * Carousel                                                             *//**
  *
- * The Carousel widget draws an image in an SVGContainer.
- *
- * The Image is frequently used by other widgets, or drawn under other
- * widgets such as LabelGroups.
+ * The Carousel widget draws a collection of images in an SVGContainer and
+ * allows one of them to be selected.
  *
  * @constructor
  * @implements {IWidget}
@@ -137,7 +134,7 @@ function Carousel(config, eventManager)
 			size: {height: 0, width: 0},
 			widgetGroup: null,
 		};
-} // end of Image constructor
+} // end of Carousel constructor
 
 /**
  * Prefix to use when generating ids for instances of LabelGroup.
@@ -281,6 +278,37 @@ Carousel.prototype.selectItemAtIndex = function (index)
 	selectedItemGroup.classed("selected", true);
 
 	this.eventManager.publish(this.selectedEventId, {selectKey: selectedItemGroup.datum().key});
+};
+
+/* **************************************************************************
+ * Carousel.calcOptimumHeightForWidth                                   *//**
+ *
+ * Calculate the optimum height for this carousel laid out horizontally
+ * to fit within the given width.
+ *
+ * @param {number}	width	-The width available to lay out the images in the carousel.
+ *
+ * @return {number) The optimum height for the carousel to display its items
+ * 					in the given width.
+ *
+ ****************************************************************************/
+Carousel.prototype.calcOptimumHeightForWidth = function (width)
+{
+	// Carve the width up for the n items
+	var itemCnt = this.items.length;
+	var itemWidth = width / itemCnt - (this.itemMargin.left + this.itemMargin.right);
+
+	var getHeight = function (item)
+	{
+		var hwRatio = item.actualSize.height / item.actualSize.width;
+		return itemWidth * hwRatio;
+	};
+
+	// Try optimum being the average height
+	var itemHeights = this.items.map(getHeight);
+	var heightSum = itemHeights.reduce(function (pv, cv) {return pv + cv;});
+
+	return (heightSum / itemCnt) + this.itemMargin.top + this.itemMargin.bottom;
 };
 
 /* **************************************************************************

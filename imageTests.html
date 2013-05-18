@@ -21,6 +21,7 @@
 				<div id="widgetTarget0"><p>0. Single image</p></div>
 				<div id="widgetTarget1n"><p>1n. Multiple images in 2 Carousels the top one gets lite events, the bottom doesn't</p></div>
 				<div id="widgetTarget1an"><p>1an. Multiple image carousel selection shown larger.</p></div>
+				<div id="widgetTarget1bn"><p>1bn. Test of the ImageViewer widget.</p></div>
 				<div id="widgetTarget1"><p>1. Multiple images with autoCarousel (events)</p></div>
 				<div id="widgetTarget2"><p>2. Image with graph overlay on local coordinate system (set by data in graph)</p></div>
 				
@@ -48,6 +49,7 @@
     <script src="js/widget-callouts.js"></script>
     <script src="js/widget-image.js"></script>
     <script src="js/widget-carousel.js"></script>
+    <script src="js/widget-imageviewer.js"></script>
 
 <script>
 	var eventManager = new EventManager();
@@ -222,6 +224,7 @@
 
 	eventManager.subscribe(crsl1.selectedEventId, function (eventDetails) {crsl1.lite(eventDetails.selectKey);});
 
+// widget test 1a using new widgets - ad hoc image viewer (carousel selection changes attached image)
 	var crslConfig3 =
 		{
 			items:
@@ -266,6 +269,32 @@
 
 	eventManager.subscribe(crsl3.selectedEventId, handleImageView);
 
+// widget test 1b using new widgets - using image viewer widget
+	var imgvwrConfig4 =
+		{
+			items:
+				[
+					new Image(imgConfig1[0]),
+					new Image(imgConfig1[1]),
+					new Image(imgConfig1[2]),
+					new Image(imgConfig1[3]),
+					new Image(imgConfig1[4]),
+					new Image(imgConfig1[5])
+				],
+		};
+
+	var cntrConfig4 = 
+		{
+			node: d3.select("#widgetTarget1bn"),
+			maxWid: 400,
+			maxHt: 400
+		};
+
+	var cntr4 = new SVGContainer(cntrConfig4);
+	var imgvwr4 = new ImageViewer(imgvwrConfig4, eventManager);
+	
+	cntr4.append(imgvwr4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	 
 // Old widgets code test for widget 1
 	var svg1 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget1"),
