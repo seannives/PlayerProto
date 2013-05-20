@@ -50,45 +50,53 @@
 
 	var eventManager = new EventManager();
 
-	var QData = {
-	answer: [
+	var Q1Choices = [
 		{
 			content: "Because as the population increases, the absolute number of births increases even though the growth rate stays constant.",
-			response: "Growth rate stays constant."
-		}],
-	distractors:[
+			response: "Growth rate stays constant.",
+			answerKey: "correct"
+		},
 		{
 			content: "Because the growth rate increases as the population rises.",
-			response: "Does the growth rate change with population size?"
+			response: "Does the growth rate change with population size?",
+			answerKey: "wrong1"
 		},
 		{
 			content: "Because the total fertility rate increases with population.",
-			response: "Does the fertility rate change with population size?"
+			response: "Does the fertility rate change with population size?",
+			answerKey: "wrong2"
+	
 		},
 		{
 			content: "Because social behaviors change and people decide to have more children.",
-			response: "This might happen but is it something is necessarily occurs?"
+			response: "This might happen but is it something is necessarily occurs?",
+			answerKey: "wrong3"
 		}
-		]};
+		];
 	//<div id="radioRnd"><p>0. Multiple Choice question, randomized</p></div>
 	
 	var radioButtons = new RadioGroup({
-			id: "Q0",
-			data: QData,
-			type: "randomized", //default, even if not specified
+			id: "RG1",
+			choices: Q1Choices
 		});
 
-	radioButtons.draw(d3.select("#radioRnd"));
+	var Q1 = new RadioGroupQuestion({
+			id: "Q1",
+			choices: Q1Choices,
+			type: "randomized", //default, even if not specified
+	});
+	
+	Q1.draw(d3.select("#radioRnd"));
 	
 	//<div id="radioOrd"><p>1. Multiple Choice question, nonrandomized</p></div>
 
-	var radioOrdinal = new RadioGroup({
-			id: "Q1",
-			data: QData,
-			type: "ordered", 
+	var Q2 = new RadioGroupQuestion({
+			id: "Q2",
+			choices: Q1Choices,
+			type: "ordered"
 		});
 
-	radioOrdinal.draw(d3.select("#radioOrd"));
+	Q2.draw(d3.select("#radioOrd"));
  
 
     //  <div id="graphIn"><p>Graphs as content</p></div>
@@ -250,27 +258,44 @@ var Africa = [
 		};
 		
 
-	var QData = {
-	answer: [
-		{
-			content: new LineGraph(Asialg),
-			response: "Asia currently has a population over 4 Billion, and is the most populous continent on the earth."
-		}],
-	distractors:[
-		{
-			content: new LineGraph(LAlg),
-			response: "Asia currently has a larger population, and it's population is still growing, not leveling off."
-		},
-		{
-			content:  new LineGraph(Africalg),
-			response: "Although the overall shape is right, Asia has a larger current population even than Africa."
-		},
-		{
-			content: new LineGraph(NAlg),
-			response: "Asia currently has a larger population, this is the curve for North America."
-		}
-		]};
+	var Q3Choices = [
+	{
+		content: new LineGraph(Asialg),
+		response: "Asia currently has a population over 4 Billion, and is the most populous continent on the earth.",
+		answerKey: "correct"
+	},
+	{
+		content: new LineGraph(LAlg),
+		response: "Asia currently has a larger population, and it's population is still growing, not leveling off.",
+		answerKey: "wrong1",
+	},
+	{
+		content:  new LineGraph(Africalg),
+		response: "Although the overall shape is right, Asia has a larger current population even than Africa.",
+		answerKey: "wrong2",
+	},
+	{
+		content: new LineGraph(NAlg),
+		response: "Asia currently has a larger population, this is the curve for North America.",
+		answerKey: "wrong3"
+	}
+	];
 	
+	var radioGraphs = new RadioGroup({
+			id: "RB2",
+			choices: Q3Choices,
+			svgWidgetSize: {height: 100, width: 200}
+		});
+
+	var Q3 = new RadioButtonQuestion({
+			id: "RB2",
+			choices: Q3Choices,
+			svgWidgetSize: {height: 100, width: 200},
+			type: "randomized"
+		});
+
+	Q3.draw(d3.select("#graphIn"));
+
 	 
 	eventManager.subscribe(radioButtons.submitEventId,
 						   handleSubmit);

@@ -271,9 +271,15 @@ var textLines = new Sketch({
 			id: "thing",
 			drawShape: 	
 			[	
-				{ shape: "line", 	data: [{ xyPos: [.4, .6], length: 0.1, angle: -Math.PI/5 }]},
+				{ shape: "line", 	data: [{ xyPos: [.4, .9], length: 0.1, angle: -Math.PI/5 }]},
 			 	{ shape: "textBit", data: [{ xyPos: [.5, .5], 
-					text: 'e = mc<tspan baseline-shift="super">2</tspan>'}]},
+					text: 'e = mc'}]},
+				{ shape: "textBit", 
+					data: [
+					  { xyPos: [.7, .55], text: 2, format: "super"}
+					  ]
+				},
+					
 			  	{ shape: "textBit", data: [{ xyPos: [.1, .1], text: 'more text over here'}]},
 			],
 		});
