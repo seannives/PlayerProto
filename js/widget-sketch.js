@@ -480,7 +480,7 @@ Sketch.prototype.redraw = function ()
 				return (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
 			});
 
-
+/*
 	var lines = drawCollection.selectAll("line")
 		.data(function (d) { return d.shape == "line"? d.data : []; });
 	lines.enter().append("line");
@@ -489,6 +489,30 @@ Sketch.prototype.redraw = function ()
 		.attr("y1", function(d) { return yScale(d.xyPos[1]); })
 		.attr("x2", function(d) { return xScale(d.xyEnd[0]); })
 		.attr("y2", function(d) { return yScale(d.xyEnd[1]); });
+
+*/
+
+	var lines = drawCollection.selectAll("line")
+	.data(function (d) { return d.shape == "line"? d.data : []; });
+	lines.enter().append("line");
+	lines.exit().remove();
+	lines
+		.attr("x1",function(d) { return xScale(d.xyPos[0]);})
+		.attr("y1",function(d) { return yScale(d.xyPos[1]);})		
+		// calculate the endpoint given the length and angle
+		.attr("x2",function(d) { 
+					return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+					})
+		.attr("y2",function(d) { 
+					return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+					});
+	
+	lines.each(function (d, i) { 
+					// if type is a vector, put a triangle on the end
+					if(d.type == "vector"){
+						lines.attr("marker-end","url(#triangle)");
+							}
+						});
 
 
 	var textBits = drawCollection.selectAll("textBits")

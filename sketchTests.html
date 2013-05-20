@@ -109,9 +109,10 @@ var mole = new Sketch({
 			drawShape: 	
 			[	
 				{ shape: "hexagon",	data: [{xyPos: [.1, .5], side: .1 }]},
-				{ shape: "line",	data: [{xyPos: [.18, .55], xyEnd: [.27, .6] }]},
-				{ shape: "line",	data: [{xyPos: [.27, .6], xyEnd: [.36, .55] }]},
-				{ shape: "line",	data: [{xyPos: [.36, .55], xyEnd: [.45, .6] }]},
+				{ shape: "line", data: [{xyPos: [0.19, 0.55], length: .1, angle: Math.PI/5}] },
+				{ shape: "line", data: [{xyPos: [0.27, 0.61], length: .1, angle: -Math.PI/5}] },
+				{ shape: "line", data: [{xyPos: [0.34, 0.55], length: .1, angle: Math.PI/5}] },
+				{ shape: "line", data: [{xyPos: [0.41, 0.61], length: .1, angle: -Math.PI/5}] }
 			],
 		});
 svgMole.append(mole, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
@@ -123,7 +124,7 @@ var svgCompass = new SVGContainer({
 		maxHt: 200	
 	});
 
-var length = .5;
+/*var length = .5;
 var width1 = length*Math.cos(30*Math.PI/180);
 var height1 = length*Math.sin(30*Math.PI/180);
 var width2 = length*Math.cos(60*Math.PI/180);
@@ -140,6 +141,25 @@ var roseLines = new Sketch({
 			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + width2, .5 + height2] }]},
 			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + width1, .5 + height1] }]},
 			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + length, .5] }]},
+			],
+		});
+		*/
+		
+var roseLines = new Sketch({
+			id: "rose",
+			drawShape: 	
+			[	
+			{ shape: "line", data: [{xyPos: [.5, 0], length: .5, angle: 0, type: "vector",}] },
+			{ shape: "line", data: [{xyPos: [.5, 0], length: .5, angle: Math.PI/4, type: "vector", }] },
+			{ shape: "line", data: [{xyPos: [.5, 0], length: .5, angle: Math.PI/2, type: "vector", }] },
+			{ shape: "line", data: [{xyPos: [.5, 0], length: .5, 
+													 angle: 2*Math.PI/3,
+													 type: "vector", }] },
+			{ shape: "line", data: [{xyPos: [.5, 0], length: .5, 
+													 angle: 5*Math.PI/6,
+													 type: "vector", }] },
+			{ shape: "line", data: [{xyPos: [.5, 0], length: .5, angle: Math.PI}] },
+			
 			],
 		});
 		
@@ -159,7 +179,7 @@ var clicks = new Sketch({
 			[	{ shape: "rectangle", data: [{ xyPos: [0, .5], width: .25, height: .5 }]},
 				{ shape: "circle",	data: [{ xyPos: [0.5, 0.8], radius: .1 }]},
 				{ shape: "hexagon",	data: [{ xyPos: [0.3, 0.5], side: .15 }]},
-				{ shape: "line",	data: [{ xyPos: [.2, .15], xyEnd: [.6, .3] }]},
+				{ shape: "line",	data: [{ xyPos: [0, 1], length: 0.7, angle: -Math.PI/3 }]},
 
 			],
 		},eventManager);
@@ -232,7 +252,7 @@ var shapeIt = new Sketch({
 			drawShape: 	
 			[	{ shape: "rectangle", data: [{xyPos: [.5, .5], width: sizeSlide.getValue(), height: sizeSlide.getValue() }]},
 				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: sizeSlide.getValue() }]},
-				{ shape: "line", data: [{xyPos: [0.5, 0.5], xyEnd: [.5+width, .5+height]}]},
+				{ shape: "line", data: [{xyPos: [0.5, 0.5], length: sizeSlide.getValue(), angle: 45}]},
 
 			],
 		});
@@ -251,7 +271,7 @@ var textLines = new Sketch({
 			id: "thing",
 			drawShape: 	
 			[	
-				{ shape: "line", 	data: [{ xyPos: [.5, .5], xyEnd: [0, .5] }]},
+				{ shape: "line", 	data: [{ xyPos: [.4, .6], length: 0.1, angle: -Math.PI/5 }]},
 			 	{ shape: "textBit", data: [{ xyPos: [.5, .5], 
 					text: 'e = mc<tspan baseline-shift="super">2</tspan>'}]},
 			  	{ shape: "textBit", data: [{ xyPos: [.1, .1], text: 'more text over here'}]},
@@ -294,7 +314,7 @@ function handleChangedValue(newValue)
 		shapeIt.drawShape =  	
 			[	{ shape: "rectangle", data: [{xyPos: [.5, .5], width: sizeSlide.getValue(), height: sizeSlide.getValue() }]},
 				{ shape: "circle",	data: [{xyPos: [0.5, 0.5], radius: sizeSlide.getValue() }]},
-				{ shape: "line", data: [{xyPos: [0.5, 0.5], xyEnd: [.5+width, .5+height]}]},
+				{ shape: "line", data: [{xyPos: [0.5, 0.5], length: sizeSlide.getValue(), angle: 45}]},
 
 			],	
 		//redraw the dots
