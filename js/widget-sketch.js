@@ -337,14 +337,24 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 	var lines = drawCollection.selectAll("line");
 	// add the given offset to the x and y positions of both endpoints
 	lines.transition()
-		.attr("x1", function(d) { d.xyPos[0] = d.xyPos[0] + xOffset; 
-								return xScale(d.xyPos[0]); })
-		.attr("y1", function(d) { d.xyPos[1] = d.xyPos[1] + yOffset;
-								return yScale(d.xyPos[1]); })
-		.attr("x2", function(d) { d.xyEnd[0] = d.xyEnd[0] + xOffset;
-								return xScale(d.xyEnd[0]); })
-		.attr("y2", function(d) { d.xyEnd[1] = d.xyEnd[1] + yOffset;
-								return yScale(d.xyEnd[1]); })
+		.attr("x1", function(d) 
+			{
+				d.xyPos[0] = d.xyPos[0] + xOffset; 
+				return xScale(d.xyPos[0]);
+			})
+		.attr("y1", function(d)
+			{
+				d.xyPos[1] = d.xyPos[1] + yOffset;
+				return yScale(d.xyPos[1]);
+			})
+		.attr("x2", function(d)
+			{ 
+				return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+			})
+		.attr("y2", function(d)
+			{ 
+				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+			})
 		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
