@@ -515,13 +515,26 @@ Sketch.prototype.redraw = function ()
 						});
 
 
-	var textBits = drawCollection.selectAll("textBits")
+	var textBits = drawCollection.selectAll("text")
 		.data(function (d) { return d.shape == "textBit"? d.data : []; });
 	textBits.enter().append("text");
 	textBits.exit().remove();
 	textBits.attr("x", function(d) { return xScale(d.xyPos[0]); })
 		.attr("y", function(d) { return yScale(d.xyPos[1]); })
-		.text(function(d) { return d.text;});
+		.each(function (d)
+		{
+			var prefixRE = /[^0-9]*/;
+			// find string upto the 1st number
+			var prefix = prefixRE.exec(d.text);
+			this.text(prefix);
+			
+			// find the number
+			var numRE = /[0-9]+/;
+			var num = numRE.exec(d.text.substring(prefixRE.lastIndex));
+			this.append("tspan").attr("baseline-shift", "sub").text(num);
+			
+		});
+	//	.text("foo").append("tspan").text("more text");
 
 
 	drawCollection.on('click',
