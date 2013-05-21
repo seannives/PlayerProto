@@ -337,14 +337,24 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 	var lines = drawCollection.selectAll("line");
 	// add the given offset to the x and y positions of both endpoints
 	lines.transition()
-		.attr("x1", function(d) { d.xyPos[0] = d.xyPos[0] + xOffset; 
-								return xScale(d.xyPos[0]); })
-		.attr("y1", function(d) { d.xyPos[1] = d.xyPos[1] + yOffset;
-								return yScale(d.xyPos[1]); })
-		.attr("x2", function(d) { d.xyEnd[0] = d.xyEnd[0] + xOffset;
-								return xScale(d.xyEnd[0]); })
-		.attr("y2", function(d) { d.xyEnd[1] = d.xyEnd[1] + yOffset;
-								return yScale(d.xyEnd[1]); })
+		.attr("x1", function(d) 
+			{
+				d.xyPos[0] = d.xyPos[0] + xOffset; 
+				return xScale(d.xyPos[0]);
+			})
+		.attr("y1", function(d)
+			{
+				d.xyPos[1] = d.xyPos[1] + yOffset;
+				return yScale(d.xyPos[1]);
+			})
+		.attr("x2", function(d)
+			{ 
+				return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+			})
+		.attr("y2", function(d)
+			{ 
+				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+			})
 		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
@@ -524,9 +534,9 @@ Sketch.prototype.redraw = function ()
 			.each(function (d)
 			  {
 				  var node = d3.select(this);
-				  var fragments = Sketch.splitOnNumbers(d.text);
+				  //var fragments = Sketch.splitOnNumbers(d.text);
 				  var i;
-				  for (i = 0; i < fragments.length; i += 2)
+				  /*for (i = 0; i < fragments.length; i += 2)
 				  {
 					  // write the normal text (ignore empty strings)
 					  if (fragments[i])
@@ -545,7 +555,26 @@ Sketch.prototype.redraw = function ()
 				  if (last)
 				  {
 				  	  node.append("tspan").text(last);
-				  }
+				  }*/
+				
+				var text = d.text;
+				for (i = 0; i < text.length; i++)
+				{
+					// the character is a number 0-9 (use ASCII code to check)
+					if (text[i].charCodeAt() >= 48 && text[i].charCodeAt() <= 57)
+					{
+						// append as subscript
+						node.append("tspan")
+							  .attr("baseline-shift", "sub")
+							  .text(text[i]);
+					}
+					// the character is not a number
+					else
+					{
+						// append as normal
+						node.append("tspan").text(text[i]);
+					}
+				}
 			  });
 
 

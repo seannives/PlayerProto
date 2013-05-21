@@ -71,6 +71,12 @@
 					<div id="test5"></div>
 				</div>
 				
+				<div class="test">
+					<p>Test 6: Moving arrow</p>
+					<span id="button6"></span>
+					<div id="test6"></div>
+				</div>
+				
 			</div>
 		</div>
     </div>
@@ -111,7 +117,7 @@
 			[	
 				{ shape: "circle",	data: [{ xyPos: [.1, .9], radius: .05 }]},
 				{ shape: "rectangle", data: [{ xyPos: [.2, .925], width: .1, height: .05 }]},
-				{ shape: "line", data: [{ xyPos: [.35, .9], xyEnd: [.55, .9] }]},
+				{ shape: "line", data: [{ xyPos: [.35, .9], length: .2, angle: 0 }]},
 				{ shape: "hexagon", data: [{ xyPos: [.65, .9], side: .05 }]},
 				{ shape: "triangle", data: [{ xyPos: [.8, .9], side: .1 }]},
 			],
@@ -245,7 +251,7 @@
 			drawShape: 	
 			[	
 				{ shape: "circle",	data: [{ xyPos: [.5, .772], radius: .056 }]},
-				{ shape: "line", data: [{ xyPos: [.5, .71], xyEnd: [.5, .88] }]},
+				{ shape: "line", data: [{ xyPos: [.5, .71], length: .17, angle: Math.PI/2 }]},
 				{ shape: "triangle", data: [{ xyPos: [.5, .8], side: .2 }]},
 			],
 		});
@@ -282,12 +288,12 @@
 			id: "sketch5_1",
 			drawShape: 	
 			[	
-				{ shape: "line", data: [{ xyPos: [.45, .4], xyEnd: [.45, .8] }]},
-				{ shape: "line", data: [{ xyPos: [.45, .8], xyEnd: [.55, .9] }]},
-				{ shape: "line", data: [{ xyPos: [.55, .9], xyEnd: [.55, .5] }]},
-				{ shape: "line", data: [{ xyPos: [.55, .5], xyEnd: [.45, .4] }]},
-				{ shape: "line", data: [{ xyPos: [.45, .6], xyEnd: [.55, .7] }]},
-				{ shape: "line", data: [{ xyPos: [.5, .85], xyEnd: [.5, .45] }]},
+				{ shape: "line", data: [{ xyPos: [.45, .4], length: .4, angle: Math.PI/2 }]},
+				{ shape: "line", data: [{ xyPos: [.45, .8], length: .14, angle: Math.PI/4 }]},
+				{ shape: "line", data: [{ xyPos: [.55, .9], length: .4, angle: -Math.PI/2 }]},
+				{ shape: "line", data: [{ xyPos: [.55, .5], length: .14, angle: 5/4*Math.PI }]},
+				{ shape: "line", data: [{ xyPos: [.45, .6], length: .14, angle: Math.PI/4 }]},
+				{ shape: "line", data: [{ xyPos: [.5, .85], length: .4, angle: -Math.PI/2 }]},
 			],
 		});
 		
@@ -331,7 +337,42 @@
 		sketch5_2.move(-.8, 0, 1000, 1200);
 		sketch5_3.move(.8, 0, 1000, 1200);
 	}
+	
+	////////////////////////////////////////////
+	
+	// Test 6: Moving arrow
+	var test6Box = new SVGContainer({
+			node: d3.select("#test6"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch6 = new Sketch({
+			id: "sketch6",
+			drawShape: 	
+			[	
+				{ shape: "line",	data: [{ xyPos: [.1, .9], length: .2, angle: 0, type: "vector" }]},
+			],
+		});
+		
+	test6Box.append(sketch6, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button6 = new Button ({
+			id: "b6",
+			text: "Click"
+		}, eventManager);
 
+	$('#button6').append(button6.getRootEl());
+
+	eventManager.subscribe(button6.pressedEventId, handleClick6);
+
+	function handleClick6()
+	{
+		sketch6.move(.6, 0, 1000, 0);
+		sketch6.move(-.6, 0, 1000, 1000);
+	}
+	
+	
 </script>
 </body>
 </html>
