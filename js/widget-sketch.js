@@ -521,7 +521,33 @@ Sketch.prototype.redraw = function ()
 	textBits.exit().remove();
 	textBits.attr("x", function(d) { return xScale(d.xyPos[0]); })
 		.attr("y", function(d) { return yScale(d.xyPos[1]); })
-		.text(function(d) { return d.text;});
+		.each(function (d)
+			  {
+				  var node = d3.select(this);
+				  var fragments = Sketch.splitOnNumbers(d.text);
+				  var i;
+				  for (i = 0; i < fragments.length; i += 2)
+				  {
+					  // write the normal text (ignore empty strings)
+					  if (fragments[i])
+					  {
+						  node.append("tspan").text(fragments[i]);
+					  }
+
+					  // write the number subscripted
+					  node.append("tspan")
+						  .attr("text-baseline", "sub")
+						  .text(fragments[i+1]);
+				  }
+				
+				  // write the last piece of normal text (ignoring empty strings)
+				  var last = fragments[fragments.length - 1];
+				  if (last)
+				  {
+				  	  node.append("tspan").text(last);
+				  }
+			  });
+
 
 
 	drawCollection.on('click',
@@ -533,6 +559,42 @@ Sketch.prototype.redraw = function ()
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 
 };
+
+/* **************************************************************************
+ * Sketch.splitOnNumbers - static                                       *//**
+ *
+ * Return an array w/ an odd number of elements derived by splitting the given
+ * string on groups of decimal digits. Each even element (0, 2, 4...) contains
+ * the text before a group of digits, each odd element is the group of digits
+ * and the final element is any text after the last digit group.
+ *
+ * @param {string}	s	-The string to parse on digit groups
+ *
+ ****************************************************************************/
+Sketch.splitOnNumbers = function (s)
+{
+	if (typeof s === 'number')
+	{
+		s = s.toString();
+	}
+
+	var matches = [];
+	var re = /([^0-9]*)([0-9]+)/g;
+
+	var match;
+	var lastIndex = re.lastIndex;
+	for (match = re.exec(s); match !== null; match = re.exec(s))
+	{
+		matches.push(match[1], match[2]);
+		lastIndex = re.lastIndex;
+	}
+
+	matches.push(s.slice(lastIndex));
+
+	return matches;
+};
+
+
 
 /* **************************************************************************
  * Sketch.lite                                                 *//**
