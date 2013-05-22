@@ -54,7 +54,8 @@
             });
 
 			it('should create an empty array of child Widgets', function () {
-                expect(myGraph.childWidgets).to.be.empty;
+                expect(myGraph.childWidgets.beforeData).to.be.empty;
+                expect(myGraph.childWidgets.afterData).to.be.empty;
             });
 
 			describe('DOM manipulation (create/update elements) tests', function () {
