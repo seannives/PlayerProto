@@ -264,9 +264,9 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 	
 	
 	// get collection of hexagons
-	var hexagons = drawCollection.selectAll("polygon.hex");
+	var polygons = drawCollection.selectAll("polygon");
 	// translate the points based on the given offset
-	hexagons.transition()
+	polygons.transition()
 		.attr("points",
 			function(d)
 			{
@@ -274,64 +274,23 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 				d.xyPos[0] = d.xyPos[0] + xOffset;
 				d.xyPos[1] = d.xyPos[1] + yOffset;
 				
-				// scale the side length
-				var side = xScale(d.side);
+				var points = d.points.split(" ");
+				var i;
+				for (i = 0; i < points.length; i++)
+				{
+					var point = points[i].split(",");
+					var x = parseFloat(point[0]) + xScale(xOffset);
+					var y = parseFloat(point[1]) - xScale(yOffset);
+					point[0] = x.toString();
+					point[1] = y.toString();
+					points[i] = point.join(",");
+				}
 				
-				// scale the x and y positions
-				var midx = xScale(d.xyPos[0]);
-				var midy = yScale(d.xyPos[1]);
-				
-				// use trigonometry to calculate all the points
-				
-				var angle = (30*Math.PI/180);
-				
-				var fartop = (midy - side*(1/2 + Math.sin(angle))).toString();
-				var top = (midy - side/2).toString();
-				var bot = (midy + side/2).toString();
-				var farbot = (midy + side*(1/2 + Math.sin(angle))).toString();
-				var left = (midx - side*Math.cos(angle)).toString();
-				var mid = midx.toString();
-				var right = (midx + side*Math.cos(angle)).toString();
-				
+				d.points = points.join(" ");
 				// return the point string
-				return (left+","+bot)+" "+(mid+","+farbot)+" "+(right+","+bot)
-					+" "+(right+","+top)+" "+(mid+","+fartop)+" "+(left+","+top);
+				return d.points;
 			})
 		.duration(duration).delay(delay);
-	
-	// get collection of triangles
-	var triangles = drawCollection.selectAll("polygon.tri");
-	// translate the points based on the given offset
-	triangles.transition()
-		.attr("points",
-			function(d)
-			{
-				// update the x and y positions
-				d.xyPos[0] = d.xyPos[0] + xOffset;
-				d.xyPos[1] = d.xyPos[1] + yOffset;
-				
-				// scale the side length
-				var side = xScale(d.side);
-				
-				// scale the x and y positions
-				var midx = xScale(d.xyPos[0]);
-				var midy = yScale(d.xyPos[1]);
-				
-				// use trigonometry to calculate all the points
-				
-				var angle = (60*Math.PI/180);
-				
-				var left = (midx - side/2).toString();
-				var mid = midx.toString();
-				var right = (midx + side/2).toString();
-				var bot = (midy + (side*Math.sin(angle))/2).toString();
-				var top = (midy - (side*Math.sin(angle))/2).toString();
-				
-				// return the point string
-				return (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
-			})
-		.duration(duration).delay(delay);
-	
 	
 	// get collection of lines
 	var lines = drawCollection.selectAll("line");
@@ -359,6 +318,196 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 	
+};
+
+/* **************************************************************************
+ * Sketch.reflect                                                  *//**
+ *
+ * Reflect the sketch over a vertical line, horizontal line, or both
+ *
+ * @param {number}		xLine		- x value of the vertical line to be reflected over
+ * @param {number}		yLine		- y value of the horizontal line to be reflected over
+ * @param {number}		delay		- the delay before the transition starts in milliseconds
+ *
+ ****************************************************************************/
+
+Sketch.prototype.reflect = function (xLine, yLine, delay)
+{
+	var xScale = this.lastdrawn.xScale;
+	var yScale = this.lastdrawn.yScale;
+
+	var sketchContainer = this.lastdrawn.widgetGroup;
+
+	// get the collection of shapes
+	var drawCollection = sketchContainer.selectAll("g.shape");
+
+	// get collection of rectangles			  
+	var rectangles = drawCollection.selectAll("rect");
+	// reflect over the given lines
+	rectangles.transition()
+		.attr("x",
+			function(d)
+			{
+				// reflect over the vertical line (if provided)
+				if (xLine != null)
+				{
+					var x = d.xyPos[0] + (d.width/2);
+					var diff = xLine - x;
+					d.xyPos[0] = xLine + diff - (d.width/2);
+				}
+				return xScale(d.xyPos[0]);
+			})
+		.attr("y",
+			function(d)
+			{
+				// reflect over the horizontal line (if provided)
+				if (yLine != null)
+				{
+					var y = d.xyPos[1] - (d.height/2);
+					var diff = yLine - y;
+					d.xyPos[1] = yLine + diff + (d.height/2);
+				}
+				return yScale(d.xyPos[1]);
+			})
+		.duration(0).delay(delay);
+
+	// get collection of circles
+	var circles = drawCollection.selectAll("circle");
+	// reflect over the given lines
+	circles.transition()
+		.attr("cx",
+			function(d)
+			{
+				// reflect over the vertical line (if provided)
+				if(xLine != null)
+				{
+					var x = d.xyPos[0];
+					var diff = xLine - x;
+					d.xyPos[0] = xLine + diff;
+				}
+				return xScale(d.xyPos[0]);
+			})
+		.attr("cy",
+			function(d)
+			{
+				// reflect over the horizontal line (if provided)
+				if (yLine != null)
+				{
+					var y = d.xyPos[1];
+					var diff = yLine - y;
+					d.xyPos[1] = yLine + diff;
+				}
+				return yScale(d.xyPos[1]);
+			})
+		.duration(0).delay(delay);
+
+
+	// get collection of hexagons
+	var polygons = drawCollection.selectAll("polygon");
+	// reflect over the given lines
+	polygons.transition()
+		.attr("points",
+			function(d)
+			{
+				// reflect over the vertical line (if provided)
+				if (xLine != null)
+				{
+					var x = d.xyPos[0];
+					var diff = xLine - x;
+					d.xyPos[0] = xLine + diff;
+				}
+				// reflect over the horizontal line (if provided)
+				if (yLine != null)
+				{
+					var y = d.xyPos[1];
+					var diff = yLine - y;
+					d.xyPos[1] = yLine + diff;
+				}
+				// reflect all the points as well
+				var points = d.points.split(" ");
+				var i;
+				for (i = 0; i < points.length; i++)
+				{
+					var point = points[i].split(",");
+					var x = parseFloat(point[0]);
+					var y = parseFloat(point[1]);
+					// reflect over the vertical line (if provided)
+					if (xLine != null)
+					{
+						var diff = xScale(xLine) - x;
+						x = xScale(xLine) + diff;
+					}
+					// reflect over the horizontal line (if provided)
+					if (yLine != null)
+					{
+						var diff = yScale(yLine) - y;
+						y = yScale(yLine) + diff;
+					}
+					point[0] = x.toString();
+					point[1] = y.toString();
+					points[i] = point.join(",");
+				}
+				
+				d.points = points.join(" ");
+				// return the point string
+				return d.points;
+			})
+		.duration(0).delay(delay);
+
+	// get collection of lines
+	var lines = drawCollection.selectAll("line");
+	// reflect over the given lines
+	lines.transition()
+		.attr("x1",
+			function(d) 
+			{
+				// reflect over the vertical line (if provided)
+				if (xLine != null)
+				{
+					var x = d.xyPos[0];
+					var diff = xLine - x;
+					d.xyPos[0] = xLine + diff;
+				}
+				return xScale(d.xyPos[0]);
+			})
+		.attr("y1",
+			function(d)
+			{
+				// reflect over the horizontal line (if provided)
+				if (yLine != null)
+				{
+					var y = d.xyPos[1];
+					var diff = yLine - y;
+					d.xyPos[1] = yLine + diff;
+				}
+				return yScale(d.xyPos[1]);
+			})
+		.attr("x2",
+			function(d)
+			{ 
+				// reflect over the vertical line (if provided)
+				if (xLine != null)
+				{
+					var angle = Math.PI - d.angle;
+					d.angle = angle;
+				}
+				return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+			})
+		.attr("y2",
+			function(d)
+			{ 
+				// reflect over the horizontal line (if provided)
+				if (yLine != null)
+				{
+					var angle = 2*Math.PI - d.angle;
+					d.angle = angle;
+				}
+				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+			})
+		.duration(0).delay(delay);
+
+	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
+
 };
 
 /* **************************************************************************
@@ -430,7 +579,8 @@ Sketch.prototype.redraw = function ()
 
 
 	var hexagons = drawCollection.selectAll("polygon.hex")
-		.data(function (d) { return d.shape == "hexagon"? d.data : []; });
+		.data(function (d) { 
+			return d.shape == "hexagon"? d.data : []; });
 	hexagons.enter().append("polygon").attr("class","hex");
 	hexagons.exit().remove();
 	// hexagons are drawn off a base shape of size 1% of the width
@@ -458,8 +608,9 @@ Sketch.prototype.redraw = function ()
 					var right = (midx + side*Math.cos(angle)).toString();
 					
 					// return the point string
-					return (left+","+bot)+" "+(mid+","+farbot)+" "+(right+","+bot)
+					d["points"] = (left+","+bot)+" "+(mid+","+farbot)+" "+(right+","+bot)
 						+" "+(right+","+top)+" "+(mid+","+fartop)+" "+(left+","+top);
+					return d.points;
 				});
 					
 	var triangles = drawCollection.selectAll("polygon.tri")
@@ -487,7 +638,8 @@ Sketch.prototype.redraw = function ()
 				var top = (midy - (side*Math.sin(angle))/2).toString();
 				
 				// return the point string
-				return (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
+				d["points"] = (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
+				return d.points;
 			});
 
 /*

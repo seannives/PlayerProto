@@ -56,14 +56,14 @@
 					<div id="test3"></div>
 				</div>
 				
-			</div>
-			<div class="span6 rightCol">
-				
 				<div class="test">
 					<p>Test 4: Multi-shape animation</p>
 					<span id="button4"></span>
 					<div id="test4"></div>
 				</div>
+				
+			</div>
+			<div class="span6 rightCol">
 				
 				<div class="test">
 					<p>Test 5: Multi-sketch animation</p>
@@ -75,6 +75,18 @@
 					<p>Test 6: Moving arrow</p>
 					<span id="button6"></span>
 					<div id="test6"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 7: Reflection</p>
+					<span id="button7_1"></span><span id="button7_2"></span>
+					<div id="test7"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 8: Fake-3d Reflection</p>
+					<span id="button8"></span>
+					<div id="test8"></div>
 				</div>
 				
 			</div>
@@ -371,6 +383,103 @@
 		sketch6.move(.6, 0, 1000, 0);
 		sketch6.move(-.6, 0, 1000, 1000);
 	}
+	
+	///////////////////////////////////////////
+	
+	// Test 7: Reflection
+	var test7Box = new SVGContainer({
+			node: d3.select("#test7"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch7_1 = new Sketch({
+			id: "sketch7_1",
+			drawShape: 	
+			[	
+				{ shape: "rectangle",	data: [{ xyPos: [.1, .8], width: .1, height: .05 }]},
+				{ shape: "circle",	data: [{ xyPos: [.3, .8], radius: .05 }]},
+				{ shape: "hexagon",	data: [{ xyPos: [.2, .7], side: .02}]},
+				{ shape: "triangle",	data: [{ xyPos: [.25, .73], side: .05}]},
+				{ shape: "line", data: [{ xyPos: [.3, .7], length: .1, angle: -Math.PI/3 }]},
+			],
+		});
+		
+	var sketch7_2 = new Sketch({
+			id: "sketch7_2",
+			drawShape:
+			[
+				{ shape: "line",	data: [{ xyPos: [.5, .1], length: .8, angle: Math.PI/2 }]},
+				{ shape: "line",	data: [{ xyPos: [.1, .5], length: .8, angle: 0 }]},
+			],
+		});
+		
+	test7Box.append(sketch7_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	test7Box.append(sketch7_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button7_1 = new Button ({
+			id: "b7_1",
+			text: "Reflect over vertical"
+		}, eventManager);
+	var button7_2 = new Button ({
+			id: "b7_2",
+			text: "Reflect over horizontal"
+		}, eventManager);
+
+	$('#button7_1').append(button7_1.getRootEl());
+	$('#button7_2').append(button7_2.getRootEl());
+
+	eventManager.subscribe(button7_1.pressedEventId, handleClick7_1);
+	eventManager.subscribe(button7_2.pressedEventId, handleClick7_2);
+
+	function handleClick7_1()
+	{
+		sketch7_1.reflect(.5, null, 0);
+	}
+	
+	function handleClick7_2()
+	{
+		sketch7_1.reflect(null, .5, 0);
+	}
+	
+	///////////////////////////////////////////
+	
+	// Test 8: Fake-3d Reflection
+	var test8Box = new SVGContainer({
+			node: d3.select("#test8"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch8 = new Sketch({
+			id: "sketch8",
+			drawShape: 	
+			[	
+				{ shape: "line", data: [{ xyPos: [.1, .6], length: .2, angle: Math.PI/4 }]},
+				{ shape: "line", data: [{ xyPos: [.24, .74], length: .2, angle: 0 }]},
+				{ shape: "line", data: [{ xyPos: [.44, .74], length: .2, angle: 5/4*Math.PI }]},
+				{ shape: "line", data: [{ xyPos: [.3, .6], length: .2, angle: Math.PI }]},
+			],
+		});
+		
+	test8Box.append(sketch8, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button8 = new Button ({
+			id: "b8",
+			text: "Click"
+		}, eventManager);
+
+	$('#button8').append(button8.getRootEl());
+
+	eventManager.subscribe(button8.pressedEventId, handleClick8);
+
+	function handleClick8()
+	{
+		sketch8.move(.25, 0, 1000, 0)
+		sketch8.reflect(.5, null, 1000);
+		sketch8.move(.25, 0, 1000, 0);
+	}
+	
 	
 	
 </script>
