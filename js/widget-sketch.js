@@ -528,9 +528,9 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				// reflect over the vertical line (if provided)
 				if(xLine != null)
 				{
-					var x = d.xyPos[0] + (.05*d.width/2);
+					var x = d.xyPos[0];
 					var diff = xLine - x;
-					d.xyPos[0] = xLine + diff - (.05*d.width/2);
+					d.xyPos[0] = xLine + diff;
 				}
 				return xScale(d.xyPos[0]);
 			})
@@ -728,7 +728,6 @@ Sketch.prototype.redraw = function ()
 			.each(function (d)
 			  {
 				  var node = d3.select(this);
-				  d["width"] = d.text.length;
 				  var fragments = Sketch.splitOnNumbers(d.text);
 				  var i;
 				  for (i = 1; i < fragments.length; i += 2)
@@ -736,20 +735,26 @@ Sketch.prototype.redraw = function ()
 					  // write the normal text (ignore empty strings)
 					  if (fragments[i-1])
 					  {
-						  node.append("tspan").text(fragments[i-1]);
+						  node.append("tspan").text(fragments[i-1])
+						  	.attr("font-size", "10px")
+							.attr("text-anchor", "middle");
 					  }
 
 					  // write the number subscripted
 					  node.append("tspan")
 						  .attr("baseline-shift", "sub")
-						  .text(fragments[i]);
+						  .text(fragments[i])
+						  .attr("font-size", "6px")
+						  .attr("text-anchor", "middle");
 				  }
 				
 				  // write the last piece of normal text (ignoring empty strings)
 				  var last = fragments[fragments.length - 1];
 				  if (last)
 				  {
-				  	  node.append("tspan").text(last);
+				  	  node.append("tspan").text(last)	
+						  .attr("font-size", "10px")
+						  .attr("text-anchor", "middle");
 				  }
 			  });
 
