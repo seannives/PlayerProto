@@ -19,6 +19,7 @@
                 <h2 class="setTitle"></h2>
 				<div id="widgetTarget0"><p>0. Single image</p></div>
 				<div id="widgetTarget1n"><p>1. Multiple images in 2 Carousels the top one gets lite events, the bottom isn't subscribed, but does get clicks. In top, 3rd and 5th have same key.</p></div>
+				<div id="widgetTarget2n"><p>2n. Image with graph overlay on local coordinate system (set by data in graph)</p></div>
 				<div id="widgetTarget2"><p>2. Image with graph overlay on local coordinate system (set by data in graph)</p></div>
 				
 			</div>
@@ -248,6 +249,39 @@
 	
 	//	<div id="widgetTarget2"><p>LineGraph on top of image - prepend</p></div>
 	
+	var cntrConfig5 =
+		{
+			node: d3.select("#widgetTarget2n"),
+			maxWid: 500,
+			maxHt: 400
+		};
+	var imgConfig5 =
+	{
+		URI: 'img/strata.jpg',
+		caption: "Earth's strata",
+		preserveAspectRatio: "xMidYMid",
+		actualSize: {height: 194, width: 259}
+	};
+	var lgConfig5 = {
+			Data: [lineData],
+			type: "lines",
+			xAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "bottom",
+						   label: "distance" },
+			yAxisFormat: { type: "linear",
+						   ticks: 5,
+						   orientation: "left",
+						   label: "Strata dividing line" },
+		};
+
+	var img5 = new Image(imgConfig5);
+	var lg5 = new LineGraph(lgConfig5);
+	lg5.append(img5, "before");
+	var cntr5 = new SVGContainer(cntrConfig5);
+	cntr5.append(lg5);
+	
+	// The old broken test drawing an image under the graph data
 	var svg2 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget2"),
 		maxWid: 500,
