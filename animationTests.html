@@ -456,10 +456,21 @@
 			id: "sketch8",
 			drawShape: 	
 			[	
+				// left fin
 				{ shape: "line", data: [{ xyPos: [.1, .6], length: .2, angle: Math.PI/4 }]},
-				{ shape: "line", data: [{ xyPos: [.24, .74], length: .2, angle: 0 }]},
 				{ shape: "line", data: [{ xyPos: [.44, .74], length: .2, angle: 5/4*Math.PI }]},
 				{ shape: "line", data: [{ xyPos: [.3, .6], length: .2, angle: Math.PI }]},
+				
+				// right fin
+				{ shape: "line", data: [{ xyPos: [.9, .6], length: .2, angle: Math.PI*3/4 }]},
+				{ shape: "line", data: [{ xyPos: [.56, .74], length: .2, angle: -Math.PI/4 }]},
+				{ shape: "line", data: [{ xyPos: [.7, .6], length: .2, angle: 0 }]},
+				
+				// top
+				{ shape: "line", data: [{ xyPos: [.24, .74], length: .52, angle: 0 }]},
+				
+				// pivot
+				{ shape: "line", data: [{ xyPos: [.5, .74], length: .14, angle: -Math.PI/2 }]}
 			],
 		});
 		
