@@ -315,6 +315,20 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
 			})
 		.duration(duration).delay(delay);
+		
+	var textBits = drawCollection.selectAll("text");
+	textBits.transition()
+		.attr("x", function(d)
+			{
+				d.xyPos[0] = d.xyPos[0] + xOffset; 
+				return xScale(d.xyPos[0]);
+			})
+		.attr("y", function(d)
+			{
+				d.xyPos[1] = d.xyPos[1] + yOffset; 
+				return yScale(d.xyPos[1]);
+			})
+		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 	
@@ -505,6 +519,34 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
 			})
 		.duration(0).delay(delay);
+		
+	var textBits = drawCollection.selectAll("text");
+	textBits.transition()
+		.attr("x",
+			function(d)
+			{
+				// reflect over the vertical line (if provided)
+				if(xLine != null)
+				{
+					var x = d.xyPos[0] + (.05*d.width/2);
+					var diff = xLine - x;
+					d.xyPos[0] = xLine + diff - (.05*d.width/2);
+				}
+				return xScale(d.xyPos[0]);
+			})
+		.attr("y",
+			function(d)
+			{
+				// reflect over the horizontal line (if provided)
+				if (yLine != null)
+				{
+					var y = d.xyPos[1];
+					var diff = yLine - y;
+					d.xyPos[1] = yLine + diff;
+				}
+				return yScale(d.xyPos[1]);
+			})
+		.duration(0).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 
@@ -686,6 +728,7 @@ Sketch.prototype.redraw = function ()
 			.each(function (d)
 			  {
 				  var node = d3.select(this);
+				  d["width"] = d.text.length;
 				  var fragments = Sketch.splitOnNumbers(d.text);
 				  var i;
 				  for (i = 1; i < fragments.length; i += 2)
