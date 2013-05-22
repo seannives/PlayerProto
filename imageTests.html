@@ -243,7 +243,8 @@
 		
 	textChunks.draw(d3.select("#calls"));
 	eventManager.subscribe(imgvwr4.selectedEventId, function (eventDetails) {textChunks.lite(eventDetails.selectKey);});
-	textChunks.lite({selectKey: 0});
+	//and show the first piece of text
+	textChunks.lite("0");
 	
 	//	<div id="widgetTarget2"><p>LineGraph on top of image - prepend</p></div>
 	
