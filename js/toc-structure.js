@@ -159,6 +159,19 @@ var bookConfig = {
                 id: "n.3.5",
                 title: "Ritter Image Carousel and Callouts"
             },
+			{
+                type: "objective",
+                url: "EnergyParabola.html",
+                id: "n.3.6",
+                title: "Mechanical Energy: Animation and Graph/Image coordination"
+            }, 
+			{
+                type: "objective",
+                url: "Brain.html",
+                id: "n.3.7",
+                title: "Cicerelli Brain hotspots"
+            }, 
+
             ]
 		},
 		{
