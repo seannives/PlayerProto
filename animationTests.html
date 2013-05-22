@@ -435,12 +435,12 @@
 
 	function handleClick7_1()
 	{
-		sketch7_1.reflect(.5, null, 0);
+		sketch7_1.reflect(.5, null, 500, 0);
 	}
 	
 	function handleClick7_2()
 	{
-		sketch7_1.reflect(null, .5, 0);
+		sketch7_1.reflect(null, .5, 500, 0);
 	}
 	
 	///////////////////////////////////////////
@@ -476,9 +476,8 @@
 
 	function handleClick8()
 	{
-		sketch8.move(.25, 0, 1000, 0)
-		sketch8.reflect(.5, null, 1000);
-		sketch8.move(.25, 0, 1000, 0);
+		sketch8.reflect(.5, null, 1000, 0);
+		sketch8.reflect(.5, null, 1000, 900);
 	}
 	
 	

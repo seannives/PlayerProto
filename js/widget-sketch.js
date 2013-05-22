@@ -341,11 +341,12 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
  *
  * @param {number}		xLine		- x value of the vertical line to be reflected over
  * @param {number}		yLine		- y value of the horizontal line to be reflected over
+ * @param {number}		duration	- the duration of the transition in milliseconds
  * @param {number}		delay		- the delay before the transition starts in milliseconds
  *
  ****************************************************************************/
 
-Sketch.prototype.reflect = function (xLine, yLine, delay)
+Sketch.prototype.reflect = function (xLine, yLine, duration, delay)
 {
 	var xScale = this.lastdrawn.xScale;
 	var yScale = this.lastdrawn.yScale;
@@ -383,7 +384,7 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				}
 				return yScale(d.xyPos[1]);
 			})
-		.duration(0).delay(delay);
+		.duration(duration).delay(delay);
 
 	// get collection of circles
 	var circles = drawCollection.selectAll("circle");
@@ -413,7 +414,7 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				}
 				return yScale(d.xyPos[1]);
 			})
-		.duration(0).delay(delay);
+		.duration(duration).delay(delay);
 
 
 	// get collection of hexagons
@@ -466,7 +467,7 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				// return the point string
 				return d.points;
 			})
-		.duration(0).delay(delay);
+		.duration(duration).delay(delay);
 
 	// get collection of lines
 	var lines = drawCollection.selectAll("line");
@@ -518,7 +519,7 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				}
 				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
 			})
-		.duration(0).delay(delay);
+		.duration(duration).delay(delay);
 		
 	var textBits = drawCollection.selectAll("text");
 	textBits.transition()
@@ -546,7 +547,7 @@ Sketch.prototype.reflect = function (xLine, yLine, delay)
 				}
 				return yScale(d.xyPos[1]);
 			})
-		.duration(0).delay(delay);
+		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 
