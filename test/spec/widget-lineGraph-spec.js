@@ -5,59 +5,97 @@
 (function () {
     var expect = chai.expect;
 
-var eventManager = new EventManager();
+	/**
+	 * createNewDiv will find the mocha div and create and return a sibling div following it
+	 */
+	var createNewDiv = function () {
+		var mochaDiv = d3.select("div#mocha");
+		var parent = d3.select(mochaDiv.node().parentNode);
+		return parent.append("div").node();
+	};
 
     describe('LineGraphs should be awesome', function () {
-        describe('linear data', function () {
+		var eventManager = null;
+
+        describe('Creating a LineGraph with linear data', function () {
 			var testData = [
 				{ x:    0, y: 1 },
 				{ x:    4, y: 4 },
 				{ x: 1000, y: 1000 }
-				];
+			];
 				
 			var configGraph = {
-			id: "lg0",
-			Data: [testData],
-			type: "lines",
-			xAxisFormat: { type: "linear",
-						   ticks: 5,
-						   orientation: "bottom",
-						   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" },
-			yAxisFormat: { type: "linear",
-						   ticks: 5,
-						   orientation: "right",
-						   label: "Labels can have extended chars (&mu;m)" },
-		};
+				id: "lg0",
+				Data: [testData],
+				type: "lines",
+				xAxisFormat: { type: "linear",
+							   ticks: 5,
+							   orientation: "bottom",
+							   label: "one line with markup <span class='math'>y=x<sup>2</sup></span>" },
+				yAxisFormat: { type: "linear",
+							   ticks: 5,
+							   orientation: "right",
+							   label: "Labels can have extended chars (&mu;m)" },
+			};
 		
-			var myGraph = new LineGraph(configGraph);
+			var myGraph = null;
+
+			before(function () {
+				eventManager = new EventManager();
+				myGraph = new LineGraph(configGraph);
+			});
 			
-            it('Should create lines id from base id + _lines', function () {
+            it('should create lines id from base id + _lines', function () {
                 expect(myGraph.lastdrawn.linesId).to.equal(myGraph.id + '_lines');
             });
-			it('Should know it has a point at 0,1', function () {
+
+			it('should know it has a point at 0,1', function () {
                 expect(myGraph.data[0][0]).to.deep.equal({x:0,y:1});
             });
-			it('Should create an empty array of child Widgets', function () {
+
+			it('should create an empty array of child Widgets', function () {
                 expect(myGraph.childWidgets).to.be.empty;
             });
 
-			var configCntr = {
-				node: d3.select("#Target"),
-				maxWid: 400,
-				maxHt: 300
+			describe('DOM manipulation (create/update elements) tests', function () {
+				var configCntr = {
+					node: null,
+					maxWid: 400,
+					maxHt: 300
 				};
-				
-			var cntr = new SVGContainer(configCntr);
-			//full width and height
-			cntr.append(myGraph, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-			
-            it('Should scale the min of x range to the left edge of svg box', function () {
-                expect(myGraph.lastdrawn.xScale(0)).to.equal(0);
-            });
-			 it('Should make a group in svg with linesId', function () {
-                expect(myGraph.lastdrawn.graph.attr("id")).to.equal(myGraph.lastdrawn.linesId);
-            });
-		
+				var targetEl = null;
+				var cntr = null;
+
+				var createNewSvgContainer = function () {
+					// Clean up node from previous test
+					configCntr.node && configCntr.node.remove();
+					// Get a reference to an empty div to create the widget in.
+					configCntr.node = d3.select(createNewDiv());
+					// Create an empty svg container to be able to append a LineGraph to.
+					cntr = new SVGContainer(configCntr);
+				};
+
+				after(function () {
+					// Clean up test modifications to the DOM
+					configCntr.node && configCntr.node.remove();
+				});
+					
+				describe('draw()', function () {
+					before(function () {
+						createNewSvgContainer();
+						// append will call draw()
+						cntr.append(myGraph);
+					});
+					
+					it('should scale the min of x range to the left edge of svg box', function () {
+						expect(myGraph.lastdrawn.xScale(0)).to.equal(0);
+					});
+
+					 it('should make a group in svg with linesId', function () {
+						expect(myGraph.lastdrawn.graph.attr("id")).to.equal(myGraph.lastdrawn.linesId);
+					});
+				});
+			});	
 		});
     });
 })();
