@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="Leslie Bondaryk" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="Carmen Santiago, Demo Book" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
+	<link href="css/widgets.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+	<link href="css/grey-thing.css" rel="stylesheet">
+	<title class="setTitle"></title>
+</head>
+
+<body>
+	
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+            	<h2 class="setTitle"></h2>
+              	<div id="carousel"></div>
+ 				<div id="callouts"></div>
+			</div>
+			<div class="span6 rightCol">
+         	   	<p>No sooner had 2012 begun when the January skies over the southern United States darkened by storms forming tornadoes that left a deadly toll. March roared in as another <a href="#" class="liteable">outbreak of tornadoes</a> ripped across a large section of the Southern United States into the Ohio Valley. By June records were falling as temperatures soared across the United States, Switzerland, Germany, and Italy. The night sky was alight over much of the western US as <a href="#" class="liteable">wildfires scorched tinder dry mountain slopes</a> and raged in southwest France, Spain, Italy and Croatia. Crops planted during the record warm spring now <a href="#" class="liteable">withered under the dry summer sky</a> of the midwest United States. By late summer drought gripped much of the United States. Wheat prices soared to new heights after the Russian crop failed. <a href="#" class="liteable">"Super storm" Sandy</a> struck the eastern seaboard of the United States in late October leaving billions of dollars in damage. Newscasters asked "What’s up with the climate? Is this the new normal?" NOAA scientists warned that Earth’s heat balance was tipping out of balance.</p>
+             <p>The Earth System seeks a state of equilibrium where inputs of mass and energy are balanced by outputs. Extreme, or at least out of the ordinary events are likely to occur. Uncommon weather patterns, migratory birds returning early and flowers blooming sooner each year herald a change in climate.The physical geography of Earth reflects the patterns of energy that drive environmental processes. An understanding of the global variations in energy and heat explains much about the current and future physical geography of Earth.</p>
+
+			</div>
+		</div>
+	</div>
+
+	
+    <script src="js/jquery-latest.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!-- script src="js/jquery.touchSwipe.min.js"></script-->
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v3.min.js"></script>
+
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-callouts.js"></script>
+  	<script src="js/eventmanager.js"></script>
+	<script src="js/widget-image.js"></script>
+    <script src="js/widget-carousel.js"></script>
+    <script src="js/widget-imageviewer.js"></script>
+	<script>
+
+
+
+	//the eventManager is an object that is specific to this page.  A new one
+	//is created for every page, and then passed to the widgets in that page
+	//that must talk to it.
+	var eventManager = new EventManager();
+	
+		var imgvwrConfig4 =
+		{
+			items:
+				[
+					new Image({
+					URI: 'img/ch4_1.jpg',
+					caption: "The Whitewater-Baldy Complex wildfire.",
+					actualSize: {height: 960, width: 1280}
+					}),
+					new Image({
+					URI: 'img/ch4_2.jpg',
+					caption: "Aerial image near downtown West Liberty, Kentucky.",
+					actualSize: {height: 550, width: 550},
+					}),
+					new Image({
+					URI: 'img/ch4_3.jpg',
+					caption: "Withering crops in Iowa summer heat.",
+					actualSize: {height: 550, width: 550},
+					}),
+					new Image({
+					URI: 'img/ch4_4.jpg',
+					caption: "Seaside Heights, NJ after Hurricane Sandy.",
+					actualSize: {height: 550, width: 550}
+					})
+				],
+		};
+
+	var cntrConfig4 = 
+		{
+			node: d3.select("#carousel"),
+			maxWid: 450,
+			maxHt: 450
+		};
+
+	var cntr4 = new SVGContainer(cntrConfig4);
+	var imgvwr4 = new ImageViewer(imgvwrConfig4, eventManager);
+	
+	cntr4.append(imgvwr4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var textChunks = new Callouts (
+		{id: "demonWeather",
+		textBits: [
+			{cols:["Climate models project increasing dryness and extreme fire hazards into the midcentury on account of global warming. Forest management in the past has led to a build up of fuel.  By 2050 scientists expect high fire years every two to four times per decade rather than once per decade under our current climate."]
+			},
+			{cols: ["2012 began with an unusual number of tornadoes in January of that year. It continued to be a storm year when early March, an outbreak of 160 tornadoes ripped across Indiana and Kentucky."]
+			},
+			{cols:["A dome of high pressure over the midwest during much of the summer was a contributing factor to the drought of 2012 that spanned much of the United States. Increasing frequency of high pressure with its drying effect is projected for the midwest United States by the Intergovernmental Panel on Climate Change."]
+			},
+			{cols: ["Super storm Sandy covered oceanside streets in sand and ripped homes from their foundations.  Hurricaine intensity is projected to increase as ocean and air temperatures rise."]}
+			]
+		});
+		
+	textChunks.draw(d3.select("#callouts"));
+	eventManager.subscribe(imgvwr4.selectedEventId, function (eventDetails) {textChunks.lite(eventDetails.selectKey);});
+	//and show the first piece of text
+	textChunks.lite("0");
+	
+
+	</script>
+</body>
+</html>
