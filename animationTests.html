@@ -62,14 +62,14 @@
 					<div id="test4"></div>
 				</div>
 				
-			</div>
-			<div class="span6 rightCol">
-				
 				<div class="test">
 					<p>Test 5: Multi-sketch animation</p>
 					<span id="button5"></span>
 					<div id="test5"></div>
 				</div>
+				
+			</div>
+			<div class="span6 rightCol">
 				
 				<div class="test">
 					<p>Test 6: Moving arrow</p>
@@ -87,6 +87,12 @@
 					<p>Test 8: Fake-3d Reflection</p>
 					<span id="button8"></span>
 					<div id="test8"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 9: Opacity</p>
+					<span id="button9"></span>
+					<div id="test9"></div>
 				</div>
 				
 			</div>
@@ -132,6 +138,7 @@
 				{ shape: "line", data: [{ xyPos: [.35, .9], length: .2, angle: 0 }]},
 				{ shape: "hexagon", data: [{ xyPos: [.65, .9], side: .05 }]},
 				{ shape: "triangle", data: [{ xyPos: [.8, .9], side: .1 }]},
+				{ shape: "wedge", data: [{ xyPos: [.1, .8], length: .15, width: .025, angle: 0 }]},
 			],
 		});
 		
@@ -363,7 +370,8 @@
 			id: "sketch6",
 			drawShape: 	
 			[	
-				{ shape: "line",	data: [{ xyPos: [.1, .9], length: .2, angle: 0, type: "vector" }]},
+				{ shape: "line",	data: [{ xyPos: [.1, .9], length: .3, angle: 0, type: "vector" }]},
+				{ shape: "wedge", data: [{ xyPos: [.2, .9], length: .1, width: .025, angle: Math.PI }]}
 			],
 		});
 		
@@ -380,8 +388,8 @@
 
 	function handleClick6()
 	{
-		sketch6.move(.6, 0, 1000, 0);
-		sketch6.move(-.6, 0, 1000, 1000);
+		sketch6.move(.5, 0, 1000, 0);
+		sketch6.move(-.5, 0, 1000, 1000);
 	}
 	
 	///////////////////////////////////////////
@@ -402,7 +410,8 @@
 				{ shape: "hexagon",	data: [{ xyPos: [.2, .7], side: .02}]},
 				{ shape: "triangle",	data: [{ xyPos: [.25, .73], side: .05}]},
 				{ shape: "line", data: [{ xyPos: [.3, .7], length: .1, angle: -Math.PI/3 }]},
-				{ shape: "textBit", data: [{ xyPos: [.38, .7], text: "H2O" }]}
+				{ shape: "textBit", data: [{ xyPos: [.38, .7], text: "H2O" }]},
+				{ shape: "wedge", data: [{ xyPos: [.27, .68], length: .08, width: .02, angle: 5/4*Math.PI }]}
 			],
 		});
 		
@@ -490,6 +499,52 @@
 		sketch8.reflect(.5, null, 1000, 0);
 		sketch8.reflect(.5, null, 1000, 900);
 	}
+	
+	///////////////////////////////////////////
+	
+	// Test 9: Opacity
+	var test9Box = new SVGContainer({
+			node: d3.select("#test9"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch9 = new Sketch({
+			id: "sketch9",
+			drawShape: 	
+			[	
+				{ shape: "circle", data: [{ xyPos: [.5, .85], radius: .1 }]}
+			],
+		});
+		
+	test9Box.append(sketch9, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button9 = new Button ({
+			id: "b9",
+			text: "Click"
+		}, eventManager);
+
+	$('#button9').append(button9.getRootEl());
+
+	eventManager.subscribe(button9.pressedEventId, handleClick9);
+	
+	var opaque = true;
+
+	function handleClick9()
+	{
+		if (opaque)
+		{
+			sketch9.setOpacity(0, 500, 0);
+			opaque = false;
+		}
+		else
+		{
+			sketch9.setOpacity(1, 500, 0);
+			opaque = true;
+		}
+	}
+	
+	
 	
 	
 	
