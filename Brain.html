@@ -137,7 +137,7 @@
 
 
 			],
-		});
+		}, eventManager);
 	cntr4.append(hotspots, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 1});
 	
 	var brainLabels = new LabelGroup(
@@ -157,10 +157,10 @@
 	
 	//if we click off the first image, then blank out the hotspots
 	eventManager.subscribe(imgvwr4.selectedEventId, handleCarouselOverlay);
-	
+	eventManager.subscribe(hotspots.selectedEventId, handleSelection);
 	eventManager.subscribe(brainLabels.selectedEventId, handleSelection);
 	//and show the first piece of text - state
-	handleSelection("eye")
+	handleSelection("eye");
 	
 /* EventHandler */
 	function handleSelection (eventDetails) {
