@@ -26,13 +26,15 @@
 			<div class="span6 leftCol">
             	<h2 class="setTitle"></h2>
               	<div id="carousel"></div>
- 				<div id="callouts"></div>
+ 				
 			</div>
 			<div class="span6 rightCol">
+           
          	   	<p>The brain is uses a subsystem of eyes and other neurological components to process incoming light.  Light entering the eyes can be separated into the left and right visual fields. Light travels in a straight line through the cornea and lens. The resulting image projected on the retina is actually upside down and reversed. Our brain compensates for this. </p>
              <p>The image from the left visual field on the right side of each retina goes to the right visual cortex, while the right visual field goes to the left visual cortex. The axons from the temporal halves of each retina project to the visual cortex on the same size of the brain, while the axons from the nasal halves cross over to the opposite side. The optic chiasm is the point of crossover.</p>
 			<p>Photoreceptors in the retina, the rods, are found all over the retina except in the very center, which contains only cones.  Rods sense changes in brightness but not wavelength, so they see only black or white and shades of gray. They are very sensitive. Because rods work well in low light, they are also the cells that adapt to low light.  Dark adaptation occurs as the eye recovers its ability to see when moving from a brightly lit state to a dark state.
             </p>
+             <div id="callouts"></div>
             
 			</div>
 		</div>
@@ -54,6 +56,7 @@
     <script src="js/widget-carousel.js"></script>
     <script src="js/widget-imageviewer.js"></script>
     <script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-sketch.js"></script>
 
 	<script>
 
@@ -105,6 +108,7 @@
 	
 	var textChunks = new Callouts (
 		{id: "brainStuff",
+		headers: ["Function"],
 		textBits: [
 			{cols:["About 90% of the axons in the optic nerve go to the lateral geniculate nucleus in the thalamus. These axons originate from the retina. This parallel processing is important for reconstructing the visual world."], key: "thalamus"
 			},
@@ -119,6 +123,22 @@
 		});
 		
 	textChunks.draw(d3.select("#callouts"));	
+	
+	var hotspots = new Sketch({
+			id: "spots",
+			drawShape: 	
+			[	
+				{ key: "thalamus", shape: "circle", data: [{xyPos: [0.53, 0.55], radius: .05 }]},
+				{ key: "dorsal", shape: "circle",	data: [{xyPos: [0.35, 0.7], radius: .06 }]},
+				{ key: "pathway", shape: "circle",	data: [{xyPos: [0.25, 0.5], radius: .05 }]},
+				{ key: "pathway", shape: "circle",	data: [{xyPos: [0.4, 0.5], radius: .05 }]},
+				{ key: "ventral", shape: "rectangle",	data: [{xyPos: [0.33, 0.36], height: .05, width: .2 }]},
+				{ key: "eye", shape: "circle",	data: [{xyPos: [0.76, 0.43], radius: .05 }]},
+
+
+			],
+		});
+	cntr4.append(hotspots, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 1});
 	
 	var brainLabels = new LabelGroup(
 		{id: "brainLabel",
@@ -139,10 +159,12 @@
 		function (eventDetails) {
 			textChunks.lite(eventDetails.selectKey);
 			brainLabels.lite(eventDetails.selectKey);
+			hotspots.lite(eventDetails.selectKey);
 			});
 	//and show the first piece of text - state
 	textChunks.lite("eye");
 	brainLabels.lite("eye");
+	hotspots.lite("eye");
 	</script>
 </body>
 </html>
