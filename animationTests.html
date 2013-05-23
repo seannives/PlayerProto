@@ -95,6 +95,12 @@
 					<div id="test9"></div>
 				</div>
 				
+				<div class="test">
+					<p>Test 10: Color</p>
+					<span id="button10"></span>
+					<div id="test10"></div>
+				</div>
+				
 			</div>
 		</div>
     </div>
@@ -544,7 +550,50 @@
 		}
 	}
 	
+	//////////////////////////////////////
 	
+	// Test 10: Color
+	var test10Box = new SVGContainer({
+			node: d3.select("#test10"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch10 = new Sketch({
+			id: "sketch9",
+			drawShape: 	
+			[	
+				{ shape: "circle", data: [{ xyPos: [.5, .85], radius: .1 }]},
+				{ shape: "wedge", data: [{ xyPos: [.5, .75], length: .1, width: .05, angle: -Math.PI/2 }]}
+			],
+		});
+		
+	test10Box.append(sketch10, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	var button10 = new Button ({
+			id: "b10",
+			text: "Click"
+		}, eventManager);
+
+	$('#button10').append(button10.getRootEl());
+
+	eventManager.subscribe(button10.pressedEventId, handleClick10);
+	
+	var changed = false;
+
+	function handleClick10()
+	{
+		if (!changed)
+		{
+			sketch10.setColor("red", 500, 0);
+			changed = true;
+		}
+		else
+		{
+			sketch10.setColor("grey", 500, 0);
+			changed = false;
+		}
+	}
 	
 	
 	

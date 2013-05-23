@@ -686,9 +686,6 @@ Sketch.prototype.reflect = function (xLine, yLine, duration, delay)
 
 Sketch.prototype.setOpacity = function (opacity, duration, delay)
 {
-	var xScale = this.lastdrawn.xScale;
-	var yScale = this.lastdrawn.yScale;
-
 	var sketchContainer = this.lastdrawn.widgetGroup;
 
 	// get the collection of shapes
@@ -696,6 +693,32 @@ Sketch.prototype.setOpacity = function (opacity, duration, delay)
 
 	drawCollection.transition()
 		.style('opacity', opacity)
+		.duration(duration).delay(delay);
+
+	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
+
+};
+
+/* **************************************************************************
+ * Sketch.setColor                                                     *//**
+ *
+ * Set the color of the sketch
+ *
+ * @param {string}		color		- color the sketch should be set to
+ * @param {number}		duration	- the duration of the transition in milliseconds
+ * @param {number}		delay		- the delay before the transition starts in milliseconds
+ *
+ ****************************************************************************/
+
+Sketch.prototype.setColor = function (color, duration, delay)
+{
+	var sketchContainer = this.lastdrawn.widgetGroup;
+
+	// get the collection of shapes
+	var drawCollection = sketchContainer.selectAll("g.shape");
+
+	drawCollection.transition()
+		.style('stroke', color)
 		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
