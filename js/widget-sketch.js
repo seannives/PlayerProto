@@ -27,6 +27,7 @@
 				{ shape: "hexagon",	xyPos: [3,3], side:  1 },
 				{ shape: "triangle", xyPos: [4, 4], side: 2 },
 				{ shape: "line",	xyPos: [1,1], length: .5, angle: Math.PI/3 },
+				{ shape: "wedge", xyPos: [2, 4], length: .5, width: .2, angle: Math.PI/6 }
 			],
 		};
 });
@@ -832,6 +833,33 @@ Sketch.prototype.redraw = function ()
 				d["points"] = (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
 				return d.points;
 			});
+			
+	var wedges = drawCollection.selectAll("polygon.wedge")
+		.data(function (d) { return d.shape == "wedge"? d.data : []; });
+	wedges.enter().append("polygon").attr("class", "wedge");
+	wedges.exit().remove();
+	wedges.attr("points", 
+			function(d)
+			{
+				var flatx = d.length * Math.cos(d.angle) + d.xyPos[0];
+				var flaty = d.length * Math.sin(d.angle) + d.xyPos[1];
+							
+				var angle = d.angle + Math.PI/2;
+				
+				var tip1x = xScale(flatx + d.width/2*Math.cos(angle));
+				var tip1y = yScale(flaty + d.width/2*Math.sin(angle));
+				var tip2x = xScale(flatx - d.width/2*Math.cos(angle));
+				var tip2y = yScale(flaty - d.width/2*Math.sin(angle));
+				
+				var xpos = xScale(d.xyPos[0]);
+				var ypos = yScale(d.xyPos[1]);
+							
+				d["points"] = (tip1x.toString()+","+tip1y.toString())+" "+
+							(xpos.toString()+","+ypos.toString())+" "+
+							(tip2x.toString()+","+tip2y.toString());
+				return d.points;
+			})
+		.style('fill', 'grey');
 
 /*
 	var lines = drawCollection.selectAll("line")

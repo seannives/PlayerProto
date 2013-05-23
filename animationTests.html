@@ -138,6 +138,7 @@
 				{ shape: "line", data: [{ xyPos: [.35, .9], length: .2, angle: 0 }]},
 				{ shape: "hexagon", data: [{ xyPos: [.65, .9], side: .05 }]},
 				{ shape: "triangle", data: [{ xyPos: [.8, .9], side: .1 }]},
+				{ shape: "wedge", data: [{ xyPos: [.1, .8], length: .15, width: .025, angle: 0 }]},
 			],
 		});
 		
@@ -369,7 +370,8 @@
 			id: "sketch6",
 			drawShape: 	
 			[	
-				{ shape: "line",	data: [{ xyPos: [.1, .9], length: .2, angle: 0, type: "vector" }]},
+				{ shape: "line",	data: [{ xyPos: [.1, .9], length: .3, angle: 0, type: "vector" }]},
+				{ shape: "wedge", data: [{ xyPos: [.2, .9], length: .1, width: .025, angle: Math.PI }]}
 			],
 		});
 		
@@ -386,8 +388,8 @@
 
 	function handleClick6()
 	{
-		sketch6.move(.6, 0, 1000, 0);
-		sketch6.move(-.6, 0, 1000, 1000);
+		sketch6.move(.5, 0, 1000, 0);
+		sketch6.move(-.5, 0, 1000, 1000);
 	}
 	
 	///////////////////////////////////////////
@@ -408,7 +410,8 @@
 				{ shape: "hexagon",	data: [{ xyPos: [.2, .7], side: .02}]},
 				{ shape: "triangle",	data: [{ xyPos: [.25, .73], side: .05}]},
 				{ shape: "line", data: [{ xyPos: [.3, .7], length: .1, angle: -Math.PI/3 }]},
-				{ shape: "textBit", data: [{ xyPos: [.38, .7], text: "H2O" }]}
+				{ shape: "textBit", data: [{ xyPos: [.38, .7], text: "H2O" }]},
+				{ shape: "wedge", data: [{ xyPos: [.27, .68], length: .08, width: .02, angle: 5/4*Math.PI }]}
 			],
 		});
 		
@@ -540,6 +543,8 @@
 			opaque = true;
 		}
 	}
+	
+	
 	
 	
 	
