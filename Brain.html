@@ -155,16 +155,35 @@
 
 	cntr4.append(brainLabels, {topPercentOffset: .2, leftPercentOffset: 0, heightPercent: .8, widthPercent: 1});
 	
-	eventManager.subscribe(brainLabels.selectedEventId, 
-		function (eventDetails) {
+	//if we click off the first image, then blank out the hotspots
+	eventManager.subscribe(imgvwr4.selectedEventId, handleCarouselOverlay);
+	
+	eventManager.subscribe(brainLabels.selectedEventId, handleSelection);
+	//and show the first piece of text - state
+	handleSelection("eye")
+	
+/* EventHandler */
+	function handleSelection (eventDetails) {
 			textChunks.lite(eventDetails.selectKey);
 			brainLabels.lite(eventDetails.selectKey);
 			hotspots.lite(eventDetails.selectKey);
-			});
-	//and show the first piece of text - state
-	textChunks.lite("eye");
-	brainLabels.lite("eye");
-	hotspots.lite("eye");
+			}
+	
+	function handleCarouselOverlay(eventDetails)
+	{
+		if (eventDetails.selectKey==0)
+		{
+			hotspots.setOpacity(0.5, 100, 0);
+			brainLabels.setOpacity(1,100,0);
+		}
+		else
+		{
+			hotspots.setOpacity(0, 100, 0);
+			brainLabels.setOpacity(0,100,0);
+		}
+	}
+	
+	
 	</script>
 </body>
 </html>
