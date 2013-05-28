@@ -30,6 +30,7 @@
                 <div id="description"></div>
                 <div id="redraw"><p>5. Slide the size</p></div>
                 <div id="someText"><p>6. Text in Sketch (SVG text)</p></div>
+                <div id="full"><p>7. Filled shapes (black, white, one of sequenced fills for textbook)</p></div>
 			</div>
 		</div>
 	</div>
@@ -39,7 +40,7 @@
     <script src="js/jquery-latest.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<!-- <script src="js/jquery.touchSwipe.min.js"></script> -->
-<script src="js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v3.min.js"></script>
@@ -52,8 +53,7 @@
     <script src="js/widget-numeric.js"></script>
     <script src="js/widget-callouts.js"></script>
 	<script src="js/widget-sketch.js"></script>
-	
-	<script src="js/widgets.js"></script>
+ 
 <script>
 
 	var eventManager = new EventManager();
@@ -169,8 +169,8 @@ svgCompass.append(roseLines, {topPercentOffset: 0, leftPercentOffset: 0, heightP
 // Case 4 highlight events with labels
 var svgLabel = new SVGContainer({
 		node: d3.select("#hotSpot"),
-		maxWid: 400,
-		maxHt: 300
+		maxWid: 300,
+		maxHt: 200
 	});
 	
 var clicks = new Sketch({
@@ -180,6 +180,7 @@ var clicks = new Sketch({
 				{ shape: "circle",	data: [{ xyPos: [0.5, 0.8], radius: .1 }]},
 				{ shape: "hexagon",	data: [{ xyPos: [0.3, 0.5], side: .15 }]},
 				{ shape: "line",	data: [{ xyPos: [0, 1], length: 0.7, angle: -Math.PI/3 }]},
+				{ shape: "triangle",	data: [{ xyPos: [0.3, 0.5], side: .15 }]},
 
 			],
 		},eventManager);
@@ -238,8 +239,8 @@ sizeSlide.draw(d3.select("#redraw"));
 
 var updateMe = new SVGContainer(
 		{node: d3.select("#redraw"),
-		maxWid: 300,
-		maxHt: 300
+		maxWid: 200,
+		maxHt: 200
 		}
 	);
 	
@@ -289,6 +290,29 @@ var textLines = new Sketch({
 		
 svgText.append(textLines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
+// 7. Fill test, and path
+
+var fillShapes = new SVGContainer({
+		node: d3.select("#full"),
+		maxWid: 200,
+		maxHt: 200	
+	});
+ 
+var filled = new Sketch({
+			id: "itIs",
+			drawShape: 	
+			[	
+				{ shape: "hexagon",	fill: 2, 
+				  data: [{ xyPos: [0.3, 0.4], side: .15 }]},
+				{ shape: "triangle", fill: 1, data: [{ xyPos: [0.3, 0.6], side: .15 }]},
+				{ shape: "rectangle", fill: "Black",
+				  data: [{ xyPos: [.05, .25], width: 0.1, height: 0.2 }]},
+				{ shape: "circle", fill: "White", 
+				  data: [{ xyPos: [0.5, 0.5], radius: .1 }]},
+			],
+		});
+		
+fillShapes.append(filled);
 //Test: set the start highlight state of 0 key by calling the 
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.

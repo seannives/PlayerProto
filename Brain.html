@@ -128,18 +128,18 @@
 			id: "spots",
 			drawShape: 	
 			[	
-				{ key: "thalamus", shape: "circle", data: [{xyPos: [0.53, 0.55], radius: .05 }]},
-				{ key: "dorsal", shape: "circle",	data: [{xyPos: [0.35, 0.7], radius: .06 }]},
-				{ key: "pathway", shape: "circle",	data: [{xyPos: [0.25, 0.5], radius: .05 }]},
-				{ key: "pathway", shape: "circle",	data: [{xyPos: [0.4, 0.5], radius: .05 }]},
-				{ key: "ventral", shape: "rectangle",	data: [{xyPos: [0.33, 0.36], height: .05, width: .2 }]},
-				{ key: "eye", shape: "circle",	data: [{xyPos: [0.76, 0.43], radius: .05 }]},
+				{ key: "thalamus", fill: "White", shape: "circle", data: [{xyPos: [0.53, 0.55], radius: .05 }]},
+				{ key: "dorsal", fill: "White", shape: "circle", data: [{xyPos: [0.35, 0.7], radius: .06 }]},
+				{ key: "pathway", fill: "White", shape: "circle", data: [{xyPos: [0.25, 0.5], radius: .05 }]},
+				{ key: "pathway", fill: "White", shape: "circle", data: [{xyPos: [0.4, 0.5], radius: .05 }]},
+				{ key: "ventral", fill: "White", shape: "rectangle", data: [{xyPos: [0.33, 0.36], height: .05, width: .2 }]},
+				{ key: "eye", fill: "White", shape: "circle", data: [{xyPos: [0.76, 0.43], radius: .05 }]},
 
 
 			],
 		}, eventManager);
 	cntr4.append(hotspots, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 1});
-	
+	hotspots.setOpacity(0.1, 0, 0);
 	var brainLabels = new LabelGroup(
 		{id: "brainLabel",
 		labels: 	
@@ -173,7 +173,7 @@
 	{
 		if (eventDetails.selectKey==0)
 		{
-			hotspots.setOpacity(0.5, 100, 0);
+			hotspots.setOpacity(0.1, 100, 0);
 			brainLabels.setOpacity(1,100,0);
 		}
 		else
