@@ -68,14 +68,14 @@
 					<div id="test5"></div>
 				</div>
 				
-			</div>
-			<div class="span6 rightCol">
-				
 				<div class="test">
 					<p>Test 6: Moving arrow</p>
 					<span id="button6"></span>
 					<div id="test6"></div>
 				</div>
+				
+			</div>
+			<div class="span6 rightCol">
 				
 				<div class="test">
 					<p>Test 7: Reflection</p>
@@ -93,6 +93,17 @@
 					<p>Test 9: Opacity</p>
 					<span id="button9"></span>
 					<div id="test9"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 10: Color</p>
+					<span id="button10"></span>
+					<div id="test10"></div>
+				</div>
+				
+				<div class="test">
+					<p>Test 11: Click the sketch</p>
+					<div id="test11"></div>
 				</div>
 				
 			</div>
@@ -544,8 +555,78 @@
 		}
 	}
 	
+	//////////////////////////////////////
 	
+	// Test 10: Color
+	var test10Box = new SVGContainer({
+			node: d3.select("#test10"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch10 = new Sketch({
+			id: "sketch10",
+			drawShape: 	
+			[	
+				{ shape: "circle", data: [{ xyPos: [.5, .85], radius: .1 }]},
+				{ shape: "wedge", data: [{ xyPos: [.5, .75], length: .1, width: .05, angle: -Math.PI/2 }]}
+			],
+		});
+		
+	test10Box.append(sketch10, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
+	var button10 = new Button ({
+			id: "b10",
+			text: "Click"
+		}, eventManager);
+
+	$('#button10').append(button10.getRootEl());
+
+	eventManager.subscribe(button10.pressedEventId, handleClick10);
+	
+	var changed = false;
+
+	function handleClick10()
+	{
+		if (!changed)
+		{
+			sketch10.setColor("red", 500, 0);
+			changed = true;
+		}
+		else
+		{
+			sketch10.setColor("grey", 500, 0);
+			changed = false;
+		}
+	}
+	
+	//////////////////////////////////////
+	
+	// Test 11: On click
+	var test11Box = new SVGContainer({
+			node: d3.select("#test11"),
+			maxWid: 200,
+			maxHt: 200
+		});
+		
+	var sketch11 = new Sketch({
+			id: "sketch11",
+			drawShape: 	
+			[	
+				{ shape: "circle", data: [{ xyPos: [.5, .85], radius: .1 }]},
+				{ shape: "rectangle", data: [{ xyPos: [.4, .75], width: .2, height: .1 }]}
+			],
+		}, eventManager);
+		
+	test11Box.append(sketch11, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	eventManager.subscribe(sketch11.selectedEventId, handleClick11);
+	
+	function handleClick11 ()
+	{
+		sketch11.setColor("red", 400, 0);
+		sketch11.setColor("grey", 400, 400);
+	}
 	
 	
 </script>
