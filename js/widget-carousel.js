@@ -293,8 +293,8 @@ Carousel.prototype.selectItemAtIndex = function (index)
  *
  * @param {Object}	key		-The key of the item to find
  *
- * @return {number} the index of the item in the list of items with the specified
- * 			key.
+ * @return {?number} the index of the item in the list of items with the
+ * 			specified key.
  *
  ****************************************************************************/
 Carousel.prototype.itemKeyToIndex = function(key)
