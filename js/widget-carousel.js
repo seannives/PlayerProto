@@ -273,9 +273,13 @@ Carousel.prototype.selectedItem = function ()
 Carousel.prototype.selectItemAtIndex = function (index)
 {
 	var itemGroups = this.lastdrawn.widgetGroup.selectAll("g.widgetItem");
-	itemGroups.classed("selected", false);
-
 	var selectedItemGroup = d3.select(itemGroups[0][index]);
+	if (selectedItemGroup.classed('selected'))
+	{
+		return;
+	}
+
+	itemGroups.classed("selected", false);
 	selectedItemGroup.classed("selected", true);
 
 	this.eventManager.publish(this.selectedEventId, {selectKey: selectedItemGroup.datum().key});

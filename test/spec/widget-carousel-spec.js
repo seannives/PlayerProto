@@ -198,15 +198,33 @@
 						expect(lastSelectEventDetails.selectKey).is.equal('foo');
 					});
 
-					it('should re-select an already selected item', function() {
+					it('should give only the selected child g.widgetItem a class of \'selected\' and no other', function () {
+						// Arrange - item 1 is selected
+						myCarousel.selectItemAtIndex(1);
 						var prevSelectEventCount = selectEventCount;
-						myCarousel.selectItemAtIndex(1);
-						expect(selectEventCount).is.equal(prevSelectEventCount + 1);
-						expect(lastSelectEventDetails.selectKey).is.equal('foo');
 						lastSelectEventDetails = null;
+						// Act - select item 2
+						myCarousel.selectItemAtIndex(2);
+						// Assert - only item 2 group has class 'selected'
+						var itemGroups = myCarousel.lastdrawn.widgetGroup.selectAll("g.widgetItem");
+						itemGroups.each(
+							function (d, i)
+							{
+								var hasClassSelected = d3.select(this).classed('selected');
+								expect(i == 2, 'item ' + i).to.equal(hasClassSelected);
+							});
+					});
+
+					it('should do nothing when selecting an already selected item (no event)', function() {
+						// Arrange - item 1 is selected
 						myCarousel.selectItemAtIndex(1);
-						expect(selectEventCount).is.equal(prevSelectEventCount + 2);
-						expect(lastSelectEventDetails.selectKey).is.equal('foo');
+						var prevSelectEventCount = selectEventCount;
+						lastSelectEventDetails = null;
+						// Act - re-select item 1
+						myCarousel.selectItemAtIndex(1);
+						// Assert - select event was not published
+						expect(selectEventCount, "select event count").is.equal(prevSelectEventCount);
+						expect(lastSelectEventDetails).to.be.null;
 					});
 				});
 			});	
