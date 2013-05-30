@@ -727,6 +727,11 @@ Sketch.prototype.setColor = function (color, duration, delay)
 		.style('stroke', color)
 		.duration(duration).delay(delay);
 		
+	var wedges = drawCollection.selectAll("polygon.wedge");
+	wedges.transition()
+		.style('fill', color)
+		.duration(duration).delay(delay);
+		
 	var textbits = drawCollection.selectAll("text");
 	textbits.transition()
 		.style('fill', color)
@@ -903,7 +908,7 @@ Sketch.prototype.redraw = function ()
 							(tip2x.toString()+","+tip2y.toString());
 				return d.points;
 			})
-		.style('fill', 'grey');
+		.attr('fill', 'grey');
 
 /*
 	var lines = drawCollection.selectAll("line")
