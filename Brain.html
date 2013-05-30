@@ -67,7 +67,7 @@
 	//that must talk to it.
 	var eventManager = new EventManager();
 	
-		var imgvwrConfig4 =
+	var imgvwrConfig4 =
 		{
 			items:
 				[
@@ -126,6 +126,7 @@
 	
 	var hotspots = new Sketch({
 			id: "spots",
+			type: "hot",
 			drawShape: 	
 			[	
 				{ key: "thalamus", fill: "White", shape: "circle", data: [{xyPos: [0.53, 0.55], radius: .05 }]},
@@ -134,12 +135,11 @@
 				{ key: "pathway", fill: "White", shape: "circle", data: [{xyPos: [0.4, 0.5], radius: .05 }]},
 				{ key: "ventral", fill: "White", shape: "rectangle", data: [{xyPos: [0.33, 0.36], height: .05, width: .2 }]},
 				{ key: "eye", fill: "White", shape: "circle", data: [{xyPos: [0.76, 0.43], radius: .05 }]},
-
-
 			],
 		}, eventManager);
+	
 	cntr4.append(hotspots, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 1});
-	hotspots.setOpacity(0.1, 0, 0);
+
 	var brainLabels = new LabelGroup(
 		{id: "brainLabel",
 		labels: 	
@@ -160,7 +160,7 @@
 	eventManager.subscribe(hotspots.selectedEventId, handleSelection);
 	eventManager.subscribe(brainLabels.selectedEventId, handleSelection);
 	//and show the first piece of text - state
-	handleSelection("eye");
+	handleSelection({selectKey: "eye"});
 	
 /* EventHandler */
 	function handleSelection (eventDetails) {
@@ -173,11 +173,12 @@
 	{
 		if (eventDetails.selectKey==0)
 		{
-			hotspots.setOpacity(0.1, 100, 0);
 			brainLabels.setOpacity(1,100,0);
 		}
 		else
 		{
+			//this is not right.  It makes all the hotspots invisible, but they are still there
+			//and active.  What we want is to remove them entirely.
 			hotspots.setOpacity(0, 100, 0);
 			brainLabels.setOpacity(0,100,0);
 		}
