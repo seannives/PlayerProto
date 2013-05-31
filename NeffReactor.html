@@ -85,43 +85,7 @@
 		});
 	
 	cntr0.append(cimg0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-	/* var svgImg = new MakeSVGContainer(
-		{
-			node: d3.select("#imgReactor"),
-			maxWid: 750,
-			maxHt: 390
-		});
-
-	svgImg.Axes( 
-		{
-			
-			xPosPerc: 0, yPosPerc:0,
-			xPerc: 1, yPerc: 1,
-			xaxisType: "linear", yaxisType: "linear",
-			xTicks: 0,
-			xOrient: "bottom",
-			yOrient: "left",
-			xLabel: "Nuclear Reactor Schematic"
-		});
-
-		
-	svgImg.ScalableImage({
-		images: [
-		{URI: "img/reactor.jpg", caption: "Nuclear Reactor schematic"}
-		],
-		});//this doesn't have an eventmanager argument, because it isn't
-	//emitting events in this page.  
-	svgImg.Labels (
-		{type: "numbered",
-		labels: 	
-		  [
-		{content: "1", xyPos: [.025,.17], width: 0},
-		{content: "2", xyPos: [.08,.38], width: 0},
-		{content: "3" , xyPos: [.325,.64], width: 0},
-		{content: "4" , xyPos: [.645,.58], width: 0},
-		{content: "5" , xyPos: [.69,.095], width: 0}
-		]}, eventManager);
-*/
+	
 //put numbered highlightable bullets on the image
 	var numLabels = new LabelGroup(
 		{

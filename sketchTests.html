@@ -123,27 +123,6 @@ var svgCompass = new SVGContainer({
 		maxWid: 200,
 		maxHt: 200	
 	});
-
-/*var length = .5;
-var width1 = length*Math.cos(30*Math.PI/180);
-var height1 = length*Math.sin(30*Math.PI/180);
-var width2 = length*Math.cos(60*Math.PI/180);
-var height2 = length*Math.sin(60*Math.PI/180);
-	
-var roseLines = new Sketch({
-			id: "rose",
-			drawShape: 	
-			[	
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 - length, .5] }]},
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 - width1, .5 + height1] }]},
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 - width2, .5 + height2] }]},
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5, .5 + length] }]},
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + width2, .5 + height2] }]},
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + width1, .5 + height1] }]},
-			{ shape: "line", data: [{ xyPos: [.5, .5], xyEnd: [.5 + length, .5] }]},
-			],
-		});
-		*/
 		
 var roseLines = new Sketch({
 			id: "rose",
@@ -181,6 +160,8 @@ var clicks = new Sketch({
 				{ shape: "hexagon",	data: [{ xyPos: [0.3, 0.5], side: .15 }]},
 				{ shape: "line",	data: [{ xyPos: [0, 1], length: 0.7, angle: -Math.PI/3 }]},
 				{ shape: "triangle",	data: [{ xyPos: [0.3, 0.5], side: .15 }]},
+				{ shape: "path", fill: "Black",
+					data: [ {d: "M139.25,157.5l18,3c0,0-2-13,11-21s10-9,20-14s22-12,29-12s-2-17-2-17s15-8,14-15s-10-9-19-4s-41,14-47,22s-22,35-25,45"}]},
 
 			],
 		},eventManager);
@@ -188,10 +169,13 @@ var clicks = new Sketch({
 var newLabels = new LabelGroup(
 		{id: "shapeLabel",
 		labels: 	
-		  [	{content: "rectangle",	xyPos:[.8,1], width: 70},
-			{content: "circle", xyPos: [.8,.85], width: 70},
-			{content: "hexagon", xyPos:[.8,.7], width: 70},
-			{content:"line", xyPos:[.8,.55], width: 70},
+		  [	{content: "rectangle",	xyPos:[.7,1], width: 70},
+			{content: "circle", xyPos: [.7,.85], width: 70},
+			{content: "hexagon", xyPos:[.7,.7], width: 70},
+			{content:"line", xyPos:[.7,.55], width: 70},
+			{content:"triangle", xyPos:[.7,.4], width: 70},
+			{content:"path", xyPos:[.7,.25], width: 70},
+
 		  ]
 		}, eventManager);
 		
@@ -212,6 +196,12 @@ var newLabels = new LabelGroup(
 	 		{ 
 			cols: ["lines might need to not start in a group or maybe need a whole different method of specifying. They are really hard to select."]
 			},
+			{ 
+			cols: ["triangles are equilateral."]
+			},
+			{ 
+			cols: ["Paths have the same data format as line graphs, as they are done identically."]
+			},
 			]
 	});
 	
@@ -220,8 +210,8 @@ var newLabels = new LabelGroup(
 // TODO: there is a bug here that prevents me from stacking up both the sketch and the newLabels in an
 // array in the svg append function.  One expects the other to have axes, or something. Need mjl 
 // to have a look - lb
-svgLabel.append([clicks], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svgLabel.append([newLabels], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+svgLabel.append([clicks]);
+svgLabel.append([newLabels]);
 
 //case 5 update the size of a sketch object on a slider
 var sizeSlide = new Slider ({
@@ -239,8 +229,8 @@ sizeSlide.draw(d3.select("#redraw"));
 
 var updateMe = new SVGContainer(
 		{node: d3.select("#redraw"),
-		maxWid: 200,
-		maxHt: 200
+		maxWid: 100,
+		maxHt: 100
 		}
 	);
 	
@@ -264,8 +254,8 @@ updateMe.append([shapeIt], {topPercentOffset: 0, leftPercentOffset: 0, heightPer
 
 var svgText = new SVGContainer({
 		node: d3.select("#someText"),
-		maxWid: 200,
-		maxHt: 200	
+		maxWid: 150,
+		maxHt: 150	
 	});
  
 var textLines = new Sketch({
