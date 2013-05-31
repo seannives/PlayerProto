@@ -127,12 +127,6 @@ svg g.widgetSketch .shape {
 	stroke-width: 2;
 }
 
-svg g.widgetSketch .shape > .hex {
-	fill: none;
-	stroke: #666;
-	stroke-width: 2;
-}
-
 svg g.widgetSketch .shape.hot {
 	opacity: 0.0;
 }

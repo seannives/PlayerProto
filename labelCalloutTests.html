@@ -17,16 +17,14 @@
 			<div class="span6 leftCol">
                 <h2 class="setTitle"></h2>
 				<div id="widgetTarget0"><p>0. Single image with labels</p></div>
-				<div id="widgetTarget1"><p>1. Line Graph with area markers and labels</p></div>
-				<div id="newBruce"><p>1n. Line Graph with labels and callouts (events)</p></div>
+				<div id="newBruce"><p>1. Line Graph with labels and callouts (events)</p></div>
 				<div id="phaseCall"></div>
 				
 			</div>
 			<div class="span6 rightCol">
-				<div id="widgetTarget50n"><p>3n. Label positions</p></div>
-				<div id="widgetTarget50"><p>3. Label positions</p></div>
-                <div id="lineMarks"><p>5. x-axis Line Markers x and y</p></div>
-                <div id="lineMarks1"><p>6. x-axis Line Markers just x</p></div>
+				<div id="widgetTarget50n"><p>2. Label positions</p></div>
+                <div id="lineMarks"><p>3. x-axis Line Markers x and y</p></div>
+                <div id="lineMarks1"><p>4. x-axis Line Markers just x</p></div>
 			</div>
 		</div>
 	</div>
@@ -243,6 +241,7 @@ for (i = 0; i < dataPts; i++)
 	
 	
 //	<div id="widgetTarget1"><p>1. Graph with Labels</p></div>
+/*
 	var svg1 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget1"),
 		maxWid: 500,
@@ -283,7 +282,7 @@ for (i = 0; i < dataPts; i++)
 		  ],
 		liteKey: [10,20,30,40,50]
 		});
-		
+	*/
 	
 	//	<div id="newBruce"><p>1. Graph with Labels</p></div>
 	var newCont = new SVGContainer(
@@ -385,10 +384,10 @@ for (i = 0; i < dataPts; i++)
 
 	var cntr50 = new SVGContainer(cntrConfig50);
 	var labelGroup50 = new LabelGroup(lblGrpConfig50);
-	cntr50.append(labelGroup50, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	cntr50.append(labelGroup50);
 	
 
-
+/*
 	var svg70 = new MakeSVGContainer(
 		{node: d3.select("#widgetTarget50"),
 		maxWid: 500,
@@ -424,7 +423,7 @@ for (i = 0; i < dataPts; i++)
 		]
 	});
 	
-	
+	*/
 
 //	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
 	var svgMark = new MakeSVGContainer(

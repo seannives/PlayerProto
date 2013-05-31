@@ -726,16 +726,6 @@ Sketch.prototype.setColor = function (color, duration, delay)
 	drawCollection.transition()
 		.style('stroke', color)
 		.duration(duration).delay(delay);
-		
-	var wedges = drawCollection.selectAll("polygon.wedge");
-	wedges.transition()
-		.style('fill', color)
-		.duration(duration).delay(delay);
-		
-	var textbits = drawCollection.selectAll("text");
-	textbits.transition()
-		.style('fill', color)
-		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
 
@@ -908,84 +898,54 @@ Sketch.prototype.redraw = function ()
 							(tip2x.toString()+","+tip2y.toString());
 				return d.points;
 			})
-		.attr('fill', 'grey');
-		
-	/*wedges.each(function (d, i) 
-		{ 
-			// if type is a hash, put a mask on it
-			if(d.type == "hash")
-			{
-				var svg = d3.select("body").append("svg");
-				var defs = svg.append('defs');
-				var mask = defs.append('mask')
-					.attr('id', 'hashMask').attr('x', 0).attr('y', 0)
-					.attr('width', 1).attr('height', 1)
-					.attr('maskUnits', "objectBoundingBox")
-					.attr('maskContentUnits', "userSpaceOnUse");
-				mask.append('line').attr('x1', x1).attr('y1', y1)
-					.attr('x2', x2).attr('y2', y2)
-					.style('stroke-width', '5px')
-					.style('opacity', 1).style('stroke', 'white');
-			
-			
-				wedges.attr('stroke-width', "0px")
-					.style('mask', 'url(#hashMask)');
-			}
-		});*/
+		.style('fill', 'grey');
 
 
-
-	/*var hashes = drawCollection.selectAll("line.hash")
-		.data(function (d) { return d.shape == "hash"? d.data : []; });
-	hashes.enter().append("line").attr("class", "hash")
-		.attr('x1', function (d)
-			{
-				return xScale(d.xyPos[0]);
-			})
-		.attr('y1', function (d)
-			{
-				return yScale(d.xyPos[1]);
-			})
-		.attr('x2', function (d)
-			{
-				return xScale(d.xyPos[0] + d.length*Math.cos(d.angle));
-			})
-		.attr('y2', function (d)
-			{
-				return yScale(d.xyPos[1] + d.length*Math.sin(d.angle));
-			});
-	hashes.exit().remove();
-	//hashes.enter().insert("line");*/
-		
-		
-
+	//lines are just degenerate paths, wonder if we should do these similarly
+	//probably have reason to do vector arrows on both straight lines and paths
 	var lines = drawCollection.selectAll("line")
-		.data(function (d) { return d.shape == "line"? d.data : []; });
+	.data(function (d) { return d.shape == "line"? d.data : []; });
 	lines.enter().append("line");
 	lines.exit().remove();
 	lines
-		.attr("x1", function(d) { return xScale(d.xyPos[0]);})
-		.attr("y1", function(d) { return yScale(d.xyPos[1]);})		
+		.attr("x1",function(d) { return xScale(d.xyPos[0]);})
+		.attr("y1",function(d) { return yScale(d.xyPos[1]);})		
 		// calculate the endpoint given the length and angle
-		.attr("x2", function(d)
-			{ 
-				return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
-			})
-		.attr("y2", function(d)
-			{ 
-				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
-			});
+		.attr("x2",function(d) { 
+					return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+					})
+		.attr("y2",function(d) { 
+					return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+					});
 	
-	lines.each(function (d, i)
-		{ 
-			// if type is a vector, put a triangle on the end
-			if(d.type == "vector")
-			{
-				d3.select(this).attr("marker-end","url(#triangle)");
-			}
-		});
+	lines.each(function (d, i) { 
+					// if type is a vector, put a triangle on the end
+					if(d.type == "vector"){
+						lines.attr("marker-end","url(#triangle)");
+							}
+						});
 
+	var lineGen = d3.svg.line()
+		// TODO: someday might want to add options for other interpolations -lb
+		//	.interpolate("basis")
+			.x(function (d) {return xScale(d.x);})
+			.y(function (d) {return yScale(d.y);});
 
+	var paths = drawCollection.selectAll("path")
+		.data(function (d) { return d.shape == "path"? d.data : []; });
+	paths.enter().append("path");
+	paths.exit().remove();
+	//d.d is the SVG path data for whatever shape you want to draw
+	//it carries with it the information about starting location on 
+	//the canvas, so it has to be in coordinates, it doesn't get scaled
+	paths.attr("d", function(d) { return d.d});
+	//if I supply x-y coordinates, we'd do it like this
+	//TODO might need this as an alternative data format
+	//just like graphs
+	//paths.attr("d", function(d) {return lineGen(d);});
+	
+	
+	
 	var textBits = drawCollection.selectAll("text")
 		.data(function (d) { return d.shape == "textBit"? d.data : []; });
 	textBits.enter().append("text");
