@@ -909,40 +909,81 @@ Sketch.prototype.redraw = function ()
 				return d.points;
 			})
 		.attr('fill', 'grey');
+		
+	/*wedges.each(function (d, i) 
+		{ 
+			// if type is a hash, put a mask on it
+			if(d.type == "hash")
+			{
+				var svg = d3.select("body").append("svg");
+				var defs = svg.append('defs');
+				var mask = defs.append('mask')
+					.attr('id', 'hashMask').attr('x', 0).attr('y', 0)
+					.attr('width', 1).attr('height', 1)
+					.attr('maskUnits', "objectBoundingBox")
+					.attr('maskContentUnits', "userSpaceOnUse");
+				mask.append('line').attr('x1', x1).attr('y1', y1)
+					.attr('x2', x2).attr('y2', y2)
+					.style('stroke-width', '5px')
+					.style('opacity', 1).style('stroke', 'white');
+			
+			
+				wedges.attr('stroke-width', "0px")
+					.style('mask', 'url(#hashMask)');
+			}
+		});*/
 
-/*
+
+
+	/*var hashes = drawCollection.selectAll("line.hash")
+		.data(function (d) { return d.shape == "hash"? d.data : []; });
+	hashes.enter().append("line").attr("class", "hash")
+		.attr('x1', function (d)
+			{
+				return xScale(d.xyPos[0]);
+			})
+		.attr('y1', function (d)
+			{
+				return yScale(d.xyPos[1]);
+			})
+		.attr('x2', function (d)
+			{
+				return xScale(d.xyPos[0] + d.length*Math.cos(d.angle));
+			})
+		.attr('y2', function (d)
+			{
+				return yScale(d.xyPos[1] + d.length*Math.sin(d.angle));
+			});
+	hashes.exit().remove();
+	//hashes.enter().insert("line");*/
+		
+		
+
 	var lines = drawCollection.selectAll("line")
 		.data(function (d) { return d.shape == "line"? d.data : []; });
 	lines.enter().append("line");
 	lines.exit().remove();
-	lines.attr("x1", function(d) { return xScale(d.xyPos[0]); })
-		.attr("y1", function(d) { return yScale(d.xyPos[1]); })
-		.attr("x2", function(d) { return xScale(d.xyEnd[0]); })
-		.attr("y2", function(d) { return yScale(d.xyEnd[1]); });
-
-*/
-
-	var lines = drawCollection.selectAll("line")
-	.data(function (d) { return d.shape == "line"? d.data : []; });
-	lines.enter().append("line");
-	lines.exit().remove();
 	lines
-		.attr("x1",function(d) { return xScale(d.xyPos[0]);})
-		.attr("y1",function(d) { return yScale(d.xyPos[1]);})		
+		.attr("x1", function(d) { return xScale(d.xyPos[0]);})
+		.attr("y1", function(d) { return yScale(d.xyPos[1]);})		
 		// calculate the endpoint given the length and angle
-		.attr("x2",function(d) { 
-					return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
-					})
-		.attr("y2",function(d) { 
-					return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
-					});
+		.attr("x2", function(d)
+			{ 
+				return xScale(d.length * Math.cos(d.angle) + d.xyPos[0]);
+			})
+		.attr("y2", function(d)
+			{ 
+				return yScale(d.length * Math.sin(d.angle) + d.xyPos[1]);
+			});
 	
-	lines.each(function (d, i) { 
-					// if type is a vector, put a triangle on the end
-					if(d.type == "vector"){
-						lines.attr("marker-end","url(#triangle)");
-							}
-						});
+	lines.each(function (d, i)
+		{ 
+			// if type is a vector, put a triangle on the end
+			if(d.type == "vector")
+			{
+				d3.select(this).attr("marker-end","url(#triangle)");
+			}
+		});
 
 
 	var textBits = drawCollection.selectAll("text")
