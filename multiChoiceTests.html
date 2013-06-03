@@ -24,10 +24,13 @@
 				</div>
 				<div id="radioRnd"><p>1. Multiple Choice question, randomized</p></div>
 				<div id="radioOrd"><p>2. Multiple Choice question, nonrandomized</p></div>
+                <div id="radioOrd"><p>3. Multiple Choice question, dropdown</p></div>
+
 			</div>
 			<div class="span6 rightCol">
-				<div id="graphIn"><p>3. Graphs as responses</p></div>
-				
+				<div id="graphIn"><p>4. Graphs as responsesn (radio buttons containing widgets)</p></div>
+				<div id="graphIn"><p>5. Traces as responses (choose a trace)</p></div>
+	
 			</div>
 		</div>
 	</div>
@@ -79,13 +82,14 @@
 	var radioButtons = new RadioGroup({
 			id: "RG1",
 			choices: Q1Choices,
-			numberFormat: "latin-lower"
+			numberFormat: "number"
 		});
 
 	radioButtons.draw(d3.select("#rb-test"));
 
 	var Q1 = new RadioGroupQuestion({
 			id: "Q1",
+			question: "Wherefore?",
 			choices: Q1Choices,
 			type: "randomized", //default, even if not specified
 	});
@@ -96,6 +100,7 @@
 
 	var Q2 = new RadioGroupQuestion({
 			id: "Q2",
+			question: "Why?",
 			choices: Q1Choices,
 			type: "ordered"
 		});

@@ -183,10 +183,6 @@ RadioGroup.prototype.draw = function(container)
 	var table = widgetGroup.append("table")
 		.attr("class", "questionTable");
 
-	// add a colgroup w/ a class so each column can be styled in widgets.css
-	table.append("colgroup").attr("class", "button");
-	table.append("colgroup").attr("class", "content");
-
 	// create the table body to contain the answer rows
 	var tbody = table.append("tbody");
 
@@ -224,7 +220,7 @@ RadioGroup.prototype.draw = function(container)
  * choice at a given index
  *
  ****************************************************************************/
-RadioGroup.prototype.getChoiceNumberToDisplayFn = function()
+RadioGroup.prototype.getChoiceNumberToDisplayFn = function ()
 {
 	var formatIndexUsing =
 	{

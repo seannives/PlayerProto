@@ -98,7 +98,7 @@ div.widgetRadioGroup tr>td
 }
 div.widgetRadioGroup table.questionTable tr>td:first-child
 {
-	width: 			4em;
+	width: 			5em;
 	text-align: 	right;
 }
 div.widgetRadioGroup table.questionTable tr>td:nth-of-type(2)
@@ -409,7 +409,8 @@ svg g.widgetLineGraph .traces
   stroke-width: 3; 
 }
 
-svg g.widgetLineGraph .traces.lit  
+svg g.widgetLineGraph .traces.lit,
+svg g.widgetLineGraph .traces.selected    
 {
 	opacity:		1;
 	stroke-width:	5;
