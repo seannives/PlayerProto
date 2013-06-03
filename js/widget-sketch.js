@@ -803,10 +803,14 @@ Sketch.prototype.redraw = function ()
 	circles.exit().remove();
 	// update the properties on all new or changing rectangles
 	// unclear how to scale the radius, with x or y scale ? -lb
-	circles.attr("r", function(d) { return xScale(d.radius); })
+	circles.attr("r", function(d) {
+		//this handles the case where the scale does not start at 0
+		//so in order for the radius to be to scale, find the distance
+		//in the local scale of the given radius from zero in the local
+		//scale.  Absolute value because it must always be positive.
+			return Math.abs(xScale(d.radius) - xScale(0)); })
 		.attr("cx", function(d) { return xScale(d.xyPos[0]); })
 		.attr("cy", function(d) { return yScale(d.xyPos[1]); });
-
 	
 
 	var hexagons = drawCollection.selectAll("polygon.hex")
