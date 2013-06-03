@@ -46,7 +46,8 @@
 	var rbConfig =
 		{
 			id: "RG1",
-			choices: Q1Choices
+			choices: Q1Choices,
+			numberFormat: "latin-upper"
 		};
 	
 	// RadioButtonQuestion widget config
@@ -91,6 +92,9 @@
  * 										 if undefined a unique id will be assigned.
  * @param {Array.<Answer>}
  *						config.choices	-The list of choices (answers) to be presented by the RadioGroup.
+ * @param {string|undefined}
+ *						config.numberFormat
+ *										-The format for numbering the choices. default is "none"
  *
  ****************************************************************************/
 function RadioGroup(config, eventManager)
@@ -108,6 +112,13 @@ function RadioGroup(config, eventManager)
 	 * @type {Array.<Answer>}
 	 */
 	this.choices = config.choices;
+
+	/**
+	 * The format for numbering the choices.
+	 * "none", "latin-upper", "latin-lower", "number", "roman-lower-number"
+	 * @type {string}
+	 */
+	this.numberFormat = config.numberFormat || "none";
 
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
@@ -184,8 +195,13 @@ RadioGroup.prototype.draw = function(container)
 	ansRows.enter().append("tr");
 
 	var buttonCell = ansRows.append("td");
-	buttonCell
-		.text("A) ");
+	if (this.numberFormat !== "none")
+	{
+		var choiceIndex = this.getChoiceNumberToDisplayFn();
+
+		buttonCell
+			.text(function (d, i) {return choiceIndex(i) + ") ";});
+	}
 
 	buttonCell
 		.append("input")
@@ -200,4 +216,37 @@ RadioGroup.prototype.draw = function(container)
 	this.lastdrawn.widgetGroup = widgetGroup;
 
 }; // end of RadioGroup.draw()
+
+/* **************************************************************************
+ * RadioGroup.getChoiceNumberToDisplayFn                                *//**
+ *
+ * Get a function which returns the string that should be prefixed to the
+ * choice at a given index
+ *
+ ****************************************************************************/
+RadioGroup.prototype.getChoiceNumberToDisplayFn = function()
+{
+	var formatIndexUsing =
+	{
+		"none": function (i)
+				{
+					return "";
+				},
+		"latin-upper": function (i)
+				{
+					return String.fromCharCode("A".charCodeAt(0) + i);
+				},
+		"latin-lower": function (i)
+				{
+					return String.fromCharCode("a".charCodeAt(0) + i);
+				},
+		"number": function (i)
+				{
+					return (i+1).toString();
+				},
+	};
+
+	return (this.numberFormat in formatIndexUsing) ? formatIndexUsing[this.numberFormat]
+												   : formatIndexUsing["none"];
+};
 

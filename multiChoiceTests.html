@@ -78,7 +78,8 @@
 	
 	var radioButtons = new RadioGroup({
 			id: "RG1",
-			choices: Q1Choices
+			choices: Q1Choices,
+			numberFormat: "latin-lower"
 		});
 
 	radioButtons.draw(d3.select("#rb-test"));
