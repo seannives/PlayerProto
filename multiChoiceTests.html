@@ -18,8 +18,12 @@
 		<div class="row-fluid">
 			<div class="span6 leftCol">
                 <h2 class="setTitle"></h2>
-				<div id="radioRnd"><p>0. Multiple Choice question, randomized</p></div>
-				<div id="radioOrd"><p>1. Multiple Choice question, nonrandomized</p></div>
+				<div><p>0. Radio button w/ 4 answers</p>
+					<p>Q1: Why?</p>
+					<div id="rb-test" style="margin: 0 0 15px 15px;"/>
+				</div>
+				<div id="radioRnd"><p>1. Multiple Choice question, randomized</p></div>
+				<div id="radioOrd"><p>2. Multiple Choice question, nonrandomized</p></div>
 			</div>
 			<div class="span6 rightCol">
 				<div id="graphIn"><p>3. Graphs as responses</p></div>
@@ -36,15 +40,12 @@
 	<script src="js/eCourse-master.js"></script>
     <script src="js/eventmanager.js"></script>
 	<script src="js/d3.v3.min.js"></script>
-	<script src="js/widget-radio.js"></script>
 
 	<!--script src="js/goog.base.js"></script>
 	<script src="js/widget-axes.js"></script-->
 
 	<script src="js/widget-base.js"></script>
-	<script src="js/widget-linegraph.js"></script>
-    <script src="js/widget-legend.js"></script>
-    <script src="js/widget-labelgroup.js"></script>
+	<script src="js/widget-radiogroup.js"></script>
 
 <script>
 
@@ -77,8 +78,11 @@
 	
 	var radioButtons = new RadioGroup({
 			id: "RG1",
-			choices: Q1Choices
+			choices: Q1Choices,
+			numberFormat: "latin-lower"
 		});
+
+	radioButtons.draw(d3.select("#rb-test"));
 
 	var Q1 = new RadioGroupQuestion({
 			id: "Q1",

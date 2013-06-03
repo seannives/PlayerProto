@@ -90,6 +90,21 @@ svg g.widgetLabel.lit .descLabel
 	background-color: #e3effe;
 }
 
+/* Radio groups
+================================================== */
+div.widgetRadioGroup tr>td
+{
+	padding: 0;
+}
+div.widgetRadioGroup table.questionTable tr>td:first-child
+{
+	width: 			4em;
+	text-align: 	right;
+}
+div.widgetRadioGroup table.questionTable tr>td:nth-of-type(2)
+{
+	padding-left:	8px;
+}
 
 /* tables of callouts
 ================================================== */
