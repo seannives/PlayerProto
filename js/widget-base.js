@@ -103,12 +103,6 @@ function getIdFromConfigOrAuto(config, autoIdClass)
  */
 getIdFromConfigOrAuto.autoPrefixCount = 0;
 
-//Tests for logFormat function
-console.log("logFormat 10^-2 produces negative decade tick label -2", logFormat(Math.pow(10, -2)) == -2);
-console.log("logFormat 2*10^-3 produces no tick label", logFormat(2 * Math.pow(10, -3)) == "");
-console.log("logFormat 10^3 produces no odd decade tick label", logFormat(Math.pow(10, 3)) == "");
-
-
 /* **************************************************************************
  * Rect                                                                 *//**
  *

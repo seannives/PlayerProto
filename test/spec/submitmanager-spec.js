@@ -23,4 +23,4 @@
                 expect(submitManager).to.be.an('object');
         	});
 	});
-});
+})();

@@ -42,5 +42,5 @@ function SubmitManager(config)
 	 * A unique id for this instance of the SubmitManager widget
 	 * @type {string}
 	 */
-	this.id = getIdFromConfigOrAuto(config, SubmitManager);
+	this.id = 1;//getIdFromConfigOrAuto(config, SubmitManager);
 }
