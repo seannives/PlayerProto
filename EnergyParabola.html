@@ -26,23 +26,38 @@
             	<h2 class="setTitle"> Mechanical Energy</h2>
               	<p> What do a falling basketball, a moving car, and a trophy on a shelf all have in common? They all have mechanical energy. The form of energy associated with the motion, position, or shape of an object is called <b>mechanical energy</b>.
 </p>
-				<p>Calculating Mechanical Energy An object’s mechanical energy is a combination of its potential energy and its kinetic energy. For example, the basketball in the picture below has both potential energy and kinetic energy. The higher the basketball moves, the greater its potential energy. The faster the basketball moves, the greater its kinetic energy. You can find an object’s mechanical energy by adding together the object’s kinetic energy and potential energy.
+				<p>Calculating Mechanical Energy An object’s mechanical energy is a combination of its potential energy and its kinetic energy. For example, the basketball in the picture below has both potential energy and kinetic energy. The higher the basketball moves, the greater its potential energy. The faster the basketball moves, the greater its kinetic energy. You can find an object’s mechanical energy by adding together the object’s kinetic energy and potential energy.</p>
 
-<blockquote>Mechanical energy = Potential energy + Kinetic energy</blockquote>
+				<p>In this case, the basketball is given some initial velocity at some angle by the basketball player.  Once the ball leaves the player's hands, it gains potential energy and loses kinetic energy. At the peak of the arc, it is motionless for a moment, neither gaining nor losing height.  Then it begins to transfer the potential energy back into kinetic energy.  </p>
+                <p>
+				
 
-Sometimes an object’s mechanical energy is its kinetic energy or potential energy only. A car moving along a flat road has kinetic energy only. A trophy resting on a shelf has gravitational potential energy only. But both have mechanical energy.
- </p>
+					<div id="velEQ"></div>
+
+Gravity only affects the vertical (y) component. Experiment with different initial velocities and angles of throw in the graph to understand how velocity and angle affect the trajectory of a mass, such as a basketball. 
+ 				</p>
+  				<div class="form-actions"> 
+                	<p>If the ball is released from an initial height of 2.8 m, using the velocity and angle found in the graph exploration, what is the height of the basket? 
+					<input type="text">
+    					
+    				</input> 
+                  	</p>
+                	<button class="btn-primary">Check it!</button>
+				</div>
 			</div>
-			<div class="span6 rightCol">         
-                <div id="basketball"></div> 
+			<div class="span6 rightCol">    
+           		<div class="form-actions"> 
+                	<p>Set the initial velocity and angle of the throw such that the player makes the basket.  </p>
+                	<span id="veloSlider"></span> 
+                    <span id="angleSlider"></span>     
+                	<div id="basketball"></div> 
+                	<button class="btn-primary">Check it!</button> <span id="veloSlider"></span> 
+          		</div>
                		<table width="100%">
-                    <tr><td colspan="2">
-                	<span id="growthSlider"></span> </td></tr>
+                    
 					<tr><td class="rightAlign"><span id="popDay"></span></td>
                     	<td class="rightAlign"><span id="pop2010"></span></td></tr>
-                    <tr><td class="rightAlign"><span id="popWeek"></span></td>
-                    	<td class="rightAlign"><span id="pop2050"></span></td></tr>
-                    <tr><td class="rightAlign"><span id="popYear"></span></td></tr>
+                  
             		</table>
 			</div>
 		</div>
@@ -64,194 +79,236 @@ Sometimes an object’s mechanical energy is its kinetic energy or potential ene
     <script src="js/widget-legend.js"></script>
     <script src="js/widget-numeric.js"></script>
     <script src="js/widget-image.js"></script>
+   	<script src="js/widget-sketch.js"></script>
+    <script src="js/widget-labelgroup.js"></script>
 	<script src="js/eventmanager.js"></script>
 
 	<script>
 
 	var eventManager = new EventManager();
-	 
-	 
-var lineData = [
-{x:	1900	, y:	1.55	},
-{x:	1910	, y:	1.75	},
-{x:	1920	, y:	1.86	},
-{x:	1930	, y:	2.07	},
-{x:	1940	, y:	2.3	},
-{x:	1950	, y:	2.529346	},
-{x:	1955	, y:	2.763453	},
-{x:	1960	, y:	3.023358	},
-{x:	1965	, y:	3.33167	},
-{x:	1970	, y:	3.685777	},
-{x:	1975	, y:	4.061317	},
-{x:	1980	, y:	4.437609	},
-{x:	1985	, y:	4.846247	},
-{x:	1990	, y:	5.290452	},
-{x:	1995	, y:	5.713073	},
-{x:	2000	, y:	6.115367	},
-{x:	2005	, y:	6.512276	},
-{x:	2010	, y:	6.908688	}
-	]; // array of data - could be read from file
 	
+	var eqVel = new LabelGroup(
+		{id: "thing",
+		labels: 	
+		  [	
+			{content: "<span class='math'>&Delta;x = x<sub>0</sub> + </span> ", xyPos: [0,.9], width: 78, key: "delta" },
+			{content: "<span class='math'>v<sub>i</sub> t </span>  &middot;",	xyPos:[.2,.9], width: 40, key: "vi"},
+			{content: "<span class='math'>cos(&theta;) </span>",	xyPos:[.31,.9], width: 60, key: "angle"},
+			{content: "<span class='math'>&Delta;y = y<sub>0</sub> + </span> ", xyPos: [0,.45], width: 78, key: "delta"},
+			{content: "<span class='math'>v<sub>i</sub> t </span>  &middot;",	xyPos:[.2,.45], width: 40, key: "vi"},
+			{content: "<span class='math'>  sin(&theta;)</span>",	xyPos:[.31,.45], width: 60, key: "angle"},
+			{content: "<span class='math'>&minus;  &half;</span> &middot; <span class='math'> g t <sup>2</sup></span>", xyPos:[.47,.45], width: 80, key: "gravity"},
+		  ]
+		}, eventManager);
+		
+//make a set of callouts in a table that lights up with the labels.
+	var eqDesc = new Callouts ({
+		id: "velDesc",
+		headers: ["The ball will follow the trajectory defined by"],
+		show: "all",
+		textBits: [
+			{key: "delta",
+			cols: ["Initial position plus"]
+			},
+			{key: "vi",
+			cols: ["initial velocity times time multiplied by" ]
+			},
+			{key: "angle",
+			cols: ["the angle of release minus "]
+			},
+	 		{key: "gravity",
+			cols: ["half the acceleration due to gravity times time squared. (y only)"]
+			},
+			]
+	}, eventManager);
 
-var energyImg = new CaptionedImage({
-			image: new Image({
-				URI:'img/mgs11p03078_nextext.png', caption: "Mechanical Energy The basketball has mechanical energy because of its speed and position above the ground.",
-				actualSize: {height: 400, width: 500}
-				}),
-			});
+	eqDesc.draw(d3.select("#velEQ"));
+	
+	var svgEQ = new SVGContainer({
+			node: d3.select("#velEQ"),
+			maxWid: 400,
+			maxHt: 100
+		});
+		
+	svgEQ.append(eqVel);
+var energyImg = new Image({
+				URI:'img/mgs11p03078_nextext.png', 
+				caption: "Mechanical Energy The basketball has mechanical energy because of its speed and position above the ground.",
+				actualSize: {height: 365, width: 500}
+				});
 			
-var cntrSize = Size.matchRatioWithHeight(450 - 40, energyImg.image.actualSize);
+var cntrSize = Size.matchRatioWithHeight(400, energyImg.actualSize);
 var cntrConfig = 
 		{
 			node: d3.select("#basketball"),
 			maxSize: cntrSize,
 			maxWid: cntrSize.width, //550,
-			maxHt: 450
+			maxHt: 400
 		};
 		
 var cntr = new SVGContainer(cntrConfig);
-cntr.append(energyImg, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+//cntr.append(energyImg);
 
 		
-	var growRt = new Slider ({
+	var velocity = new Slider ({
 			id: "growth",
-			startVal: 1.2,
-			minVal: 0,
-			maxVal: 2.5,
+			startVal: 5,
+			minVal: 5,
+			maxVal: 10,
 			stepVal: .1,
-			unit: "%",
-			label: "Growth Rate",
+			unit: "m/s",
+			label: "Initial Velocity",
 			format: d3.format('.1f')
 		}, eventManager);
 		
-	growRt.draw(d3.select("#growthSlider"));
+	velocity.draw(d3.select("#veloSlider"));
+	
+			
+	var angle = new Slider ({
+			id: "thet",
+			startVal: 40,
+			minVal: 0,
+			maxVal: 90,
+			//step in 5 degree increments
+			stepVal: 1,
+			unit: "&deg;",
+			label: "Angle of velocity &theta;",
+			format: d3.format('.1f')
+		}, eventManager);
+		
+	angle.draw(d3.select("#angleSlider"));
 
-	var N0 = 6.908688;	
+	var pts = 13, vi = velocity.startVal, theta = angle.startVal*Math.PI/180;
+	var y0 = 2.67, g = 9.8;
+	 
+	function deltax(t) {
+		return vi*Math.cos(theta)*t;
+	}
+	
+	function deltay(t) {
+		return y0 + vi*Math.sin(theta)*t - 1/2 * g * t * t;
+	}
+	
+	function dataGen(pts,xfun,yfun){
+		var points = [], t = [];
+		for(i=0; i<pts; i++){
+			t[i] = 0.1*i;
+			points[i] =
+				{x: xfun(t[i]),
+				 y: yfun(t[i])}
+		}
+		return points;
+	}
+	 
+	var ptData = dataGen(pts,deltax,deltay);
+	 
+	var vMatch = 7.35;
+	function deltaxTrue(t) {
+		return vMatch*Math.cos(58.5*Math.PI/180)*t;
+	}
+	
+	function deltayTrue(t) {
+		return y0 + vMatch*Math.sin(58.5*Math.PI/180)*t - 1/2 * g * t * t;
+	}
+	
+	function circleGen(pts,xfun,yfun){
+		var shapes = [], t = [];
+		for(i=0; i<pts; i++){
+			t[i] = 0.093*i;
+			shapes[i] =
+				{shape: "circle", fill: "White", 
+				data: [{
+					xyPos: [xfun(t[i]), yfun(t[i])], 
+					radius: .15}]
+				};
+			}
+		return shapes;
+		}
+		
+	function lineGen(pts,xfun,yfun){
+		var shapes = [], t = [];
+		for(i=0; i<pts; i++){
+			t[i] = 0.093*i;
+			shapes[i] =
+				{shape: "line", 
+				data: [{
+					xyPos: [xfun(t[i]), yfun(t[i])], 
+					length: vMatch/10, angle: 58.5*Math.PI/180 }]
+				};
+			}
+		return shapes;
+		}
+	var shapeDataTrue = circleGen(pts,"circle",deltaxTrue,deltayTrue);
+	
 	
 	// Create the population growth in a day
 	var popDayRead = new Readout({
 			node: d3.select("#popDay"),
 			id: 'pDay',
-			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/36500)-1)),
+			startVal: d3.format(",.0f")(vi),
 			readOnly: true,
 			size: 5,
-			label: "Born in one day"
+			label: "Initial Velocity"
 		});
 	
- 	// Create the population growth in a week
-	var popWkRead = new Readout({
-			node: d3.select("#popWeek"),
-			id: 'pWk',
-			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/5200)-1)),
-			readOnly: true,
-			size: 5,
-			label: "Born in one week"
-		});
 	
-	// Create the population growth in a year
-	var popYearRead = new Readout({
-			node: d3.select("#popYear"),
-			id: 'pYr',
-			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(growRt.getValue()/100)-1)),
-			readOnly: true,
-			size: 5,
-			label: "Born in one year"
-		});
-		
-	// Create the population growth in 2010 (historic census data)
-	var popNow = new Readout({
-			node: d3.select("#pop2010"),
-			id: 'pNow',
-			startVal: d3.format(",.0f")(1E9*N0),
-			readOnly: true,
-			size: 5,
-			label: "2010 Population"
-		});
-		
-	// Create the population projected for 2050, 40 years on
-	var popProj = new Readout({
-			node: d3.select("#pop2050"),
-			id: 'pProj',
-			startVal: d3.format(",.0f")(1E9*N0*(Math.exp(40*growRt.getValue()/100))),
-			readOnly: true,
-			size: 5,
-			label: "2050 Population"
-		}, eventManager);
-		
-	projected = [];
-for (i=0;i<10;i++){
-	projected[i] = { x: 2010 + i*5,
-					 y: 6.908688*Math.exp(growRt.getValue()*(.05*i))};
-}
 
-nineB = [
-{x: 1900, y:9},
-{x: 2050, y:9}
-];
-var xData=[], yData=[];
-var Data = [lineData,projected,nineB];
-
-	//generate the exp data based on the slider values
-	
-	function expXYData(inputVals)
-	{
-		var pts = inputVals.pts;
-		var amplitudeX = inputVals.amplitudeX;
-		var amplitudeY = inputVals.amplitudeY;
-		
-		var data = [];
-	
-		for (i = 0; i < pts; i++)
-		{
-			data[i] = { x: 2010 + i*5,
-					 y: 6.908688*Math.exp(growRt.getValue()*(.5*i))};
-
-		}
-		
-		return data;
-	}
-	
-// configure and draw the SVG container and the graph of the population data
-
-	var cont1 = new SVGContainer({
-			node: d3.select("#graph0"),
-			maxWid: 500,
-			maxHt: 320
-		});
-		
 	var lines = new LineGraph({
 			id: "lg0",
-			Data: Data, 
-			type: "lines",
+			Data:[ptData], 
+			type: "lines+points",
 			xAxisFormat: { type: "linear",
-						   ticks: [1900,1950,1990,2010,2030,2050],
+						   ticks: [-1,0,1,2,3,4,5],
 						   orientation: "bottom",
-						   label: "Year" },
+						 //  label: "position (m)"
+						   },
 			yAxisFormat: { type: "linear",
 						   orientation: "left",
-						   label: "Human Population (Billions)",
-						    ticks: 7,
+						   ticks: [-.5,0,1,2,3,4,5],
+						  // label: "position (m)"
 						    },
 		});	
 			
-	cont1.append(lines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	lines.append(energyImg, "before");
 	
-// configure and append the legend to the graph
+	var vectors = new Sketch({
+			id: "vel",
+			type: "hot",
+			drawShape: shapeDataTrue,
+		}, eventManager);
+		
+	lines.append(vectors);
 
-	var legLines = new Legend({
-		xPos: "left", yPos: "top",
-		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
-		type: "line"
-	});
+	cntr.append(lines);
 	
-	lines.append(legLines);
-	
+
 	// Handle changes of the growth rate slider (one subscription per
 	// event we listen to)
-	eventManager.subscribe(growRt.changedValueEventId,
+	eventManager.subscribe(velocity.changedValueEventId,
 							handleChangedValue);
-	 
+	 eventManager.subscribe(angle.changedValueEventId,
+							handleChangedValue);
+	//light up the balls when clicked
+	eventManager.subscribe(vectors.selectedEventId,
+							function (eventDetails) { vectors.lite(eventDetails.selectKey);});
 
+	//light up the parts of the equation when clicked
+	eventManager.subscribe(eqDesc.selectedEventId,
+							function (eventDetails) { 
+								eqDesc.lite(eventDetails.selectKey);
+								eqVel.lite(eventDetails.selectKey);
+
+							});
+	eventManager.subscribe(eqVel.selectedEventId,
+							function (eventDetails) { 
+								eqDesc.lite(eventDetails.selectKey);
+								eqVel.lite(eventDetails.selectKey);
+
+							});
+
+	//set initial state
+	eqDesc.lite("delta");
+	eqVel.lite("delta");
 	/* **************************************************************************
 	 * handleInputValueChanged                                              *//**
 	 *
@@ -269,29 +326,26 @@ var Data = [lineData,projected,nineB];
 	function handleChangedValue(newValue)
 	{
 		//get the values of the growth rate
-		newRate = growRt.getValue();
+		var vi = velocity.getValue();
+		var theta = angle.getValue()*Math.PI/180;
 		//use that to calculate the new populations
 		popDayRead.setValue(d3.format(",.0f")
-			(1E9*N0*(Math.exp(newRate/36500)-1)));
-		popWkRead.setValue(d3.format(",.0f")
-			(1E9*N0*(Math.exp(newRate/5200)-1)));
-		// factor of 100 to convert to percent decimal value
-		popYearRead.setValue(d3.format(",.0f")
-			(1E9*N0*(Math.exp(newRate/100)-1)));
-		// factor of 100 to convert to percent decimal value
-		popProj.setValue(d3.format(",.0f")
-			(1E9*N0*(Math.exp(40*newRate/100))));
+			(vi));
 	
 		
 		//recalculate the data
 		
-		for (i=0;i<10;i++){
-			projected[i] = { x: 2010 + i*5,
-					 y: 6.908688*Math.exp(growRt.getValue()*(.05*i))};
-			}
+		function deltax(t) {
+			return vi*Math.cos(theta)*t;
+		}
+	
+		function deltay(t) {
+			return y0 + vi*Math.sin(theta) * t - 1/2 * g * t * t;
+		}
+		ptData = dataGen(pts,deltax,deltay);
 		
 		// update the linegraph w/ the new data
-		lines.data[1] = projected;
+		lines.data[0] = ptData;
 
 		//redraw the dots
 		lines.redraw();
