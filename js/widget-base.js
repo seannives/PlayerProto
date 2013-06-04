@@ -34,11 +34,13 @@ function measure(container)
 
 function logFormat(d)
 {
-	var x = (Math.log(d) / Math.log(10)) + 1e-6; //find the log base 10 (plus a little for zero padding)
+	//find the log base 10 (plus a little for zero padding)
+	var x = (Math.log(d) / Math.log(10)) + 1e-6;  
 	//then see if the log has abscissa 1, and only return numbers for those, and even
 	return (Math.abs(x - Math.floor(x)) < .1)&&(Math.floor(x)%2==0) ? d3.round(Math.log(d)/Math.log(10)) : "";
 }
 
+function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
 
 /* **************************************************************************
  * attrFnVal                                                            *//**
