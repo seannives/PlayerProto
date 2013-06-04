@@ -108,6 +108,7 @@
 				
 				<div class="test">
 					<p>Test 12: Hashes</p>
+					<span id="button12"></span>
 					<div id="test12"></div>
 				</div>
 				
@@ -427,7 +428,8 @@
 				{ shape: "triangle",	data: [{ xyPos: [.25, .73], side: .05}]},
 				{ shape: "line", data: [{ xyPos: [.3, .7], length: .1, angle: -Math.PI/3 }]},
 				{ shape: "textBit", data: [{ xyPos: [.38, .7], text: "H2O" }]},
-				{ shape: "wedge", data: [{ xyPos: [.27, .68], length: .08, width: .02, angle: 5/4*Math.PI }]}
+				{ shape: "wedge", data: [{ xyPos: [.27, .68], length: .08, width: .02, angle: 5/4*Math.PI }]},
+				{ shape: "wedge", data: [{ xyPos: [.29, .65], length: .08, width: .02, angle: -Math.PI/2, type: "hash" }]}
 			],
 		});
 		
@@ -637,7 +639,7 @@
 	////////////////////////////////////////
 	
 	// Test 12: Hashes
-	/*var test12Box = new SVGContainer({
+	var test12Box = new SVGContainer({
 			node: d3.select("#test12"),
 			maxWid: 200,
 			maxHt: 200
@@ -647,11 +649,26 @@
 			id: "sketch12",
 			drawShape: 	
 			[	
-				{ shape: "hash", data: [{ xyPos: [.5, .7], length: .2, width: .1, angle: Math.PI/4 }]}
+				{ shape: "wedge", data: [{ xyPos: [.2, .7], length: .2, width: .1, angle: Math.PI/4, type: "hash" }]}
 			],
 		});
 		
-	test12Box.append(sketch12, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});*/
+	var button12 = new Button ({
+			id: "b12",
+			text: "Click"
+		}, eventManager);
+
+	$('#button12').append(button12.getRootEl());
+		
+	test12Box.append(sketch12, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	eventManager.subscribe(button12.pressedEventId, handleClick12);
+	
+	function handleClick12 ()
+	{
+		sketch12.move(.5, 0, 1000, 0);
+		sketch12.move(-.5, 0, 1000, 1000);
+	}
 	
 </script>
 </body>
