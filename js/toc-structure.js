@@ -155,9 +155,9 @@ var bookConfig = {
             },
             {
                 type: "objective",
-                url: "RitterImages.html",
+                url: "KantorAnimation.html",
                 id: "n.3.5",
-                title: "Ritter Image Carousel and Callouts"
+                title: "Stereoisomerism in Alkenes: Animation"
             },
 			{
                 type: "objective",
