@@ -25,7 +25,8 @@
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50"><p>3. Three scaled images in grid</p></div>
-				<div id="widgetTarget1bn"><p>4. ImageViewer widget (carousel and image viewer and caption combined) and associated callouts.</p>
+				<div id="widgetTarget1bn"><p>4. ImageViewer widget (carousel and image viewer and caption combined) and associated callouts. ImageViewer can also be controlled with a slider.</p>
+				<span id="slider1"></span>
                 </div>
                 <div id="calls"></div>
 			</div>
@@ -49,6 +50,8 @@
     <script src="js/widget-image.js"></script>
     <script src="js/widget-carousel.js"></script>
     <script src="js/widget-imageviewer.js"></script>
+	<script src="js/widget-slider.js"></script>
+	<script src="js/widget-numeric.js"></script>
 
 <script>
 	var eventManager = new EventManager();
@@ -228,6 +231,36 @@
 	var imgvwr4 = new ImageViewer(imgvwrConfig4, eventManager);
 	
 	cntr4.append(imgvwr4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	
+	// slider controlled image viewer
+	var slide1 = new Slider ({
+			id: "val1",
+			startVal: 1,
+			minVal: 1,
+			maxVal: 4,
+			stepVal: 1,
+			label: "Image set",
+			format: d3.format('5.2f'),
+		}, eventManager);
+
+	slide1.draw(d3.select("#slider1"));
+	
+	eventManager.subscribe(slide1.changedValueEventId, handleChangedValue1);
+	eventManager.subscribe(imgvwr4.selectedEventId, handleSelection1);
+
+	function handleChangedValue1 (newValue)
+	{
+		var newval = d3.round(slide1.getValue(), 1);
+		imgvwr4.selectItemAtIndex(newval - 1);
+	}
+
+	function handleSelection1 ()
+	{
+		var newImage = imgvwr4.selectedItem();
+		var newval = imgvwr4.itemKeyToIndex(newImage.key);
+		slide1.setValue(newval + 1);
+	}
+	
 	
 	var textChunks = new Callouts (
 		{id: "demonWeather",
