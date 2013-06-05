@@ -5,7 +5,7 @@
 (function () {
     var expect = chai.expect;
 
-    describe('LineGraphs should be awesome', function () {
+    describe('LineGraphs should be super awesome', function () {
 		var eventManager = null;
 
         describe('Creating a LineGraph with linear data', function () {

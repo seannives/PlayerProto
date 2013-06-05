@@ -31,9 +31,8 @@ var helper = (function () {
 	 ****************************************************************************/
 	var createNewDiv = function createNewDiv()
 	{
-		var mochaDiv = d3.select("div#mocha");
-		var parent = d3.select(mochaDiv.node().parentNode);
-		return parent.append("div").node();
+            var body = d3.select("body");
+	    return body.append("div").node();
 	};
 
 	/* **************************************************************************

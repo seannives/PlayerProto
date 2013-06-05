@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="Seann Ives" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="eCourses Author, Title" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
+	<link href="css/widgets.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+
+	<title class="setTitle"></title>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span8 leftCol">
+                <h2 class="setTitle">Can you rock?</h2>
+            	<p>It's important to rock.  Set the volume to the appropriate level using the slider below.</p>
+            	<p>
+				<div id="t1slider"></div>
+				<div id="t1button"></div>
+				</p>
+			</div>
+		</div>
+	</div>
+
+    <script src="js/jquery-latest.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!-- <script src="js/jquery.touchSwipe.min.js"></script> -->
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v3.min.js"></script>
+    
+    <script src="js/widget-base.js"></script>
+    <script src="js/widget-button.js"></script>
+	<script src="js/widget-slider.js"></script>
+	<!-- widget-numeric is required with widget-slider, even if you don't want a readout, as you'll get an "Uncaught ReferenceError: Readout is not defined" error without it -->
+	<script src="js/widget-numeric.js"></script>
+	<script src="js/eventmanager.js"></script>
+
+	<script>
+
+	// create event manager
+	var eventManager = new EventManager();
+	
+	///////////////////////////////////////////
+	
+	// Test 1: One slider, one button
+	var t1Extent = [0, 11];
+	
+	/* Seann Notes:
+	Apparently all sliders must live with a border surrounding them.
+	Also, your page explodes if you don't set things correctly (like if you
+	leave out startVal) or if you put in something bad in a value (like '0' 
+	instead of '0.0' as a startVal) */
+	var t1Slide = new Slider ({
+			id: "t1Val",
+			startVal: 0.0,
+			minVal: t1Extent[0],
+			maxVal: t1Extent[1],
+			stepVal: .5,
+			label: "Volume:",
+			format: d3.format('5.2f'),
+		}, eventManager);
+		
+	t1Slide.draw(d3.select("#t1slider"));
+
+	var t1Button = new Button ({
+			id: "t1Button",
+			text: "Submit"
+		}, eventManager);
+		
+	$('#t1button').append(t1Button.getRootEl());
+
+	eventManager.subscribe(t1Button.pressedEventId, t1handleClick);
+	/* 
+	- create a Submission object
+	- create a Readout object
+	- have the Submission subscribe to the Button and send stuff off for checking when it's pressed
+	- have the Readout subscribe to the Submission and display whatever the Submission returns
+	- Leslie's example: https://dl.dropboxusercontent.com/u/89342193/NeffLiveDemo/assess_12.1.html
+	*/
+
+	function t1handleClick()
+	{
+		console.log(t1Slide.getValue());
+	}
+	
+
+	</script>
+
+</body>
+</html>
