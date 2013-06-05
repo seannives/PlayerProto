@@ -190,29 +190,12 @@
 					});
 				});
 
-				describe('.selectItemAtIndex()', function () {
-					it('should publish the carousel.selectedEventId with the key of the item at that index', function () {
+				describe.skip('.selectItemAtIndex()', function () {
+					it('should publish the radiogroup.selectedEventId with the answer key of the item at that index', function () {
 						var prevSelectEventCount = selectEventCount;
 						myRadioGroup.selectItemAtIndex(1);
 						expect(selectEventCount).is.equal(prevSelectEventCount + 1);
 						expect(lastSelectEventDetails.selectKey).is.equal('foo');
-					});
-
-					it('should give only the selected child g.widgetItem a class of \'selected\' and no other', function () {
-						// Arrange - item 1 is selected
-						myRadioGroup.selectItemAtIndex(1);
-						var prevSelectEventCount = selectEventCount;
-						lastSelectEventDetails = null;
-						// Act - select item 2
-						myRadioGroup.selectItemAtIndex(2);
-						// Assert - only item 2 group has class 'selected'
-						var itemGroups = myRadioGroup.lastdrawn.widgetGroup.selectAll("g.widgetItem");
-						itemGroups.each(
-							function (d, i)
-							{
-								var hasClassSelected = d3.select(this).classed('selected');
-								expect(i == 2, 'item ' + i).to.equal(hasClassSelected);
-							});
 					});
 
 					it('should do nothing when selecting an already selected item (no event)', function() {
