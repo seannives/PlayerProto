@@ -1,13 +1,23 @@
 # Testing #
 
-This is using the [mocha][] javascript test framework.
+This is using the [mocha][] javascript test framework.  You can run it
+in the browser or on command line using Karma (once Testacular).
 
-We'll be running it out of the browser to test our client-side javascript.
+To run it out of the browser, drop /test/index.html into your browser
+and the tests will run.  Any javascript files you'd like to test, as
+well as their dependencies, should be referenced via script tags within
+index.html.
 
-Drop /test/index.html into your browser and the tests will run.
-
-Any javascript files you'd like to test, as well as their dependencies,
-should be referenced via script tags within index.html.
+To run it via command-line, you must have node.js, phantomjs, and
+karma installed.  All javascript files you'd like to test, as
+well as their dependencies, should be referenced within karma.conf.js.
+Generally, this will be the same thing as you'll put in index.html.
+From within the test/ directory run
+$ karma start karma.conf.js
+This will run all of our tests using phantomjs.  It will then watch for
+changes in all the js files referenced in karma.conf.js and all of the
+html files in the main directory and re-run the tests when changes are
+found.
 
 The actual tests you'll find within the /test/spec/ directory, generally
 one spec file per javascript file you're testing.
