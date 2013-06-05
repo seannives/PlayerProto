@@ -74,10 +74,10 @@
 				[
 					{ shape: "rectangle", data:[{xyPos: [.2, .5], width: .2, height: .1 }]},
 					{ shape: "circle", data:[{xyPos: [.5, .5], radius:  .2 }]}, 
-					//{ shape: "hexagon", data:[{xyPos: [.3, .3], side:  .1 }]},
-					//{ shape: "triangle", data:[{xyPos: [.4, .4], side: .2 }]},
+					{ shape: "hexagon", data:[{xyPos: [.3, .3], side:  .1 }]},
+					{ shape: "triangle", data:[{xyPos: [.4, .4], side: .2 }]},
 					{ shape: "line", data:[{xyPos: [.1, .1], length: .5, angle: Math.PI/3 }]},
-					//{ shape: "wedge", data:[{xyPos: [.2, .4], length: .5, width: .2, angle: Math.PI/6 }]},
+					{ shape: "wedge", data:[{xyPos: [.2, .4], length: .5, width: .2, angle: Math.PI/6 }]},
 					//{ shape: "wedge", data:[{xyPos: [.35, .24], length: .3, width: .15, angle: Math.PI/4, type: "hash"}]},
 					{ shape: "textBit", data:[{xyPos: [.15, .35], text: "blah" }]}
 				],
@@ -102,6 +102,18 @@
 					expect(circle.attr('cx')).to.equal(xScale(.5).toString());
 					expect(circle.attr('cy')).to.equal(yScale(.5).toString());
 					expect(circle.attr('r')).to.equal(xScale(.2).toString());
+					
+					var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+					var points = hexpoints(.3, .3, .1, xScale, yScale);
+					expect(hexagon.attr('points')).to.equal(points);
+					
+					var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+					points = tripoints(.4, .4, .2, xScale, yScale);
+					expect(triangle.attr('points')).to.equal(points);
+					
+					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+					points = wedgepoints(.2, .4, .5, .2, Math.PI/6, xScale, yScale);
+					expect(wedge.attr('points')).to.equal(points);
 					
 					var line = mySketch.lastdrawn.widgetGroup.select("line");
 					expect(line.attr('x1')).to.equal(xScale(.1).toString());
@@ -133,6 +145,18 @@
 					expect(circle.attr('cx')).to.equal(xScale(.6).toString());
 					expect(circle.attr('cy')).to.equal(yScale(.7).toString());
 					
+					var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+					var points = hexpoints(.4, .5, .1, xScale, yScale);
+					expect(hexagon.attr('points')).to.equal(points);
+					
+					var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+					points = tripoints(.5, .6, .2, xScale, yScale);
+					expect(triangle.attr('points')).to.equal(points);
+					
+					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+					points = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale);
+					expect(wedge.attr('points')).to.equal(points);
+					
 					var line = mySketch.lastdrawn.widgetGroup.select("line");
 					expect(line.attr('x1')).to.equal(xScale(.2).toString());
 					expect(line.attr('y1')).to.equal(yScale(.3).toString());
@@ -160,6 +184,21 @@
 					var circle = mySketch.lastdrawn.widgetGroup.select("circle");
 					expect(circle.attr('cx')).to.equal(xScale(.6).toString());
 					expect(circle.attr('cy')).to.equal(yScale(.3).toString());
+					
+					/* reflection of polygons needs to take into account that
+					the points get flipped */
+					
+					/*var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+					var points = hexpoints(.4, .5, .1, xScale, yScale);
+					expect(hexagon.attr('points')).to.equal(points);
+					
+					var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+					var points = tripoints(.5, .4, .2, xScale, yScale);
+					expect(triangle.attr('points')).to.equal(points);
+					
+					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+					points = wedgepoints(.3, .4, .5, .2, -Math.PI/6, xScale, yScale);
+					expect(wedge.attr('points')).to.equal(points);*/
 					
 					var line = mySketch.lastdrawn.widgetGroup.select("line");
 					expect(line.attr('x1')).to.equal(xScale(.2).toString());
@@ -205,7 +244,7 @@
 				before(function () {
 					mySketch.setOpacity(0, 0, 0);
 				});
-				it('should make the sketch invisible', function () {
+				it('should set the opacity to 0', function () {
 					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
 					expect(sketch.style('opacity')).to.equal('0');
 				});
@@ -215,7 +254,7 @@
 				before(function () {
 					mySketch.setOpacity(1, 0, 0);
 				});
-				it('should make the sketch visible', function () {
+				it('should set the opacity to 1', function () {
 					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
 					expect(sketch.style('opacity')).to.equal('1');
 				});
@@ -225,14 +264,87 @@
 				before(function () {
 					mySketch.setColor("blue", 0, 0);
 				});
-				it('should change color to blue', function () {
+				it('should change the color to blue', function () {
 					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
 					expect(sketch.style('stroke')).to.equal('#0000ff');
 					
 					var textBit = mySketch.lastdrawn.widgetGroup.select("text");
 					expect(textBit.style('fill')).to.equal('#0000ff');
+					
+					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+					expect(wedge.style('fill')).to.equal('#0000ff');
 				});
 			});
 		});
     });
 })();
+
+// figure out correct point string for a hexagon
+function hexpoints (x, y, sidelen, xScale, yScale)
+{
+	var side = xScale(sidelen);
+	var midx = xScale(x);
+	var midy = yScale(y);
+	
+	// use trigonometry to calculate all the points
+	var angle = (Math.PI/6);
+	
+	var round = d3.format('2f');
+	
+	var fartop = round(midy + side*(1/2 + Math.sin(angle))).toString();
+	var top = round(midy + side/2).toString();
+	var bot = round(midy - side/2).toString();
+	var farbot = round(midy - side*(1/2 + Math.sin(angle))).toString();
+	var left = round(midx - side*Math.cos(angle)).toString();
+	var mid = round(midx).toString();
+	var right = round(midx + side*Math.cos(angle)).toString();
+	
+	// return the point string
+	var points = (left+","+bot)+" "+(mid+","+farbot)+" "+(right+","+bot)
+		+" "+(right+","+top)+" "+(mid+","+fartop)+" "+(left+","+top);
+	return points;
+}
+// figure out correct point string for a triangle
+function tripoints (x, y, sidelen, xScale, yScale)
+{
+	var side = xScale(sidelen);
+	var midx = xScale(x);
+	var midy = yScale(y);
+	
+	// use trigonometry to calculate all the points
+	var angle = (Math.PI/3);
+	
+	var round = d3.format('2f');
+	
+	var left = round(midx - side/2).toString();
+	var mid = round(midx).toString();
+	var right = round(midx + side/2).toString();
+	var bot = round(midy + (side*Math.sin(angle))/2).toString();
+	var top = round(midy - (side*Math.sin(angle))/2).toString();
+	
+	// return the point string
+	var points = (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
+	return points;
+}
+function wedgepoints(x, y, len, wid, ang, xScale, yScale)
+{
+	var flatx = len * Math.cos(ang) + x;
+	var flaty = len * Math.sin(ang) + y;
+				
+	var angle = ang + Math.PI/2;
+	
+	var round = d3.format('2f');
+	
+	var tip1x = xScale(flatx + wid/2*Math.cos(angle));
+	var tip1y = yScale(flaty + wid/2*Math.sin(angle));
+	var tip2x = xScale(flatx - wid/2*Math.cos(angle));
+	var tip2y = yScale(flaty - wid/2*Math.sin(angle));
+	
+	var xpos = xScale(x);
+	var ypos = yScale(y);
+				
+	var points = (round(tip1x).toString()+","+round(tip1y).toString())+" "+
+				(round(xpos).toString()+","+round(ypos).toString())+" "+
+				(round(tip2x).toString()+","+round(tip2y).toString());
+	return points;
+}

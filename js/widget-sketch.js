@@ -830,15 +830,17 @@ Sketch.prototype.redraw = function ()
 					
 					// use trigonometry to calculate all the points
 					
-					var angle = (30*Math.PI/180);
+					var angle = (Math.PI/6);
 					
-					var fartop = (midy - side*(1/2 + Math.sin(angle))).toString();
-					var top = (midy - side/2).toString();
-					var bot = (midy + side/2).toString();
-					var farbot = (midy + side*(1/2 + Math.sin(angle))).toString();
-					var left = (midx - side*Math.cos(angle)).toString();
-					var mid = midx.toString();
-					var right = (midx + side*Math.cos(angle)).toString();
+					var round = d3.format('2f');
+					
+					var fartop = round(midy + side*(1/2 + Math.sin(angle))).toString();
+					var top = round(midy + side/2).toString();
+					var bot = round(midy - side/2).toString();
+					var farbot = round(midy - side*(1/2 + Math.sin(angle))).toString();
+					var left = round(midx - side*Math.cos(angle)).toString();
+					var mid = round(midx).toString();
+					var right = round(midx + side*Math.cos(angle)).toString();
 					
 					// return the point string
 					d["points"] = (left+","+bot)+" "+(mid+","+farbot)+" "+(right+","+bot)
@@ -862,13 +864,15 @@ Sketch.prototype.redraw = function ()
 				
 				// use trigonometry to calculate all the points
 				
-				var angle = (60*Math.PI/180);
+				var angle = (Math.PI/3);
 				
-				var left = (midx - side/2).toString();
-				var mid = midx.toString();
-				var right = (midx + side/2).toString();
-				var bot = (midy + (side*Math.sin(angle))/2).toString();
-				var top = (midy - (side*Math.sin(angle))/2).toString();
+				var round = d3.format('2f');
+				
+				var left = round(midx - side/2).toString();
+				var mid = round(midx).toString();
+				var right = round(midx + side/2).toString();
+				var bot = round(midy + (side*Math.sin(angle))/2).toString();
+				var top = round(midy - (side*Math.sin(angle))/2).toString();
 				
 				// return the point string
 				d["points"] = (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
@@ -887,6 +891,8 @@ Sketch.prototype.redraw = function ()
 							
 				var angle = d.angle + Math.PI/2;
 				
+				var round = d3.format('2f');
+				
 				var tip1x = xScale(flatx + d.width/2*Math.cos(angle));
 				var tip1y = yScale(flaty + d.width/2*Math.sin(angle));
 				var tip2x = xScale(flatx - d.width/2*Math.cos(angle));
@@ -895,9 +901,9 @@ Sketch.prototype.redraw = function ()
 				var xpos = xScale(d.xyPos[0]);
 				var ypos = yScale(d.xyPos[1]);
 							
-				d["points"] = (tip1x.toString()+","+tip1y.toString())+" "+
-							(xpos.toString()+","+ypos.toString())+" "+
-							(tip2x.toString()+","+tip2y.toString());
+				d["points"] = (round(tip1x).toString()+","+round(tip1y).toString())+" "+
+							(round(xpos).toString()+","+round(ypos).toString())+" "+
+							(round(tip2x).toString()+","+round(tip2y).toString());
 				return d.points;
 			})
 		.style('fill', 'grey');
