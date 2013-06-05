@@ -57,6 +57,28 @@
         });
 
 		describe('Creating a sketch', function () {
+			
+			/*
+			
+				Occasionally one of the following tests will fail for no apparent
+				reason. I suspect the problem to be related to how d3 transitions
+				work.
+				Each element can only have one transition attached to it at
+				a time. If another transition is added before the previous one
+				finishes, then the previous one is overridden, and is unable to
+				be completed. The duration and delay values are supposed to help
+				prevent this, and in practice they generally do. But when these
+				values are zero, the transition isn't actually instantaneous.
+				I therefore suspect that sometimes a transition takes a few
+				milliseconds too long and gets overidden, causing a test to fail.
+				
+				TODO: Figure out how to prevent transitions from overriding each
+				other.
+				
+				Jordan
+			
+			*/
+			
 			var configCntr = {
 				node: null,
 				maxWid: 200,
@@ -169,11 +191,11 @@
 				});
 			});
 			
-			describe('reflect over horizontal line', function () {
+			describe('horizontal reflection', function () {
 				before(function () {
 					mySketch.reflect(null, .5, 0, 0);
 				});
-				it('should reflect the sketch over the horizontal line y = 0.5', function () {
+				it('should reflect the sketch over a horizontal line', function () {
 					var xScale = mySketch.lastdrawn.xScale;
 					var yScale = mySketch.lastdrawn.yScale;
 					
@@ -212,11 +234,11 @@
 				});
 			});
 			
-			describe('reflect over vertical line', function () {
+			describe('vertical reflection', function () {
 				before(function () {
 					mySketch.reflect(.5, null, 0, 0);
 				});
-				it('should reflect the sketch over the vertical line x = 0.5', function () {
+				it('should reflect the sketch over a vertical line', function () {
 					var xScale = mySketch.lastdrawn.xScale;
 					var yScale = mySketch.lastdrawn.yScale;
 					
@@ -264,7 +286,7 @@
 				before(function () {
 					mySketch.setColor("blue", 0, 0);
 				});
-				it('should change the color to blue', function () {
+				it('should change the color of the sketch', function () {
 					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
 					expect(sketch.style('stroke')).to.equal('#0000ff');
 					
