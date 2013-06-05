@@ -30,7 +30,7 @@
 						actualSize: {height: 366, width: 443}
 					},
 					{
-						URI: 'img/test2.png',
+						URI: 'img/test2.jpg',
 						caption: "Seaside Heights, NJ after Hurricane Sandy.",
 						preserveAspectRatio: "xMidYMid",
 						actualSize: {height: 550, width: 550},

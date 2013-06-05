@@ -27,7 +27,9 @@
 				{ shape: "hexagon", data:[{xyPos: [3,3], side:  1 }]},
 				{ shape: "triangle", data:[{xyPos: [4, 4], side: 2 }]},
 				{ shape: "line", data:[{xyPos: [1,1], length: .5, angle: Math.PI/3 }]},
-				{ shape: "wedge", data:[{xyPos: [2, 4], length: .5, width: .2, angle: Math.PI/6 }]}
+				{ shape: "wedge", data:[{xyPos: [2, 4], length: .5, width: .2, angle: Math.PI/6 }]},
+				{ shape: "wedge", data:[{xyPos: [3.5, 2.4], length: .3, width: .15, angle: Math.PI/4, type: "hash"}]},
+				{ shape: "textBit", data:[{xyPos: [1.5, 3.5], text: "blah" }]}
 			],
 		};
 });
