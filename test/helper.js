@@ -23,8 +23,8 @@ var helper = (function () {
 	/* **************************************************************************
 	 * createNewDiv                                                         *//**
 	 *
-	 * createNewDiv will find the mocha div in the document and create and
-	 * return a sibling div following it.
+	 * createNewDiv will append a new div element to the document body and
+	 * return that div.
 	 *
 	 * @return {Element} the newly created div element
 	 *
