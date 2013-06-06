@@ -192,7 +192,7 @@ var cntr = new SVGContainer(cntrConfig);
 	function dataGen(pts,xfun,yfun){
 		var points = [], t = [];
 		for(i=0; i<pts; i++){
-			t[i] = 0.1*i;
+			t[i] = 0.093*i;
 			points[i] =
 				{x: xfun(t[i]),
 				 y: yfun(t[i])}
@@ -202,13 +202,14 @@ var cntr = new SVGContainer(cntrConfig);
 	 
 	var ptData = dataGen(pts,deltax,deltay);
 	 
-	var vMatch = 7.35;
+	//correct initial velocity m/s and angle in degrees
+	var vMatch = 7.34, aMatch = 58.5; 
 	function deltaxTrue(t) {
-		return vMatch*Math.cos(58.5*Math.PI/180)*t;
+		return vMatch*Math.cos(aMatch*Math.PI/180)*t;
 	}
 	
 	function deltayTrue(t) {
-		return y0 + vMatch*Math.sin(58.5*Math.PI/180)*t - 1/2 * g * t * t;
+		return y0 + vMatch*Math.sin(aMatch*Math.PI/180)*t - 1/2 * g * t * t;
 	}
 	
 	function circleGen(pts,xfun,yfun){
@@ -225,21 +226,34 @@ var cntr = new SVGContainer(cntrConfig);
 		return shapes;
 		}
 		
-	function lineGen(pts,xfun,yfun){
+	function xlineGen(pts,xfun,yfun){
 		var shapes = [], t = [];
 		for(i=0; i<pts; i++){
 			t[i] = 0.093*i;
-			shapes[i] =
-				{shape: "line", 
+			var xpos = xfun(t[i]);
+			var ypos = yfun(t[i]);
+			var yvel = vMatch*Math.sin(aMatch*Math.PI/180)*t[i] - 1/2 * g * t[i];
+			shapes.push(
+				{shape: "line",
 				data: [{
-					xyPos: [xfun(t[i]), yfun(t[i])], 
-					length: vMatch/10, angle: 58.5*Math.PI/180 }]
-				};
+					xyPos: [xpos, ypos], 
+					length: xpos/(20 * (t[i]+.0001)), angle: 0,  type: "vector" }]
+				});
+			shapes.push(
+				{shape: "line",
+				data: [{
+					xyPos: [xpos, ypos], 
+					length: yvel/20, angle: sign(yvel) * Math.PI/2,  type: "vector" }]
+				});
 			}
 		return shapes;
 		}
-	var shapeDataTrue = circleGen(pts,"circle",deltaxTrue,deltayTrue);
+		
 	
+	
+	var shapeDataTrue = circleGen(pts,deltaxTrue,deltayTrue);
+	var vXData = xlineGen(pts,deltaxTrue,deltayTrue);
+	var hots = shapeDataTrue.concat(vXData);
 	
 	// Create the population growth in a day
 	var popDayRead = new Readout({
@@ -256,7 +270,7 @@ var cntr = new SVGContainer(cntrConfig);
 	var lines = new LineGraph({
 			id: "lg0",
 			Data:[ptData], 
-			type: "lines+points",
+			type: "points",
 			xAxisFormat: { type: "linear",
 						   ticks: [-1,0,1,2,3,4,5],
 						   orientation: "bottom",
@@ -274,7 +288,7 @@ var cntr = new SVGContainer(cntrConfig);
 	var vectors = new Sketch({
 			id: "vel",
 			type: "hot",
-			drawShape: shapeDataTrue,
+			drawShape: hots,
 		}, eventManager);
 		
 	lines.append(vectors);
@@ -286,7 +300,7 @@ var cntr = new SVGContainer(cntrConfig);
 	// event we listen to)
 	eventManager.subscribe(velocity.changedValueEventId,
 							handleChangedValue);
-	 eventManager.subscribe(angle.changedValueEventId,
+	eventManager.subscribe(angle.changedValueEventId,
 							handleChangedValue);
 	//light up the balls when clicked
 	eventManager.subscribe(vectors.selectedEventId,
