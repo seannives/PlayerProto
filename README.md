@@ -22,7 +22,7 @@ Initial implementation and simple demo pages illustrating usage of the following
   * RadioButton
   * Callout
 
-The widgets are implemented in Javascript, and are largely based on the [d3 DOM manipulation framework][d3.js].
+The widgets are implemented in Javascript, and are largely based on the [d3 DOM manipulation framework][D3].
 
 ## Coding Style ##
 Currently we are mostly using google's [Javascript Style Guide][styleguide]
