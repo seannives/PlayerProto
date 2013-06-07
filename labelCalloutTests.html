@@ -44,7 +44,7 @@
 	<script src="js/widget-linegraph.js"></script>
 	<script src="js/widget-labelgroup.js"></script>
     <script src="js/widget-callouts.js"></script>
-	
+	<script src="js/widget-image.js"></script>
 	<script src="js/widgets.js"></script>
 <script>
 
@@ -197,48 +197,49 @@ for (i = 0; i < dataPts; i++)
 		
 	
 	//<div id="widgetTarget0"><p>0. Labels on an Image</p></div>
+	var ecofoot = new Image(
+		{ 
+			URI: 'img/FG12_5_3.jpg',
+			caption: "Examples of ecological footprints",
+			actualSize: {height: 300, width: 400}
+		}
+	);
 	
-	var svg0 = new MakeSVGContainer(
+	var svg0 = new SVGContainer(
 		{node: d3.select("#widgetTarget0"),
-		maxWid: 400,
+		//maxSize not yet used, but should be, so that the container gets sized to match
+		//the image not the other way round
+		//maxSize: Size.matchRatioWithHeight(440, ecofoot.actualSize),
+		maxWid: 394,
+		//adding 40px to make room for the caption
 		maxHt: 300
 		}
 	);
+		
+	var ecocap = new CaptionedImage({
+			image: ecofoot,
+			captionPosition: "below"
+		});
 	
-	svg0.Axes({
-		id: 0,
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		xaxisType: "linear",
-		xOrient: "bottom",
-		xLabel: "caption",
-		yaxisType: "linear",
-		yOrient: "left",
-	});
 	
-	svg0.ScalableImage(
-		{images: [	
-				{URI:'img/FG12_5_3.jpg', caption: "Examples of ecological footprints"}
-			]
-		}
-	);
-	
-	svg0.Labels(
-		{labels: 	
+	var ecoLabels = new LabelGroup({
+		labels: 	
 		  [	
 			{content: "United States",	xyPos: [0,.2], width: 80	},
 			{content: "European Union",	xyPos:[0.45,0.2], width: 100},
 			{content: "Afghanistan", xyPos:[0.8,0.2], 
-			//because I used the default Data, my scale on the image is
-			//now 0 to 1, so I want this label to be 8/10 of the way across, 
-			//and 1/5 from the bottom
+			//scale on the image is 0 to 1, so I want this label to be 8/10 of the way across, 
+			//and 1/5 from the bottom, so xyPos is 80% and 20%
 			width: 60	},
 			{content:"23 Acres/person",	xyPos:[0,1], width: 100},
 			{content:"11.5 acres/person", xyPos:[0.45,.7], width: 100	},
 			{content:"1 acre/ person", xyPos:[0.8,0.5], width: 60}
-		  ],
+		  ]
 		});
 	
+	
+	ecocap.append(ecoLabels);
+	svg0.append(ecocap);
 	
 //	<div id="widgetTarget1"><p>1. Graph with Labels</p></div>
 /*
@@ -385,45 +386,6 @@ for (i = 0; i < dataPts; i++)
 	var cntr50 = new SVGContainer(cntrConfig50);
 	var labelGroup50 = new LabelGroup(lblGrpConfig50);
 	cntr50.append(labelGroup50);
-	
-
-/*
-	var svg70 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget50"),
-		maxWid: 500,
-		maxHt: 300
-		}
-	);
-	svg70.Axes({
-		xPosPerc: 0, yPosPerc:0,
-		xPerc: 1, yPerc: 1,//full height and half width
-		xaxisType: "linear", yaxisType: "linear",
-		xOrient: "bottom",
-		yOrient: "left",
-		xLabel: "label placement"
-	});
-
-	svg70.Labels(
-		{type: "numbered",
-		labels: 	
-		  [
-		{content: "TOP left", xyPos: [0,1], width: 100	},
-		{content: "middle left", xyPos: [0,.5], width: 100	},
-		{content: "Bottom left" , xyPos: [0,0], width: 100	},
-		{content: "top middle", xyPos: [.5,1], width: 100	},
-		{content:"center", xyPos: [.5,.5], width: 100	},
-		{content: "bottom middle", xyPos: [.5,0], width: 100	},
-		{content: "TOP right", xyPos: [1,1], width: 50	},
-		{content: "middle right", xyPos: [1,0.5], width: 50	},
-		{content: "width 50 at 1/4,1/4", xyPos: [0.25,0.25], width: 50	},
-		{content: "width 150 at 3/4,3/4 with extended &copy; chars", xyPos: [0.75,0.75], width: 150},
-		{content: '3/4,1/4 with forn fields <input type="range" min="0" max="2.5" />', 
-			xyPos: [0.75,0.25], width: 150},
-		{content: "with bullet", xyPos: [0.25,0.75], width: 80, bullet: "circle"}		
-		]
-	});
-	
-	*/
 
 //	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
 	var svgMark = new MakeSVGContainer(

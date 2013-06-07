@@ -1,25 +1,27 @@
 # Testing #
 
 This is using the [mocha][] javascript test framework.  You can run it
-in the browser or on command line using Karma (once Testacular).
+in the browser or on command line using [Karma][] (once Testacular).
 
 To run it out of the browser, drop /test/index.html into your browser
 and the tests will run.  Any javascript files you'd like to test, as
 well as their dependencies, should be referenced via script tags within
 index.html.
 
-To run it via command-line, you must have node.js, phantomjs, and
-karma installed.  All javascript files you'd like to test, as
-well as their dependencies, should be referenced within karma.conf.js.
+To run it via command-line, you must have [node.js][], [phantomjs][], and
+[karma][] installed.  All javascript files you'd like to test, as
+well as their dependencies, should be referenced within `karma.conf.js`.
 Generally, this will be the same thing as you'll put in index.html.
 From within the test/ directory run
+```
 $ karma start karma.conf.js
+```
 This will run all of our tests using phantomjs.  It will then watch for
-changes in all the js files referenced in karma.conf.js and all of the
+changes in all the js files referenced in `karma.conf.js` and all of the
 html files in the main directory and re-run the tests when changes are
 found.
 
-The actual tests you'll find within the /test/spec/ directory, generally
+The actual tests you'll find within the `/test/spec/` directory, generally
 one spec file per javascript file you're testing.
 
 Mocha allows you to use a number of assertion libraries; syntax for
@@ -33,3 +35,6 @@ falls down when you run the tests in IE sometimes.
 [chai]: <http://chaijs.com> "Chai is a BDD / TDD assertion library for node and the browser"
 [TDD]: <http://en.wikipedia.org/wiki/Test-driven_development> "Test-driven Development - wikipedia"
 [BDD]: <http://en.wikipedia.org/wiki/Behavior-driven_development> "Behavior-driven Development - wikipedia"
+[karma]: <http://karma-runner.github.io/0.8/index.html> "Karma Spectacular Test Runner for JavaScript"
+[node.js]: <http://nodejs.org/> "node.js home page"
+[phantomjs]: <http://phantomjs.org/> "phantom.js home page"

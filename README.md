@@ -8,14 +8,21 @@ Initial implementation and simple demo pages illustrating usage of the following
 * SVG Widgets
   * LineGraph
   * BarChart
+  * LabelGroup
   * Image
   * CaptionedImage
   * Carousel
   * Sketch
+  * Markers (still on old framework)
+  * Pie Charts (still on old framework)
+  * Legends
 * HTML Widgets
   * Button
+  * Slider
+  * RadioButton
+  * Callout
 
-The widgets are implemented in Javascript.
+The widgets are implemented in Javascript, and are largely based on the [d3 DOM manipulation framework][D3].
 
 ## Coding Style ##
 Currently we are mostly using google's [Javascript Style Guide][styleguide]
@@ -32,7 +39,8 @@ Similarly, the `then` (and `else`) portion of the `if` statement should always b
 and enclosed in curly braces. The [arguments go back and forth][if-braces], but if it prevents
 some merge errors it's worth the verbosity.
 
-We do need some framework that will provide OOP but have not selected one yet. In particular our need is to be able to provide base class functionality overridden by derived classes only when necessary.
+We do need some framework that will provide OOP but have not selected one yet. In particular our need is to be able to 
+provide base class functionality overridden by derived classes only when necessary.
 
 == Useful references ==
 
