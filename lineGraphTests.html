@@ -480,20 +480,27 @@
 	
 	var legLines = new Legend({
 		xPos: "left", yPos: "top",
-		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
+		labels: [{ content: "historical data long discription",	},
+				{ content: "predicted",	},
+				{ content: "threshold" ,}],
 		type: "line"
-	});
+	},eventManager);
 	
 	// draw the lineGraph in the container
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, 		
 	widthPercent: 1});
 	
 	// draw the legend and the labels on the line graph
-	lineGraph[n].append([labelGroup80, legLines]);
+	lineGraph[n].append([legLines, labelGroup80]);
 
 	eventManager.subscribe(labelGroup80.selectedEventId,
 						   handleSelectionChanged);
-	
+	eventManager.subscribe(legLines.selectedEventId,
+						   handleSelectionChanged);
+	eventManager.subscribe(lineGraph[n].selectedEventId,
+						   handleSelectionChanged);
+						   
+	handleSelectionChanged({selectKey: "0"});
 /************************************************************************
 * handleSelectionChanged                                            *//**
 *
@@ -514,7 +521,7 @@
 		//is written as a constructor
 		labelGroup80.lite(eventDetails.selectKey);
 		lineGraph[n].lite(eventDetails.selectKey);
-		//legLines.legendLite(eventDetails.selectKey);
+		legLines.lite(eventDetails.selectKey);
 		
 	}
 
