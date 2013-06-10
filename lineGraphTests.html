@@ -476,7 +476,7 @@
 	var labelGroup80 = new LabelGroup(lblGrpConfig80, eventManager);
 
 	cntr[n] = new SVGContainer(config[n].cntr);
-	lineGraph[n] = new LineGraph(config[n].lg);
+	lineGraph[n] = new LineGraph(config[n].lg,eventManager);
 	
 	var legLines = new Legend({
 		xPos: "left", yPos: "top",

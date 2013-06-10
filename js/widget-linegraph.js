@@ -365,7 +365,7 @@ LineGraph.prototype.drawData_ = function ()
 					});
 					
 		this.lastdrawn.traces = graph.selectAll("g.traces");
-		
+		 
 		traces.on('click',
 				function (d, i)
 				{
