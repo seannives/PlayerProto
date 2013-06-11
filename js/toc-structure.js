@@ -93,32 +93,26 @@ var bookConfig = {
             },
             {
                 type: "objective",
-                url: "eventmanagerTests.html",
-                id: "n.2.8",
-                title: "Button and Slider Tests"
-            },
-            {
-                type: "objective",
                 url: "sketchTests.html",
-                id: "n.2.9",
+                id: "n.2.8",
                 title: "Sketch Tests"
             },
 			{
 				type: "objective",
 				url: "animationTests.html",
-				id: "n.2.10",
+				id: "n.2.9",
 				title: "Animation Tests"
 			},
             {
                 type: "objective",
                 url: "sliderTests.html",
-                id: "n.2.11",
+                id: "n.2.10",
                 title: "Slider and Readout Tests"
             },
             {
                 type: "objective",
                 url: "buttonTests.html",
-				id: "n.2.12",
+				id: "n.2.11",
                 title: "Button Tests"
             },
             ]
@@ -197,6 +191,12 @@ var bookConfig = {
                 url: "hotSpotTests.html",
                 id: "n.4.3",
                 title: "Hot Spot Assessment Tests"
+            },
+			  {
+                type: "objective",
+                url: "submitTests.html",
+                id: "n.4.4",
+                title: "Submit Tests"
             },
             ]
         },

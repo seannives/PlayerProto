@@ -28,6 +28,7 @@
             	<p>
 				<div id="t1slider"></div>
 				<div id="t1button"></div>
+				<div id="resultDisplay"></div>
 				</p>
 			</div>
 		</div>
@@ -47,6 +48,7 @@
 	<!-- widget-numeric is required with widget-slider, even if you don't want a readout, as you'll get an "Uncaught ReferenceError: Readout is not defined" error without it -->
 	<script src="js/widget-numeric.js"></script>
 	<script src="js/eventmanager.js"></script>
+	<script src="js/submitmanager.js"></script>
 
 	<script>
 
@@ -55,12 +57,12 @@
 	
 	///////////////////////////////////////////
 	
-	// Test 1: One slider, one button
+	// Test 1: One slider, one button.
 	var t1Extent = [0, 11];
 	
 	/* Seann Notes:
 	Apparently all sliders must live with a border surrounding them.
-	Also, your page explodes if you don't set things correctly (like if you
+	Also, your page explodes if you don't set things correctly (like if you 
 	leave out startVal) or if you put in something bad in a value (like '0' 
 	instead of '0.0' as a startVal) */
 	var t1Slide = new Slider ({
@@ -81,19 +83,63 @@
 		}, eventManager);
 		
 	$('#t1button').append(t1Button.getRootEl());
-
+	// subscribe to the "submit" button press
 	eventManager.subscribe(t1Button.pressedEventId, t1handleClick);
+
+	// create submit manager
+	var t1SubmitManagerConfig = {
+		id: 't1sm',
+		sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/3314583736548363/nodes/1'
+	};
+	var submitManager = new SubmitManager(t1SubmitManagerConfig, eventManager);
+	// subscribe to the submitManager
+	eventManager.subscribe(submitManager.submittedEventId, t1handleResponse);
+
+	// create a Readout object in which you'll shove the results of the submit.  This isn't great
+	// but a fine temporary solution
+	var resultDisplay = new Readout({
+		node: d3.select("#resultDisplay"),
+		id: 'resultDisplay',
+		startVal: '',
+		readOnly: true,
+		size: 20,
+		label: 'Your result: '
+	});
+
 	/* 
-	- create a Submission object
-	- create a Readout object
-	- have the Submission subscribe to the Button and send stuff off for checking when it's pressed
-	- have the Readout subscribe to the Submission and display whatever the Submission returns
+	TODO:
 	- Leslie's example: https://dl.dropboxusercontent.com/u/89342193/NeffLiveDemo/assess_12.1.html
+	- extract as much of this configuration stuff into a dynamic js "builder" script with config
 	*/
 
+	/************************************************************************
+	* t1handleClick                                                     *//**
+	*
+	* t1handleClick is called from the event handler for the "submit" button,
+	* sending the value of the slider to the submitManager.
+	*************************************************************************/
 	function t1handleClick()
 	{
-		console.log(t1Slide.getValue());
+		// fire off the submit method of the SubmitManager, sending value from Slider
+		submitManager.submit(t1Slide.getValue());
+	}
+
+	/************************************************************************
+	* t1handleResponse                                                  *//**
+	*
+	* t1handleResponse is called from the event handler for the submitManager
+	* when it returns a response after sending the student's submission off
+	* for processing.  It plops the response into the resultDisplay Readout.
+	*
+	* @param eventDetails			These are the keyed values returned by 
+	*								the event:
+	*                               grade: 0..1
+	*                               response: string response
+	*************************************************************************/
+	function t1handleResponse(eventDetails)
+	{
+		// display the results of the submission in the resultDisplay Readout
+		resultDisplay.setValue(eventDetails.response);
 	}
 	
 

@@ -27,16 +27,22 @@
                 <p>In one case, the two methyl groups are distal to each other, whereas in the second version they are proximal. Select either of the two ball-and-stick models below to see the cis and trans configurations of the but-2-ene molecule. <span id="button0_2"></span></p>
 				
 					<div id="picture0"></div>
+                    		<p>The &pi; bond in but-2-ene restricts rotation about the C2-C3 bond, preventing either of these from converting into the other. Despite their identical connectivity, they are not superposable structures and are, therefore, stereoisomers.</p>
+                    <div id="threedButeneTrans"><span id="buteneslider"></span></div>
 	
 			</div>
 			<div class="span6 rightCol">
-		<div>The &pi; bond restricts rotation about the C2-C3 bond, preventing either of these from converting into the other. Despite their identical connectivity, they are not superposable structures and are, therefore, stereoisomers.</div>
 
 				<p>Alkenes are stereogenic if switching two of the groups attached to the same alkenyl carbon results in a stereoisomer. Transposing a hydrogen and a methyl group attached to the same carbon in but-2-ene produces a structure that is not superposable on the original compound. </p>
 				
 				<span id="button1"></span>
 				<div id="picture1"></div>
-
+				<div class="form-actions">
+                <p>Touch each compound to simplify it.  Then select the two that are the same (not stereoisomers).</p> 
+                 <span class="btn-primary" id="button7"></span>
+				<div id="picture7"></div>
+              
+                </div>
 				<p style="color:blue;">TIP: In evaluating whether or not the alkene is stereogenic, it is satisfactory to perform the substituent change on one of the alkenyl carbons.</p>
 		
 				<p><b>Discovery Exercise 7.1.2 Testing for Stereoisomerism in Alkenes with Identical Substituents on the Same Carbon</b></p>
@@ -47,41 +53,13 @@
 				<div id="picture6"></div>
 				
 				<p>As the substituents about the alkene increase in complexity it is advantageous to simplify the groups using substitutive labels. For example, the relationship among the three alkene isomers shown is not immediately obvious. The alkyl branches have been inconveniently drawn in different conformations. This precludes a simple inspection of superposability. By replacing the alkyl substituents with their <b>abbreviated labels</b> [Provide a pop-up list; see below after Figure 7.1.7] the conformational permutations, while still occurring, no longer complicate the analysis and the relationships become apparent.</p>
+               
 				
 			</div>
 		</div>
-				<p style="color:blue;">[INTERACTIVE: The following figure needs to be revealed in steps. The first three structures will appear immediately. The black arrow and the corresponding structure in the next row appears after a touch. The student is directed to touch the two identical structures. If the 2nd and 3rd structures are touched then the red and blue boxes with the labels appears with feedback (Correct).]</p>
-				
-				<span id="button7"></span>
-				<div id="picture7"></div>
-				
-				<p style="color:blue;">[POP-UP REFERENCE: The following table is a pop-up reference that will be useful across multiple chapters.]</p>
-				
-				<p><b>Hydrocarbon Group Prefixes</b></p>
-				<div id="picture8"></div>
-				<p></p>
-				
-				<p><b>Worked Example 7.1.1 Identifying Stereogenic Alkenes</b></p>
-				
-				<p>Identify if the following alkenes are stereogenic.</p>
-				
-				<div id="picture9"></div>
-
-				<p style="color:blue;">[ANIMATE: These solutions will benefit from the animation/interactive treatment applied earlier. Maybe we don&apos;t want to give the students control for solved examples and simply have them watch the animation.]</p>
+				 
 			
-				<p>There is a simpler analysis available. The other carbon of the alkene possesses identical groups. Imagine starting from the alkenyl carbon and progressing in a counterclockwise direction (green arrow); compare this with progressing in a clockwise direction (red arrow). The exact same groups would be observed at every step along either pathway.</p>
 				
-				<p><b>Exercise 7.1.1 Identifying Stereogenic Alkenes</b></p>
-				
-				<p>Identify which of the following alkenes are stereogenic. You must draw in alkenyl hydrogens before finalizing your answer.</p>
-				
-				<div id="picture10"></div>
-				
-				<p><b>Exercise 7.1.2 Drawing Alkene Stereoisomers</b></p>
-				
-				<p>Draw a stereoisomer for each of the following alkenes.</p>
-				
-				<div id="picture11"></div>
 				
 			</div>
 		</div>
@@ -102,7 +80,9 @@
     <script src="js/widget-carousel.js"></script>
     <script src="js/widget-imageviewer.js"></script>
 	<script src="js/widget-callouts.js"></script>
-    
+    <script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-slider.js"></script>
+    <script src="js/widget-numeric.js"></script>
 	<script src="js/eventmanager.js"></script>
 	
 <script>
@@ -113,8 +93,8 @@ var eventManager = new EventManager();
 
 var svg0 = new SVGContainer({
 		node: d3.select("#picture0"),
-		maxWid: 400,
-		maxHt: 600
+		maxWid: 500,
+		maxHt: 250
 	});
 
 var sketch0_1 = new Sketch ({
@@ -127,10 +107,10 @@ var sketch0_1 = new Sketch ({
 			{ shape: "line", 	data: [{ xyPos: [.26, .78], length: 0.1, angle: 0 }]},
 			{ shape: "line", 	data: [{ xyPos: [.26, .82], length: 0.1, angle: 0 }]},
 
-		 	{ shape: "textBit", data: [{ xyPos: [.12, .89], text: 'H3C'}]},
+		 	{ shape: "textBit", data: [{ xyPos: [.10, .89], text: 'H3C'}]},
 			{ shape: "textBit", data: [{ xyPos: [.23, .78], text: 'C'}]},
 			{ shape: "textBit", data: [{ xyPos: [.4, .78], text: 'C'}]},
-		  	{ shape: "textBit", data: [{ xyPos: [.08, .69], text: 'H'}]},
+		  	{ shape: "textBit", data: [{ xyPos: [.12, .68], text: 'H'}]},
 		]
 	});
 	
@@ -141,8 +121,8 @@ var sketch0_2 = new Sketch ({
 			{ shape: "line", 	data: [{ xyPos: [.5, .9], length: 0.1, angle: -4*Math.PI/5 }]},
 			{ shape: "line", 	data: [{ xyPos: [.5, .7], length: 0.1, angle: 4*Math.PI/5 }]},
 			
-			{ shape: "textBit", data: [{ xyPos: [.56, .9], text: 'H' }]},
-			{ shape: "textBit", data: [{ xyPos: [.56, .7], text: 'H3C' }]},
+			{ shape: "textBit", data: [{ xyPos: [.53, .9], text: 'H' }]},
+			{ shape: "textBit", data: [{ xyPos: [.54, .68], text: 'H3C' }]},
 		]
 	});
 	
@@ -150,9 +130,9 @@ var sketch0_3 = new Sketch ({
 		id: "sketch0_3",
 		drawShape:
 		[
-			{ shape: "line", data: [{ xyPos: [.76, .8], length: .1, angle: 0 }]},
-			{ shape: "line", data: [{ xyPos: [.76, .82], length: .1, angle: 0 }]},
-			{ shape: "line", data: [{ xyPos: [.76, .8], length: .1, angle:  -4*Math.PI/5 }]},
+			{ shape: "line", data: [{ xyPos: [.1, .8], length: .1, angle: 0 }]},
+			{ shape: "line", data: [{ xyPos: [.1, .82], length: .1, angle: 0 }]},
+			{ shape: "line", data: [{ xyPos: [.1, .8], length: .1, angle:  -4*Math.PI/5 }]},
 		]
 	});
 	
@@ -160,8 +140,8 @@ var sketch0_4 = new Sketch ({
 		id: "sketch0_4",
 		drawShape:
 		[
-			{ shape: "line", data: [{ xyPos: [.76, .8], length: .08, angle:  3*Math.PI/4 }]},
-			{ shape: "textBit", data: [{ xyPos: [.68, .88], text: 'H' }]},
+			{ shape: "line", data: [{ xyPos: [.1, .8], length: .08, angle:  3*Math.PI/4 }]},
+			{ shape: "textBit", data: [{ xyPos: [.02, .88], text: 'H' }]},
 		]
 	});
 	
@@ -169,7 +149,7 @@ var sketch0_5 = new Sketch ({
 		id: "sketch0_5",
 		drawShape:
 		[
-			{ shape: "line", data: [{ xyPos: [.86, .8], length: .1, angle:  Math.PI/5 }]},
+			{ shape: "line", data: [{ xyPos: [.2, .8], length: .1, angle:  Math.PI/5 }]},
 		]
 	});
 	
@@ -177,17 +157,17 @@ var sketch0_6 = new Sketch ({
 		id: "sketch0_6",
 		drawShape:
 		[
-			{ shape: "line", data: [{ xyPos: [.86, .8], length: .08, angle:  -Math.PI/4 }]},
-			{ shape: "textBit", data: [{ xyPos: [.96, .72], text: 'H' }]},
+			{ shape: "line", data: [{ xyPos: [.2, .8], length: .08, angle:  -Math.PI/4 }]},
+			{ shape: "textBit", data: [{ xyPos: [.3, .72], text: 'H' }]},
 		]
 	});
 	
-svg0.append(sketch0_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .7, widthPercent: 1});
-svg0.append(sketch0_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .7, widthPercent: 1});
-svg0.append(sketch0_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .7, widthPercent: 1});
-svg0.append(sketch0_4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .7, widthPercent: 1});
-svg0.append(sketch0_5, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .7, widthPercent: 1});
-svg0.append(sketch0_6, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .7, widthPercent: 1});
+svg0.append(sketch0_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: .6});
+svg0.append(sketch0_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: .6});
+svg0.append(sketch0_3, {topPercentOffset: 0.4, leftPercentOffset: 0.1, heightPercent: 1, widthPercent: .8});
+svg0.append(sketch0_4, {topPercentOffset: 0.4, leftPercentOffset: 0.1, heightPercent: 1, widthPercent: .8});
+svg0.append(sketch0_5, {topPercentOffset: 0.4, leftPercentOffset: 0.1, heightPercent: 1, widthPercent: .8});
+svg0.append(sketch0_6, {topPercentOffset: 0.4, leftPercentOffset: 0.1, heightPercent: 1, widthPercent: .8});
 
 	
 var button0_2 = new Button ({
@@ -217,13 +197,10 @@ var ballStick_imgs = new ImageViewer({
 			],
 	}, eventManager);
 	
-svg0.append(ballStick_imgs,{topPercentOffset: 0.25, leftPercentOffset: 0, heightPercent: .5, widthPercent: 1});
+svg0.append(ballStick_imgs,{topPercentOffset: 0, leftPercentOffset: .5, heightPercent: 1, widthPercent: 0.5});
 
 //eventManager.subscribe(button0_1.pressedEventId, handleClick0_1);
 eventManager.subscribe(button0_2.pressedEventId, handleClick0_2);
-//TODO this next line is broken, the clicks on the image carousel are not
-// firing the eventManager, although they should.  The carousel buttons (images)
-// should be used in place of the swap button. -lb
 eventManager.subscribe(ballStick_imgs.selectedEventId, handleSelect);
 
 //set the lite key so we can swap between carousel images
@@ -265,8 +242,8 @@ function handleClick0_2 ()
 
 var svg1 = new SVGContainer({
 		node: d3.select("#picture1"),
-		maxWid: 600,
-		maxHt: 600
+		maxWid: 400,
+		maxHt: 100
 	});
 
 // original sketch, does not change
@@ -322,7 +299,8 @@ var sketch1_3 = new Sketch ({
 		]
 	});
 	
-// message is also a sketch
+// message is also a sketch - I have turned this off in favor of the
+// label implementation, which can also have it's opacity set
 var sketch1_4 = new Sketch ({
 		id: "sketch1_4",
 		drawShape:
@@ -333,18 +311,28 @@ var sketch1_4 = new Sketch ({
 		]
 	});
 	
-svg1.append(sketch1_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .5, widthPercent: .5});
-svg1.append(sketch1_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .5, widthPercent: .5});
-svg1.append(sketch1_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .5, widthPercent: .5});
-svg1.append(sketch1_4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .5, widthPercent: .5});
+var explain = new LabelGroup({
+		labels: 	
+		  [	
+			{content: "These structures are non-superposable and are therefore stereoisomers.",	
+			xyPos: [.4,.9], width: 140	},
+		  ]
+		});
+	
+	
+svg1.append(sketch1_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 2, widthPercent: .6});
+svg1.append(sketch1_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 2, widthPercent: .6});
+svg1.append(sketch1_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 2, widthPercent: .6});
+//svg1.append(sketch1_4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 2, widthPercent: .6});
 
+svg1.append(explain);
 // message starts out invisible
-sketch1_4.setOpacity(0, 0, 0);
-
+//sketch1_4.setOpacity(0, 0, 0);
+explain.setOpacity(0, 0, 0);
 // button used to advance the animation
 var button1 = new Button ({
 		id: "b1",
-		text: "Click to advance"
+		text: "Reflect and Compare"
 	}, eventManager);
 	
 $('#button1').append(button1.getRootEl());
@@ -374,7 +362,8 @@ function handleClick1 ()
 	{
 		sketch1_2.move(-.7, -.07, 1000, 0);
 		sketch1_3.move(-.7, -.07, 1000, 0);
-		sketch1_4.setOpacity(1, 500, 1000);
+		//sketch1_4.setOpacity(1, 500, 1000);
+		explain.setOpacity(1,500,1000);
 		click1 ++;
 	}
 	// reset
@@ -383,7 +372,8 @@ function handleClick1 ()
 		sketch1_2.move(0, .07, 0, 0);
 		sketch1_3.move(0, .07, 0, 0);
 		sketch1_3.reflect(null, .8, 0, 0);
-		sketch1_4.setOpacity(0, 0, 0);
+		//sketch1_4.setOpacity(0, 0, 0);
+		explain.setOpacity(0, 0, 0);
 		click1 = 0;
 	}
 	
@@ -476,7 +466,36 @@ var fullrot = new ImageViewer({
 svg3D.append(fullrot, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: .5, widthPercent: 1});
 svg3D.append(fullrot2, {topPercentOffset: 0.5, leftPercentOffset: 0, heightPercent: .5, widthPercent: 1});
 	
+var buteneExtent = [1, 6];
 
+var buteneSlide1 = new Slider ({
+		id: "b1Val",
+		startVal: 1,
+		minVal: buteneExtent[0],
+		maxVal: buteneExtent[1],
+		stepVal: 1,
+		label: "Image set 1",
+		format: d3.format('5.0f'),
+	}, eventManager);
+	
+buteneSlide1.draw(d3.select("#buteneslider"));
+
+
+eventManager.subscribe(buteneSlide1.changedValueEventId, buteneHandleChangedValue1);
+eventManager.subscribe(fullrot.selectedEventId, buteneHandleSelection1);
+
+function buteneHandleChangedValue1 (newValue)
+{
+	var newval = d3.round(buteneSlide1.getValue(), 1);
+	fullrot.selectItemAtIndex(newval - 1);
+}
+
+function buteneHandleSelection1 ()
+{
+	var newImage = fullrot.selectedItem();
+	var newval = fullrot.itemKeyToIndex(newImage.key);
+	buteneSlide1.setValue(newval + 1);
+}
 
 ///////////////////////////////////////////////
 
@@ -580,24 +599,24 @@ var svg7 = new SVGContainer({
 	});
 
 // message for part 1 of interactive exercise
-var sketch7_0 = new Sketch ({
-		id: "sketch7_0",
-		drawShape:
-		[
-			{ shape: "textBit", data: [{ xyPos: [.98, .8], text: "Touch each structure" }]},
-			{ shape: "textBit", data: [{ xyPos: [.98, .76], text: "to simplify it" }]}
-		]
-	});
-// message for part 2 of interactive exercise
-var sketch7_01 = new Sketch ({
-		id: "sketch7_01",
-		drawShape:
-		[
-			{ shape: "textBit", data: [{ xyPos: [.98, .45], text: "Touch the two" }]},
-			{ shape: "textBit", data: [{ xyPos: [.98, .41], text: "identical structures" }]},
-		]
-	});
+	
+var instructions7_0 = new LabelGroup({
+		labels: 	
+		  [	
+			{content: "Touch each structure to simplify it.",	
+			xyPos: [.5,.6], width: 140	},
+		  ]
+		});
 
+// message for part 2 of interactive exercise
+
+var instructions7_1 = new LabelGroup({
+		labels: 	
+		  [	
+			{content: "Touch the two identical structures.",	
+			xyPos: [.5,.4], width: 140	},
+		  ]
+		});
 // left molecule (clickable)
 var sketch7_1 = new Sketch ({
 		id: "sketch7_1",
@@ -777,8 +796,8 @@ var button7 = new Button ({
 
 $('#button7').append(button7.getRootEl());
 
-svg7.append(sketch7_0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_01, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+//svg7.append(sketch7_0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+//svg7.append(sketch7_01, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 svg7.append(sketch7_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 svg7.append(sketch7_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 svg7.append(sketch7_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
@@ -800,7 +819,7 @@ eventManager.subscribe(sketch7_9.selectedEventId, handleClick7_6);
 eventManager.subscribe(button7.pressedEventId, handleClick7_7);
 
 // much of the exercise starts out invisible
-sketch7_01.setOpacity(0, 0, 0);
+//sketch7_01.setOpacity(0, 0, 0);
 sketch7_4.setOpacity(0, 0, 0);
 sketch7_5.setOpacity(0, 0, 0);
 sketch7_6.setOpacity(0, 0, 0);
@@ -977,74 +996,7 @@ svg8.append(sketch8_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent
 
 reference8.draw(d3.select("#picture8"));
 	
-///////////////////////////////////////
 
-var svg9 = new MakeSVGContainer(
-	{node: d3.select("#picture9"),
-	maxWid: 800,
-	maxHt: 600
-	}
-);
-
-svg9.Axes({
-	xPosPerc: .25, yPosPerc: .25,
-	xPerc: .5, yPerc: .5,
-	xaxisType: "linear", yaxisType: "ordinal",
-	xOrient: "bottom",
-	yOrient: "left",
-	xLabel: "population"
-});
-
-svg9.ScalableImage(
-	{images: [
-			{URI:'img/ch7_1_13.png', caption: "Placeholder for interactive."}]
-	});
-	
-///////////////////////////////////////
-
-var svg10 = new MakeSVGContainer(
-	{node: d3.select("#picture10"),
-	maxWid: 800,
-	maxHt: 600
-	}
-);
-
-svg10.Axes({
-	xPosPerc: .25, yPosPerc: .25,
-	xPerc: .5, yPerc: .5,
-	xaxisType: "linear", yaxisType: "ordinal",
-	xOrient: "bottom",
-	yOrient: "left",
-	xLabel: "population"
-});
-
-svg10.ScalableImage(
-	{images: [
-			{URI:'img/ch7_1_14.png', caption: "Placeholder for interactive."}]
-	});
-	
-/////////////////////////////////////////
-
-var svg11 = new MakeSVGContainer(
-	{node: d3.select("#picture11"),
-	maxWid: 800,
-	maxHt: 600
-	}
-);
-
-svg11.Axes({
-	xPosPerc: .25, yPosPerc: .25,
-	xPerc: .5, yPerc: .5,
-	xaxisType: "linear", yaxisType: "ordinal",
-	xOrient: "bottom",
-	yOrient: "left",
-	xLabel: "population"
-});
-
-svg11.ScalableImage(
-	{images: [
-			{URI:'img/ch7_1_15.png', caption: "Placeholder for interactive."}]
-	});
 
 </script>
 </body>
