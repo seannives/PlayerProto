@@ -126,7 +126,7 @@
 
 				after(function () {
 					// Clean up test modifications to the DOM
-					cntrNode && cntrNode.remove();
+					cntrNode.node && cntrNode.node.remove();
 				});
 					
 				describe('.draw()', function () {
