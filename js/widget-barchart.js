@@ -69,7 +69,7 @@ function BarChart(config, eventManager)
 	 * A unique id for this instance of the bar chart widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, BarChart);
 
 	/**
 	 * Array of bar series, where each series is an array of objects/bars, and each object is a
@@ -97,6 +97,14 @@ function BarChart(config, eventManager)
 	this.xAxisFormat = config.xAxisFormat;
 	this.yAxisFormat = config.yAxisFormat;
 
+	/**
+	 * List of child widgets which are to be drawn before and after this
+	 * bar chart's data in its data area.
+	 * Child widgets are added using BarChart.append.
+	 * @type {beforeData: Array.<IWidget>, afterData: Array.<IWidget>}
+	 */
+	this.childWidgets = {beforeData: [], afterData: []};
+	
 	
 	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
@@ -106,20 +114,36 @@ function BarChart(config, eventManager)
 		{
 			container: null,
 			size: {height: 0, width: 0},
+			dataRect: new Rect(0, 0, 0, 0),
 			barsId: 'bars',
 			axes: null,
 			xScale: null,
 			yScale: null,
+			groupScale: null,
+			bandsize: null,
 			traces: null,
+			graph: null,
 		};
 		
 	//these aren't hooked up yet, but I expect bar graphs to eventually need
 	//to fire drag events that let users change the data for the bar length
 	//and drag events that let users sort the data differently, reordering the bars -lb
 	this.eventManager = eventManager;
-	this.changedEventId = this.id + 'barDataChanged';
+	/**
+	 * The event id published when a row in this group is selected.
+	 * @const
+	 * @type {string}
+	 */
+
+	this.selectedEventId = this.id + '_barSelected';
 	this.sortedEventId = this.id + 'barSortChanged';
 } // end of barChart constructor
+/**
+ * Prefix to use when generating ids for instances of LineGraph.
+ * @const
+ * @type {string}
+ */
+BarChart.autoIdPrefix = "auto_";
 
 
 /* **************************************************************************
@@ -157,25 +181,33 @@ BarChart.prototype.draw = function(container, size)
 
 	//Check to see whether ordinal or other scales will be generated
 	// and whether explicit ticks are set, which overrides the autoranging
-	if (axesConfig.xAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.xAxisFormat.ticks))
+	if (axesConfig.xAxisFormat.type == 'ordinal' && !Array.isArray(axesConfig.xAxisFormat.ticks))
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.x;}));
 		axesConfig.xAxisFormat.ticks = ordinalValueMap.values();
 	}
 	
-	if (axesConfig.yAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.yAxisFormat.ticks))
+	if (axesConfig.yAxisFormat.type == 'ordinal' && !Array.isArray(axesConfig.yAxisFormat.ticks))
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.y;}));
 		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
 		
 	} 
 	
+	
 	//make the axes for this graph - draw these first because these are the 
 	//pieces that need extra unknown space for ticks, ticklabels, axis label
+	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
 	//only draw axes if there aren't any yet
+	/*
 	if(!d3.select("#"+ axesConfig.id)[0][0]){
 		this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
-	}
+	}*/
+	
+	
+	//inherit the dataRect from the axes container
+	this.lastdrawn.dataRect = this.lastdrawn.axes.dataRect;
+	
 	// alias for axes once they've been rendered
 	var axesDrawn = this.lastdrawn.axes;
 
@@ -185,9 +217,12 @@ BarChart.prototype.draw = function(container, size)
 	this.lastdrawn.barsId = this.id + '_bars';
 	var barsId = this.lastdrawn.barsId;
 	
+	
+
 	//get the size of the bars and spacing produced by ordinal scale
 	//TODO: would need to be xScale if the bars are vertical
-	var bandsize = axesDrawn.yScale.rangeBand();
+	this.lastdrawn.bandsize = axesDrawn.yScale.rangeBand();
+	var bandsize = this.lastdrawn.bandsize;
 	
 	if (this.type == "grouped")
 	{
@@ -214,8 +249,15 @@ BarChart.prototype.draw = function(container, size)
 			groupScale(this.data.length - 1) == 0);
 	};
 
+
+	// Draw any 'before' child widgets that got appended before draw was called
+	this.childWidgets.beforeData.forEach(this.drawWidget_, this);
+
+	var graph = axesDrawn.group.append("g") //make a group to hold bars
+		.attr("class","widgetBarChart").attr("id", this.id);
+
 	// todo: see if there is maybe a better way to determine if something is already drawn other than by id. -mjl
-	if (d3.select("#"+barsId)[0][0] === null)
+	/*if (d3.select("#"+barsId)[0][0] === null)
 	{
 
 	var graph = axesDrawn.group.append("g") //make a group to hold new bar chart
@@ -226,12 +268,100 @@ BarChart.prototype.draw = function(container, size)
 	else
 	{
 		var graph = d3.select("#" + barsId);
-	}
-	//TEST: the graph group now exists and reports it's ID correctly
-	console.log("graph group is made/found:", graph.attr("id") == barsId); 
-
+	} */
 	
-	//draw the serie(s)
+	this.lastdrawn.graph = graph;
+	this.lastdrawn.groupScale = groupScale;
+	
+	// Draw the data (traces and/or points as specified by the graph type)
+	this.drawData_();
+
+	// Draw any 'after' child widgets that got appended after draw was called
+	this.childWidgets.afterData.forEach(this.drawWidget_, this);
+	
+	
+
+}; // end of barChart.draw()
+
+
+/* **************************************************************************
+ * BarChart.redraw                                                     *//**
+ *
+ * Redraw the line graph data as it may have been modified. It will be
+ * redrawn into the same container area as it was last drawn.
+ *
+ ****************************************************************************/
+BarChart.prototype.redraw = function ()
+{
+	// TODO: We may want to create new axes if the changed data would cause their
+	//       min/max to have changed, but for now we're going to keep them.
+
+	// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
+	//       by doing nothing? -mjl
+	this.childWidgets.beforeData.forEach(this.redrawWidget_, this);
+	this.drawData_();
+	this.childWidgets.afterData.forEach(this.redrawWidget_, this);
+};
+
+/* **************************************************************************
+ * BarChart.drawWidget_                                                *//**
+ *
+ * Draw the given child widget in this charts's data area.
+ * This chart must have been drawn BEFORE this method is called or
+ * bad things will happen.
+ *
+ * @private
+ *
+ * @todo implement some form of error handling! -mjl
+ *
+ ****************************************************************************/
+BarChart.prototype.drawWidget_ = function (widget)
+{
+	widget.setScale(this.lastdrawn.xScale, this.lastdrawn.yScale);
+	widget.draw(this.lastdrawn.axes.group, this.lastdrawn.dataRect.getSize());
+};
+
+
+/* **************************************************************************
+ * BarChart.redrawWidget_                                              *//**
+ *
+ * Redraw the given child widget.
+ * This bar chart and this child widget must have been drawn BEFORE this
+ * method is called or bad things will happen.
+ *
+ * @private
+ *
+ * @todo implement some form of error handling! -mjl
+ *
+ ****************************************************************************/
+BarChart.prototype.redrawWidget_ = function (widget)
+{
+	widget.redraw();
+};
+
+/* **************************************************************************
+ * BarChart.drawData_                                                  *//**
+ *
+ * Draw the chart data (overwriting any existing data).
+ *
+ * @private
+ *
+ ****************************************************************************/
+ 
+ BarChart.prototype.drawData_ = function ()
+{
+	// local var names are easier to read (shorter)
+	var barId = this.lastdrawn.barId;
+	var xScale = this.lastdrawn.xScale;
+	var yScale = this.lastdrawn.yScale;
+	var bandsize = this.lastdrawn.bandsize;
+	var groupScale = this.lastdrawn.groupScale;
+	var that = this;
+	
+	// get the group that contains the graph lines
+	var graph = this.lastdrawn.graph;
+	
+	//draw the series
 	// bind all the series data to a group element w/ a series class
 	// creating or removing group elements so that each series has its own group.
 	var barSeries = graph.selectAll("g.series")
@@ -242,11 +372,7 @@ BarChart.prototype.draw = function(container, size)
 			.attr("class", function(d, i) {
 					//give each series it's own color
 					return "series fill" + i;
-				})
-			.attr("id", function(d, i) {
-			//put the number of the series on the series ID
-			//can't use the y label because it might contain spaces. -lb
-				return barsId + i;});
+				});
 	//on redraw, get rid of any series which now have no data
 	barSeries.exit().remove();  
 
@@ -291,8 +417,8 @@ BarChart.prototype.draw = function(container, size)
 				// positive bar, or start at it's negative x value if it's reversed.
 				// The x<0 logic allows us to draw pyramid charts, normally bar 
 				// charts are bin counts and all positive. 
-				      var x = (d.x < 0) ? axesDrawn.xScale(d.x) : axesDrawn.xScale(0);
-					  var y = axesDrawn.yScale(d.y);
+				      var x = (d.x < 0) ? xScale(d.x) : xScale(0);
+					  var y = yScale(d.y);
 				      return "translate(" + x + "," + y + ")";
 				  });
 				  
@@ -303,11 +429,88 @@ BarChart.prototype.draw = function(container, size)
 		.attr("width",
 			  function(d)
 			  {
-				  return (d.x < 0) ? axesDrawn.xScale(0) - axesDrawn.xScale(d.x)
-								   : axesDrawn.xScale(d.x) - axesDrawn.xScale(0);
+				  return (d.x < 0) ? xScale(0) - xScale(d.x)
+								   : xScale(d.x) - xScale(0);
 			  });
 
+}
 
-}; // end of barChart.draw()
+/* **************************************************************************
+ * LineGraph.append                                                     *//**
+ *
+ * Append the widget or widgets to this line graph and draw it/them on top
+ * of the line graph's data area and any widgets appended earlier. If append
+ * is called before draw has been called, then the appended widget(s) will be
+ * drawn when draw is called.
+ *
+ * @param {!IWidget|Array.<IWidget>}
+ * 						svgWidgets	-The widget or array of widgets to be drawn in
+ *									 this line graph's data area.
+ * @param {string|undefined}
+ * 						zOrder		-Optional. Specifies whether to append this
+ * 									 widget to the list of widgets that are
+ * 									 drawn before the graph data or the list that
+ * 									 is drawn after. "after" | "before", defaults
+ * 									 to "after".
+ *
+ ****************************************************************************/
+BarChart.prototype.append = function(svgWidgets, zOrder)
+{
+	if (!Array.isArray(svgWidgets))
+	{
+		this.append_one_(svgWidgets, zOrder);
+	}
+	else
+	{
+		svgWidgets.forEach(function (w) {this.append_one_(w, zOrder);}, this);
+	}
 
+	// Deal w/ drawing the appended widgets before already drawn data.
+	if (zOrder === "before" && this.lastdrawn.container != null)
+	{
+		// we need to remove the existing drawn elements and execute draw again
+		var container = this.lastdrawn.container;
+		var size = this.lastdrawn.size;
+		var axes = this.lastdrawn.axes;
+		this.clearLastdrawn_();
+		axes.group.remove();
+		this.draw(container, size);
+	}
+		
+}; // end of BarChart.append()
 
+/* **************************************************************************
+ * LineGraph.append_one_                                                *//**
+ *
+ * Helper for append that does the work needed to append a single widget.
+ * This can handle drawing the widget after the data even after the data
+ * has been drawn, but it does not handle drawning the widget before when
+ * the data has already been drawn, so the caller must deal with that situation.
+ *
+ * @param {!IWidget}	widget	-The widget which is to be drawn in this line
+ *								 graph's data area.
+ * @param {string|undefined}
+ * 						zOrder	-Optional. Specifies whether to append this
+ * 								 widget to the list of widgets that are
+ * 								 drawn before the graph data or the list that
+ * 								 is drawn after. "after" | "before", defaults
+ * 								 to "after".
+ *
+ * @private
+ *
+ ****************************************************************************/
+BarChart.prototype.append_one_ = function(widget, zOrder)
+{
+	if (zOrder === "before")
+	{
+		this.childWidgets.beforeData.push(widget);
+	}
+	else
+	{
+		this.childWidgets.afterData.push(widget);
+	
+		if (this.lastdrawn.container !== null)
+			this.drawWidget_(widget);
+	}
+		
+}; // end of BarChart.append_one_()

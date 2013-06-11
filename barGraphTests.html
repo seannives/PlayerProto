@@ -23,7 +23,7 @@
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50"><p>3. Double-sided pyramid bar graph (negatives)</p></div>
-				<div id="widgetTarget55"><p>4. Double-sided bar graph (double positive axis)</p></div>
+				<div id="widgetTarget55"><p>4. Double-sided bar graph (double positive axis) <span style="color: red">BUG: these shove the bars up too high on the graph, will fix when specified for content</span></p></div>
 				<div id="widgetTarget70"><p>5. Small multiples (several line graphs in container)</p></div>
 				<div id="widgetTarget80"><p>6. bar with Legend</p></div>
 			</div>
@@ -177,7 +177,6 @@ var ordinalData2 = [
 			maxHt: 300
 		});
 	var newBar0 = new BarChart({
-			id: "bc0",
 			Data: [ordinalData], 
 			xAxisFormat: { type: "linear",
 						   ticks: 4,
@@ -336,15 +335,20 @@ var ordinalData2 = [
 	
 	var legBar = new Legend({
 		xPos: "right", yPos: "top",
-		labels: ["low income", "middle income", "high income"],
+		labels: [
+			{content: "low income"}, 
+			{content: "middle income"}, 
+			{content: "high income"}],
 		type: "box"
 	});
 	
 	//I can write the same defined widget above into a new SVG container, but only if 
 	//I give it a new ID first.
 	barGroup.id = "foo";
-	svg5.append([barGroup,legBar], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-
+	
+	svg5.append(barGroup);
+	barGroup.append(legBar,{topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, 		
+	widthPercent: 1});
 	
 </script>
 </body>
