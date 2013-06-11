@@ -884,7 +884,8 @@ Sketch.prototype.redraw = function ()
 				d["points"] = (left+","+bot)+" "+(right+","+bot)+" "+(mid+","+top);
 				return d.points;
 			});
-			
+	
+	var id = this.id;
 	var wedges = drawCollection.selectAll("polygon.wedge")
 		.data(function (d) { return d.shape == "wedge"? d.data : []; });
 	wedges.enter().append("polygon").attr("class", "wedge");
@@ -925,7 +926,7 @@ Sketch.prototype.redraw = function ()
 				var defs = sketchContainer.select("defs");
 				var mask = defs.append("mask")
 					.attr("x", 0).attr("y", 0).attr("width", 1).attr("height", 1)
-					.attr("id", "hashmask");
+					.attr("id", id + "hashmask");
 				var i;
 				var ratio = .9;
 				for (i = 0; i < 3; i++)
@@ -955,7 +956,7 @@ Sketch.prototype.redraw = function ()
 						.attr("stroke", "white").attr("opacity", 1);
 					ratio = ratio - .33;
 				}
-				hash.style("mask", "url(#hashmask)");
+				hash.style("mask", "url(#" + id + "hashmask)");
 			}
 		});
 
