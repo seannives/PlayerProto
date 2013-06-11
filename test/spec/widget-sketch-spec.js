@@ -58,243 +58,298 @@
 
 		describe('Creating a sketch', function () {
 			
-			/*
-			
-				Occasionally one of the following tests will fail for no apparent
-				reason. I suspect the problem to be related to how d3 transitions
-				work.
-				Each element can only have one transition attached to it at
-				a time. If another transition is added before the previous one
-				finishes, then the previous one is overridden, and is unable to
-				be completed. The duration and delay values are supposed to help
-				prevent this, and in practice they generally do. But when these
-				values are zero, the transition isn't actually instantaneous.
-				I therefore suspect that sometimes a transition takes a few
-				milliseconds too long and gets overidden, causing a test to fail.
-				
-				TODO: Figure out how to prevent transitions from overriding each
-				other.
-				
-				Jordan
-			
-			*/
-			
 			var configCntr = {
 				node: null,
 				maxWid: 200,
 				maxHt: 200
 			};
 			
+			var time = 20;	// number of milliseconds for each timeout
+			
+			// make svg container
+			var cntr = helper.createNewSvgContainer(configCntr);
+			
 			after(function () {
 				// Clean up test modifications to the DOM
 				configCntr.node && configCntr.node.remove();
 			});
 			
-			var mySketch = new Sketch ({
-				id: "sketch1",
-				drawShape:
-				[
-					{ shape: "rectangle", data:[{xyPos: [.2, .5], width: .2, height: .1 }]},
-					{ shape: "circle", data:[{xyPos: [.5, .5], radius:  .2 }]}, 
-					{ shape: "hexagon", data:[{xyPos: [.3, .3], side:  .1 }]},
-					{ shape: "triangle", data:[{xyPos: [.4, .4], side: .2 }]},
-					{ shape: "line", data:[{xyPos: [.1, .1], length: .5, angle: Math.PI/3 }]},
-					{ shape: "wedge", data:[{xyPos: [.2, .4], length: .5, width: .2, angle: Math.PI/6 }]},
-					//{ shape: "wedge", data:[{xyPos: [.35, .24], length: .3, width: .15, angle: Math.PI/4, type: "hash"}]},
-					{ shape: "textBit", data:[{xyPos: [.15, .35], text: "blah" }]}
-				],
+			before(function ()
+			{
+				// make the sketch
+				var mySketch = new Sketch ({
+					id: "sketch1",
+					drawShape:
+					[
+						{ shape: "rectangle", data:[{xyPos: [.2, .5], width: .2, height: .1 }]},
+						{ shape: "circle", data:[{xyPos: [.5, .5], radius:  .2 }]}, 
+						{ shape: "hexagon", data:[{xyPos: [.3, .3], side:  .1 }]},
+						{ shape: "triangle", data:[{xyPos: [.4, .4], side: .2 }]},
+						{ shape: "line", data:[{xyPos: [.1, .1], length: .5, angle: Math.PI/3 }]},
+						{ shape: "wedge", data:[{xyPos: [.2, .4], length: .5, width: .2, angle: Math.PI/6 }]},
+						//{ shape: "wedge", data:[{xyPos: [.35, .24], length: .3, width: .15, angle: Math.PI/4, type: "hash"}]},
+						{ shape: "textBit", data:[{xyPos: [.15, .35], text: "blah" }]}
+					],
+				});
+			
+				// append the sketch
+				cntr.append(mySketch);
 			});
 			
-			var cntr = helper.createNewSvgContainer(configCntr);
-			cntr.append(mySketch, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-			
+			/*
+				NOTE:
+				
+				- The x and y values for each successive test are based on the values
+				left from the previous test, since they all act on the same sketch.
+				
+				- Reflection for rectangles is not as simple as it is for other
+				shapes because rectangles are anchored at their top left corner, rather
+				than their center.
+				
+				- Transitions on sketches are asynchronous, so timeouts are necessary to
+				keep new transitions from overriding older ones.
+			*/
 			
 			describe('draw', function () {
-				it('should start with the correct attributes', function () {
-					var xScale = mySketch.lastdrawn.xScale;
-					var yScale = mySketch.lastdrawn.yScale;
+				it('should start with the correct attributes', function (done) {
+					setTimeout( function()
+					{
+						check(done, function ()
+						{
+							var xScale = mySketch.lastdrawn.xScale;
+							var yScale = mySketch.lastdrawn.yScale;
 					
-					var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
-					expect(rectangle.attr('x')).to.equal(xScale(.2).toString());
-					expect(rectangle.attr('y')).to.equal(yScale(.5).toString());
-					expect(rectangle.attr('width')).to.equal(xScale(.2).toString());
-					expect(rectangle.attr('height')).to.equal((yScale(0) - yScale(.1)).toString());
+							var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
+							expect(rectangle.attr('x')).to.equal(xScale(.2).toString());
+							expect(rectangle.attr('y')).to.equal(yScale(.5).toString());
+							expect(rectangle.attr('width')).to.equal(xScale(.2).toString());
+							expect(rectangle.attr('height')).to.equal((yScale(0) - yScale(.1)).toString());
 					
-					var circle = mySketch.lastdrawn.widgetGroup.select("circle");
-					expect(circle.attr('cx')).to.equal(xScale(.5).toString());
-					expect(circle.attr('cy')).to.equal(yScale(.5).toString());
-					expect(circle.attr('r')).to.equal(xScale(.2).toString());
+							var circle = mySketch.lastdrawn.widgetGroup.select("circle");
+							expect(circle.attr('cx')).to.equal(xScale(.5).toString());
+							expect(circle.attr('cy')).to.equal(yScale(.5).toString());
+							expect(circle.attr('r')).to.equal(xScale(.2).toString());
 					
-					var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-					var points = hexpoints(.3, .3, .1, xScale, yScale);
-					expect(hexagon.attr('points')).to.equal(points);
+							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+							var points1 = hexpoints(.3, .3, .1, xScale, yScale);
+							expect(hexagon.attr('points')).to.equal(points1);
 					
-					var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-					points = tripoints(.4, .4, .2, xScale, yScale);
-					expect(triangle.attr('points')).to.equal(points);
+							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+							var points2 = tripoints(.4, .4, .2, xScale, yScale);
+							expect(triangle.attr('points')).to.equal(points2);
 					
-					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-					points = wedgepoints(.2, .4, .5, .2, Math.PI/6, xScale, yScale);
-					expect(wedge.attr('points')).to.equal(points);
+							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+							var points3 = wedgepoints(.2, .4, .5, .2, Math.PI/6, xScale, yScale);
+							expect(wedge.attr('points')).to.equal(points3);
 					
-					var line = mySketch.lastdrawn.widgetGroup.select("line");
-					expect(line.attr('x1')).to.equal(xScale(.1).toString());
-					expect(line.attr('y1')).to.equal(yScale(.1).toString());
-					expect(line.attr('x2')).to.equal(xScale(.1 + .5*Math.cos(Math.PI/3)).toString());
-					expect(line.attr('y2')).to.equal(yScale(.1 + .5*Math.sin(Math.PI/3)).toString());
+							var line = mySketch.lastdrawn.widgetGroup.select("line");
+							expect(line.attr('x1')).to.equal(xScale(.1).toString());
+							expect(line.attr('y1')).to.equal(yScale(.1).toString());
+							expect(line.attr('x2')).to.equal(xScale(.1 + .5*Math.cos(Math.PI/3)).toString());
+							expect(line.attr('y2')).to.equal(yScale(.1 + .5*Math.sin(Math.PI/3)).toString());
 					
-					var textBit = mySketch.lastdrawn.widgetGroup.select("text");
-					var text = textBit.select("tspan").text();
-					expect(textBit.attr('x')).to.equal(xScale(.15).toString());
-					expect(textBit.attr('y')).to.equal(yScale(.35).toString());
-					expect(text).to.equal("blah");
+							var textBit = mySketch.lastdrawn.widgetGroup.select("text");
+							var text = textBit.select("tspan").text();
+							expect(textBit.attr('x')).to.equal(xScale(.15).toString());
+							expect(textBit.attr('y')).to.equal(yScale(.35).toString());
+							expect(text).to.equal("blah");
+						});
+					}, time);
 				});
 			});
 			
 			describe('move', function () {
-				before(function () {
+				before(function (done) {
 					mySketch.move(.1, .2, 0, 0);
+					
+					done();
 				});
-				it('should move the x and y position by the given offsets', function () {
-					var xScale = mySketch.lastdrawn.xScale;
-					var yScale = mySketch.lastdrawn.yScale;
+				it('should move the x and y position by the given offsets', function (done) {
+					setTimeout( function ()
+					{
+						check(done, function ()
+						{
+							var xScale = mySketch.lastdrawn.xScale;
+							var yScale = mySketch.lastdrawn.yScale;
 					
-					var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
-					expect(rectangle.attr('x')).to.equal(xScale(.3).toString());
-					expect(rectangle.attr('y')).to.equal(yScale(.7).toString());
+							var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
+							expect(rectangle.attr('x')).to.equal(xScale(.3).toString());
+							expect(rectangle.attr('y')).to.equal(yScale(.7).toString());
 					
-					var circle = mySketch.lastdrawn.widgetGroup.select("circle");
-					expect(circle.attr('cx')).to.equal(xScale(.6).toString());
-					expect(circle.attr('cy')).to.equal(yScale(.7).toString());
+							var circle = mySketch.lastdrawn.widgetGroup.select("circle");
+							expect(circle.attr('cx')).to.equal(xScale(.6).toString());
+							expect(circle.attr('cy')).to.equal(yScale(.7).toString());
 					
-					var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-					var points = hexpoints(.4, .5, .1, xScale, yScale);
-					expect(hexagon.attr('points')).to.equal(points);
+							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+							var points1 = hexpoints(.4, .5, .1, xScale, yScale);
+							expect(hexagon.attr('points')).to.equal(points1);
 					
-					var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-					points = tripoints(.5, .6, .2, xScale, yScale);
-					expect(triangle.attr('points')).to.equal(points);
+							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+							var points2 = tripoints(.5, .6, .2, xScale, yScale);
+							expect(triangle.attr('points')).to.equal(points2);
 					
-					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-					points = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale);
-					expect(wedge.attr('points')).to.equal(points);
+							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale);
+							expect(wedge.attr('points')).to.equal(points3);
 					
-					var line = mySketch.lastdrawn.widgetGroup.select("line");
-					expect(line.attr('x1')).to.equal(xScale(.2).toString());
-					expect(line.attr('y1')).to.equal(yScale(.3).toString());
-					expect(line.attr('x2')).to.equal(xScale(.2 + .5*Math.cos(Math.PI/3)).toString());
-					expect(line.attr('y2')).to.equal(yScale(.3 + .5*Math.sin(Math.PI/3)).toString());
+							var line = mySketch.lastdrawn.widgetGroup.select("line");
+							expect(line.attr('x1')).to.equal(xScale(.2).toString());
+							expect(line.attr('y1')).to.equal(yScale(.3).toString());
+							expect(line.attr('x2')).to.equal(xScale(.2 + .5*Math.cos(Math.PI/3)).toString());
+							expect(line.attr('y2')).to.equal(yScale(.3 + .5*Math.sin(Math.PI/3)).toString());
 					
-					var textBit = mySketch.lastdrawn.widgetGroup.select("text");
-					expect(textBit.attr('x')).to.equal(xScale(.25).toString());
-					expect(textBit.attr('y')).to.equal(yScale(.55).toString());
+							var textBit = mySketch.lastdrawn.widgetGroup.select("text");
+							expect(textBit.attr('x')).to.equal(xScale(.25).toString());
+							expect(textBit.attr('y')).to.equal(yScale(.55).toString());
+						});
+					}, time);
 				});
 			});
 			
 			describe('horizontal reflection', function () {
-				before(function () {
-					mySketch.reflect(null, .5, 0, 0);
+				before(function (done) {
+					mySketch.reflect(null, .6, 0, 0);
+					
+					done();
 				});
-				it('should reflect the sketch over a horizontal line', function () {
-					var xScale = mySketch.lastdrawn.xScale;
-					var yScale = mySketch.lastdrawn.yScale;
+				it('should reflect the sketch over a horizontal line', function (done) {
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var xScale = mySketch.lastdrawn.xScale;
+							var yScale = mySketch.lastdrawn.yScale;
 					
-					var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
-					expect(rectangle.attr('x')).to.equal(xScale(.3).toString());
-					expect(rectangle.attr('y')).to.equal(yScale(.4).toString());
+							var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
+							expect(rectangle.attr('x')).to.equal(xScale(.3).toString());
+							expect(rectangle.attr('y')).to.equal(yScale(.6).toString());
 					
-					var circle = mySketch.lastdrawn.widgetGroup.select("circle");
-					expect(circle.attr('cx')).to.equal(xScale(.6).toString());
-					expect(circle.attr('cy')).to.equal(yScale(.3).toString());
+							var circle = mySketch.lastdrawn.widgetGroup.select("circle");
+							expect(circle.attr('cx')).to.equal(xScale(.6).toString());
+							expect(circle.attr('cy')).to.equal(yScale(.5).toString());
 					
-					/* reflection of polygons needs to take into account that
-					the points get flipped */
+							/* reflection of polygons needs to take into account that
+							the points get flipped */
 					
-					/*var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-					var points = hexpoints(.4, .5, .1, xScale, yScale);
-					expect(hexagon.attr('points')).to.equal(points);
+							/*var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+							var points1 = hexpoints(.4, .5, .1, xScale, yScale);
+							expect(hexagon.attr('points')).to.equal(points1);
 					
-					var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-					var points = tripoints(.5, .4, .2, xScale, yScale);
-					expect(triangle.attr('points')).to.equal(points);
+							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+							var points2 = tripoints(.5, .4, .2, xScale, yScale);
+							expect(triangle.attr('points')).to.equal(points2);
 					
-					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-					points = wedgepoints(.3, .4, .5, .2, -Math.PI/6, xScale, yScale);
-					expect(wedge.attr('points')).to.equal(points);*/
+							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+							var points3 = wedgepoints(.3, .4, .5, .2, -Math.PI/6, xScale, yScale);
+							expect(wedge.attr('points')).to.equal(points3);*/
 					
-					var line = mySketch.lastdrawn.widgetGroup.select("line");
-					expect(line.attr('x1')).to.equal(xScale(.2).toString());
-					expect(line.attr('y1')).to.equal(yScale(.7).toString());
-					expect(line.attr('x2')).to.equal(xScale(.2 + .5*Math.cos(-Math.PI/3)).toString());
-					expect(line.attr('y2')).to.equal(yScale(.7 + .5*Math.sin(-Math.PI/3)).toString());
+							var line = mySketch.lastdrawn.widgetGroup.select("line");
+							expect(line.attr('x1')).to.equal(xScale(.2).toString());
+							expect(line.attr('y1')).to.equal(yScale(.9).toString());
+							expect(line.attr('x2')).to.equal(xScale(.2 + .5*Math.cos(-Math.PI/3)).toString());
+							expect(line.attr('y2')).to.equal(yScale(.9 + .5*Math.sin(-Math.PI/3)).toString());
 					
-					var textBit = mySketch.lastdrawn.widgetGroup.select("text");
-					expect(textBit.attr('x')).to.equal(xScale(.25).toString());
-					expect(textBit.attr('y')).to.equal(yScale(.45).toString());
+							var textBit = mySketch.lastdrawn.widgetGroup.select("text");
+							expect(textBit.attr('x')).to.equal(xScale(.25).toString());
+							expect(textBit.attr('y')).to.equal(yScale(.65).toString());
+						});
+					}, time);
 				});
 			});
 			
 			describe('vertical reflection', function () {
-				before(function () {
+				before(function (done) {
 					mySketch.reflect(.5, null, 0, 0);
+					
+					done();
 				});
-				it('should reflect the sketch over a vertical line', function () {
-					var xScale = mySketch.lastdrawn.xScale;
-					var yScale = mySketch.lastdrawn.yScale;
+				it('should reflect the sketch over a vertical line', function (done) {
+					setTimeout( function ()
+					{
+						check(done, function ()
+						{
+							var xScale = mySketch.lastdrawn.xScale;
+							var yScale = mySketch.lastdrawn.yScale;
 					
-					var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
-					expect(rectangle.attr('x')).to.equal(xScale(.5).toString());
-					expect(rectangle.attr('y')).to.equal(yScale(.4).toString());
+							var rectangle = mySketch.lastdrawn.widgetGroup.select("rect");
+							expect(rectangle.attr('x')).to.equal(xScale(.5).toString());
+							expect(rectangle.attr('y')).to.equal(yScale(.6).toString());
 					
-					var circle = mySketch.lastdrawn.widgetGroup.select("circle");
-					expect(circle.attr('cx')).to.equal(xScale(.4).toString());
-					expect(circle.attr('cy')).to.equal(yScale(.3).toString());
+							var circle = mySketch.lastdrawn.widgetGroup.select("circle");
+							expect(circle.attr('cx')).to.equal(xScale(.4).toString());
+							expect(circle.attr('cy')).to.equal(yScale(.5).toString());
 					
-					var line = mySketch.lastdrawn.widgetGroup.select("line");
-					expect(line.attr('x1')).to.equal(xScale(.8).toString());
-					expect(line.attr('y1')).to.equal(yScale(.7).toString());
-					expect(line.attr('x2')).to.equal(xScale(.8 + .5*Math.cos(-2*Math.PI/3)).toString());
-					expect(line.attr('y2')).to.equal(yScale(.7 + .5*Math.sin(-2*Math.PI/3)).toString());
+							var line = mySketch.lastdrawn.widgetGroup.select("line");
+							expect(line.attr('x1')).to.equal(xScale(.8).toString());
+							expect(line.attr('y1')).to.equal(yScale(.9).toString());
+							expect(line.attr('x2')).to.equal(xScale(.8 + .5*Math.cos(-2*Math.PI/3)).toString());
+							expect(line.attr('y2')).to.equal(yScale(.9 + .5*Math.sin(-2*Math.PI/3)).toString());
 					
-					var textBit = mySketch.lastdrawn.widgetGroup.select("text");
-					expect(textBit.attr('x')).to.equal(xScale(.75).toString());
-					expect(textBit.attr('y')).to.equal(yScale(.45).toString());
+							var textBit = mySketch.lastdrawn.widgetGroup.select("text");
+							expect(textBit.attr('x')).to.equal(xScale(.75).toString());
+							expect(textBit.attr('y')).to.equal(yScale(.65).toString());
+						});
+					}, time);
 				});
 			});
 			
 			describe('make invisible', function () {
-				before(function () {
+				before(function (done) {
 					mySketch.setOpacity(0, 0, 0);
+					
+					done();
 				});
-				it('should set the opacity to 0', function () {
-					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
-					expect(sketch.style('opacity')).to.equal('0');
+				it('should set the opacity to 0', function (done) {
+					setTimeout( function ()
+					{
+						check(done, function ()
+						{
+							var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
+							expect(sketch.style('opacity')).to.equal('0');
+						});
+					}, time);
 				});
 			});
 			
 			describe('make visible', function () {
-				before(function () {
+				before(function (done) {
 					mySketch.setOpacity(1, 0, 0);
+					
+					done();
 				});
-				it('should set the opacity to 1', function () {
-					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
-					expect(sketch.style('opacity')).to.equal('1');
+				it('should set the opacity to 1', function (done) {
+					setTimeout( function ()
+					{
+						check(done, function ()
+						{
+							var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
+							expect(sketch.style('opacity')).to.equal('1');
+						});
+					}, time);
 				});
 			});
 			
 			describe('change color', function () {
-				before(function () {
+				before(function (done) {
 					mySketch.setColor("blue", 0, 0);
+					
+					done();
 				});
-				it('should change the color of the sketch', function () {
-					var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
-					expect(sketch.style('stroke')).to.equal('#0000ff');
+				it('should change the color of the sketch', function (done) {
+					setTimeout( function ()
+					{
+						check(done, function ()
+						{
+							var sketch = mySketch.lastdrawn.widgetGroup.selectAll("g.shape");
+							expect(sketch.style('stroke')).to.equal('#0000ff');
 					
-					var textBit = mySketch.lastdrawn.widgetGroup.select("text");
-					expect(textBit.style('fill')).to.equal('#0000ff');
+							var textBit = mySketch.lastdrawn.widgetGroup.select("text");
+							expect(textBit.style('fill')).to.equal('#0000ff');
 					
-					var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-					expect(wedge.style('fill')).to.equal('#0000ff');
+							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+							expect(wedge.style('fill')).to.equal('#0000ff');
+						});
+					}, time);
 				});
 			});
 		});
@@ -369,4 +424,16 @@ function wedgepoints(x, y, len, wid, ang, xScale, yScale)
 				(round(xpos).toString()+","+round(ypos).toString())+" "+
 				(round(tip2x).toString()+","+round(tip2y).toString());
 	return points;
+}
+function check(done, f)
+{
+	try
+	{
+    	f();
+    	done();
+  	} 
+	catch(e)
+	{
+    	done(e);
+  	}
 }
