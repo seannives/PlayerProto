@@ -74,10 +74,12 @@
 				configCntr.node && configCntr.node.remove();
 			});
 			
+			var mySketch = null;
+			
 			before(function ()
 			{
 				// make the sketch
-				var mySketch = new Sketch ({
+				mySketch = new Sketch ({
 					id: "sketch1",
 					drawShape:
 					[
