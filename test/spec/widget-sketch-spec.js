@@ -73,8 +73,6 @@
 					maxHt: 200
 				};
 			
-			var time = 20;	// number of milliseconds for each timeout
-			
 			// make svg container
 			var cntr = helper.createNewSvgContainer(configCntr);
 			
@@ -121,9 +119,13 @@
 				than their center.
 				
 				- Transitions on sketches are asynchronous, so timeouts are necessary to
-				keep new transitions from overriding older ones.
+				keep new transitions from overriding older ones. If there is an unexpected
+				and/or random test failure, try increasing the timeout value defined below.
 			*/
+			var time = 20;	// number of milliseconds for each timeout
 			
+			
+			// draw
 			describe('draw', function ()
 			{
 				before(function (done)
@@ -168,7 +170,7 @@
 						check(done, function ()
 						{
 							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-							var points1 = hexpoints(.3, .3, .1, xScale, yScale);
+							var points1 = hexpoints(.3, .3, .1, xScale, yScale, null, null);
 							expect(hexagon.attr('points')).to.equal(points1);
 						});
 					}, time);
@@ -180,7 +182,7 @@
 						check(done, function ()
 						{
 							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-							var points2 = tripoints(.4, .4, .2, xScale, yScale);
+							var points2 = tripoints(.4, .4, .2, xScale, yScale, null, null);
 							expect(triangle.attr('points')).to.equal(points2);
 						});
 					}, time);
@@ -192,7 +194,7 @@
 						check(done, function ()
 						{
 							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-							var points3 = wedgepoints(.2, .4, .5, .2, Math.PI/6, xScale, yScale);
+							var points3 = wedgepoints(.2, .4, .5, .2, Math.PI/6, xScale, yScale, null, null);
 							expect(wedge.attr('points')).to.equal(points3);
 						});
 					}, time);
@@ -228,6 +230,7 @@
 			});
 			
 			
+			// move
 			describe('move', function ()
 			{
 				before(function (done)
@@ -270,7 +273,7 @@
 						check(done, function ()
 						{
 							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-							var points1 = hexpoints(.4, .5, .1, xScale, yScale);
+							var points1 = hexpoints(.4, .5, .1, xScale, yScale, null, null);
 							expect(hexagon.attr('points')).to.equal(points1);
 						});
 					}, time);
@@ -282,7 +285,7 @@
 						check(done, function ()
 						{
 							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-							var points2 = tripoints(.5, .6, .2, xScale, yScale);
+							var points2 = tripoints(.5, .6, .2, xScale, yScale, null, null);
 							expect(triangle.attr('points')).to.equal(points2);
 						});
 					}, time);
@@ -294,7 +297,7 @@
 						check(done, function ()
 						{
 							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale);
+							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale, null, null);
 							expect(wedge.attr('points')).to.equal(points3);
 						});
 					}, time);
@@ -327,6 +330,8 @@
 				});
 			});
 			
+			
+			// horizontal reflection
 			describe('horizontal reflection', function ()
 			{
 				before(function (done)
@@ -363,13 +368,44 @@
 					}, time);
 				});
 				
+				it('hexagons should be reflected over the horizontal line', function (done)
+				{
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+							var points1 = hexpoints(.4, .5, .1, xScale, yScale, null, .6);
+							expect(hexagon.attr('points')).to.equal(points1);
+						});
+					});
+				});
 				
-				it('hexagons should be reflected over the horizontal line');
+				it('triangles should be reflected over the horizontal line', function (done)
+				{
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+							var points2 = tripoints(.5, .6, .2, xScale, yScale, null, .6);
+							expect(triangle.attr('points')).to.equal(points2);
+						});
+					});
+				});
 				
-				it('triangles should be reflected over the horizontal line');
-				
-				it('wedges should be reflected over the horizontal line');
-				
+				it('wedges should be reflected over the horizontal line', function (done)
+				{
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale, null, .6);
+							expect(wedge.attr('points')).to.equal(points3);
+						});
+					});
+				});
 				
 				it('lines should be reflected over the horizontal line', function (done)
 				{
@@ -399,6 +435,8 @@
 				});
 			});
 			
+			
+			// vertical reflection
 			describe('vertical reflection', function ()
 			{
 				before(function (done)
@@ -435,13 +473,44 @@
 					}, time);
 				});
 				
+				it('hexagons should be reflected over the vertical line', function (done)
+				{
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
+							var points1 = hexpoints(.4, .5, .1, xScale, yScale, .5, .6);
+							expect(hexagon.attr('points')).to.equal(points1);
+						});
+					});
+				});
 				
-				it('hexagons should be reflected over the vertical line');
+				it('triangles should be reflected over the vertical line', function (done)
+				{
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
+							var points2 = tripoints(.5, .6, .2, xScale, yScale, .5, .6);
+							expect(triangle.attr('points')).to.equal(points2);
+						});
+					});
+				});
 				
-				it('triangles should be reflected over the vertical line');
-				
-				it('wedges should be reflected over the vertical line');
-				
+				it('wedges should be reflected over the vertical line', function (done)
+				{
+					setTimeout( function ()
+					{
+						check( done, function ()
+						{
+							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
+							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale, .5, .6);
+							expect(wedge.attr('points')).to.equal(points3);
+						});
+					});
+				});
 				
 				it('lines should be reflected over the vertical line', function (done)
 				{
@@ -471,6 +540,8 @@
 				});
 			});
 			
+			
+			// make invisible
 			describe('make invisible', function ()
 			{
 				before(function (done)
@@ -492,6 +563,8 @@
 				});
 			});
 			
+			
+			// make visible
 			describe('make visible', function ()
 			{
 				before(function (done)
@@ -513,6 +586,8 @@
 				});
 			});
 			
+			
+			// change color
 			describe('change color', function ()
 			{
 				before(function (done)
@@ -539,32 +614,74 @@
 					}, time);
 				});
 			});
+			
+			
 		});
     });
 })();
 
-// figure out correct point string for a hexagon
-function hexpoints (x, y, side, xScale, yScale)
-{	
+// figure out point string
+// xLine and yLine should both be null if reflection not wanted
+function hexpoints(x, y, side, xScale, yScale, xLine, yLine)
+{
 	// create an array of points representing a hexagon
 	var points = Sketch.createHexagon(x, y, side);
+	
+	var i;
+	for (i = 0; i < points.length; i++)
+	{
+		if (xLine != null)
+		{
+			points[i][0] = Sketch.reflectValue(points[i][0], xLine);
+		}
+		if (yLine != null)
+		{
+			points[i][1] = Sketch.reflectValue(points[i][1], yLine);
+		}
+	}
 	
 	// return the point string
 	return Sketch.pointString(points, xScale, yScale);
 }
 // figure out correct point string for a triangle
-function tripoints (x, y, side, xScale, yScale)
+function tripoints (x, y, side, xScale, yScale, xLine, yLine)
 {	
 	// create an array of points representing a triangle
 	var points = Sketch.createTriangle(x, y, side);
 	
+	var i;
+	for (i = 0; i < points.length; i++)
+	{
+		if(xLine != null)
+		{
+			points[i][0] = Sketch.reflectValue(points[i][0], xLine);
+		}
+		if(yLine != null)
+		{
+			points[i][1] = Sketch.reflectValue(points[i][1], yLine);
+		}
+	}
+	
 	// return the point string
 	return Sketch.pointString(points, xScale, yScale);
 }
-function wedgepoints(x, y, len, wid, ang, xScale, yScale)
+function wedgepoints(x, y, len, wid, ang, xScale, yScale, xLine, yLine)
 {	
 	// create an array of points representing a wedge
 	var points = Sketch.createWedge(x, y, wid, len, ang);
+	
+	var i;
+	for (i = 0; i < points.length; i++)
+	{
+		if(xLine != null)
+		{
+			points[i][0] = Sketch.reflectValue(points[i][0], xLine);
+		}
+		if(yLine != null)
+		{
+			points[i][1] = Sketch.reflectValue(points[i][1], yLine);
+		}
+	}
 	
 	// return the point string		
 	return Sketch.pointString(points, xScale, yScale);
