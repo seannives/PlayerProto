@@ -111,9 +111,13 @@
                 expect(myRadioGroup.choices[3]).to.not.have.property('key');
             });
 
-            it('should leave existing keys on images unchanged', function () {
+            it('should leave existing keys on choices unchanged', function () {
                 expect(myRadioGroup.choices[1]).to.have.property('key', 'foo').that.is.a('string');
             });
+
+			it('should have the eventManager given to the constructor', function () {
+                expect(myRadioGroup.eventManager).to.equal(eventManager);
+			});
 
 			it('should have an uninitialized lastdrawn property', function () {
                 expect(myRadioGroup.lastdrawn).to.have.property('container').that.is.null;
@@ -148,7 +152,6 @@
 						expect(myRadioGroup.lastdrawn.widgetGroup.node()).to.deep.equal(last.node());
 					});
 
-					// todo: Implement this test. -mjl
 					it('should create a table w/ a row for each choice', function () {
 						/*
 						 div.widgetRadioGroup
@@ -190,12 +193,24 @@
 					});
 				});
 
-				describe.skip('.selectItemAtIndex()', function () {
+				describe('.selectItemAtIndex()', function () {
 					it('should publish the radiogroup.selectedEventId with the answer key of the item at that index', function () {
 						var prevSelectEventCount = selectEventCount;
 						myRadioGroup.selectItemAtIndex(1);
 						expect(selectEventCount).is.equal(prevSelectEventCount + 1);
-						expect(lastSelectEventDetails.selectKey).is.equal('foo');
+						expect(lastSelectEventDetails.selectKey).is.equal('ans2');
+					});
+
+					it('should change the selection when selecting an unselected item', function() {
+						// Arrange - item 1 is selected
+						myRadioGroup.selectItemAtIndex(1);
+						var prevSelectEventCount = selectEventCount;
+						lastSelectEventDetails = null;
+						// Act - change the selection to item 2
+						myRadioGroup.selectItemAtIndex(2);
+						// Assert - select event was published
+						expect(selectEventCount, "select event count").is.equal(prevSelectEventCount + 1);
+						expect(lastSelectEventDetails.selectKey).is.equal('ans3');
 					});
 
 					it('should do nothing when selecting an already selected item (no event)', function() {
@@ -208,6 +223,35 @@
 						// Assert - select event was not published
 						expect(selectEventCount, "select event count").is.equal(prevSelectEventCount);
 						expect(lastSelectEventDetails).to.be.null;
+					});
+
+					it.skip('MANUAL TEST: should publish selectedEventId when selection is made w/ mouse or keyboard', function() {
+					});
+				});
+
+				describe('.selectedItem()', function () {
+					before(function () {
+						cntrNode && cntrNode.remove();
+						cntrNode = helper.createNewDiv();
+						myRadioGroup.draw(d3.select(cntrNode));
+					});
+
+					it('should return null when no item is selected', function () {
+						expect(myRadioGroup.selectedItem()).to.be.null;
+					});
+
+					it('should return the selected choice, even after the choice has been changed', function () {
+						// 1st selection
+						myRadioGroup.selectItemAtIndex(1);
+						expect(myRadioGroup.selectedItem()).is.deep.equal(myRadioGroup.choices[1]);
+
+						// 2nd selection is after the current selection
+						myRadioGroup.selectItemAtIndex(3);
+						expect(myRadioGroup.selectedItem()).is.deep.equal(myRadioGroup.choices[3]);
+
+						// 3rd selection is before the current selection
+						myRadioGroup.selectItemAtIndex(0);
+						expect(myRadioGroup.selectedItem()).is.deep.equal(myRadioGroup.choices[0]);
 					});
 				});
 			});	
