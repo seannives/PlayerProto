@@ -316,7 +316,7 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 		{
 			if (d.type == "hash")
 			{
-				var mask = sketchContainer.select("defs").select("mask");
+				var mask = sketchContainer.select("#" + d.maskid);
 				var lines = mask.selectAll("line");
 				
 				var ratio = .9;
