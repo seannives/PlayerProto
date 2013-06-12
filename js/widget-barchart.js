@@ -121,7 +121,7 @@ function BarChart(config, eventManager)
 			yScale: null,
 			groupScale: null,
 			bandsize: null,
-			traces: null,
+			bars: null,
 			graph: null,
 		};
 		
@@ -279,8 +279,6 @@ BarChart.prototype.draw = function(container, size)
 	// Draw any 'after' child widgets that got appended after draw was called
 	this.childWidgets.afterData.forEach(this.drawWidget_, this);
 	
-	
-
 }; // end of barChart.draw()
 
 
@@ -376,7 +374,17 @@ BarChart.prototype.redrawWidget_ = function (widget)
 	//on redraw, get rid of any series which now have no data
 	barSeries.exit().remove();  
 
+	// autokey entries which have no key with the data index for highlighting
+	// can't use the y label because it might contain spaces. 
+	barSeries.each(function (d, i) { 
+					// if there is no key assigned, make one from the index
+					d.key = 'key' in d ? d.key : i.toString();
+					});
 	//If it's a grouped barchart, shimmie out the bars by group
+	//Bars will be thinner and the group will be centered around
+	//the ordinal label. The whole series can be shifted up or down 
+	//according to it's order.  TODO: make these sortable by max or
+	//min value for any group label
 	if (this.type == "grouped")
 	{
 		barSeries.attr("transform", function(d, i) {
@@ -399,16 +407,9 @@ BarChart.prototype.redrawWidget_ = function (widget)
 	bars.enter()
 		.append("g")
 			.attr("class", "bar")
-			//todo: check the dom to verify that a null value for an attribute does not create that attribute -mjl
-			.append("rect")
-			;
+			.append("rect");
 			
-	// autokey entries which have no key with the data index for highlighting
-	// can't use the y label because it might contain spaces. -lb
-	bars.each(function (d, i) { 
-					// if there is no key assigned, make one from the index
-					d.key = 'key' in d ? d.key : i.toString();
-					});
+	// TODO: figure out a strategy for highlighting and selecting individual bars -lb 
 
 	bars.attr("transform",
 				  function(d)
@@ -432,6 +433,16 @@ BarChart.prototype.redrawWidget_ = function (widget)
 				  return (d.x < 0) ? xScale(0) - xScale(d.x)
 								   : xScale(d.x) - xScale(0);
 			  });
+			  
+	
+	bars.on('click',
+				function (d, i)
+				{
+					that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
+				});
+				
+	//do a clean selection of the drawn data to store for the object properties
+	this.lastdrawn.bars = graph.selectAll("g.series");
 
 }
 
@@ -513,4 +524,45 @@ BarChart.prototype.append_one_ = function(widget, zOrder)
 			this.drawWidget_(widget);
 	}
 		
-}; // end of BarChart.append_one_()
+} // end of BarChart.append_one_()
+
+
+/* **************************************************************************
+ * BarChart.lite                                                      *//**
+ *
+ * Highlight the members of the collection associated w/ the given liteKey (key) and
+ * remove any highlighting on all other labels.
+ *
+ * @param {string}	liteKey	-The key associated with the label(s) to be highlighted.
+ *
+ ****************************************************************************/
+BarChart.prototype.lite = function(liteKey)
+{
+	
+	console.log("TODO: log fired BarChart highlite " + liteKey);
+	
+	// Turn off all current highlights
+	var allBars = this.lastdrawn.bars;
+	allBars
+		.classed("lit", false);
+		
+	//var allSeries = this.lastdrawn.series;
+	//allSeries
+		//.classed("lit", false);
+
+	// create a filter function that will match all instances of the liteKey
+	// then find the set that matches
+	var matchesKey = function (d, i) { return d.key === liteKey; };
+	
+	var barsToLite = allBars.filter(matchesKey);
+
+	// Highlight the labels w/ the matching key
+	barsToLite
+		.classed("lit", true);
+
+	if (barsToLite.empty())
+	{
+		console.log("No key '" + liteKey + "' in bar chart " + this.id );
+	}
+
+};
