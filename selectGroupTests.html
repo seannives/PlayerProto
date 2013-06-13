@@ -25,7 +25,9 @@
 				</div>
 				<div><p>1. Multiple Choice dropdown question, randomized</p></div>
 				<div id="selectRnd"><p>2. Multiple Choice dropdown question, nonrandomized</p></div>
-                
+                <div id="selectEvents"><p>3. Multiple Choice dropdown selector as UI (events)</p>
+                </div>
+                <div id="seaImages"></div>
 			</div>
 			<div class="span6 rightCol">
 				<div id="graphIn"><p>4. Dropdowns on top of image (labeling)</p></div>
@@ -43,13 +45,11 @@
 	<script src="js/eCourse-master.js"></script>
     <script src="js/eventmanager.js"></script>
 	<script src="js/d3.v3.min.js"></script>
-
-	<!--script src="js/goog.base.js"></script>
-	<script src="js/widget-axes.js"></script-->
-
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-selectgroup.js"></script>
-
+    <script src="js/widget-image.js"></script>
+    <script src="js/widget-carousel.js"></script>
+	<script src="js/widget-imageviewer.js"></script>
 <script>
 
 	var eventManager = new EventManager();
@@ -82,16 +82,98 @@
 							eventDetails.selectValue);
 							});
 							
-	var Q1 = new SelectGroupQuestion({
+	/*var Q1 = new SelectGroupQuestion({
 			id: "Q1",
 			question: "A wire of shorter length has" + selector2 + " resistance as a wire of greater length.",
 			choices: selector2.choices,
 			type: "randomized", //default, even if not specified
 	});
 	
-	Q1.draw(d3.select("#selectRnd"));
+	Q1.draw(d3.select("#selectRnd")); */
 	
+     //<div id="selectEvents"><p>3. Multiple Choice dropdown selector as UI (events)</p></div>
+//////////////////////////////////////////////
+/* temperature images in a carousel		*/
+//////////////////////////////////////////////*
 
+var profiles = new SelectGroup(
+		{	id: "seas",
+			choices: [
+			{
+			content: "Sea Surface Temperature",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "wrong1",
+			},
+			{
+       		content: "Sea Height Anomoly",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "correct",
+ 			},
+			{
+			content: "Depth to 26&deg;C Isotherm",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "wrong2",
+			},
+			{
+			content: "Tropical Cyclone Heat Potential",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "wrong2",
+			}]
+			
+		}, eventManager);
+		
+	profiles.draw(d3.select("#selectEvents"));
+							
+var svg3D = new SVGContainer({
+		node: d3.select("#seaImages"),
+		maxWid: 600,
+		maxHt: 600
+	});
+	
+var layers = new ImageViewer({
+		items:
+			[
+				new Image({
+				URI: 'img/seaTempSeries/gom_sst_26aug2005_260.jpg',
+				caption: "",
+				actualSize: {height: 288, width: 435}
+				}),
+				new Image({
+				URI: 'img/seaTempSeries/gom_sha_26aug2005_260.jpg',
+				caption: "",
+				actualSize: {height: 288, width: 435}
+				}),
+				new Image({
+				URI: 'img/seaTempSeries/gom_26.c_26aug2005_260.jpg',
+				caption: "",
+				actualSize: {height: 288, width: 435}
+				}),
+				new Image({
+				URI: 'img/seaTempSeries/gom_tchp_26aug2005_260.jpg',
+				caption: "",
+				actualSize: {height: 288, width: 435}
+				})
+			],
+	}, eventManager);
+
+svg3D.append(layers);
+							
+
+eventManager.subscribe(profiles.changedValueEventId, carouselUpdate);
+eventManager.subscribe(layers.selectedEventId, dropdownUpdate);
+
+function carouselUpdate (eventDetails)
+{
+	 
+	layers.selectItemAtIndex(eventDetails.selectedIndex);
+}
+
+function dropdownUpdate ()
+{
+	var newImage = layers.selectedItem();
+	var newval = layers.itemKeyToIndex(newImage.key);
+	profiles.setSelectedIndex(newval);
+}
 	
 /************************************************************************
 * handleSubmit	                                           *//**
