@@ -71,8 +71,8 @@
 						expect(myGraph.lastdrawn.xScale(0)).to.equal(0);
 					});
 
-					 it('should make a group in svg with barId', function () {
-						expect(myGraph.lastdrawn.graph.attr("id")).to.equal(myGraph.lastdrawn.linesId);
+					 it('should make a group in svg with barsId', function () {
+						expect(myGraph.lastdrawn.graph.attr("id")).to.equal(myGraph.lastdrawn.barsId);
 					});
 				});
 			});	
