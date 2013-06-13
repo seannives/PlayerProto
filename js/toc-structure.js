@@ -180,6 +180,12 @@ var bookConfig = {
                 id: "n.4.1",
                 title: "Multiple Choice Tests"
             },
+			{
+                type: "objective",
+                url: "selectGroupTests.html",
+                id: "n.4.1a",
+                title: "Dropdown Selection Multiple Choice Tests"
+            },
             {
                 type: "objective",
                 url: "labelScoreTests.html",
