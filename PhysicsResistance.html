@@ -32,21 +32,13 @@
 				
                 <div class="form-actions"> 
                 	<p>A wire of greater cross-section has 
-					<select>
-    					<option>smaller</option>
-        				<option>greater</option>
-        				<option>the same</option>
-    				</select>  resistance as a wire of smaller cross section.
+					<span id="resCross"></span> resistance as a wire of smaller cross section.
                   	</p>
                 	<button class="btn-primary">Check it!</button>
 				</div>
                  <div class="form-actions"> 
                  	<p>A wire of shorter length has 
-					<select>
-    					<option>smaller</option>
-        				<option>greater</option>
-        				<option>the same</option>
-    				</select>  resistance as a wire of greater length.
+					<span id="resLength"></span> resistance as a wire of greater length.
 					</p>
                 <button class="btn-primary">Check it!</button>
 				</div>
@@ -87,6 +79,7 @@
     <script src="js/widget-callouts.js"></script>
     <script src="js/widget-numeric.js"></script>
     <script src="js/widget-sketch.js"></script>
+    <script src="js/widget-selectgroup.js"></script>
 	<script src="js/eventmanager.js"></script>
 
 	<script>
@@ -98,6 +91,60 @@
 	//that must talk to it.
 	var eventManager = new EventManager();
 	
+	// Select widget config
+	var selector1 = new SelectGroup(
+		{
+			choices: [
+			{
+			content: "smaller",
+			response: "More area allows more room for electrons to move through.",
+			answerKey: "correct",
+			},
+			{
+       		content: "greater",
+			response: "More area allows more room for electrons to move through.",
+			answerKey: "wrong1",
+ 			},
+			{
+			content: "the same",
+			response: "More area allows more room for electrons to move through.",
+			answerKey: "wrong2",
+			}]
+		}, eventManager);
+		
+	selector1.draw(d3.select("#resCross"));
+	
+	var selector2 = new SelectGroup(
+		{	id: "foobar",
+			choices: [
+			{
+			content: "smaller",
+			response: "Longer length requires more potential to move electrons across.",
+			answerKey: "wrong1",
+			},
+			{
+       		content: "greater",
+			response: "Longer length requires more potential to move electrons across.",
+			answerKey: "correct",
+ 			},
+			{
+			content: "approximately the same",
+			response: "Longer length requires more potential to move electrons across.",
+			answerKey: "wrong2",
+			}]
+		}, eventManager);
+		
+	selector2.draw(d3.select("#resLength"));
+	
+	// Handle dropdown changes
+	eventManager.subscribe(selector1.changedValueEventId,
+							function(eventDetails){ 
+								alert(eventDetails.selectValue);
+							});
+	eventManager.subscribe(selector2.changedValueEventId,
+							function(eventDetails){ alert(
+							eventDetails.selectValue);
+							console.log(document.getElementsByName("foobar")[0].selectedIndex);});
 	
 	// Create the callout array, which also emits events so you 
 	//can click on the table row to highlight the labels.  
