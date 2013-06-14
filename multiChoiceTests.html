@@ -21,6 +21,12 @@
 				<div><p>0. Radio button w/ 4 answers</p>
 					<p>Q1: Why?</p>
 					<div id="rb-test" style="margin: 0 0 15px 15px;"/>
+						<p>In order to manually test that selecting an answer correctly
+						publishes the selected event, we have an event handler that displays
+						the answer key of the selection. It should change as you manually
+						select an answer.</p>
+						<p>The answer key selected is: <b id="rb-test-key">none</b>.</p>
+						<p id="rb-test-resp"/>
 				</div>
 				<div id="radioRnd"><p>1. Multiple Choice question, randomized</p></div>
 				<div id="radioOrd"><p>2. Multiple Choice question, nonrandomized</p></div>
@@ -28,7 +34,7 @@
 
 			</div>
 			<div class="span6 rightCol">
-				<div id="graphIn"><p>4. Graphs as responsesn (radio buttons containing widgets)</p></div>
+				<div id="graphIn"><p>4. Graphs as responses (radio buttons containing widgets)</p></div>
 				<div id="graphIn"><p>5. Traces as responses (choose a trace)</p></div>
 	
 			</div>
@@ -49,6 +55,7 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-radiogroup.js"></script>
+	<script src="js/widget-selectonequestion.js"></script>
 
 <script>
 
@@ -83,15 +90,28 @@
 			id: "RG1",
 			choices: Q1Choices,
 			numberFormat: "number"
-		});
+		}, eventManager);
+		
 
 	radioButtons.draw(d3.select("#rb-test"));
 
-	var Q1 = new RadioGroupQuestion({
+	// Manual test that making a selection on the radio group fires the selectedEventId
+	var handle_radioButtons_selected = function (eventDetails)
+	{
+		d3.select("#rb-test-key").text(eventDetails.selectKey);
+		d3.select("#rb-test-resp").text(radioButtons.selectedItem().response);
+	};
+
+	eventManager.subscribe(radioButtons.selectedEventId, handle_radioButtons_selected);
+
+	// Test a select one question using a radio group widget
+	var Q1 = new SelectOneQuestion({
 			id: "Q1",
 			question: "Wherefore?",
 			choices: Q1Choices,
-			type: "randomized", //default, even if not specified
+			type: "randomized",
+			widget: RadioGroup,
+			widgetConfig: { numberFormat: "latin-upper" },
 	});
 	
 	Q1.draw(d3.select("#radioRnd"));

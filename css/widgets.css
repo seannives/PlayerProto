@@ -1,8 +1,6 @@
 /*
 * Axes, markers, ticks, and other graph styling
-* required for eCourses/Neff.
-* 1/15/2013 LBondaryk
-* adding math styling
+* required for San/Van.
 */
 
 /* highlights                                      
@@ -264,18 +262,6 @@ table.questionTable td {
   text-align:right;
 }
 
-.legendLabel {
-  font: 0.85em/1.1em HelveticaNeue-Light,HelveticaNeue,Helvetica, Arial, Lucida Grande, sans-serif;
-  color: #000; 
-  text-align: left;
-  padding: 2px;
-}
-
-.legendBox {
-  fill: #fff;
-  stroke: #3A87AD;
-  stroke-width: 1px;
-}
 
 /* todo: double check if it is still used anywhere -mjl */
 .numSteps {
@@ -387,22 +373,13 @@ table.questionTable td {
   padding: .2em;
   margin: .2em; }
 
-.legendLabel {
-  font: .85em/1.1em;
-  color: #000;
-  text-align: left;
-  padding: 2px; }
-
-.legendBox {
-  fill: #fff;
-  stroke: #3A87AD;
-  stroke-width: 1px; }
 
 
 /* LineGraph and legends highlights and styles
 ================================================== */
 
-svg g.widgetLineGraph .traces 
+svg g.widgetLineGraph .traces,
+svg g.widgetLegend .traces 
 {
   opacity:		0.8;
   fill: none;
@@ -410,10 +387,29 @@ svg g.widgetLineGraph .traces
 }
 
 svg g.widgetLineGraph .traces.lit,
-svg g.widgetLineGraph .traces.selected    
+svg g.widgetLineGraph .traces.selected,    
+svg g.widgetLegend .lit .traces
 {
 	opacity:		1;
 	stroke-width:	5;
+}
+
+svg g.widgetLegend .legendLabel {
+  font: 0.9em/1.1em HelveticaNeue-Light,HelveticaNeue,Helvetica, Arial, Lucida Grande, sans-serif;
+  color: #000; 
+  text-align: left;
+  padding: 2px;
+}
+
+svg g.widgetLegend .lit>text
+{
+	font-weight: bold;
+}
+
+svg g.widgetLegend .legendBox {
+  fill: #fff;
+  stroke: #3A87AD;
+  stroke-width: 1px;
 }
 
 svg g .stroke0 {
@@ -439,8 +435,13 @@ svg g .stroke6 {
 
 /* bars, lines and points
 ================================================== */
-.bar {
+svg g.widgetBarChart rect,
+svg g.widgetLegend rect {
   opacity: 0.8; }
+
+svg g.widgetBarChart rect .lit {
+  opacity: 1;
+  }
 
 
 svg g .fill0 {
@@ -475,25 +476,6 @@ svg g .fillBlack {
 svg g .fillNone {
   fill: none;
 }
-/* zoom and pan widget 
-================================================== */
-g.context g.axis path {
-  stroke-opacity: 0; }
-
-g.context g.axis line {
-  stroke-opacity: .1; }
-
-g.context g.brush rect.background {
-  fill: rgba(0, 0, 0, 0.1); }
-
-.brush .extent {
-  stroke: #fff;
-  fill-opacity: .125;
-  shape-rendering: crispEdges; }
-
-g.context rect.background {
-  fill: #c8c8ff;
-  visibility: visible !important; }
 
 /* tables of data and readouts
 ================================================== */

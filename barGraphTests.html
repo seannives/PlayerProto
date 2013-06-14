@@ -23,7 +23,7 @@
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50"><p>3. Double-sided pyramid bar graph (negatives)</p></div>
-				<div id="widgetTarget55"><p>4. Double-sided bar graph (double positive axis)</p></div>
+				<div id="widgetTarget55"><p>4. Double-sided bar graph (double positive axis) <span style="color: red">BUG: these shove the bars up too high on the graph, will fix when specified for content</span></p></div>
 				<div id="widgetTarget70"><p>5. Small multiples (several line graphs in container)</p></div>
 				<div id="widgetTarget80"><p>6. bar with Legend</p></div>
 			</div>
@@ -37,11 +37,10 @@
 	<script src="js/toc-structure.js"></script>    
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v3.min.js"></script>
-
-
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-barchart.js"></script>
 	<script src="js/widget-legend.js"></script>
+    <script src="js/eventmanager.js"></script>
 <script>
 
 var highIncome = [
@@ -177,7 +176,6 @@ var ordinalData2 = [
 			maxHt: 300
 		});
 	var newBar0 = new BarChart({
-			id: "bc0",
 			Data: [ordinalData], 
 			xAxisFormat: { type: "linear",
 						   ticks: 4,
@@ -227,7 +225,7 @@ var ordinalData2 = [
 			yAxisFormat: { type: "ordinal",
 						   orientation: "left",
 						   }
-		});		
+		},eventManager);		
 	newGroup.append(barGroup, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
 	
@@ -326,6 +324,7 @@ var ordinalData2 = [
 	
 	
 	//	<div id="widgetTarget80"><p>6. Bars with Legend</p></div>
+	var eventManager = new EventManager();
 	var svg5 = new SVGContainer(
 		{node: d3.select("#widgetTarget80"),
 		maxWid: 500,
@@ -336,15 +335,49 @@ var ordinalData2 = [
 	
 	var legBar = new Legend({
 		xPos: "right", yPos: "top",
-		labels: ["low income", "middle income", "high income"],
+		labels: [
+			{content: "low income"}, 
+			{content: "middle income"}, 
+			{content: "high income"}],
 		type: "box"
-	});
+	},eventManager);
 	
 	//I can write the same defined widget above into a new SVG container, but only if 
 	//I give it a new ID first.
 	barGroup.id = "foo";
-	svg5.append([barGroup,legBar], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-
+	
+	svg5.append(barGroup);
+	barGroup.append(legBar,{topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, 		
+	widthPercent: 1});
+	
+	eventManager.subscribe(legBar.selectedEventId,
+						   handleSelectionChanged);
+	eventManager.subscribe(barGroup.selectedEventId,
+						   handleSelectionChanged);
+	handleSelectionChanged({selectKey: "0"});
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		barGroup.lite(eventDetails.selectKey);
+		legBar.lite(eventDetails.selectKey);
+		
+	}					   
+						   
 	
 </script>
 </body>

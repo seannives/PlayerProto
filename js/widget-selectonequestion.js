@@ -1,8 +1,8 @@
 /* **************************************************************************
- * $Workfile:: widget-radiogroup.js                                         $
+ * $Workfile:: widget-selectonequestion.js                                  $
  * **********************************************************************//**
  *
- * @fileoverview Implementation of the RadioGroup widget.
+ * @fileoverview Implementation of the SelectOneQuestion widget.
  *
  * The RadioGroup widget draws a list of choices and allows the user to
  * select one of the choices.
@@ -54,8 +54,11 @@
 	var rbqConfig =
 	{
 		id: "Q1",
+		question: "Why?",
 		choices: Q1Choices,
 		type: "randomized", //default, even if not specified
+		widget: RadioGroup,
+		widgetConfig: { numberFormat: "latin-upper" } // id and choices will be added by SelectOneQuestion
 	};
 });
 
@@ -78,7 +81,7 @@
 
 
 /* **************************************************************************
- * RadioGroup                                                           *//**
+ * SelectOneQuestion                                                    *//**
  *
  * The RadioGroup widget draws a list of choices and allows the user to
  * select one of the choices.
@@ -86,12 +89,12 @@
  * @constructor
  * @implements {IWidget}
  *
- * @param {Object}		config			-The settings to configure this RadioGroup
+ * @param {Object}		config			-The settings to configure this SelectOneQuestion
  * @param {string|undefined}
- * 						config.id		-String to uniquely identify this RadioGroup.
+ * 						config.id		-String to uniquely identify this SelectOneQuestion.
  * 										 if undefined a unique id will be assigned.
  * @param {Array.<Answer>}
- *						config.choices	-The list of choices (answers) to be presented by the RadioGroup.
+ *						config.choices	-The list of choices (answers) to be presented by the SelectOneQuestion.
  * @param {string|undefined}
  *						config.numberFormat
  *										-The format for numbering the choices. default is "none"
@@ -100,28 +103,44 @@
  * 										 and subscribing to them. (Optional)
  *
  ****************************************************************************/
-function RadioGroup(config, eventManager)
+function SelectOneQuestion(config, eventManager)
 {
-	var that = this;
-	
 	/**
-	 * A unique id for this instance of the radio group widget
+	 * A unique id for this instance of the select one question widget
 	 * @type {string}
 	 */
-	this.id = getIdFromConfigOrAuto(config, RadioGroup);
+	this.id = getIdFromConfigOrAuto(config, SelectOneQuestion);
 
 	/**
-	 * The list of choices presented by the RadioGroup.
-	 * @type {Array.<Answer>}
-	 */
-	this.choices = config.choices;
-
-	/**
-	 * The format for numbering the choices.
-	 * "none", "latin-upper", "latin-lower", "number", "roman-lower-number"
+	 * The question text.
 	 * @type {string}
 	 */
-	this.numberFormat = config.numberFormat || "none";
+	this.question = config.question;
+
+	/**
+	 * The configuration options for the widget that will display the choices that
+	 * answer this question.
+	 * Add an id and adjust the choices according to the question type and add them
+	 * to the config.
+	 * @type {Object}
+	 */
+	var widgetConfig = config.widgetConfig;
+
+	widgetConfig.id = this.id + "_wdgt";
+
+	if (config.type === undefined || config.type === "randomized")
+	{
+		randomizeArray(config.choices);
+	}
+
+	widgetConfig.choices = config.choices;
+
+	/**
+	 * The widget used to present the choices that may be selected to answer
+	 * this question.
+	 * @type {IWidget}
+	 */
+	this.choiceWidget = new config.widget(widgetConfig, eventManager);
 
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
@@ -152,26 +171,26 @@ function RadioGroup(config, eventManager)
 			widgetGroup: null,
 			choiceSelected: null,
 		};
-} // end of RadioGroup constructor
+} // end of SelectOneQuestion constructor
 
 /**
- * Prefix to use when generating ids for instances of RadioGroup.
+ * Prefix to use when generating ids for instances of SelectOneQuestion.
  * @const
  * @type {string}
  */
-RadioGroup.autoIdPrefix = "rg_auto_";
+SelectOneQuestion.autoIdPrefix = "s1Q_auto_";
 
 /* **************************************************************************
- * RadioGroup.draw                                                      *//**
+ * SelectOneQuestion.draw                                               *//**
  *
- * Draw this RadioGroup in the given container.
+ * Draw this SelectOneQuestion in the given container.
  *
  * @param {!d3.selection}
- *					container	-The container html element to append the radio
- *								 group element tree to.
+ *					container	-The container html element to append the
+ *								 question element tree to.
  *
  ****************************************************************************/
-RadioGroup.prototype.draw = function(container)
+SelectOneQuestion.prototype.draw = function(container)
 {
 	this.lastdrawn.container = container;
 
@@ -179,8 +198,15 @@ RadioGroup.prototype.draw = function(container)
 	
 	// make a div to hold the radio group
 	var widgetGroup = container.append("div")
-		.attr("class", "widgetRadioGroup")
+		.attr("class", "widgetSelectOneQuestion")
 		.attr("id", this.id);
+
+	var question = widgetGroup.append("p")
+		.attr("class", "question")
+		.text(this.question);
+	
+	var widgetCntr = widgetGroup.append("div")
+		.attr("class", "choices");
 
 	// We will use a table to provide structure for the radio group
 	// and put each answer in its own row of the table.
@@ -231,7 +257,7 @@ RadioGroup.prototype.draw = function(container)
 }; // end of RadioGroup.draw()
 
 /* **************************************************************************
- * RadioGroup.selectedItem                                              *//**
+ * SelectOneQuestion.selectedItem                                       *//**
  *
  * Return the selected choice in the radio group or null if nothing has been
  * selected.
@@ -239,7 +265,7 @@ RadioGroup.prototype.draw = function(container)
  * @return {Object} the radio group choice which is currently selected or null.
  *
  ****************************************************************************/
-RadioGroup.prototype.selectedItem = function ()
+SelectOneQuestion.prototype.selectedItem = function ()
 {
 	var selectedInputSelector = "div.widgetRadioGroup input[name='" + this.id + "']:checked";
 	var selectedInput = this.lastdrawn.widgetGroup.select(selectedInputSelector);
@@ -247,7 +273,7 @@ RadioGroup.prototype.selectedItem = function ()
 };
 
 /* **************************************************************************
- * RadioGroup.selectItemAtIndex                                         *//**
+ * SelectOneQuestion.selectItemAtIndex                                  *//**
  *
  * Select the choice in the radio group at the given index. If the choice is
  * already selected, do nothing.
@@ -255,7 +281,7 @@ RadioGroup.prototype.selectedItem = function ()
  * @param {number}	index	-the 0-based index of the choice to mark as selected.
  *
  ****************************************************************************/
-RadioGroup.prototype.selectItemAtIndex = function (index)
+SelectOneQuestion.prototype.selectItemAtIndex = function (index)
 {
 	var choiceInputs = this.lastdrawn.widgetGroup.selectAll("div.widgetRadioGroup input");
 	var selectedInput = choiceInputs[0][index];
@@ -269,40 +295,5 @@ RadioGroup.prototype.selectItemAtIndex = function (index)
 	selectedInput.checked = true;
 
 	this.eventManager.publish(this.selectedEventId, {selectKey: d3.select(selectedInput).datum().answerKey});
-};
-
-/* **************************************************************************
- * RadioGroup.getChoiceNumberToDisplayFn_                               *//**
- *
- * Get a function which returns the string that should be prefixed to the
- * choice at a given index
- *
- * @private
- *
- ****************************************************************************/
-RadioGroup.prototype.getChoiceNumberToDisplayFn_ = function ()
-{
-	var formatIndexUsing =
-	{
-		"none": function (i)
-				{
-					return "";
-				},
-		"latin-upper": function (i)
-				{
-					return String.fromCharCode("A".charCodeAt(0) + i);
-				},
-		"latin-lower": function (i)
-				{
-					return String.fromCharCode("a".charCodeAt(0) + i);
-				},
-		"number": function (i)
-				{
-					return (i+1).toString();
-				},
-	};
-
-	return (this.numberFormat in formatIndexUsing) ? formatIndexUsing[this.numberFormat]
-												   : formatIndexUsing["none"];
 };
 

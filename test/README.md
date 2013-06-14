@@ -38,3 +38,15 @@ falls down when you run the tests in IE sometimes.
 [karma]: <http://karma-runner.github.io/0.8/index.html> "Karma Spectacular Test Runner for JavaScript"
 [node.js]: <http://nodejs.org/> "node.js home page"
 [phantomjs]: <http://phantomjs.org/> "phantom.js home page"
+
+## Environment setup ##
+### linux ###
+
+Install node and phantomjs. 
+The npm package depends on the nodejs package (among others).
+
+    $ sudo apt-get install npm phantomjs
+
+Then use npm (node package manager) to install karma:
+
+    $ sudo npm install -g karma
