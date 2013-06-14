@@ -112,6 +112,12 @@ function SelectOneQuestion(config, eventManager)
 	this.id = getIdFromConfigOrAuto(config, SelectOneQuestion);
 
 	/**
+	 * The question text.
+	 * @type {string}
+	 */
+	this.question = config.question;
+
+	/**
 	 * The configuration options for the widget that will display the choices that
 	 * answer this question.
 	 * Add an id and adjust the choices according to the question type and add them
@@ -192,8 +198,15 @@ SelectOneQuestion.prototype.draw = function(container)
 	
 	// make a div to hold the radio group
 	var widgetGroup = container.append("div")
-		.attr("class", "widgetRadioGroup")
+		.attr("class", "widgetSelectOneQuestion")
 		.attr("id", this.id);
+
+	var question = widgetGroup.append("p")
+		.attr("class", "question")
+		.text(this.question);
+	
+	var widgetCntr = widgetGroup.append("div")
+		.attr("class", "choices");
 
 	// We will use a table to provide structure for the radio group
 	// and put each answer in its own row of the table.
