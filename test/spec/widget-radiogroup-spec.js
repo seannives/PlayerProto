@@ -130,7 +130,7 @@
 
 				after(function () {
 					// Clean up test modifications to the DOM
-					cntrNode.node && cntrNode.node.remove();
+					cntrNode && d3.select(cntrNode).remove();
 				});
 					
 				describe('.draw()', function () {
@@ -231,7 +231,7 @@
 
 				describe('.selectedItem()', function () {
 					before(function () {
-						cntrNode && cntrNode.remove();
+						cntrNode && d3.select(cntrNode).remove();
 						cntrNode = helper.createNewDiv();
 						myRadioGroup.draw(d3.select(cntrNode));
 					});

@@ -55,6 +55,7 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-radiogroup.js"></script>
+	<script src="js/widget-selectonequestion.js"></script>
 
 <script>
 
@@ -104,11 +105,13 @@
 	eventManager.subscribe(radioButtons.selectedEventId, handle_radioButtons_selected);
 
 	// Test a select one question using a radio group widget
-	var Q1 = new RadioGroupQuestion({
+	var Q1 = new SelectOneQuestion({
 			id: "Q1",
 			question: "Wherefore?",
 			choices: Q1Choices,
-			type: "randomized", //default, even if not specified
+			type: "randomized",
+			widget: RadioGroup,
+			widgetConfig: { numberFormat: "latin-upper" },
 	});
 	
 	Q1.draw(d3.select("#radioRnd"));
