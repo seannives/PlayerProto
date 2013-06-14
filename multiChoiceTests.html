@@ -26,6 +26,7 @@
 						the answer key of the selection. It should change as you manually
 						select an answer.</p>
 						<p>The answer key selected is: <b id="rb-test-key">none</b>.</p>
+						<p id="rb-test-resp"/>
 				</div>
 				<div id="radioRnd"><p>1. Multiple Choice question, randomized</p></div>
 				<div id="radioOrd"><p>2. Multiple Choice question, nonrandomized</p></div>
@@ -54,6 +55,7 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-radiogroup.js"></script>
+	<script src="js/widget-selectonequestion.js"></script>
 
 <script>
 
@@ -97,16 +99,19 @@
 	var handle_radioButtons_selected = function (eventDetails)
 	{
 		d3.select("#rb-test-key").text(eventDetails.selectKey);
+		d3.select("#rb-test-resp").text(radioButtons.selectedItem().response);
 	};
 
 	eventManager.subscribe(radioButtons.selectedEventId, handle_radioButtons_selected);
 
 	// Test a select one question using a radio group widget
-	var Q1 = new RadioGroupQuestion({
+	var Q1 = new SelectOneQuestion({
 			id: "Q1",
 			question: "Wherefore?",
 			choices: Q1Choices,
-			type: "randomized", //default, even if not specified
+			type: "randomized",
+			widget: RadioGroup,
+			widgetConfig: { numberFormat: "latin-upper" },
 	});
 	
 	Q1.draw(d3.select("#radioRnd"));
