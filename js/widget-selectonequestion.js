@@ -98,9 +98,9 @@
  * @param {string|undefined}
  *						config.numberFormat
  *										-The format for numbering the choices. default is "none"
- * @param {EventManager|undefined}
+ * @param {EventManager}
  * 						eventManager	-The event manager to use for publishing events
- * 										 and subscribing to them. (Optional)
+ * 										 and subscribing to them.
  *
  ****************************************************************************/
 function SelectOneQuestion(config, eventManager)
@@ -142,24 +142,56 @@ function SelectOneQuestion(config, eventManager)
 	 */
 	this.choiceWidget = new config.widget(widgetConfig, eventManager);
 
+	// The configuration options for the submit button
+	var submitBtnConfig =
+	{
+		id: this.id + "_sbmtBtn",
+		text: "Submit answer"
+	};
+
+	/**
+	 * The button widget which allows the answer to the question to be submitted
+	 * for scoring.
+	 * @type {IWidget}
+	 */
+	this.submitButton = new Button(submitBtnConfig, eventManager);
+
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
 	 */
-	this.eventManager = eventManager || { publish: function () {}, subscribe: function () {} };
+	this.eventManager = eventManager;
 
 	/**
-	 * The event id published when an item in this carousel is selected.
+	 * The event id published when a choice in this question is selected.
 	 * @const
 	 * @type {string}
 	 */
-	this.selectedEventId = this.id + '_itemSelected';
-	
+	this.selectedEventId = this.choiceWidget.selectedEventId;
+
 	/**
 	 * The event details for this.selectedEventId events
 	 * @typedef {Object} SelectedEventDetails
 	 * @property {string} selectKey	-The answerKey associated with the selected answer.
 	 */
+
+	/**
+	 * The event id published when the submit button is clicked.
+	 * @const
+	 * @type {string}
+	 */
+	this.submitAnswerRequestEventId = this.id + "_submitAnswerRequest";
+
+	/**
+	 * The event details for this.submitAnswerRequestEventId events
+	 * @typedef {Object} SubmitAnswerRequest
+	 * @property {SelecOneQuestion} question	-This question widget
+	 * @property {string} 			answerKey	-The answerKey associated with the selected answer.
+	 */
+
+	// subscribe to events of our 'child' widgets
+	eventManager.subscribe(this.submitButton.pressedEventId, function () {that.handleSubmitRequested_();});
+	eventManager.subscribe(this.choiceWidget.selectedEventId, function () {that.handleAnswerSelected_();});
 
 	/**
 	 * Information about the last drawn instance of this image (from the draw method)
@@ -169,7 +201,6 @@ function SelectOneQuestion(config, eventManager)
 		{
 			container: null,
 			widgetGroup: null,
-			choiceSelected: null,
 		};
 } // end of SelectOneQuestion constructor
 
@@ -179,6 +210,38 @@ function SelectOneQuestion(config, eventManager)
  * @type {string}
  */
 SelectOneQuestion.autoIdPrefix = "s1Q_auto_";
+
+/* **************************************************************************
+ * SelectOneQuestion.handleSubmitRequested_                             *//**
+ *
+ * Handle the pressed event from the submit button which means that we want
+ * to fire the submit answer requested event.
+ * @private
+ *
+ ****************************************************************************/
+SelectOneQuestion.prototype.handleSubmitRequested_ = function()
+{
+	var submitAnsDetails =
+		{
+			question: this,
+			answerKey: this.choiceWidget.selectedItem().answerKey
+		};
+
+	this.eventManager.publish(this.submitAnswerRequestEventId, submitAnsDetails);
+};
+
+/* **************************************************************************
+ * SelectOneQuestion.handleAnswerSelected_                              *//**
+ *
+ * Handle the selected event from the choice widget which means that the
+ * submit button can be enabled.
+ * @private
+ *
+ ****************************************************************************/
+SelectOneQuestion.prototype.handleAnswerSelected_ = function()
+{
+	this.submitButton.enabled(true);
+};
 
 /* **************************************************************************
  * SelectOneQuestion.draw                                               *//**
@@ -196,7 +259,7 @@ SelectOneQuestion.prototype.draw = function(container)
 
 	var that = this;
 	
-	// make a div to hold the radio group
+	// make a div to hold the select one question
 	var widgetGroup = container.append("div")
 		.attr("class", "widgetSelectOneQuestion")
 		.attr("id", this.id);
@@ -205,95 +268,47 @@ SelectOneQuestion.prototype.draw = function(container)
 		.attr("class", "question")
 		.text(this.question);
 	
-	var widgetCntr = widgetGroup.append("div")
+	var choiceWidgetCntr = widgetGroup.append("div")
 		.attr("class", "choices");
 
-	// We will use a table to provide structure for the radio group
-	// and put each answer in its own row of the table.
-	var table = widgetGroup.append("table")
-		.attr("class", "questionTable");
+	this.choiceWidget.draw(choiceWidgetCntr);
 
-	// create the table body to contain the answer rows
-	var tbody = table.append("tbody");
+	var submitButtonCntr = widgetGroup.append("div")
+		.attr("class", "submit");
 
-	// Create a group for each item then draw the item in that group
-	var ansRows = tbody.selectAll("tr").data(this.choices);
-	ansRows.enter().append("tr");
+	this.submitButton.draw(submitButtonCntr);
 
-	var getButtonId = function (d, i) {return that.id + "_btn" + i;};
-
-	var buttonCell = ansRows.append("td");
-	if (this.numberFormat !== "none")
-	{
-		var choiceIndex = this.getChoiceNumberToDisplayFn_();
-
-		buttonCell
-			.text(function (d, i) {return choiceIndex(i) + ") ";});
-	}
-
-	buttonCell
-		.append("input")
-			.attr("id", getButtonId)
-			.attr("type", "radio")
-			.attr("name", this.id)
-			.attr("value", function (d) {return d.answerKey;});
-
-	var labelCell = ansRows.append("td");
-
-	labelCell
-		.append("label")
-			.attr("for", getButtonId)
-			.text(function (d) {return d.content;});
-	
-	var choiceInputs = widgetGroup.selectAll("div.widgetRadioGroup input[name='" + this.id + "']");
-	choiceInputs
-		.on("change", function (d)
-				{
-					that.eventManager.publish(that.selectedEventId, {selectKey: d.answerKey});
-				});
-	
 	this.lastdrawn.widgetGroup = widgetGroup;
 
-}; // end of RadioGroup.draw()
+}; // end of SelectOneQuestion.draw()
 
 /* **************************************************************************
  * SelectOneQuestion.selectedItem                                       *//**
  *
- * Return the selected choice in the radio group or null if nothing has been
+ * Return the selected choice from the choice widget or null if nothing has been
  * selected.
  *
- * @return {Object} the radio group choice which is currently selected or null.
+ * @return {Object} the choice which is currently selected or null.
  *
  ****************************************************************************/
 SelectOneQuestion.prototype.selectedItem = function ()
 {
-	var selectedInputSelector = "div.widgetRadioGroup input[name='" + this.id + "']:checked";
-	var selectedInput = this.lastdrawn.widgetGroup.select(selectedInputSelector);
-	return !selectedInput.empty() ? selectedInput.datum() : null;
+	return this.choiceWidget.selectedItem();
 };
 
 /* **************************************************************************
  * SelectOneQuestion.selectItemAtIndex                                  *//**
  *
- * Select the choice in the radio group at the given index. If the choice is
- * already selected, do nothing.
+ * Select the choice in the choice widget at the given index. If the choice is
+ * already selected, do nothing. The index is the displayed choice index and
+ * not the config choice index (in other words if the choices have been randomized
+ * then the configuration index is NOT the displayed index).
  *
  * @param {number}	index	-the 0-based index of the choice to mark as selected.
  *
  ****************************************************************************/
 SelectOneQuestion.prototype.selectItemAtIndex = function (index)
 {
-	var choiceInputs = this.lastdrawn.widgetGroup.selectAll("div.widgetRadioGroup input");
-	var selectedInput = choiceInputs[0][index];
-
-	if (selectedInput.checked)
-	{
-		return;
-	}
-
-	// choice at index is not selected, so select it and publish selected event
-	selectedInput.checked = true;
-
-	this.eventManager.publish(this.selectedEventId, {selectKey: d3.select(selectedInput).datum().answerKey});
+	this.choiceWidget.selectItemAtIndex(index);
 };
 
