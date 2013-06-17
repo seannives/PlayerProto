@@ -4,8 +4,8 @@
  *
  * @fileoverview Implementation of the SelectOneQuestion widget.
  *
- * The RadioGroup widget draws a list of choices and allows the user to
- * select one of the choices.
+ * The SelectOneQuestion widget displays a question and a set of possible
+ * answers one of which must be selected and submitted to be scored.
  *
  * Created on		May 29, 2013
  * @author			Michael Jay Lippert
@@ -83,8 +83,8 @@
 /* **************************************************************************
  * SelectOneQuestion                                                    *//**
  *
- * The RadioGroup widget draws a list of choices and allows the user to
- * select one of the choices.
+ * The SelectOneQuestion widget displays a question and a set of possible
+ * answers one of which must be selected and submitted to be scored.
  *
  * @constructor
  * @implements {IWidget}
@@ -194,7 +194,7 @@ function SelectOneQuestion(config, eventManager)
 	eventManager.subscribe(this.choiceWidget.selectedEventId, function () {that.handleAnswerSelected_();});
 
 	/**
-	 * Information about the last drawn instance of this image (from the draw method)
+	 * Information about the last drawn instance of this widget (from the draw method)
 	 * @type {Object}
 	 */
 	this.lastdrawn =
@@ -240,7 +240,7 @@ SelectOneQuestion.prototype.handleSubmitRequested_ = function()
  ****************************************************************************/
 SelectOneQuestion.prototype.handleAnswerSelected_ = function()
 {
-	this.submitButton.enabled(true);
+	this.submitButton.setEnabled(true);
 };
 
 /* **************************************************************************
