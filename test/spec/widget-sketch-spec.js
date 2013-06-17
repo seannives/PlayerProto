@@ -170,8 +170,7 @@
 						check(done, function ()
 						{
 							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-							var points1 = hexpoints(.3, .3, .1, xScale, yScale, null, null);
-							expect(hexagon.attr('points')).to.equal(points1);
+							expect(hexagon.attr('points')).to.equal('43,150 60,160 77,150 77,130 60,120 43,130');
 						});
 					}, time);
 				});
@@ -182,8 +181,7 @@
 						check(done, function ()
 						{
 							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-							var points2 = tripoints(.4, .4, .2, xScale, yScale, null, null);
-							expect(triangle.attr('points')).to.equal(points2);
+							expect(triangle.attr('points')).to.equal('60,137 100,137 80,103');
 						});
 					}, time);
 				});
@@ -194,8 +192,7 @@
 						check(done, function ()
 						{
 							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-							var points3 = wedgepoints(.2, .4, .5, .2, Math.PI/6, xScale, yScale, null, null);
-							expect(wedge.attr('points')).to.equal(points3);
+							expect(wedge.attr('points')).to.equal('117,53 40,120 137,87');
 						});
 					}, time);
 				});
@@ -273,8 +270,7 @@
 						check(done, function ()
 						{
 							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-							var points1 = hexpoints(.4, .5, .1, xScale, yScale, null, null);
-							expect(hexagon.attr('points')).to.equal(points1);
+							expect(hexagon.attr('points')).to.equal('63,110 80,120 97,110 97,90 80,80 63,90');
 						});
 					}, time);
 				});
@@ -285,8 +281,7 @@
 						check(done, function ()
 						{
 							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-							var points2 = tripoints(.5, .6, .2, xScale, yScale, null, null);
-							expect(triangle.attr('points')).to.equal(points2);
+							expect(triangle.attr('points')).to.equal('80,97 120,97 100,63');
 						});
 					}, time);
 				});
@@ -297,8 +292,7 @@
 						check(done, function ()
 						{
 							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale, null, null);
-							expect(wedge.attr('points')).to.equal(points3);
+							expect(wedge.attr('points')).to.equal('137,13 60,80 157,47');
 						});
 					}, time);
 				});
@@ -375,8 +369,7 @@
 						check( done, function ()
 						{
 							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-							var points1 = hexpoints(.4, .5, .1, xScale, yScale, null, .6);
-							expect(hexagon.attr('points')).to.equal(points1);
+							expect(hexagon.attr('points')).to.equal('63,50 80,40 97,50 97,70 80,80 63,70');
 						});
 					});
 				});
@@ -388,8 +381,7 @@
 						check( done, function ()
 						{
 							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-							var points2 = tripoints(.5, .6, .2, xScale, yScale, null, .6);
-							expect(triangle.attr('points')).to.equal(points2);
+							expect(triangle.attr('points')).to.equal('80,63 120,63 100,97');
 						});
 					});
 				});
@@ -401,8 +393,7 @@
 						check( done, function ()
 						{
 							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale, null, .6);
-							expect(wedge.attr('points')).to.equal(points3);
+							expect(wedge.attr('points')).to.equal('137,147 60,80 157,113');
 						});
 					});
 				});
@@ -480,8 +471,7 @@
 						check( done, function ()
 						{
 							var hexagon = mySketch.lastdrawn.widgetGroup.select("polygon.hex");
-							var points1 = hexpoints(.4, .5, .1, xScale, yScale, .5, .6);
-							expect(hexagon.attr('points')).to.equal(points1);
+							expect(hexagon.attr('points')).to.equal('137,50 120,40 103,50 103,70 120,80 137,70');
 						});
 					});
 				});
@@ -493,8 +483,7 @@
 						check( done, function ()
 						{
 							var triangle = mySketch.lastdrawn.widgetGroup.select("polygon.tri");
-							var points2 = tripoints(.5, .6, .2, xScale, yScale, .5, .6);
-							expect(triangle.attr('points')).to.equal(points2);
+							expect(triangle.attr('points')).to.equal('120,63 80,63 100,97');
 						});
 					});
 				});
@@ -506,8 +495,7 @@
 						check( done, function ()
 						{
 							var wedge = mySketch.lastdrawn.widgetGroup.select("polygon.wedge");
-							var points3 = wedgepoints(.3, .6, .5, .2, Math.PI/6, xScale, yScale, .5, .6);
-							expect(wedge.attr('points')).to.equal(points3);
+							expect(wedge.attr('points')).to.equal('63,147 140,80 43,113');
 						});
 					});
 				});
@@ -620,72 +608,6 @@
     });
 })();
 
-// figure out point string
-// xLine and yLine should both be null if reflection not wanted
-function hexpoints(x, y, side, xScale, yScale, xLine, yLine)
-{
-	// create an array of points representing a hexagon
-	var points = Sketch.createHexagon(x, y, side);
-	
-	var i;
-	for (i = 0; i < points.length; i++)
-	{
-		if (xLine != null)
-		{
-			points[i][0] = Sketch.reflectValue(points[i][0], xLine);
-		}
-		if (yLine != null)
-		{
-			points[i][1] = Sketch.reflectValue(points[i][1], yLine);
-		}
-	}
-	
-	// return the point string
-	return Sketch.pointString(points, xScale, yScale);
-}
-// figure out correct point string for a triangle
-function tripoints (x, y, side, xScale, yScale, xLine, yLine)
-{	
-	// create an array of points representing a triangle
-	var points = Sketch.createTriangle(x, y, side);
-	
-	var i;
-	for (i = 0; i < points.length; i++)
-	{
-		if(xLine != null)
-		{
-			points[i][0] = Sketch.reflectValue(points[i][0], xLine);
-		}
-		if(yLine != null)
-		{
-			points[i][1] = Sketch.reflectValue(points[i][1], yLine);
-		}
-	}
-	
-	// return the point string
-	return Sketch.pointString(points, xScale, yScale);
-}
-function wedgepoints(x, y, len, wid, ang, xScale, yScale, xLine, yLine)
-{	
-	// create an array of points representing a wedge
-	var points = Sketch.createWedge(x, y, wid, len, ang);
-	
-	var i;
-	for (i = 0; i < points.length; i++)
-	{
-		if(xLine != null)
-		{
-			points[i][0] = Sketch.reflectValue(points[i][0], xLine);
-		}
-		if(yLine != null)
-		{
-			points[i][1] = Sketch.reflectValue(points[i][1], yLine);
-		}
-	}
-	
-	// return the point string		
-	return Sketch.pointString(points, xScale, yScale);
-}
 function check(done, f)
 {
 	try
