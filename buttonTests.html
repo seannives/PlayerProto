@@ -82,6 +82,7 @@
 	<script src="js/d3.v2.min.js"></script>
 	<script src="js/widgets.js"></script>
 	<script src="js/eventmanager.js"></script>
+	<script src="js/widget-base.js"></script>
 	<script src="js/widget-button.js"></script>
 	<script src="js/widget-numeric.js"></script>
 
@@ -93,29 +94,29 @@
 	///////////////////////////////////////////
 	
 	// Test 0: One button
-	var t0Button = new Button ({
+	var t0Button = new Button({
 			id: "t0",
 			text: "Test 0"
 		}, eventManager);
 		
-	$('#t0button').append(t0Button.getRootEl());
+	t0Button.draw(d3.select('#t0button'));
 	
 	///////////////////////////////////////////
 	
 	// Test 1: Two Buttons
-	var t1_1Button = new Button ({
+	var t1_1Button = new Button({
 			id: "t1_1",
 			text: "Test 1 Button 1"
 		}, eventManager);
 		
-	$('#t1_1button').append(t1_1Button.getRootEl());
+	t1_1Button.draw(d3.select('#t1_1button'));
 		
 	var t1_2Button = new Button ({
 			id: "t1_2",
 			text: "Test 1 Button 2"
 		}, eventManager);
 		
-	$('#t1_2button').append(t1_2Button.getRootEl());
+	t1_2Button.draw(d3.select('#t1_2button'));
 		
 	///////////////////////////////////////////
 	
@@ -125,7 +126,7 @@
 			text: "Test 2 Button"
 		}, eventManager);
 		
-	$('#t2button').append(t2Button.getRootEl());
+	t2Button.draw(d3.select('#t2button'));
 	
 	var t2Readout = new Readout ({
 			node: d3.select("#t2val"),
@@ -150,14 +151,14 @@
 			text: "Test 3 Button 1"
 		}, eventManager);
 		
-	$('#t3_1button').append(t3_1Button.getRootEl());
+	t3_1Button.draw(d3.select('#t3_1button'));
 	
 	var t3_2Button = new Button ({
 			id: "t3_2",
 			text: "Test 3 Button 2"
 		}, eventManager);
 		
-	$('#t3_2button').append(t3_2Button.getRootEl());
+	t3_2Button.draw(d3.select('#t3_2button'));
 	
 	var t3Readout = new Readout ({
 			node: d3.select("#t3val"),
@@ -184,19 +185,19 @@
 	
 	// Test 4: Button changes text on another button
 	
-	var t4_1Button = new Button ({
+	var t4_1Button = new Button({
 			id: "t4_1",
 			text: "Test 4 Button 1"
 		}, eventManager);
 		
-	$('#t4_1button').append(t4_1Button.getRootEl());
+	t4_1Button.draw(d3.select('#t4_1button'));
 	
-	var t4_2Button = new Button ({
+	var t4_2Button = new Button({
 			id: "t4_2",
 			text: "Blah"
 		}, eventManager);
 		
-	$('#t4_2button').append(t4_2Button.getRootEl());
+	t4_2Button.draw(d3.select('#t4_2button'));
 	
 	eventManager.subscribe(t4_1Button.pressedEventId, t4handleClick);
 	
