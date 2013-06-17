@@ -20,7 +20,8 @@
 {
 	var button1Config = {
 			id: "button1",
-			text: "Hello World"
+			text: "Hello World",
+			enabled: true
 		};
 });
 	
@@ -37,6 +38,8 @@
  * 						config.id		-String to uniquely identify this button
  * 										 if undefined a unique id will be assigned.
  * @param {string}		config.text		-The text to be displayed on the button
+ * @param {bool}		config.enabled	-The initial enabled state of the button.
+ * 										 Optional, defaults to true.
  * @param {!EventManager}
  * 						eventManager	-The event manager to use for publishing events
  * 										 and subscribing to them.
@@ -65,7 +68,7 @@ function Button(config, eventManager)
 	 * May be accessed using the methods getEnabled, setEnabled.
 	 * @type {bool}
 	 */
-	this.enabled_ = true;
+	this.enabled_ = config.enabled === false ? false : true;
 
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
@@ -156,7 +159,7 @@ Button.prototype.setText = function (text)
 	var textChanged = this.text_ !== text;
 	this.text_ = text;
 
-	if (textChanged)
+	if (textChanged && this.lastdrawn.widgetGroup)
 	{
 		this.redraw();
 	}
@@ -188,7 +191,7 @@ Button.prototype.setEnabled = function (newEnableState)
 	var stateChanged = this.enabled_ !== newEnableState;
 	this.enabled_ = newEnableState;
 
-	if (stateChanged)
+	if (stateChanged && this.lastdrawn.widgetGroup)
 	{
 		this.redraw();
 	}

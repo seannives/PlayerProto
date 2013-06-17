@@ -146,7 +146,8 @@ function SelectOneQuestion(config, eventManager)
 	var submitBtnConfig =
 	{
 		id: this.id + "_sbmtBtn",
-		text: "Submit answer"
+		text: "Submit answer",
+		enabled: false
 	};
 
 	/**
@@ -190,6 +191,7 @@ function SelectOneQuestion(config, eventManager)
 	 */
 
 	// subscribe to events of our 'child' widgets
+	var that = this;
 	eventManager.subscribe(this.submitButton.pressedEventId, function () {that.handleSubmitRequested_();});
 	eventManager.subscribe(this.choiceWidget.selectedEventId, function () {that.handleAnswerSelected_();});
 
