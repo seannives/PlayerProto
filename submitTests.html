@@ -50,7 +50,7 @@
 	<script src="js/eventmanager.js"></script>
 	<script src="js/submitmanager.js"></script>
 	<script src="js/answerman.js"></script>
-
+	<script src="js/fakeactivitydb.js"></script>
 	<script>
 
 	// create event manager
@@ -89,15 +89,22 @@
 
 	// create submit manager
 	var t1SubmitManagerConfig = {
-		id: 't1sm',
-		sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/3314583736548363/nodes/1',
+		//id: 't1sm',
+		sequenceNodeID: 'SanVan003',
 		container: t1Button.lastdrawn.container
 	};
 	var submitManager = new SubmitManager(t1SubmitManagerConfig, eventManager);
 	// subscribe to the submitManager
 	eventManager.subscribe(submitManager.submittedEventId, t1handleResponse);
 
+	/* wish I could use the d3 method to read JSON but cross origin requests error prevents it
 	
+	d3.json("js/fakeactivitydb.js", function(error, json) {
+  		if (error) return console.warn(error);
+  		data = json;
+  		console.log(data);
+	});
+	*/
 	/* 
 	TODO:
 	- Leslie's example: https://dl.dropboxusercontent.com/u/89342193/NeffLiveDemo/assess_12.1.html
@@ -112,8 +119,11 @@
 	*************************************************************************/
 	function t1handleClick()
 	{
+		var slider = t1Slide.getValue();
+		var ans = slider == 11 ? "answer011" : slider == 0 ? "answer000": "answer001";
+
 		// fire off the submit method of the SubmitManager, sending value from Slider
-		submitManager.submit(t1Slide.getValue());
+		submitManager.submit(ans);
 	}
 
 	/************************************************************************
@@ -131,15 +141,19 @@
 	function t1handleResponse(eventDetails)
 	{
 		// display the results of the submission in the resultDisplay Readout
-		//resultDisplay.setValue(eventDetails.response);
 		switch(eventDetails.score)
 		{
+	
 		case 1:
   			eventDetails.container.append("div").attr("class", "alert alert-success").html("<i class='icon-ok-sign'></i> Congratulations, Your answer, " + eventDetails.submission + ", is correct. " + eventDetails.response);
   			break;
 			
 		case 0:
   			eventDetails.container.append("div").attr("class", "alert alert-error").html("<i class='icon-remove'></i> Sorry, your answer, " + eventDetails.submission + ", is not correct." + eventDetails.response);
+  			break;
+			
+		case -1:
+			eventDetails.container.append("div").attr("class", "alert").html("<i class='icon-adjust'></i> something has gone horribly awry - we can't score this answer. ");
   			break;
 			
 		default:
