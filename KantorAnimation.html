@@ -175,7 +175,7 @@ var button0_2 = new Button ({
 		text: "Show/Hide Hydrogens"
 	}, eventManager);
 	
-$('#button0_2').append(button0_2.getRootEl());
+button0_2.draw(d3.select('#button0_2'));
 
 //////////////////////////////////////////////
 /* ball and stick models in a carousel		*/
@@ -335,7 +335,7 @@ var button1 = new Button ({
 		text: "Reflect and Compare"
 	}, eventManager);
 	
-$('#button1').append(button1.getRootEl());
+button1.draw(d3.select('#button1'));
 
 eventManager.subscribe(button1.pressedEventId, handleClick1);
 
@@ -560,7 +560,7 @@ var button6 = new Button ({
 		text: "Click to advance"
 	}, eventManager);
 
-$('#button6').append(button6.getRootEl());
+button6.draw(d3.select('#button6'));
 	
 svg6.append(sketch6_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 svg6.append(sketch6_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
@@ -794,7 +794,7 @@ var button7 = new Button ({
 		text: "Click to reset"
 	}, eventManager);
 
-$('#button7').append(button7.getRootEl());
+button7.draw(d3.select('#button7'));
 
 //svg7.append(sketch7_0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 //svg7.append(sketch7_01, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
