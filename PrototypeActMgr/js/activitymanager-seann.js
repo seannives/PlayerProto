@@ -126,16 +126,81 @@ var activityManager = {
         return nodes;
     },
 
+    // initializing the activity manager 
+    // - uses requirejs to load the interactives stuff just for debugging.
+    // - the initActivityManager below doesn't bother with this, just relying on the compiled 
+    //   interactives library
+    initActivityManagerAMD : function() {
+        // 'that = this' avoids having to reference whatever we named our object (aM.) within this factory
+        var that = this;
+        var eventManager = that.getEventManager();
+
+        // ----- temporary for debugging
+        requirejs.config({
+            baseURL: '../PrototypeDist/interactives',
+            paths: {
+                jquery: '../PrototypeDist/lib/jquery',
+                underscore: '../PrototypeDist/lib/underscore',
+                interactives: '../PrototypeDist/interactives'
+            },
+            shim: {
+                underscore: {
+                    exports: 'underscore'
+                }
+            }
+        });
+        // ------
+
+        window.onload = function() {
+            // --->
+            require(['interactives', 'jquery', 'underscore'], function (interactives, $, _) {
+                // <----
+                // may want to clone the object here?
+
+                that.loadNodes(function(content){
+                    // initialize master player widget for each chunk of content
+                    //var interactive = interactives();
+                    //console.log(interactives.convert('alpha'));
+
+                    console.log(interactives);
+                    console.log('Running jQuery %s', $().jquery);
+                    console.log(interactives.version);
+                    console.log(interactives.convert('convert test'));
+                    interactives.init(content, eventManager);
+
+                    //interactives.init(content, eventManager);
+                    //var interactive = Object.create(interactives);
+                    //interactive.init(content, eventManager);
+                });
+            });
+        };
+    },
+
     initActivityManager : function() {
         // 'that = this' avoids having to reference whatever we named our object (aM.) within this factory
         var that = this;
         var eventManager = that.getEventManager();
+
         window.onload = function() {
+            // may want to clone the object here?
+
             that.loadNodes(function(content){
                 // initialize master player widget for each chunk of content
-                var interactive = interactives();
-                interactive.init(content, eventManager);
+                //var interactive = interactives();
+                //console.log(interactives.convert('alpha'));
+
+                console.log(interactives);
+                console.log('Running jQuery %s', $().jquery);
+                console.log(interactives.version);
+                console.log(interactives.convert('convert test'));
+                interactives.init(content, eventManager);
+
+                //interactives.init(content, eventManager);
+                //var interactive = Object.create(interactives);
+                //interactive.init(content, eventManager);
             });
+            
         };
     }
+
 }
