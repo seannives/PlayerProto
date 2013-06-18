@@ -11,28 +11,28 @@ define(function (require) {
     var widgetButton = require('interactives/widget-button')
 
 	// widget loading command pattern (instead of case statement)
-	function loadWidget(widget, content) {
+	function loadWidget(widgetContent) {
 		var widgets = {
 			'button' : buttonConf
 			//, add other widget config here
 	    };
 	   
-	    if (typeof widgets[widget] !== 'function') {
+	    if (typeof widgets[widgetContent.type] !== 'function') {
 	      throw new Error('Invalid widget.');
 	    }
 
-	    return widgets[widget](content);
+	    return widgets[widgetContent.type](widgetContent);
 	}
 	
 	// button widget config
-	function buttonConf(content) {
+	function buttonConf(widgetContent) {
 		var config = {
-			"id" : content.targetActivity.master.widget.id,
-			"text" : content.targetActivity.master.widget.text
+			"id" : widgetContent.id,
+			"text" : widgetContent.text
 		};
 		//var mybutton = ibutton();
         widgetButton.init(config, eventManager);
-        $('#' + content.targetActivity.master.widget.targetid).append(widgetButton.getRootEl());
+        $('#' + widgetContent.targetid).append(widgetButton.getRootEl());
         // subscribe to the button press
 		eventManager.subscribe(widgetButton.pressedEventId, function(){alert('yay');});
 	}
@@ -48,7 +48,10 @@ define(function (require) {
 			// todo - loop over each nested widget (we don't have nested widgets yet in sample json)
 
 			// load the widgets
-			loadWidget(content.targetActivity.master.widget.type, content);
+			content.targetActivity.master.widgets.forEach(function(widgetContent){
+				loadWidget(widgetContent.widget);
+			});
+			//loadWidget(content.targetActivity.master.widget.type, content);
 		}
     };
 });

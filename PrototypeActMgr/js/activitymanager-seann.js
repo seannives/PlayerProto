@@ -34,24 +34,32 @@ var activityManager = {
         var interactiveConfig;
         if (myid[0] == '8883774665') {
             interactiveConfig = {
-                "master" : {
-                    "widget" : {
-                        "type" : "button",
-                        "targetid" : "button1",
-                        "id" : "button1",
-                        "text" : "Submit #1"
-                    }
+                "master": {
+                    "widgets": [
+                        {
+                            "widget": {
+                                "type": "button",
+                                "targetid": "button1",
+                                "id": "button1",
+                                "text": "Submit #1"
+                            }
+                        }
+                    ]
                 }
             };
         } else if (myid[0] == '12345') {
             interactiveConfig = {
-                "master" : {
-                    "widget" : {
-                        "type" : "button",
-                        "targetid" : "button2",
-                        "id" : "button2",
-                        "text" : "Submit #2"
-                    }
+                "master": {
+                    "widgets": [
+                        {
+                            "widget": {
+                                "type": "button",
+                                "targetid": "button2",
+                                "id": "button2",
+                                "text": "Submit #2"
+                            }
+                        }
+                    ]
                 }
             };
         }
