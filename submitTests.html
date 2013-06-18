@@ -22,13 +22,13 @@
 <body>
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span8 leftCol">
+			<div class="span6 leftCol">
                 <h2 class="setTitle">Can you rock?</h2>
             	<p>It's important to rock.  Set the volume to the appropriate level using the slider below.</p>
             	<p>
 				<div id="t1slider"></div>
 				<div id="t1button"></div>
-				<div id="resultDisplay"></div>
+				
 				</p>
 			</div>
 		</div>
@@ -49,6 +49,7 @@
 	<script src="js/widget-numeric.js"></script>
 	<script src="js/eventmanager.js"></script>
 	<script src="js/submitmanager.js"></script>
+	<script src="js/answerman.js"></script>
 
 	<script>
 
@@ -82,30 +83,21 @@
 			text: "Submit"
 		}, eventManager);
 		
-	$('#t1button').append(t1Button.getRootEl());
+	t1Button.draw(d3.select("#t1slider"));
 	// subscribe to the "submit" button press
 	eventManager.subscribe(t1Button.pressedEventId, t1handleClick);
 
 	// create submit manager
 	var t1SubmitManagerConfig = {
 		id: 't1sm',
-		sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/3314583736548363/nodes/1'
+		sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/3314583736548363/nodes/1',
+		container: t1Button.lastdrawn.container
 	};
 	var submitManager = new SubmitManager(t1SubmitManagerConfig, eventManager);
 	// subscribe to the submitManager
 	eventManager.subscribe(submitManager.submittedEventId, t1handleResponse);
 
-	// create a Readout object in which you'll shove the results of the submit.  This isn't great
-	// but a fine temporary solution
-	var resultDisplay = new Readout({
-		node: d3.select("#resultDisplay"),
-		id: 'resultDisplay',
-		startVal: '',
-		readOnly: true,
-		size: 20,
-		label: 'Your result: '
-	});
-
+	
 	/* 
 	TODO:
 	- Leslie's example: https://dl.dropboxusercontent.com/u/89342193/NeffLiveDemo/assess_12.1.html
@@ -139,7 +131,21 @@
 	function t1handleResponse(eventDetails)
 	{
 		// display the results of the submission in the resultDisplay Readout
-		resultDisplay.setValue(eventDetails.response);
+		//resultDisplay.setValue(eventDetails.response);
+		switch(eventDetails.score)
+		{
+		case 1:
+  			eventDetails.container.append("div").attr("class", "alert alert-success").html("<i class='icon-ok-sign'></i> Congratulations, Your answer, " + eventDetails.submission + ", is correct. " + eventDetails.response);
+  			break;
+			
+		case 0:
+  			eventDetails.container.append("div").attr("class", "alert alert-error").html("<i class='icon-remove'></i> Sorry, your answer, " + eventDetails.submission + ", is not correct." + eventDetails.response);
+  			break;
+			
+		default:
+  			eventDetails.container.append("div").attr("class", "alert alert-info").html("<i class='icon-adjust'></i> Your answer, " + eventDetails.submission + ", is partially correct." + eventDetails.response);
+		}
+	
 	}
 	
 
