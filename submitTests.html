@@ -28,8 +28,10 @@
             	<p>
 				<div id="t1slider"></div>
 				<div id="t1button"></div>
-				
 				</p>
+				<div id="Q1here">
+					<h2 class="setTitle">Test SubmitManager w/ a question widget</h2>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -47,6 +49,8 @@
 	<script src="js/widget-slider.js"></script>
 	<!-- widget-numeric is required with widget-slider, even if you don't want a readout, as you'll get an "Uncaught ReferenceError: Readout is not defined" error without it -->
 	<script src="js/widget-numeric.js"></script>
+	<script src="js/widget-radiogroup.js"></script>
+	<script src="js/widget-selectonequestion.js"></script>
 	<script src="js/eventmanager.js"></script>
 	<script src="js/submitmanager.js"></script>
 	<script src="js/answerman.js"></script>
@@ -140,28 +144,45 @@
 	*************************************************************************/
 	function t1handleResponse(eventDetails)
 	{
-		// display the results of the submission in the resultDisplay Readout
-		switch(eventDetails.score)
-		{
-	
-		case 1:
-  			eventDetails.container.append("div").attr("class", "alert alert-success").html("<i class='icon-ok-sign'></i> Congratulations, Your answer, " + eventDetails.submission + ", is correct. " + eventDetails.response);
-  			break;
-			
-		case 0:
-  			eventDetails.container.append("div").attr("class", "alert alert-error").html("<i class='icon-remove'></i> Sorry, your answer, " + eventDetails.submission + ", is not correct." + eventDetails.response);
-  			break;
-			
-		case -1:
-			eventDetails.container.append("div").attr("class", "alert").html("<i class='icon-adjust'></i> something has gone horribly awry - we can't score this answer. ");
-  			break;
-			
-		default:
-  			eventDetails.container.append("div").attr("class", "alert alert-info").html("<i class='icon-adjust'></i> Your answer, " + eventDetails.submission + ", is partially correct." + eventDetails.response);
-		}
-	
+		SubmitManager.appendResponseWithDefaultFormatting(eventDetails.container, eventDetails);
 	}
 	
+	//------------------- Q1 Test --------------------
+
+	var Q1Choices = [
+		{
+			content: "Because she turned me into a newt.",
+			answerKey: "newt"
+		},
+		{
+			content: "Because she has a long nose.",
+			answerKey: "nose"
+		},
+		{
+			content: "Because she floats on water.",
+			answerKey: "floats"
+	
+		},
+		{
+			content: "Because she's afraid of daylight.",
+			answerKey: "daylight"
+		}
+		];
+
+	// Test a select one question using a radio group widget
+	var Q1 = new SelectOneQuestion({
+			id: "Q1",
+			questionId: "SanVan004",
+			question: "How do you *know* she's a witch?",
+			choices: Q1Choices,
+			type: "randomized",
+			widget: RadioGroup,
+			widgetConfig: { numberFormat: "latin-upper" },
+		}, eventManager);
+	
+	submitManager.handleRequestsFrom(Q1);
+
+	Q1.draw(d3.select("#Q1here"));
 
 	</script>
 
