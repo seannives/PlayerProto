@@ -256,7 +256,7 @@ SubmitManager.appendResponseWithDefaultFormatting = function (container, respons
 
 	// display the results of the submission in the given container
 	container.append("div")
-		.attr("class", ["alert", responseFormat.responseClass].join(" "))
+		.attr("class", ["alert", responseFormat[ansType].responseClass].join(" "))
 		.html(responseHtml);
 };
 
