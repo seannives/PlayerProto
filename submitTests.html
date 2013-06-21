@@ -50,7 +50,7 @@
 	<!-- widget-numeric is required with widget-slider, even if you don't want a readout, as you'll get an "Uncaught ReferenceError: Readout is not defined" error without it -->
 	<script src="js/widget-numeric.js"></script>
 	<script src="js/widget-radiogroup.js"></script>
-	<script src="js/widget-selectonequestion.js"></script>
+	<script src="js/widget-multiplechoicequestion.js"></script>
 	<script src="js/eventmanager.js"></script>
 	<script src="js/submitmanager.js"></script>
 	<script src="js/answerman.js"></script>
@@ -170,12 +170,12 @@
 		];
 
 	// Test a select one question using a radio group widget
-	var Q1 = new SelectOneQuestion({
+	var Q1 = new MultipleChoiceQuestion({
 			id: "Q1",
 			questionId: "SanVan004",
 			question: "How do you *know* she's a witch?",
 			choices: Q1Choices,
-			type: "randomized",
+			order: "randomized",
 			widget: RadioGroup,
 			widgetConfig: { numberFormat: "latin-upper" },
 		}, eventManager);
