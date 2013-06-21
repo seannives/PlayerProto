@@ -237,17 +237,19 @@ var Data = [lineData,projected,nineB];
 						   label: "Human Population (Billions)",
 						    ticks: 7,
 						    },
-		});	
+		},eventManager);	
 			
 	cont1.append(lines, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 	
 // configure and append the legend to the graph
 
 	var legLines = new Legend({
-		xPos: "left", yPos: "top",
-		labels: ["Historical Population", "Projected Growth", "Nine Billion"],
+		xPos: "right", yPos: "bottom",
+		labels: [{ content: "historical data",	},
+				{ content: "predicted",	},
+				{ content: "threshold" ,}],
 		type: "line"
-	});
+	},eventManager);
 	
 	lines.append(legLines);
 	
@@ -255,7 +257,10 @@ var Data = [lineData,projected,nineB];
 	// event we listen to)
 	eventManager.subscribe(growRt.changedValueEventId,
 							handleChangedValue);
-	 
+	eventManager.subscribe(legLines.selectedEventId,
+						   handleHighlight);
+	eventManager.subscribe(lines.selectedEventId,
+						   handleHighlight);
 
 	/* **************************************************************************
 	 * handleInputValueChanged                                              *//**
@@ -302,6 +307,28 @@ var Data = [lineData,projected,nineB];
 		lines.redraw();
 	}
 	
+/************************************************************************
+* handleHighlight                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleHighlight(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+	
+		lines.lite(eventDetails.selectKey);
+		legLines.lite(eventDetails.selectKey);
+		
+	}
+
 
 	
 	
