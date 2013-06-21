@@ -517,8 +517,9 @@
 	{
 		//Handler needs to get written into each page, 
 		//each widget will have it's own way of responding  
-		//LabelLite should be a method of Labels, once Labels
-		//is written as a constructor
+		//since these are all highlight events, they have the 
+		//lite method name
+		
 		labelGroup80.lite(eventDetails.selectKey);
 		lineGraph[n].lite(eventDetails.selectKey);
 		legLines.lite(eventDetails.selectKey);
