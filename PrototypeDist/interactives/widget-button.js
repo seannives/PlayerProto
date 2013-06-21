@@ -23,8 +23,7 @@ define(['jquery'], function ($) {
 		 * NOTES: firefox doesn't support HTML5 buttons, they degrade to numeric input
 		 * fields.
 		 **************************************************************************/
-		init : function init(config, eventManager)
-		{
+		init : function init(config, eventManager) {
 			/**
 			 * A unique id for this instance of the button widget
 			 * @type {string}

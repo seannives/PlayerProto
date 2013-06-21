@@ -153,13 +153,51 @@ define(['jquery','d3'], function ($,d3) {
 		 */
 		getIdFromConfigOrAuto.autoPrefixCount = 0;
 
+// TODO - find out where in the code we create Size objects to see what we should do with these.
+// perhaps they need to go in base/size?
+/* **************************************************************************
+ * Size.matchRatioWithHeight                                            *//**
+ *
+ * Return a Size with the specified height whose aspect ratio is the same as
+ * that of the given size.
+ *
+ * @param {number}	desiredHeight	-The vertical dimension of the Size to be returned.
+ * @param {Size}	desiredRatio	-A Size whose ratio should be preserved in the returned Size.
+ * @return {Size}
+ ****************************************************************************/
+function matchRatioWithHeight(desiredHeight, desiredRatio)
+{
+	return {height: desiredHeight,
+			width: desiredRatio.width * desiredHeight / desiredRatio.height};
+};
+
+/* **************************************************************************
+ * Size.matchRatioWithWidth                                             *//**
+ *
+ * Return a Size with the specified width whose aspect ratio is the same as
+ * that of the given size.
+ *
+ * @param {number}	desiredWidth	-The horizontal dimension of the Size to be returned.
+ * @param {Size}	desiredRatio	-A Size whose ratio should be preserved in the returned Size.
+ * @return {Size}
+ ****************************************************************************/
+function matchRatioWithWidth(desiredWidth, desiredRatio)
+{
+	return {height: desiredRatio.height * desiredWidth / desiredRatio.width,
+			width: desiredWidth};
+};
+
+
+
 	return {
 		measure : measure,
 		logFormat : logFormat,
 		sign : sign,
 		attrFnVal : attrFnVal,
 		getIdFromConfigOrAuto : getIdFromConfigOrAuto,
-		randomizeArray : randomizeArray
+		randomizeArray : randomizeArray,
+		matchRatioWithHeight : matchRatioWithHeight,
+		matchRatioWithWidth : matchRatioWithWidth
 	}
 
 });

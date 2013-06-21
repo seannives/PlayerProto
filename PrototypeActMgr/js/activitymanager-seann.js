@@ -175,7 +175,7 @@ var activityManager = {
                 jquery: '../PrototypeDist/lib/jquery',
                 underscore: '../PrototypeDist/lib/underscore',
                 interactives: '../PrototypeDist/interactives',
-                d3: '../PrototypeDist/lib/d3.v3.min' // TODO - shouldn't reference version
+                d3: '../PrototypeDist/lib/d3' // TODO - shouldn't reference version
             },
             shim: {
                 underscore: {

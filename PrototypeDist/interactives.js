@@ -20,6 +20,7 @@ define(function (require) {
     var widgetCallout = require('interactives/widget-callouts');
     var widgetImage = require('interactives/widget-image');
     var captionedImage = require('interactives/image/captionedimage');
+    var labelGroup = require('interactives/labelgroup');
 
 	// widget loading command pattern (instead of case statement)
 	function loadWidget(widgetContent, eventManager) {
@@ -77,8 +78,8 @@ define(function (require) {
 
 
 		// todo - fix this
-		//var cntrSize = base.Size.matchRatioWithHeight(350 - 40, imgConfig.actualSize);
-		var cntrSize = {height: 500, width: 500};
+		var cntrSize = baseUtil.matchRatioWithHeight(350 - 40, imgConfig.actualSize);
+		//var cntrSize = {height: 500, width: 500};
 
 		var cntrConfig0 = 
 			{
@@ -99,6 +100,24 @@ define(function (require) {
 			});
 		
 		cntr0.append(cimg0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+		//put numbered highlightable bullets on the image
+		var numLabels = Object.create(labelGroup);
+		numLabels.init(
+			{
+				id: "reactorNum",
+				type: "numbered",
+				labels: 	
+				[	
+					{content: "1", xyPos: [0.025, 0.17], width: 0},
+					{content: "2", xyPos: [0.075, 0.37], width: 0},
+					{content: "3", xyPos: [0.325, 0.64], width: 0},
+					{content: "4", xyPos: [0.648, 0.59], width: 0},
+					{content: "5", xyPos: [0.690, 0.10], width: 0}
+				]
+			}, eventManager);
+		
+		cimg0.append(numLabels);
 
 	}
 
