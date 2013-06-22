@@ -29,7 +29,7 @@
 });
 
 /* **************************************************************************
- * SubmitManager                                                         *//**
+ * SubmitManager                                                        *//**
  *
  * @constructor
  *
@@ -70,10 +70,33 @@ function SubmitManager(config, eventManager)
 	/**
 	 * map of all submitted answers awaiting a response from
 	 * the scoring engine.
-	 * @type {Object}
+	 * @type {Object.<SequenceNodeId, PendingDetails>}
+	 * @private
 	 */
-	this.requestsAwaitingResponse = {};
+	this.requestsAwaitingResponse_ = {};
 
+	/**
+	 * The PAF Activity ID used by the scoring engine to identify
+	 * the particular activity (question) being scored.
+	 *
+	 * @typedef {string} SequenceNodeId
+	 */
+	
+	/**
+	 * The PendingDetails is the information about an outstanding
+	 * request for an activity to be scored by the scoring engine.
+	 *
+	 * @typedef {Object} PendingDetails
+	 * @property {SequenceNodeId}	sequenceNodeId	-The PAF Activity Id which identifies the
+	 * 												 activity being scored.
+	 * @property {string}			answer			-The chosen answer to be scored.
+	 * @property {function(Object)}	responseCallback
+	 * 												-The function to call w/ the response from
+	 * 												 the scoring engine.
+	 * @property {Object}			requestDetails	-The details from the score
+	 * 												 request event from the question widget.
+	 */
+	
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
@@ -97,11 +120,14 @@ function SubmitManager(config, eventManager)
 SubmitManager.autoIdPrefix = "sm_auto_";
 
 /* **************************************************************************
- * SubmitManager.handleRequestsFrom                                                                *//**
+ * SubmitManager.handleRequestsFrom                                     *//**
  *
- * [Description of handleRequestsFrom]
+ * Register the given question widget w/ this SubmitManager to handle any
+ * submitScoreRequest events the widget may publish.
  *
- * @param {Object}	questionWidget		-[Description of questionWidget]
+ * @param {Object}	questionWidget		-The question widget that may submit a
+ * 										 request for an answer to an activity to
+ * 										 be scored.
  *
  ****************************************************************************/
 SubmitManager.prototype.handleRequestsFrom = function(questionWidget)
@@ -112,11 +138,16 @@ SubmitManager.prototype.handleRequestsFrom = function(questionWidget)
 };
 
 /* **************************************************************************
- * SubmitManager.handleScoreRequest_                                                                *//**
+ * SubmitManager.handleScoreRequest_                                    *//**
  *
- * [Description of handleScoreRequest_]
+ * The event handler of this SubmitManager for submitScoreRequest events
+ * from registered question widgets.
  *
- * @param {Object}	eventDetails		-[Description of eventDetails]
+ * @param {Object}	eventDetails		-The details of the score request must include:
+ * 										 questionId and answerKey. Optionally it may
+ * 										 also include a responseCallback, and any other
+ * 										 properties that responseCallback may need.
+ * @private
  *
  ****************************************************************************/
 SubmitManager.prototype.handleScoreRequest_ = function(eventDetails)
@@ -129,25 +160,36 @@ SubmitManager.prototype.handleScoreRequest_ = function(eventDetails)
 			requestDetails: eventDetails,
 		};
 
-	if (this.requestsAwaitingResponse[eventDetails.questionId] !== undefined)
+	if (this.requestsAwaitingResponse_[eventDetails.questionId] !== undefined)
 	{
 		alert("there's already an outstanding submission request for the sequenceNode: " + eventDetails.questionId);
 	}
 
-	this.requestsAwaitingResponse[eventDetails.questionId] = pendingDetails;
+	this.requestsAwaitingResponse_[eventDetails.questionId] = pendingDetails;
 
-	this.submitForScoring(pendingDetails);
+	this.submitForScoring_(pendingDetails);
 };
 
 /* **************************************************************************
- * SubmitManager.submitForScoring                                       *//**
+ * SubmitManager.submitForScoring_                                      *//**
  *
- * [Description of submitForScoring]
+ * Send the score request to the scoring engine using whatever means required
+ * to access that scoring engine.
  *
- * @param {Object}	submitDetails		-[Description of submitDetails]
+ * @param {PendingDetails}	submitDetails	-Information identifying the question
+ * 											 and answer to be scored, in the properties:
+ * 											 sequenceNodeId and answer.
+ * @private
+ *
+ * @note Currently this method is using a local scoring engine that returns
+ * the response immediately. Eventually the scoring engine will be remote
+ * and the response should be asynchronous, meaning that it will have to be
+ * handled in a separate method probably an event handler of some sort. The
+ * code here that deals w/ the current synchronous response will have to be
+ * moved to this new method. -mjl
  *
  ****************************************************************************/
-SubmitManager.prototype.submitForScoring = function(submitDetails)
+SubmitManager.prototype.submitForScoring_ = function(submitDetails)
 {
 	// pass the submission on to the scoring engine. This will probably be
 	// via the ActivityManager I'd think
@@ -160,8 +202,8 @@ SubmitManager.prototype.submitForScoring = function(submitDetails)
 	// We handle the reply from the scoring engine (in the event handler eventually)
 	// by removing the request from the list of pending request
 	// and calling the given callback if it exists
-	var pendingDetails = this.requestsAwaitingResponse[submitDetails.sequenceNodeId];
-	delete this.requestsAwaitingResponse[submitDetails.sequenceNodeId];
+	var pendingDetails = this.requestsAwaitingResponse_[submitDetails.sequenceNodeId];
+	delete this.requestsAwaitingResponse_[submitDetails.sequenceNodeId];
 	if (typeof pendingDetails.responseCallback === "function")
 	{
 		submissionResponse.submitDetails = pendingDetails.requestDetails;
@@ -209,8 +251,15 @@ SubmitManager.prototype.submit = function (submission)
  * 									 response into.
  * @param {Object}	responseDetails	-The response details returned by the
  * 									 scoring engine.
- *                               grade: 0..1
- *                               response: string response
+ * 									 The details must contain the following
+ * 									 properties:
+ * 									 score, submission, response.
+ *
+ * @note It would be nice if the score property of the responseDetails was
+ * changed from the possible values of -1, 0, 1 or undefined to either a
+ * string (perhaps matching the responseFormat table below), or at least
+ * a whole number that could be used as an index w/o manipulation. -mjl
+ *
  ****************************************************************************/
 SubmitManager.appendResponseWithDefaultFormatting = function (container, responseDetails)
 {
@@ -261,7 +310,7 @@ SubmitManager.appendResponseWithDefaultFormatting = function (container, respons
 };
 
 /* **************************************************************************
- * fancyAnswerEngine                                                 *//**
+ * fancyAnswerEngine                                                    *//**
  *
  * I'm just a stub
  * Yes, I'm only a stub

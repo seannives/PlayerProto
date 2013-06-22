@@ -1,5 +1,5 @@
 /* **************************************************************************
- * $Workfile:: answerman.js                                             $
+ * $Workfile:: answerman.js                                                 $
  * **********************************************************************//**
  *
  * @fileoverview Client-side answer evaluation engine object.
@@ -18,15 +18,15 @@
 Student feedback and scoring functions
 -------------------------------------------------*/
 
-function answerMan(config, studAnswer) {
-	
+var answerMan = function (config, studAnswer)
+{
 	//set the sequence node. This will be used to look up the activity
-	this.sequenceNode = config.sequenceNode;
-	var activity = this.sequenceNode;
+	var sequenceNode = config.sequenceNode;
+	var activity = sequenceNode;
 	
 	//lookup the student answer in the answer key in fakeactivitydb.js, which
 	//got loaded with the page
-	var activity = (this.sequenceNode in activities) ? activities[this.sequenceNode] : "activity not found";
+	var activity = (sequenceNode in activities) ? activities[sequenceNode] : "activity not found";
 	var solution = (studAnswer in activity) ? activity[studAnswer] : "solution key not found";
 
 	// stash the answer score and response in some variables
