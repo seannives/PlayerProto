@@ -1,10 +1,10 @@
 /* **************************************************************************
- * $Workfile:: widget-selectonequestion.js                                  $
+ * $Workfile:: widget-multiplechoicequestion.js                             $
  * **********************************************************************//**
  *
- * @fileoverview Implementation of the SelectOneQuestion widget.
+ * @fileoverview Implementation of the MultipleChoiceQuestion widget.
  *
- * The SelectOneQuestion widget displays a question and a set of possible
+ * The MultipleChoiceQuestion widget displays a question and a set of possible
  * answers one of which must be selected and submitted to be scored.
  *
  * Created on		May 29, 2013
@@ -50,16 +50,16 @@
 			numberFormat: "latin-upper"
 		};
 	
-	// RadioButtonQuestion widget config
-	var rbqConfig =
+	// MultipleChoiceQuestion widget config
+	var mcqConfig =
 	{
 		id: "Q1",
 		questionId: "SanVan003",
 		question: "Why?",
 		choices: Q1Choices,
-		type: "randomized", //default, even if not specified
+		order: "randomized", //default, even if not specified
 		widget: RadioGroup,
-		widgetConfig: { numberFormat: "latin-upper" } // id and choices will be added by SelectOneQuestion
+		widgetConfig: { numberFormat: "latin-upper" } // id and choices will be added by MultipleChoiceQuestion
 	};
 });
 
@@ -70,8 +70,6 @@
  * @typedef {Object} Answer
  * @property {string}	content		-The content of the answer, which presents the
  * 									 meaning of the answer.
- * @property {string}	response	-The response is presented to the user when
- * 									 they choose this answer.
  * @property {string}	answerKey	-This is the unique ID that will be returned
  * 									 to the scoring engine to identify that the
  * 									 user has chosen this answer.
@@ -82,39 +80,47 @@
 
 
 /* **************************************************************************
- * SelectOneQuestion                                                    *//**
+ * MultipleChoiceQuestion                                               *//**
  *
- * The SelectOneQuestion widget displays a question and a set of possible
+ * The MultipleChoiceQuestion widget displays a question and a set of possible
  * answers one of which must be selected and submitted to be scored.
  *
  * @constructor
  * @implements {IWidget}
+ * @implements {IQuestion}
  *
- * @param {Object}		config			-The settings to configure this SelectOneQuestion
+ * @param {Object}		config			-The settings to configure this MultipleChoiceQuestion
  * @param {string|undefined}
- * 						config.id		-String to uniquely identify this SelectOneQuestion.
+ * 						config.id		-String to uniquely identify this MultipleChoiceQuestion.
  * 										 if undefined a unique id will be assigned.
  * @param {string}		config.questionId
  * 										-Scoring engine Id of this question
  * @param {string}		config.question	-The question being posed to the user which should
  * 										 be answered by choosing one of the presented choices.
  * @param {Array.<Answer>}
- *						config.choices	-The list of choices (answers) to be presented by the SelectOneQuestion.
+ *						config.choices	-The list of choices (answers) to be presented
+ *										 by the MultipleChoiceQuestion.
  * @param {string|undefined}
- *						config.numberFormat
- *										-The format for numbering the choices. default is "none"
+ *						config.order	-The order in which the choices should be presented.
+ *										 either "randomized" or "ordered". Default is
+ *										 "randomized" if not specified.
+ * @param {IWidget}		config.widget	-The constructor for a widget that presents choices.
+ * @param {!Object}		config.widgetConfig
+ * 										-The configuration object for the specified widget
+ * 										 constructor without the id or choices properties which
+ * 										 will be added by this question constructor.
  * @param {EventManager}
  * 						eventManager	-The event manager to use for publishing events
  * 										 and subscribing to them.
  *
  ****************************************************************************/
-function SelectOneQuestion(config, eventManager)
+function MultipleChoiceQuestion(config, eventManager)
 {
 	/**
 	 * A unique id for this instance of the select one question widget
 	 * @type {string}
 	 */
-	this.id = getIdFromConfigOrAuto(config, SelectOneQuestion);
+	this.id = getIdFromConfigOrAuto(config, MultipleChoiceQuestion);
 
 	/**
 	 * The scoring engine id of this question.
@@ -139,12 +145,17 @@ function SelectOneQuestion(config, eventManager)
 
 	widgetConfig.id = this.id + "_wdgt";
 
-	if (config.type === undefined || config.type === "randomized")
+	var choices = config.choices;
+
+	if (config.order === undefined || config.order === "randomized")
 	{
-		randomizeArray(config.choices);
+		// clone the array before we rearrange it so we don't modify the
+		// array passed in the config.
+		choices = choices.slice(0);
+		randomizeArray(choices);
 	}
 
-	widgetConfig.choices = config.choices;
+	widgetConfig.choices = choices;
 
 	/**
 	 * The widget used to present the choices that may be selected to answer
@@ -223,24 +234,24 @@ function SelectOneQuestion(config, eventManager)
 			container: null,
 			widgetGroup: null,
 		};
-} // end of SelectOneQuestion constructor
+} // end of MultipleChoiceQuestion constructor
 
 /**
- * Prefix to use when generating ids for instances of SelectOneQuestion.
+ * Prefix to use when generating ids for instances of MultipleChoiceQuestion.
  * @const
  * @type {string}
  */
-SelectOneQuestion.autoIdPrefix = "s1Q_auto_";
+MultipleChoiceQuestion.autoIdPrefix = "mcQ_auto_";
 
 /* **************************************************************************
- * SelectOneQuestion.handleSubmitRequested_                             *//**
+ * MultipleChoiceQuestion.handleSubmitRequested_                        *//**
  *
  * Handle the pressed event from the submit button which means that we want
  * to fire the submit answer requested event.
  * @private
  *
  ****************************************************************************/
-SelectOneQuestion.prototype.handleSubmitRequested_ = function()
+MultipleChoiceQuestion.prototype.handleSubmitRequested_ = function()
 {
 	var that = this;
 	var submitAnsDetails =
@@ -255,21 +266,21 @@ SelectOneQuestion.prototype.handleSubmitRequested_ = function()
 };
 
 /* **************************************************************************
- * SelectOneQuestion.handleAnswerSelected_                              *//**
+ * MultipleChoiceQuestion.handleAnswerSelected_                         *//**
  *
  * Handle the selected event from the choice widget which means that the
  * submit button can be enabled.
  * @private
  *
  ****************************************************************************/
-SelectOneQuestion.prototype.handleAnswerSelected_ = function()
+MultipleChoiceQuestion.prototype.handleAnswerSelected_ = function()
 {
 	this.submitButton.setText("Submit Answer");
 	this.submitButton.setEnabled(true);
 };
 
 /* **************************************************************************
- * SelectOneQuestion.handleSubmitResponse_                              *//**
+ * MultipleChoiceQuestion.handleSubmitResponse_                         *//**
  *
  * Handle the response to submitting an answer.
  *
@@ -278,7 +289,7 @@ SelectOneQuestion.prototype.handleAnswerSelected_ = function()
  * @private
  *
  ****************************************************************************/
-SelectOneQuestion.prototype.handleSubmitResponse_ = function(responseDetails)
+MultipleChoiceQuestion.prototype.handleSubmitResponse_ = function(responseDetails)
 {
 	this.responses.push(responseDetails);
 
@@ -289,16 +300,16 @@ SelectOneQuestion.prototype.handleSubmitResponse_ = function(responseDetails)
 };
 
 /* **************************************************************************
- * SelectOneQuestion.draw                                               *//**
+ * MultipleChoiceQuestion.draw                                          *//**
  *
- * Draw this SelectOneQuestion in the given container.
+ * Draw this MultipleChoiceQuestion in the given container.
  *
  * @param {!d3.selection}
  *					container	-The container html element to append the
  *								 question element tree to.
  *
  ****************************************************************************/
-SelectOneQuestion.prototype.draw = function(container)
+MultipleChoiceQuestion.prototype.draw = function(container)
 {
 	this.lastdrawn.container = container;
 
@@ -306,7 +317,7 @@ SelectOneQuestion.prototype.draw = function(container)
 	
 	// make a div to hold the select one question
 	var widgetGroup = container.append("div")
-		.attr("class", "widgetSelectOneQuestion")
+		.attr("class", "widgetMultipleChoiceQuestion")
 		.attr("id", this.id);
 
 	var question = widgetGroup.append("p")
@@ -328,10 +339,10 @@ SelectOneQuestion.prototype.draw = function(container)
 
 	this.lastdrawn.widgetGroup = widgetGroup;
 
-}; // end of SelectOneQuestion.draw()
+}; // end of MultipleChoiceQuestion.draw()
 
 /* **************************************************************************
- * SelectOneQuestion.selectedItem                                       *//**
+ * MultipleChoiceQuestion.selectedItem                                  *//**
  *
  * Return the selected choice from the choice widget or null if nothing has been
  * selected.
@@ -339,13 +350,13 @@ SelectOneQuestion.prototype.draw = function(container)
  * @return {Object} the choice which is currently selected or null.
  *
  ****************************************************************************/
-SelectOneQuestion.prototype.selectedItem = function ()
+MultipleChoiceQuestion.prototype.selectedItem = function ()
 {
 	return this.choiceWidget.selectedItem();
 };
 
 /* **************************************************************************
- * SelectOneQuestion.selectItemAtIndex                                  *//**
+ * MultipleChoiceQuestion.selectItemAtIndex                             *//**
  *
  * Select the choice in the choice widget at the given index. If the choice is
  * already selected, do nothing. The index is the displayed choice index and
@@ -355,7 +366,7 @@ SelectOneQuestion.prototype.selectedItem = function ()
  * @param {number}	index	-the 0-based index of the choice to mark as selected.
  *
  ****************************************************************************/
-SelectOneQuestion.prototype.selectItemAtIndex = function (index)
+MultipleChoiceQuestion.prototype.selectItemAtIndex = function (index)
 {
 	this.choiceWidget.selectItemAtIndex(index);
 };
