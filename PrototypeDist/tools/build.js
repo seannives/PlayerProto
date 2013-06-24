@@ -4,7 +4,7 @@
         "interactives": "../interactives"
     },
     "include": ["../tools/almond", "interactives"],
-    "exclude": ["jquery", "underscore"],
+    "exclude": ["jquery", "underscore", "d3"],
     "out": "../dist/interactives.js",
     "wrap": {
         "startFile": "wrap.start",

@@ -3,11 +3,11 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD.
-        define(['jquery', 'underscore'], factory);
+        define(['jquery', 'underscore', 'd3'], factory);
     } else {
         // Browser globals
-        root.interactives = factory(root.$, root._);
+        root.interactives = factory(root.$, root._, root.d3);
     }
-}(this, function ($, _) {
+}(this, function ($, _, d3) {
 
 
