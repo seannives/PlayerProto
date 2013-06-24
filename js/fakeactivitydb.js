@@ -75,4 +75,11 @@ var activities = {
 				response:  "I believe you are thinking of vampires.",
 				},
 		},
+	"http://hub.paf.pearson.com/resources/sequences/123/nodes/1": {
+		"1": {
+				content: "1",
+				score: 1,
+				response: "There can be only 1",
+			},
+		},
 	};

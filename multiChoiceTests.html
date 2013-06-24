@@ -28,14 +28,18 @@
 						<p>The answer key selected is: <b id="rb-test-key">none</b>.</p>
 						<p id="rb-test-resp"/>
 				</div>
-				<div id="radioRnd"><p>1. Multiple Choice question, randomized</p></div>
-				<div id="radioOrd"><p>2. Multiple Choice question, nonrandomized</p></div>
-                <div id="radioOrd"><p>3. Multiple Choice question, dropdown</p></div>
+				<hr />
+				<div id="radioRnd"><p>Q1-test. Multiple Choice question, randomized</p></div>
+				<hr />
+				<div id="radioOrd"><p>Q2-test. Multiple Choice question, nonrandomized</p></div>
+				<hr />
+                <div id="selectOrd"><p>Q3-test. Multiple Choice question, dropdown</p></div>
 
 			</div>
 			<div class="span6 rightCol">
 				<div id="graphIn"><p>4. Graphs as responses (radio buttons containing widgets)</p></div>
-				<div id="graphIn"><p>5. Traces as responses (choose a trace)</p></div>
+				<hr />
+				<div id="traceIn"><p>5. Traces as responses (choose a trace)</p></div>
 	
 			</div>
 		</div>
@@ -55,8 +59,9 @@
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-radiogroup.js"></script>
+	<script src="js/widget-selectgroup.js"></script>
 	<script src="js/widget-button.js"></script>
-	<script src="js/widget-selectonequestion.js"></script>
+	<script src="js/widget-multiplechoicequestion.js"></script>
 
 <script>
 
@@ -106,11 +111,11 @@
 	eventManager.subscribe(radioButtons.selectedEventId, handle_radioButtons_selected);
 
 	// Test a select one question using a radio group widget
-	var Q1 = new SelectOneQuestion({
+	var Q1 = new MultipleChoiceQuestion({
 			id: "Q1",
 			question: "Wherefore?",
 			choices: Q1Choices,
-			type: "randomized",
+			order: "randomized",
 			widget: RadioGroup,
 			widgetConfig: { numberFormat: "latin-upper" },
 		}, eventManager);
@@ -119,17 +124,31 @@
 	
 	//<div id="radioOrd"><p>1. Multiple Choice question, nonrandomized</p></div>
 
-	var Q2 = new SelectOneQuestion({
+	var Q2 = new MultipleChoiceQuestion({
 			id: "Q2",
 			question: "Why?",
 			choices: Q1Choices,
-			type: "ordered",
+			order: "ordered",
 			widget: RadioGroup,
 			widgetConfig: { numberFormat: "latin-lower" },
 		}, eventManager);
 
 	Q2.draw(d3.select("#radioOrd"));
  
+	//<div id="selectOrd"><p>3. Multiple Choice question, dropdown</p></div>
+
+	var Q3 = new MultipleChoiceQuestion({
+			id: "Q3",
+			question: "Why?",
+			choices: Q1Choices,
+			order: "ordered",
+			widget: SelectGroup,
+			widgetConfig: {},
+		}, eventManager);
+
+	Q3.draw(d3.select("#selectOrd"));
+ 
+
 
     //  <div id="graphIn"><p>Graphs as content</p></div>
 	 
@@ -290,7 +309,7 @@ var Africa = [
 		};
 		
 
-	var Q3Choices = [
+	var Q4Choices = [
 	{
 		content: new LineGraph(Asialg),
 		response: "Asia currently has a population over 4 Billion, and is the most populous continent on the earth.",
@@ -313,27 +332,23 @@ var Africa = [
 	}
 	];
 	
-	var radioGraphs = new RadioGroup({
-			id: "RB2",
-			choices: Q3Choices,
-			svgWidgetSize: {height: 100, width: 200}
-		});
+	var Q4 = new MultipleChoiceQuestion({
+			id: "Q4",
+			question: "Wherefore?",
+			choices: Q4Choices,
+			order: "randomized",
+			widget: RadioGroup,
+			widgetConfig: { numberFormat: "latin-upper", svgWidgetSize: {height: 100, width: 200} }
+		}, eventManager);
 
-	var Q3 = new RadioButtonQuestion({
-			id: "RB2",
-			choices: Q3Choices,
-			svgWidgetSize: {height: 100, width: 200},
-			type: "randomized"
-		});
-
-	Q3.draw(d3.select("#graphIn"));
+	Q4.draw(d3.select("#graphIn"));
 
 	 
 	eventManager.subscribe(radioButtons.submitEventId,
 						   handleSubmit);
 	
 /************************************************************************
-* handleSubmit	                                           *//**
+* handleSubmit	                                                    *//**
 *
 * handleSubmit is called from the event handler for one of
 * the input widgets when the user submits an answer. It scores
