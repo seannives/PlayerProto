@@ -17,75 +17,48 @@
 (function () {
     var expect = chai.expect;
 
-    describe('SubmitManager tests', function () {
-    	var eventManager = null;
-    	describe('Configuration with no id set tests', function () {
-			var submit1Config = {
-				sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/123/nodes/1'
+	var createMockEventManager = function ()
+		{
+			return {
+				subscribe: function (topic, callback)
+						{
+							this.lastSubscribe.count++;
+							this.lastSubscribe.topic = topic;
+							this.lastSubscribe.callback = callback;
+						},
+				lastSubscribe: {count: 0, topic: undefined, callback: undefined}
 			};
-			var submitManager = new SubmitManager(submit1Config, eventManager);
-
-			it('should be an object', function () {
-	            expect(submitManager).to.be.an('object');
-	        });
-	    	it('should have an auto-generated id', function () {
-	    		expect(submitManager.id).to.equal('sm_auto_1');
-	    	});
-	    	it('should have a sequenceNodeID', function () {
-	    		expect(submitManager.sequenceNodeID).to.equal('http://hub.paf.pearson.com/resources/sequences/123/nodes/1');
-	    	});
-		});
-
-		var submit1Config = {
-			id: 'sm1',
-			sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/123/nodes/1'
 		};
-							
-		describe('Configuration with id set tests', function () {
-			var submitManager = new SubmitManager(submit1Config, eventManager);
-			it('should be an object', function () {
-	            expect(submitManager).to.be.an('object');
-	        });
-	    	it('should have an id', function () {
-	    		expect(submitManager.id).to.equal('sm1');
-	    	});
-	    	it('should have a sequenceNodeID', function () {
-	    		expect(submitManager.sequenceNodeID).to.equal('http://hub.paf.pearson.com/resources/sequences/123/nodes/1');
-	    	});
-		});
 
-		describe('Submitting to the SubmitManager', function() {
-			var submitManager = null;
-			var submittedEventCount = 0;
-			var lastSubmittedEventDetails = null;
-			var logSubmittedEvent =
-				function logSubmittedEvent(eventDetails)
-				{
-					++submittedEventCount;
-					lastSubmittedEventDetails = eventDetails;
-				};
+    describe('SubmitManager tests', function () {
+		describe('.handleRequestsFrom()', function () {
+			var eventManager = createMockEventManager();
+			var submitManager = new SubmitManager(null, eventManager);
+			var mockQWidget = {submitScoreRequestEventId: "foo"};
+			submitManager.handleRequestsFrom(mockQWidget);
 
-			before(function () {
-				eventManager = new EventManager();
-				submittedEventCount = 0;
-				lastSubmittedEventDetails = null;
-
-				submitManager = new SubmitManager(submit1Config, eventManager);
-				eventManager.subscribe(submitManager.submittedEventId, logSubmittedEvent);
-				submitManager.submit('1');
+			it('should subscribe to the given widget\'s submitScoreRequestEventId', function () {
+				expect(eventManager.lastSubscribe.topic).is.equal(mockQWidget.submitScoreRequestEventId);
 			});
 
-			it('should return an object', function() {
-				expect(lastSubmittedEventDetails).to.be.an.object;
+			it('should use a handler which scores the request and calls the given callback with the response', function () {
+				// Arrange
+				var returnedResponseDetails = null;
+				var scoreEventDetails =
+					{
+						questionId: "http://hub.paf.pearson.com/resources/sequences/123/nodes/1",
+						answerKey: "1",
+						responseCallback: function (responseDetails)
+							{
+								returnedResponseDetails = responseDetails;
+							},
+						foo: "bar"
+					};
+				// Act - pretend event was published by calling callback
+				eventManager.lastSubscribe.callback(scoreEventDetails);
+				// Assert
+				expect(returnedResponseDetails.submitDetails).is.deep.equals(scoreEventDetails);
 			});
-			it('should return a grade', function() {
-				expect(lastSubmittedEventDetails.grade).to.not.be.null;
-				expect(lastSubmittedEventDetails.grade).to.be.within(0,1);
-			});
-			it('should return a response', function() {
-				expect(lastSubmittedEventDetails.response).to.not.be.null;
-			});
-			
 		});
 	});
 })();
