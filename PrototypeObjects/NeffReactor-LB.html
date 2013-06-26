@@ -38,7 +38,7 @@
             	<!-- SI - again, remove div and replace with object tag. -->
             	<!--<div id="steps">
                 </div>-->
-                <object id="imgReactorObject" data="neffReactorSteps.html" height="360" width="100%" 
+                <object id="imgReactorObject2" data="neffReactorSteps.html" height="360" width="100%" 
                 	style="overflow:
                     visible" type="text/html"></object>
 			</div>
@@ -52,6 +52,16 @@
 	<script src="../js/toc-structure.js"></script>    
 	<script src="../js/eCourse-master.js"></script>    
 
+	<script>
+        window.addEventListener('message', function(e){
+        	console.log("heard it");
+            var object = document.querySelector('#imgReactorObject2');
+            console.log('before: ' + object.style.width + ' ' + object.style.height);
+            //object.style.width = e.data.width + 'px';
+            object.style.height = e.data.height + 'px';
+            console.log('after: '+ object.style.width + ' ' + object.style.height);
+        });
+    </script>
 
 	<!-- SI - remove all the js necessary for brix -->
 	

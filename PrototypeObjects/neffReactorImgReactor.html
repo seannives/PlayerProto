@@ -91,6 +91,15 @@
 	cimg0.append(numLabels);
 
 
+        window.onload = function(){
+			console.log('img loaded');
+			window.parent.postMessage({
+                    width: document.documentElement.offsetWidth,
+                    height: document.documentElement.offsetHeight
+                }, '*');
+        };
+
+
 	
 	</script>
 </body>

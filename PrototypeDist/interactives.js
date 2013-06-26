@@ -25,9 +25,12 @@ define(function (require) {
 	// widget loading command pattern (instead of case statement)
 	function loadWidget(widgetContent, eventManager) {
 		var widgets = {
-			'button' : buttonConf,
-			'callout' : calloutConf,
-			'image' : imageConf
+			'button'         : buttonConf,
+			'callout'        : calloutConf,
+			'captionedImage' : captionedImageConf,
+			'image'          : imageConf,
+			'labelGroup'     : labelgroupConf,
+			'svgContainer'   : svgContainerConf
 			//, add other widget config here
 	    };
 	   
@@ -56,69 +59,88 @@ define(function (require) {
 
 	// callout widget config 
 	function calloutConf(widgetContent, eventManager) {
-
 		var callout = Object.create(widgetCallout);
 		callout.init(widgetContent, eventManager);
         callout.draw(d3.select("#" + widgetContent.targetid));
-        // todo - your event manager stuff goes here		
+        return callout;	
+	}
+
+	function captionedImageConf(widgetContent, eventManager) {
+		var img = imageConf(widgetContent.image, eventManager);
+		// todo - figure out how to chain these; Object.create(widgetImage).init(imgConfig)
+
+		var capImg = Object.create(captionedImage);
+		capImg.init({
+				id: widgetContent.id,
+				image: img,
+				captionPosition: widgetContent.captionPosition
+			});
+		return capImg;
+		//cntr0.append(capImg, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+
+
+		
+		//capImg.append(numLabels);
 	}
 
 	function imageConf(widgetContent, eventManager) {
 		var imgConfig =
 			{
-				id: "imgReactor",
-				URI: '../img/reactor.jpg',
-				caption: "Nuclear Reactor Schematic Diagram",
-				actualSize: {height: 310, width: 680}
+				id: widgetContent.targetid,
+				URI: widgetContent.URI,
+				caption: widgetContent.caption,
+				actualSize: widgetContent.actualSize
 			};
 
-		var myImg = Object.create(widgetImage);
-		myImg.init(imgConfig);
+		var img = Object.create(widgetImage);
+		img.init(imgConfig);
 		// todo - figure out how to chain these; Object.create(widgetImage).init(imgConfig)
+		return img;
+	}
 
-
-		// todo - fix this
-		var cntrSize = baseUtil.matchRatioWithHeight(350 - 40, imgConfig.actualSize);
-		//var cntrSize = {height: 500, width: 500};
-
-		var cntrConfig0 = 
-			{
-				node: d3.select("#imgReactor"),
-				maxSize: cntrSize,
-				maxWid: cntrSize.width, //550,
-				maxHt: 350
-			};
-		
-		var cntr0 = Object.create(svgContainer);
-		cntr0.init(cntrConfig0);
-		
-		var cimg0 = Object.create(captionedImage);
-		cimg0.init({
-				id: "cimg0n",
-				image: myImg,
-				captionPosition: "below"
-			});
-		
-		cntr0.append(cimg0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-
+	function labelgroupConf(widgetContent, eventManager) {
 		//put numbered highlightable bullets on the image
-		var numLabels = Object.create(labelGroup);
-		numLabels.init(
+		var labelGrp = Object.create(labelGroup);
+		labelGrp.init(
 			{
-				id: "reactorNum",
-				type: "numbered",
-				labels: 	
-				[	
-					{content: "1", xyPos: [0.025, 0.17], width: 0},
-					{content: "2", xyPos: [0.075, 0.37], width: 0},
-					{content: "3", xyPos: [0.325, 0.64], width: 0},
-					{content: "4", xyPos: [0.648, 0.59], width: 0},
-					{content: "5", xyPos: [0.690, 0.10], width: 0}
-				]
+				id: widgetContent.id,
+				type: widgetContent.type,
+				labels: widgetContent.labels
 			}, eventManager);
-		
-		cimg0.append(numLabels);
+		return labelGrp;
+	}
 
+	function svgContainerConf(widgetContent, eventManager) {
+
+		var cntrSize = baseUtil.matchRatioWithHeight(widgetContent.height, widgetContent.actualSize);
+		var cntrConfig = 
+			{
+				node: d3.select('#' + widgetContent.nodeid),
+				maxSize: cntrSize,
+				maxWid: cntrSize.width,
+				maxHt: widgetContent.maxHt
+			};
+		var cntr = Object.create(svgContainer);
+		cntr.init(cntrConfig);
+		return cntr;
+	}
+
+	// action loading command pattern (instead of case statement)
+	function doAction(widgetContent, brixObjects) {
+		var actions = {
+			'append' : appendAction
+			//, add other widget config here
+	    };
+	   
+	    if (typeof actions[widgetContent.type] !== 'function') {
+	      throw new Error('Invalid widget ' + widgetContent.type);
+	    }
+
+	    return actions[widgetContent.type](widgetContent, brixObjects);
+	}
+
+	function appendAction(brixContent, brixObjects) {
+		brixObjects[brixContent.to].append(brixObjects[brixContent.what], brixContent.config);
 	}
 
     //Return the module value.
@@ -129,13 +151,34 @@ define(function (require) {
         convert: convert,
     	init: function init(content, eventManager) {
 
-			// todo - loop over each nested widget (we don't have nested widgets yet in sample json)
+
 
 			// load the widgets
-
-			content.targetActivity.master.widgets.forEach(function(widgetContent){
-				loadWidget(widgetContent, eventManager);
+			var brixObjects = {};
+			content.targetActivity.master.brix.forEach(function(brixContent){
+				if (brixContent.wtype == "action") {
+					doAction(brixContent, brixObjects);
+					
+				} else {
+					var br = loadWidget(brixContent, eventManager);
+					brixObjects[brixContent.id] = br;
+				}				
 			});
+
+			eventManager.subscribe(brixObjects["reactorNum"].selectedEventId, handleSelectionChanged);
+			eventManager.subscribe(brixObjects["callme"].selectedEventId, handleSelectionChanged);
+
+			handleSelectionChanged({selectKey: '0'});
+			function handleSelectionChanged(eventDetails)
+    		{
+    			//Handler needs to get written into each page, 
+    			//each widget will have it's own way of responding  
+    			//LabelLite should be a method of Labels, once Labels
+    			//is written as a constructor
+    			brixObjects["reactorNum"].lite(eventDetails.selectKey);
+    			brixObjects["callme"].lite(eventDetails.selectKey);
+    			
+    		}
 		}
     };
 });

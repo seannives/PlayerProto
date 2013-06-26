@@ -61,19 +61,57 @@ var activityManager = {
         } else if (myid[0] == '111001') { // NeffReactor
             interactiveConfig = {
                 "master": {
-                    "widgets": [                        
-                        { // Image
-                            "wtype": "image",
-                            "targetid": "imgReactor",
-                            "id": "imgReactor",
-                            "URI": '../img/reactor.jpg',
-                            "caption": "Nuclear Reactor Schematic Diagram",
-                            "actualSize": {height: 310, width: 680}                                
+                    "brix": [                        
+                        { // SVG Container
+                            "wtype": "svgContainer",
+                            "id": "svg1",
+                            "nodeid": "imgReactor",
+                            "height": 310,
+                            "maxHt": 350,
+                            "actualSize": {height: 310, width: 680} // dupe from img above
+                        },
+                        { // Captioned Image                            
+                            "wtype": "captionedImage",
+                            "id": "cimg0n",
+                            "captionPosition": "below",
+                            "image": {
+                                "targetid": "imgReactor",
+                                "id": "imgReactor",
+                                "URI": '../img/reactor.jpg',
+                                "caption": "Nuclear Reactor Schematic Diagram",
+                                "actualSize": {height: 310, width: 680}
+                            }
+                        },
+                        { // action - append image to container
+                            "wtype": "action",
+                            "type": "append",
+                            "what": "cimg0n",
+                            "to": "svg1",
+                            "config": {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1}
+                        },                       
+                        { // Num Labels
+                            "wtype": "labelGroup",
+                            "id": "reactorNum",
+                            "type": "numbered",
+                            "labels":     
+                            [   
+                                {content: "1", xyPos: [0.025, 0.17], width: 0},
+                                {content: "2", xyPos: [0.075, 0.37], width: 0},
+                                {content: "3", xyPos: [0.325, 0.64], width: 0},
+                                {content: "4", xyPos: [0.648, 0.59], width: 0},
+                                {content: "5", xyPos: [0.690, 0.10], width: 0}
+                            ]
+                        },
+                        { // action - append label to image
+                            "wtype": "action",
+                            "type": "append",
+                            "what": "reactorNum",
+                            "to": "cimg0n"
                         },
                         { // Callout
                             "wtype": "callout",
-                            "targetid": "steps",
                             "id": "callme",
+                            "targetid": "steps",
                             "show": "all",
                             "type": "numbered",
                             "headers": ["Nuclear Reactor function" ],
