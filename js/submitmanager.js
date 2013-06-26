@@ -21,10 +21,6 @@
 (function()
 {
 	var submit1Config = {
-			id: "sm1",
-			//sequenceNodeID is used to tell the PAF engine where in the assignment 
-			//(sequence of activities) this particular activity lives
-			sequenceNodeID: 'http://hub.paf.pearson.com/resources/sequences/3314583736548363/nodes/1'
 		};
 });
 
@@ -33,39 +29,28 @@
  *
  * @constructor
  *
- * The event manager handles your submissions, yo.
+ * The submit manager handles your submissions, yo.
+ * It listens (subscribes) for scoring requests from registered widgets,
+ * handles getting the request to the scoring engine and processes the
+ * response, returning that response to the requesting widget if there
+ * is a callback associated w/ the request.
  *
  * @constructor
  *
  * @param {Object}		config			-The settings to configure this SubmitManager
- * @param {string|undefined}
- * 						config.id		-String to uniquely identify this SubmitManager.
- * 										 if undefined a unique id will be assigned.
- * @param {string}		sequenceNodeID	-sequenceNodeID uniquely identifies the item.
- *										 This is a PAF construct.
+ * 										 of which there are currently none.
+ * @param {!EventManager}
+ * 						eventManager	-The event manager to use for publishing events
+ * 										 and subscribing to them.
  *
  ****************************************************************************/
-
 function SubmitManager(config, eventManager)
 {
 	/**
-	 * A unique id for this instance of the SubmitManager widget
-	 * @type {string}
+	 * The event manager to use to publish (and subscribe to) events for this widget
+	 * @type {EventManager}
 	 */
-	this.id = getIdFromConfigOrAuto(config, SubmitManager);
-	
-	/**
-	 * pointer to the submission div so responses can be written
-	 * @type {d3 selection object}
-	 */
-	this.container = config.container;
-
-
-	/**
-	 * The PAF SequenceNodeID, uniquely identifying the item
-	 * @type {string}
-	 */
-	this.sequenceNodeID = config.sequenceNodeID;
+	this.eventManager = eventManager;
 
 	/**
 	 * map of all submitted answers awaiting a response from
@@ -96,28 +81,7 @@ function SubmitManager(config, eventManager)
 	 * @property {Object}			requestDetails	-The details from the score
 	 * 												 request event from the question widget.
 	 */
-	
-	/**
-	 * The event manager to use to publish (and subscribe to) events for this widget
-	 * @type {EventManager}
-	 */
-	this.eventManager = eventManager;
-
-	/**
-	 * The event id published when a submission is returned.
-	 * @const
-	 * @type {string}
-	 */
-	this.submittedEventId = this.id + '_submitted';
-	
 }
-
-/**
- * Prefix to use when generating ids for instances of LabelGroup.
- * @const
- * @type {string}
- */
-SubmitManager.autoIdPrefix = "sm_auto_";
 
 /* **************************************************************************
  * SubmitManager.handleRequestsFrom                                     *//**
@@ -245,6 +209,11 @@ SubmitManager.prototype.submit = function (submission)
  *
  * This is a temporary helper method to format the responses to submitted
  * answers.
+ *
+ * @note This function is attached to the SubmitManager just as a convenient
+ * place for widgets to access it while the actual details of the response
+ * are worked out. It might otherwise be a utility function or a static class
+ * method on the base class of question widgets.
  *
  * @param {!d3.selection}
  * 					container		-The html element to write the formatted
