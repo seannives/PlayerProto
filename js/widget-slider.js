@@ -96,7 +96,6 @@ Slider.prototype.draw = function(container)
 	/**
 	 *  a jquery selection in the document, tells where to write the slider.  
 	 */
-	//console.log(container)
 	this.node = container;
 	var that = this;
 	var readOut = $("<span id='"+this.id + "_readout"+"'>"+this.startVal+"</span>");
@@ -107,11 +106,12 @@ Slider.prototype.draw = function(container)
 				.append($("<span role='label' />")
 					.html(this.label ? this.label : "")
 				)
+				.append("&nbsp;&nbsp;&nbsp;")
 				.append(readOut)
 				.append($("<span />")
 					.html(" &nbsp;&nbsp;&nbsp;" + this.minVal)
 				)
-				.append($("<span id='"+that.id+"' style='display:inline-block; width: 150px;' />")
+				.append($("<span id='"+that.id+"' style='display:inline-block; min-width: 100px;' />")
 					.slider(
 						{
 							max : this.maxVal,
@@ -171,5 +171,5 @@ Slider.prototype.setValue = function(newValue)
 {
 	// The value is set in the input element which was given an id
 	$("#" + this.id).slider("option", "value", newValue);
-	this.display.setValue(this.format($("#" + this.id).slider("option", "value")));
+	$("#"+this.id+"_readout").html($("#" + this.id).slider("option", "value"));
 };

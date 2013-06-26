@@ -74,8 +74,8 @@
 				<div class="test">
 					<p>Test 5: Three sliders, one readout</p>
 					<div id="t5sliders">
-						<span id="t5_1slider"></span>
-						<span id="t5_2slider"></span>
+						<span id="t5_1slider"></span><br />
+						<span id="t5_2slider"></span><br />
 						<span id="t5_3slider"></span>
 					</div>
 					<p>(Slider 1 + Slider 2) / Slider 3 = <span id="t5val"></span></p>
@@ -514,7 +514,7 @@
 			format: d3.format('5.2f'),
 		}, eventManager);
 		
-	t9_1Slide.draw(d3.select("#t9_1slider"));
+	t9_1Slide.draw($("#t9_1slider"));
 	
 	var t9_2Slide = new Slider ({
 			id: "t9_2Val",
@@ -526,7 +526,7 @@
 			format: d3.format('5.2f'),
 		}, eventManager);
 		
-	t9_2Slide.draw(d3.select("#t9_2slider"));
+	t9_2Slide.draw($("#t9_2slider"));
 	
 	/////////////////////////////////////////////////
 	
