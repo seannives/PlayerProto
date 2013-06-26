@@ -9,6 +9,7 @@
  * Created on		April 15, 2013
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
+ * @author			Greg Davis
  *
  * Copyright (c) 2013 Pearson, All rights reserved.
  *
@@ -69,7 +70,7 @@ function Slider(config, eventManager)
 	this.stepVal = config.stepVal;
 	this.unit = config.unit;
 	this.label = config.label;
-	this.format = config.format;
+	this.format = config.format; //not sure if this is needed after it becomes a jquery object - gd 6/26/2013
 	this.display = null;
 	// Define the ids of the events the slider uses
 	this.changedValueEventId = this.id + 'Slider';
@@ -93,50 +94,56 @@ function Slider(config, eventManager)
 Slider.prototype.draw = function(container)
 {	
 	/**
-	 *  a d3 selection in the document, tells where to write the slider.  
-	 * TODO: Should prolly change to jQuery selector style? -lb
+	 *  a jquery selection in the document, tells where to write the slider.  
 	 */
+	//console.log(container)
 	this.node = container;
 	var that = this;
-	var readOutId = this.id + "_readout";
-	//<input id="slide" type="range" min="0" max="2.5" step=".1" value="1.2">
-	this.rootEl = this.node.append("div");
+	var readOut = $("<span id='"+this.id + "_readout"+"'>"+this.startVal+"</span>");
+	this.rootEl = this.node;
 	//write a label in front of the input if there is one
-	this.rootEl.attr("class", "dataInput");
-	this.rootEl.append("span").html(this.label ? this.label : "").attr("role", "label");
-	this.rootEl.append("span").attr("id", readOutId);
-	this.rootEl.append("span").html(" &nbsp;&nbsp;&nbsp;" + this.minVal);
-	this.rootEl.append("input")
-		.attr("type", "range")
-		.attr("min", this.minVal)
-		.attr("max", this.maxVal)
-		.attr("step", this.stepVal)
-		.attr("value", this.startVal)
-		.attr("id", that.id);
-	this.rootEl.append("span").html(this.maxVal);
+	this.rootEl
+				.attr("class", "dataInput")
+				.append($("<span role='label' />")
+					.html(this.label ? this.label : "")
+				)
+				.append(readOut)
+				.append($("<span />")
+					.html(" &nbsp;&nbsp;&nbsp;" + this.minVal)
+				)
+				.append($("<span id='"+that.id+"' style='display:inline-block; width: 150px;' />")
+					.slider(
+						{
+							max : this.maxVal,
+							step : this.stepVal,
+							value : this.startVal,
+							min : this.minVal,
+							slide : function(e, ui)
+							{
+								//this publishes the onChange event to the eventManager
+								//passing along the updated value in the numeric field.
+								var newVal = ui.value;
+								//newVal = that.format(newVal);
+								//that.display.setValue(newVal);
+								readOut.html(ui.value)
+								that.eventManager.publish(that.changedValueEventId,
+												{value: ui.value});
+							}
+						} )
+				)
+				.append($("<span />")
+					.html(this.maxVal)
+				);
 	
-	this.display = new Readout({
+	/*this.display = new Readout({
 			node: d3.select("#"+readOutId),
-			id: this.id + "_Display",
-			startVal: this.format(this.startVal),
+			id: that.id + "_Display",
+			startVal: 0,//this.format(this.startVal),
 			readOnly: true,
 			size: 4,
 			unit:  (this.unit ? this.unit : ""), 
-		});
+		});*/
 
-	this.rootEl.on('change', function()
-			{
-				//this publishes the onChange event to the eventManager
-				//passing along the updated value in the numeric field.
-				//note that jQuery returns an array for selections, the
-				//first element of which is the actual pointer to the
-				//tag in the DOM
-				var newVal = $("#" + that.id)[0].value;
-				newVal = that.format(newVal);
-				that.display.setValue(newVal);
-				that.eventManager.publish(that.changedValueEventId,
-								{value: $("#" + that.id)[0].value});
-			} );
 }; // end of Slider.draw()
 
 /* **************************************************************************
@@ -148,7 +155,7 @@ Slider.prototype.draw = function(container)
 Slider.prototype.getValue = function()
 {
 	// The value is kept in the input element which was given an id
-	return $("#" + this.id)[0].value;
+	return $("#" + this.id).slider("option", "value");
 };
 
 /* **************************************************************************
@@ -163,6 +170,6 @@ Slider.prototype.getValue = function()
 Slider.prototype.setValue = function(newValue)
 {
 	// The value is set in the input element which was given an id
-	$("#" + this.id)[0].value = newValue;
-	this.display.setValue(this.format($("#" + this.id)[0].value));
+	$("#" + this.id).slider("option", "value", newValue);
+	this.display.setValue(this.format($("#" + this.id).slider("option", "value")));
 };
