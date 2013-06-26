@@ -35,9 +35,9 @@ var activityManager = {
         if (myid[0] == '8883774665') {
             interactiveConfig = {
                 "master": {
-                    "widgets": [
+                    "brix": [
                         {
-                            "wtype": "button",
+                            "xtype": "button",
                             "targetid": "button1",
                             "id": "button1",
                             "text": "Submit #1"                            
@@ -48,9 +48,9 @@ var activityManager = {
         } else if (myid[0] == '12345') {
             interactiveConfig = {
                 "master": {
-                    "widgets": [
+                    "brix": [
                         {
-                            "wtype": "button",
+                            "xtype": "button",
                             "targetid": "button2",
                             "id": "button2",
                             "text": "Submit #2"
@@ -63,7 +63,7 @@ var activityManager = {
                 "master": {
                     "brix": [                        
                         { // SVG Container
-                            "wtype": "svgContainer",
+                            "xtype": "svgContainer",
                             "id": "svg1",
                             "nodeid": "imgReactor",
                             "height": 310,
@@ -71,7 +71,7 @@ var activityManager = {
                             "actualSize": {height: 310, width: 680} // dupe from img above
                         },
                         { // Captioned Image                            
-                            "wtype": "captionedImage",
+                            "xtype": "captionedImage",
                             "id": "cimg0n",
                             "captionPosition": "below",
                             "image": {
@@ -83,14 +83,15 @@ var activityManager = {
                             }
                         },
                         { // action - append image to container
-                            "wtype": "action",
+                            "xtype": "action",
+                            "id": "appendImg1",
                             "type": "append",
                             "what": "cimg0n",
                             "to": "svg1",
                             "config": {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1}
                         },                       
                         { // Num Labels
-                            "wtype": "labelGroup",
+                            "xtype": "labelGroup",
                             "id": "reactorNum",
                             "type": "numbered",
                             "labels":     
@@ -103,13 +104,14 @@ var activityManager = {
                             ]
                         },
                         { // action - append label to image
-                            "wtype": "action",
+                            "xtype": "action",
+                            "id": "appendLabel1",
                             "type": "append",
                             "what": "reactorNum",
                             "to": "cimg0n"
                         },
                         { // Callout
-                            "wtype": "callout",
+                            "xtype": "callout",
                             "id": "callme",
                             "targetid": "steps",
                             "show": "all",
@@ -122,6 +124,36 @@ var activityManager = {
                             {"cols":["The steam turns the turbine, which is connected to an electricity generator. Power lines distribute the electricity. A typical reactor produces as much as a coal-fired power plant."]},
                             {"cols":[ "A third supply of water is used to cool the steam so it condenses into water, which is pumped back to the steam generator."]}
                             ]
+                        },
+                        { // action - createFn
+                            "xtype": "action",
+                            "id": "handleSelectionChanged",
+                            "type": "createFn",
+                            "config": [
+                                {"object": "reactorNum", "method": "lite"},
+                                {"object": "callme", "method": "lite"}
+                            ]
+                        },
+                        { // action - eventManager on label
+                            "xtype": "action",
+                            "id": "reactorNumEvent1",
+                            "type": "subscribe",
+                            "object": "reactorNum",
+                            "callback": "handleSelectionChanged"
+                        },
+                        { // action - eventManager on callout
+                            "xtype": "action",
+                            "id": "callmeEvent1",
+                            "type": "subscribe",
+                            "object": "callme",
+                            "callback": "handleSelectionChanged"
+                        },
+                        { // action - seed callout
+                            "xtype": "action",
+                            "id": "seed1",
+                            "type": "seedFn",
+                            "fn": "handleSelectionChanged",
+                            "config": {selectKey: '0'}
                         }
                     ]
                 }
@@ -199,9 +231,9 @@ var activityManager = {
     },
 
     // initializing the activity manager 
-    // - uses requirejs to load the interactives stuff just for debugging.
+    // - uses requirejs to load the non-minified interactives stuff just for debugging.
     // - the initActivityManager below doesn't bother with this, just relying on the compiled 
-    //   interactives library.  You'd use one or the other.
+    //   interactives library.
     initActivityManagerAMD : function() {
         // 'that = this' avoids having to reference whatever we named our object (aM.) within this factory
         var that = this;
@@ -212,6 +244,8 @@ var activityManager = {
             paths: {
                 jquery: '../PrototypeDist/lib/jquery',
                 underscore: '../PrototypeDist/lib/underscore',
+                // you can change this to point to the minified library if you want, like
+                // interactives: '../PrototypeDist/dist/interactives',
                 interactives: '../PrototypeDist/interactives',
                 d3: '../PrototypeDist/lib/d3' // TODO - shouldn't reference version
             },
@@ -233,18 +267,14 @@ var activityManager = {
 
                 that.loadNodes(function(content){
                     // initialize master player widget for each chunk of content
-
-                    console.log(interactives);
-                    console.log('Running jQuery %s', $().jquery);
-                    console.log(interactives.version);
-                    console.log(interactives.convert('convert test'));
                     interactives.init(content, eventManager);
-
                 });
             });
         };
     },
 
+    // This demonstrates using the brix interactives library without using an AMD loader, instead using
+    // global $, _, and d3.
     initActivityManager : function() {
         // 'that = this' avoids having to reference whatever we named our object (aM.) within this factory
         var that = this;
