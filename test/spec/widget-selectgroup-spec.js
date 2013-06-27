@@ -17,37 +17,6 @@
 (function () {
     var expect = chai.expect;
 
-	//a helper function that allows testing of the elements and hierarchy written to the 
-	//DOM - probably needs to be cleaned and moved to helper.js
-	var expectElementTree = function expectElementTree(topElement, treeDescr)
-	{
-		expectElement(topElement, treeDescr);
-
-		if (treeDescr.children)
-		{
-			var childElements = topElement.node().children;
-			for (var i = 0; i < treeDescr.children.length; ++i)
-			{
-				expectElementTree(d3.select(childElements[i]), treeDescr.children[i]);
-			};
-		}
-		else if (treeDescr.foreach)
-		{
-			var childElements = topElement.node().children;
-			for (var i = 0; i < treeDescr.foreach.items.length; ++i)
-			{
-				expectElementTree(d3.select(childElements[i]),
-								  treeDescr.foreach.fn(treeDescr.foreach.items[i]));
-			};
-		}
-	};
-
-	var expectElement = function expectElement(element, descr)
-	{
-		descr.name && expect(element.node().nodeName).to.be.equal(descr.name);
-		descr.class && expect(element.classed(descr.class), 'has class ' + descr.class).to.be.true;
-	};
-
     describe('SelectGroups: Pick one from column A', function () {
 		var eventManager = null;
 
@@ -142,7 +111,7 @@
 					//We could have a more manual test where we check that there are three
 					//options made for the three choices in the config.  But this actually 
 					//checks the whole tree is created correctly.
-					it('should create a dropdown w/a option for each choice', function () {
+					it('should create a dropdown w/ an option for each choice', function () {
 						/*
 						Here's a visual layout of the HTML tree that should be drawn
 						by the SelectGroup widget
@@ -166,7 +135,7 @@
 										} ]
 							};
 
-						expectElementTree(mySelectGroup.lastdrawn.widgetGroup, tree);
+						helper.expectElementTree(mySelectGroup.lastdrawn.widgetGroup, tree);
 					});
 				});
 

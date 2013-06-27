@@ -312,8 +312,6 @@ MultipleChoiceQuestion.prototype.handleSubmitResponse_ = function(responseDetail
 MultipleChoiceQuestion.prototype.draw = function(container)
 {
 	this.lastdrawn.container = container;
-
-	var that = this;
 	
 	// make a div to hold the select one question
 	var widgetGroup = container.append("div")
