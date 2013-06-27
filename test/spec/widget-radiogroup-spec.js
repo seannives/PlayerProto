@@ -17,35 +17,6 @@
 (function () {
     var expect = chai.expect;
 
-	var expectElementTree = function expectElementTree(topElement, treeDescr)
-	{
-		expectElement(topElement, treeDescr);
-
-		if (treeDescr.children)
-		{
-			var childElements = topElement.node().children;
-			for (var i = 0; i < treeDescr.children.length; ++i)
-			{
-				expectElementTree(d3.select(childElements[i]), treeDescr.children[i]);
-			};
-		}
-		else if (treeDescr.foreach)
-		{
-			var childElements = topElement.node().children;
-			for (var i = 0; i < treeDescr.foreach.items.length; ++i)
-			{
-				expectElementTree(d3.select(childElements[i]),
-								  treeDescr.foreach.fn(treeDescr.foreach.items[i]));
-			};
-		}
-	};
-
-	var expectElement = function expectElement(element, descr)
-	{
-		descr.name && expect(element.node().nodeName).to.be.equal(descr.name);
-		descr.class && expect(element.classed(descr.class), 'has class ' + descr.class).to.be.true;
-	};
-
     describe('RadioGroups: broadcasting for an answer', function () {
 		var eventManager = null;
 
@@ -189,7 +160,7 @@
 								} ],
 							};
 
-						expectElementTree(myRadioGroup.lastdrawn.widgetGroup, tree);
+						helper.expectElementTree(myRadioGroup.lastdrawn.widgetGroup, tree);
 					});
 				});
 

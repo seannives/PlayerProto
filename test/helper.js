@@ -61,8 +61,83 @@ var helper = (function () {
 		return new SVGContainer(config);
 	};
 
+	/* **************************************************************************
+	 * expectElementTree                                                    *//**
+	 *
+	 * Unit test helper which tests that a given DOM element matches the
+	 * given tree description.
+	 *
+	 * A tree description is an object that describes the attributes of the DOM
+	 * element that should be verified, including an array of child tree descriptions
+	 * which must match the children of the given DOM element.
+	 *
+	 * Uses the private helper method expectElement to verify all of the attributes
+	 * of the DOM element except the child elements.
+	 *
+	 * See expectElement for the list of properties that will be verified on the
+	 * actual DOM element (not including children).
+	 *
+	 * Also supported is the optional property 'children' which is an array of element
+	 * descriptions.
+	 * or the optional property 'foreach' which is an object with the properties
+	 * 'items' and 'fn'. This is used to get a tree description for one child of
+	 * the parent DOM element for each item in 'items'. The function in 'fn'
+	 * will return the tree description for the particular item it is given.
+	 *
+	 * Currently specifying both 'children' and 'foreach' is not supported.
+	 *
+	 * @param {Object}	topElement	-DOM element that must match the description.
+	 * @param {Object}	treeDescr	-Description of the DOM element tree that is expected.
+	 *
+	 ****************************************************************************/
+	var expectElementTree = function expectElementTree(topElement, treeDescr)
+	{
+		expectElement(topElement, treeDescr);
+
+		if (treeDescr.children)
+		{
+			var childElements = topElement.node().children;
+			for (var i = 0; i < treeDescr.children.length; ++i)
+			{
+				expectElementTree(d3.select(childElements[i]), treeDescr.children[i]);
+			};
+		}
+		else if (treeDescr.foreach)
+		{
+			var childElements = topElement.node().children;
+			for (var i = 0; i < treeDescr.foreach.items.length; ++i)
+			{
+				expectElementTree(d3.select(childElements[i]),
+								  treeDescr.foreach.fn(treeDescr.foreach.items[i]));
+			};
+		}
+	};
+
+	/* **************************************************************************
+	 * expectElement                                                        *//**
+	 *
+	 * Test the attributes of the given DOM element against what is specified
+	 * by the given description.
+	 *
+	 * Supported description properties are:
+	 * name - The name of the element
+	 * class - The element has this class
+	 *
+	 * @param {Object}	element		-The DOM element to test.
+	 * @param {Object}	descr		-The list of attributes to verify on the DOM element.
+	 * @private
+	 *
+	 ****************************************************************************/
+	var expectElement = function expectElement(element, descr)
+	{
+		descr.name && expect(element.node().nodeName).to.be.equal(descr.name);
+		descr.class && expect(element.classed(descr.class), 'has class ' + descr.class).to.be.true;
+	};
+
 	return {
 		createNewDiv: createNewDiv,
-		createNewSvgContainer: createNewSvgContainer
+		createNewSvgContainer: createNewSvgContainer,
+		expectElementTree: expectElementTree,
 	};
+
 })();
