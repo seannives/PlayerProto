@@ -1,124 +1,212 @@
-/*global define */
+/* global define */
 
 /**
- * The main module that defines the public interface for interactives.
+ * The main module that defines the public interface for brix.
  */
+
 define(function (require) {
     'use strict';
 
+    /* **************************************************************************
+ 	 * AMD (Asynchronous Module Definition) Module loading                  *//**
+ 	 *
+ 	 * Load in our modules.
+ 	 ****************************************************************************/
     var $ = require('jquery');
     var d3 = require('d3');
 
     // sample test file - can get purged when convenient
     var convert = require('interactives/convert');
 
-    // TODO: if you wanted to do base.util and base.svgContainer you might be able to make
+    // Each 'brix' module I'm prefacing with 'x' just for some generic naming pattern, at least for now.
+    // TODO: if you wanted to do xBase.util and base.svgContainer you might be able to make
     // an empty base object and extend them with these requires, if you found that helpful
-    var baseUtil = require('interactives/base/util');    
-    var svgContainer = require('interactives/base/svgcontainer');
-    var widgetButton = require('interactives/widget-button');
-    var widgetCallout = require('interactives/widget-callouts');
-    var widgetImage = require('interactives/widget-image');
-    var captionedImage = require('interactives/image/captionedimage');
-    var labelGroup = require('interactives/labelgroup');
+    var xBaseUtil = require('interactives/base/util');    
+    var xSvgContainer = require('interactives/base/svgcontainer');
+    var xButton = require('interactives/button');
+    var xCallout = require('interactives/callouts');
+    var xImage = require('interactives/image');
+    var xCaptionedImage = require('interactives/image/captionedimage');
+    var xLabelGroup = require('interactives/labelgroup');
 
-	// widget loading command pattern (instead of case statement)
-	function loadWidget(widgetContent, eventManager) {
-		var widgets = {
-			'button' : buttonConf,
-			'callout' : calloutConf,
-			'image' : imageConf
-			//, add other widget config here
+    /* **************************************************************************
+ 	 * createBric                						                    *//**
+ 	 *
+ 	 * bric loading command pattern
+ 	 *
+ 	 * Each bric config has an 'xtype' which matches a bricMold function.
+ 	 * We pass each mold function the 'bric' object, which is the config,
+ 	 * and the eventManager, which some brix require for setup
+ 	 ****************************************************************************/
+	function createBric(bric, eventManager) {
+		var bricMolds = {
+			'button'         : buttonMold,
+			'callout'        : calloutMold,
+			'captionedImage' : captionedImageMold,
+			'image'          : imageMold,
+			'labelGroup'     : labelGroupMold,
+			'svgContainer'   : svgContainerMold
+			//, add other bric config here
 	    };
 	   
-	    if (typeof widgets[widgetContent.wtype] !== 'function') {
-	      throw new Error('Invalid widget ' + widgetContent.wtype);
+	    if (typeof bricMolds[bric.xtype] !== 'function') {
+	      throw new Error('Invalid bric ' + bric.xtype);
 	    }
 
-	    return widgets[widgetContent.wtype](widgetContent, eventManager);
+	    return bricMolds[bric.xtype](bric, eventManager);
 	}
+
+	 /* **************************************************************************
+ 	 * bricMolds	               						                     *//**
+ 	 *
+ 	 * functions responsible for pulling data out of the 'bric' config object,
+ 	 * making sure that conforms to what the individual bric wants, creating,
+ 	 * and initializing the bric.  It then returns the bric.
+ 	 ****************************************************************************/
 	
-	// button widget config - it seems to make sense to move this into widget-button but that's a refactor
+	// button bric config - it seems to make sense to move this into interactiveds/button but that's a refactor
 	// for another day
-	function buttonConf(widgetContent, eventManager) {
+	function buttonMold(bric, eventManager) {
 		var config = {
-			"id" : widgetContent.id,
-			"text" : widgetContent.text
+			"id" : bric.id,
+			"text" : bric.text
 		};
 
-		var button = Object.create(widgetButton);
+		var button = Object.create(xButton);
 		button.init(config, eventManager);
-		$('#' + widgetContent.targetid).append(button.getRootEl());
-        // subscribe to the button press
-		eventManager.subscribe(button.pressedEventId, function(){alert('yay' + widgetContent.text);});
-
+		// this could be an append action
+		$('#' + bric.targetid).append(button.getRootEl());
+        // subscribe to the button press - this shouldn't be in here but should instead be 
+        // configured out as an action
+		eventManager.subscribe(button.pressedEventId, function(){alert('yay' + bric.text);});
 	}
 
-	// callout widget config 
-	function calloutConf(widgetContent, eventManager) {
-
-		var callout = Object.create(widgetCallout);
-		callout.init(widgetContent, eventManager);
-        callout.draw(d3.select("#" + widgetContent.targetid));
-        // todo - your event manager stuff goes here		
+	// callout bric mold 
+	function calloutMold(bric, eventManager) {
+		var callout = Object.create(xCallout);
+		callout.init(bric, eventManager);
+        callout.draw(d3.select("#" + bric.targetid));
+        return callout;	
 	}
 
-	function imageConf(widgetContent, eventManager) {
+	// captionedImage bric mold
+	function captionedImageMold(bric, eventManager) {
+		// create an image first, using the imageMold
+		var img = imageMold(bric.image, eventManager);
+		// todo - figure out how to chain these; Object.create(xImage).init(imgConfig)
+
+		var capImg = Object.create(xCaptionedImage);
+		capImg.init({
+				id: bric.id,
+				image: img,
+				captionPosition: bric.captionPosition
+			});
+		return capImg;
+	}
+
+	// image bric mold
+	function imageMold(bric, eventManager) {
 		var imgConfig =
 			{
-				id: "imgReactor",
-				URI: '../img/reactor.jpg',
-				caption: "Nuclear Reactor Schematic Diagram",
-				actualSize: {height: 310, width: 680}
+				id: bric.targetid,
+				URI: bric.URI,
+				caption: bric.caption,
+				actualSize: bric.actualSize
 			};
 
-		var myImg = Object.create(widgetImage);
-		myImg.init(imgConfig);
-		// todo - figure out how to chain these; Object.create(widgetImage).init(imgConfig)
+		var img = Object.create(xImage);
+		img.init(imgConfig);
+		// todo - figure out how to chain these; Object.create(xImage).init(imgConfig)
+		return img;
+	}
 
-
-		// todo - fix this
-		var cntrSize = baseUtil.matchRatioWithHeight(350 - 40, imgConfig.actualSize);
-		//var cntrSize = {height: 500, width: 500};
-
-		var cntrConfig0 = 
+	// labelGroup bric mold
+	function labelGroupMold(bric, eventManager) {
+		var labelGrp = Object.create(xLabelGroup);
+		labelGrp.init(
 			{
-				node: d3.select("#imgReactor"),
-				maxSize: cntrSize,
-				maxWid: cntrSize.width, //550,
-				maxHt: 350
-			};
-		
-		var cntr0 = Object.create(svgContainer);
-		cntr0.init(cntrConfig0);
-		
-		var cimg0 = Object.create(captionedImage);
-		cimg0.init({
-				id: "cimg0n",
-				image: myImg,
-				captionPosition: "below"
-			});
-		
-		cntr0.append(cimg0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-
-		//put numbered highlightable bullets on the image
-		var numLabels = Object.create(labelGroup);
-		numLabels.init(
-			{
-				id: "reactorNum",
-				type: "numbered",
-				labels: 	
-				[	
-					{content: "1", xyPos: [0.025, 0.17], width: 0},
-					{content: "2", xyPos: [0.075, 0.37], width: 0},
-					{content: "3", xyPos: [0.325, 0.64], width: 0},
-					{content: "4", xyPos: [0.648, 0.59], width: 0},
-					{content: "5", xyPos: [0.690, 0.10], width: 0}
-				]
+				id: bric.id,
+				type: bric.type,
+				labels: bric.labels
 			}, eventManager);
-		
-		cimg0.append(numLabels);
+		return labelGrp;
+	}
 
+	// SVGContainer bric mold
+	function svgContainerMold(bric, eventManager) {
+		var cntrSize = xBaseUtil.matchRatioWithHeight(bric.height, bric.actualSize);
+		var cntrConfig = 
+			{
+				node: d3.select('#' + bric.nodeid),
+				maxSize: cntrSize,
+				maxWid: cntrSize.width,
+				maxHt: bric.maxHt
+			};
+		var cntr = Object.create(xSvgContainer);
+		cntr.init(cntrConfig);
+		return cntr;
+	}
+
+    /* **************************************************************************
+ 	 * doAction	                						                    *//**
+ 	 *
+ 	 * action loading command pattern
+ 	 *
+ 	 * Brix with an xtype of 'action' are shunted here.  They have a config
+ 	 * 'type' which defines the type of action (not sure I like that...may 
+ 	 * want to just combine this with the above but that seems a little messy).
+ 	 * We pass along the 'bric' config object, the object that contains all of 
+ 	 * the existing brix, the object that contains all the existing actions,
+ 	 * and the eventManager.
+ 	 ****************************************************************************/
+	function doAction(bric, brixObjects, brixActions, eventManager) {
+		var actions = {
+			'append'    : appendAction,
+			'createFn'  : createFnAction,
+			'seedFn'    : seedFnAction,
+			'subscribe' : subscribeAction
+			//, add other actions here
+	    };
+	   
+	    if (typeof actions[bric.type] !== 'function') {
+	      throw new Error('Invalid action ' + bric.type);
+	    }
+
+	    return actions[bric.type](bric, brixObjects, brixActions, eventManager);
+	}
+
+	/* **************************************************************************
+ 	 * bricActions	               						                    *//**
+ 	 *
+ 	 * functions responsible for doing stuff to brix...
+ 	 ****************************************************************************/	
+
+ 	// append one bric to another with optional config
+	function appendAction(bric, brixObjects) {
+		brixObjects[bric.to].append(brixObjects[bric.what], bric.config);
+	}
+
+	// create a function, primarily used as callback for eventManager.
+	// hopefully we can pad this out to make it more useful for more than just
+	// the neffReactor
+	function createFnAction(bric, brixObjects) {
+		return {
+			bricFn : function bricFn(eventDetails) {
+    			bric.config.forEach(function(thing){
+    				brixObjects[thing.object][thing.method](eventDetails.selectKey);
+    			});
+    		}    			
+    	};
+	}
+
+	// seed function.  Fire off one of the functions you created with a specific config
+	function seedFnAction(bric, brixObjects, brixActions) {
+		brixActions[bric.fn].bricFn(bric.config);
+	}
+
+	// subscribe your bric
+	function subscribeAction(bric, brixObjects, brixActions, eventManager) {
+		eventManager.subscribe(brixObjects[bric.object].selectedEventId, brixActions[bric.callback].bricFn);
 	}
 
     //Return the module value.
@@ -127,14 +215,23 @@ define(function (require) {
         version: '0.0.1, jQuery version is: ' + $.fn.jquery,
         // test method to show requirejs functionality - boilerplate to eventually be removed
         convert: convert,
+        // This is what the activityManager calls
     	init: function init(content, eventManager) {
 
-			// todo - loop over each nested widget (we don't have nested widgets yet in sample json)
-
-			// load the widgets
-
-			content.targetActivity.master.widgets.forEach(function(widgetContent){
-				loadWidget(widgetContent, eventManager);
+			// placeholder for all of our brix objects
+			var brixObjects = {};
+			// placeholder for our actions
+			var brixActions = {};
+			// loop over each 'brix blox' (which can contain multiple brix and actions)
+			content.targetActivity.master.brix.forEach(function(bric){
+				if (bric.xtype == "action") {
+					// actions, like append, subscribe, or createFn
+					brixActions[bric.id] = doAction(bric, brixObjects, brixActions, eventManager);
+					
+				} else {
+					// an individual bric, like image or labelGroup
+					brixObjects[bric.id] = createBric(bric, eventManager);
+				}				
 			});
 		}
     };

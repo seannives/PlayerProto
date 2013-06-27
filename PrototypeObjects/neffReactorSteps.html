@@ -67,7 +67,13 @@
 	
 	callEm.draw(d3.select("#steps"));
 
-
+        window.onload = function(){
+			console.log('callout loaded');
+			window.parent.postMessage({
+                    width: document.documentElement.offsetWidth,
+                    height: document.documentElement.offsetHeight
+                }, '*');
+        };
 	
 	</script>
 </body>
