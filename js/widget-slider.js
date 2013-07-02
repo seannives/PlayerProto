@@ -16,7 +16,7 @@
  *
  * **************************************************************************/
 
-// Sample BarChart constructor configuration
+// Sample Slider constructor configuration
 (function()
 {
 	var sl1Config = {
@@ -142,8 +142,8 @@ Slider.prototype.draw = function(container)
 	var readOut = $("<span class='readout'>" + this.format(this.startVal) + "</span>");
 
 	// All widgets get a top level "grouping" element which gets a class identifying the widget type.
-	$(cntrElement).append($("<span />").addClass("widgetSlider"));
-	var widgetGroup = $("span.widgetSlider", cntrElement);
+	var widgetGroup = $("<span />").addClass("widgetSlider");
+	$(cntrElement).append(widgetGroup);
 
 	//write a label in front of the input if there is one
 	widgetGroup
