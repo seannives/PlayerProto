@@ -24,7 +24,7 @@
 			<div class="span6 rightCol">
 				<div id="widgetTarget50n"><p>2. Label positions</p></div>
                 <div id="lineMarks"><p>3. x-axis Line Markers x and y</p></div>
-                <div id="lineMarks1"><p>4. x-axis Line Markers just x</p></div>
+                <div id="lineMarks1"><p>4. x-axis Line Markers just labels. Note that our handling of different label lengths is not very sophisticated. Of course, maybe if the label runs on that long it shouldn't be a label? Also nothing to prevent labels from obscuring each other if the markers are close together.</p></div>
 			</div>
 		</div>
 	</div>
@@ -43,9 +43,10 @@
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-linegraph.js"></script>
 	<script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-markergroup.js"></script>
     <script src="js/widget-callouts.js"></script>
 	<script src="js/widget-image.js"></script>
-	<script src="js/widgets.js"></script>
+
 <script>
 
 	var eventManager = new EventManager();
@@ -241,49 +242,6 @@ for (i = 0; i < dataPts; i++)
 	ecocap.append(ecoLabels);
 	svg0.append(ecocap);
 	
-//	<div id="widgetTarget1"><p>1. Graph with Labels</p></div>
-/*
-	var svg1 = new MakeSVGContainer(
-		{node: d3.select("#widgetTarget1"),
-		maxWid: 500,
-		maxHt: 400
-		}
-	);
-	svg1.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
-		Data: [birth,death,popGrowth, [{x:0,y:-0.5}]],
-		xaxisType: "linear",
-		xTicks: 0,
-		xOrient: "bottom",
-		xLabel: "Time",
-		yaxisType: "linear",
-		yTicks: 0,
-		yOrient: "left",
-	});
-		
-	svg1.AreaMarkers(
-	{xBands:  [[0,14],[25,40],[50,65]]
-		});
-			
-	svg1.LineGraph(
-		{Data: [birth,death,popGrowth],
-			type: "lines"
-		}
-	);
-
-	svg1.Labels(
-		{labels: 	
-		  [	
-			{content: "Pre-development", xyPos: [0,-.25], width: 100	},
-			{content: "Developing",	xyPos:[14,-.25], width: 80},
-			{content: "Modernizing", xyPos:[27,-.25], width: 80},
-			{content:"Developed",	xyPos:[40,-.25], width: 70},
-			{content:"Post-development", xyPos:[51,-.25], width: 100	},
-		  ],
-		liteKey: [10,20,30,40,50]
-		});
-	*/
 	
 	//	<div id="newBruce"><p>1. Graph with Labels</p></div>
 	var newCont = new SVGContainer(
@@ -387,71 +345,92 @@ for (i = 0; i < dataPts; i++)
 	var labelGroup50 = new LabelGroup(lblGrpConfig50);
 	cntr50.append(labelGroup50);
 
-//	<div id="lineMarks"><p>5. x-axis Line Markers</p></div>
-	var svgMark = new MakeSVGContainer(
+//	<div id="lineMarks"><p>5. x-axis Line Markers (data only) </p></div>
+
+	var svgMark = new SVGContainer(
 		{node: d3.select("#lineMarks"),
 		maxWid: 500,
 		maxHt: 400
 		}
 	);
-	svgMark.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
+	
+	// configure the graph
+	var markGraph = new LineGraph({
+		type: "lines",
 		Data: [birth,death],
-		xaxisType: "linear",
-		xTicks: 5,
-		xOrient: "bottom",
-		xLabel: "Time",
-		yaxisType: "linear",
-		yTicks: 4,
-		yOrient: "left",
-		yLabel: "Population"
+		xAxisFormat: {
+						type: "linear",
+						ticks: 5,
+						orientation: "bottom",
+						label: "Time",	},
+		yAxisFormat: {
+						type: "linear",
+						ticks: 0,
+						orientation: "left",
+						label: "Population"}
 	});
-		
-			
-	svgMark.LineGraph(
-		{Data: [birth,death],
-			type: "lines+points"
-		});
+	
+		// draw Graph 
+	svgMark.append(markGraph, {topPercentOffset: .2, leftPercentOffset: 0, heightPercent: .8, widthPercent: 1});
 
+	var newMarks = new MarkerGroup(
+		{
+		marks: 	
+		  [	
+			birth[5],
+			death[40],
+		  ]
+		}, eventManager);
 		
-	svgMark.LineMarkers(
-		{xMarks: [death[40],birth[5]]
-		});
-		
-		
+	// write the labels onto the graph in the local coordinates, inside the 
+	// data area.  These are designed to slop over the top, that's why the
+	// graph is written to the bottom 80% of SVG area
+	markGraph.append(newMarks);
+	
 
-//	<div id="lineMarks"><p>6. x-axis Line Markers single data point</p></div>
-	var svgMark1 = new MakeSVGContainer(
+//	<div id="lineMarks"><p>6. x-axis multiple label Markers</p></div>
+	
+	var svgMark4 = new SVGContainer(
 		{node: d3.select("#lineMarks1"),
 		maxWid: 500,
 		maxHt: 400
 		}
 	);
-	svgMark1.Axes({
-		xPosPerc: 0, yPosPerc:0, //top, left corner
-		xPerc: 1, yPerc: 1,//full height and width
+
+	// configure the graph
+	var markGraph4 = new LineGraph({
+		type: "lines",
 		Data: [birth,death],
-		xaxisType: "linear",
-		xTicks: 5,
-		xOrient: "bottom",
-		xLabel: "Time",
-		yaxisType: "linear",
-		yTicks: 4,
-		yOrient: "left",
-		yLabel: "Population"
+		xAxisFormat: {
+						type: "linear",
+						ticks: 5,
+						orientation: "bottom",
+						label: "Time",	},
+		yAxisFormat: {
+						type: "linear",
+						ticks: 0,
+						orientation: "right",
+						label: "Population"}
 	});
-		
-			
-	svgMark1.LineGraph(
-		{Data: [birth,death],
-			type: "line"
-		});
 
 		
-	svgMark1.LineMarkers(
-		{xMarks: [{x: 8, label: "An early year"},{x: 20, label: "a later year"},{x: 45, label: "the latest year with a long description"}]
-		});
+			// draw Graph 
+	svgMark4.append(markGraph4, {topPercentOffset: .2, leftPercentOffset: 0, heightPercent: .8, widthPercent: 1});
+
+	var newMarks4 = new MarkerGroup(
+		{
+		marks: 	
+		 [
+		 {x: 8, label: "An early year partially obscured"},
+		 {x: 20, label: "a later year"},
+		 {x: 45, label: "the latest year with a long description that runs over and gets really long"}]
+		}, eventManager);
+		
+	// write the labels onto the graph in the local coordinates, inside the 
+	// data area.  These are designed to slop over the top, that's why the
+	// graph is written to the bottom 80% of SVG area
+	markGraph4.append(newMarks4);
+		
 		
 		
 //events

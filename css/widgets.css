@@ -58,6 +58,49 @@ svg g.widgetImageViewer>rect.background
 	stroke-width:	0;
 }
 
+/* Markers
+================================================== */
+svg g.bricMarkers line
+{
+  fill:     none;
+  stroke:   #ccc;
+  stroke-width: 2;
+}
+
+svg g.bricMarkers .lit line
+{
+  stroke:   #1d95ae;
+  stroke-width: 4;
+}
+
+svg g.bricMarkers polygon,
+svg g.bricMarkers rect
+{
+  fill:    #aaa;
+}
+
+svg g.bricMarkers .lit rect,
+svg g.bricMarkers .lit polygon
+{
+  fill:    #e3effe;
+}
+
+svg g.bricMarkers .markerLabel
+{
+ 
+  max-width: 12em;
+  padding: .2em  .3em;
+  font: .9em HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Lucida, sans-serif;
+  text-align:right;
+}
+
+svg g.widgetLabel.lit .markerLabel
+{
+  color: #1d456e;
+  font-weight: 600;
+  background-color: #e3effe;
+}
+
 /* Labels
 ================================================== */
 svg g.widgetLabel>circle
@@ -273,15 +316,7 @@ table.questionTable td {
   color: #000;
   padding: 0em 0.2em; }
 
-.markerLabel {
-  border: solid 1px #5bafe4;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-  max-width: 10em;
-  padding: .2em  .3em;
-  font: .7em HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Lucida, sans-serif;
-  text-align:right;
-}
+
 
 
 .sliderLabel {
@@ -302,19 +337,6 @@ table.questionTable td {
   font: bold .7em/1.5em;
   color: #008496; }
 
-.markers {
-  stroke: #aaa; }
-
-.markerLabel {
-  border: solid 1px #5bafe4;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-  max-width: 30em;
-  padding: .5em .3em;
-  margin: .2em;
-  font-size: 10px;
-  text-align: center;
-  white-space: normal; }
 
 .descLabel {
   border: solid 1px #5bafe4;
@@ -325,11 +347,7 @@ table.questionTable td {
   font-size: .8em;
   text-align:center;
 }
-.descLabel.lit {
-	color: #1d95ae;
-	font-weight: 600;
-	background-color: #e3effe;
-}
+
 .areaMarker {
   fill: #2C6CB8;
   opacity: .3; }
