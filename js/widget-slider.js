@@ -34,13 +34,14 @@
 /* **************************************************************************
  * Slider                                                               *//**
  *
- * @constructor
- *
  * The slider widget creates an html5 slider for setting a numerical value from a range.
  *
+ * @constructor
+ *
  * @param {Object}		config			-The settings to configure this Slider
- * @param {string}		config.id		-String to uniquely identify this Slider
- *  
+ * @param {string|undefined}
+ * 						config.id		-String to uniquely identify this Slider.
+ * 										 if undefined a unique id will be assigned.
  * @param {startVal}	config.startVal	- starting position of slider, number
  * @param {minVal}		config.minVal	- minimum value of slider, number
  * @param {maxVal}		config.maxVal	- maximum value of slider, number
@@ -50,7 +51,9 @@
  * @param {format}		config.format	- d3 formatting function for numerics
  *						https://github.com/mbostock/d3/wiki/Formatting
  *
- * @param {Object}		eventManager
+ * @param {EventManager|undefined}
+ * 						eventManager	-The event manager to use for publishing events
+ * 										 and subscribing to them. (Optional)
  *
  * NOTES: firefox doesn't support HTML5 sliders, they degrade to numeric input
  * fields.
@@ -61,7 +64,7 @@ function Slider(config, eventManager)
 	 * A unique id for this instance of the slider widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, Slider);
 
 	// TODO: These all need comments describing what they are. -mjl 5/16/2013
 	this.startVal = config.startVal;
@@ -71,12 +74,45 @@ function Slider(config, eventManager)
 	this.unit = config.unit;
 	this.label = config.label;
 	this.format = config.format; //not sure if this is needed after it becomes a jquery object - gd 6/26/2013
-	this.display = null;
+	//
 	// Define the ids of the events the slider uses
-	this.changedValueEventId = this.id + 'Slider';
-	this.eventManager = eventManager;
 	
+	/**
+	 * The event manager to use to publish (and subscribe to) events for this widget
+	 * @type {EventManager}
+	 */
+	this.eventManager = eventManager || { publish: function () {}, subscribe: function () {} };
+
+	/**
+	 * The event id (topic) published when the value of this slider changes.
+	 * @const
+	 * @type {string}
+	 */
+	this.changedValueEventId = this.id + '_valueChanged';
+	
+	/**
+	 * The event details for this.changedValueEventId events
+	 * @typedef {Object} ChangedValueEventDetails
+	 * @property {number} newValue	-The new/current value of this slider.
+	 */
+
+	/**
+	 * Information about the last drawn instance of this slider (from the draw method)
+	 * @type {Object}
+	 */
+	this.lastdrawn =
+		{
+			container: null,
+			widgetGroup: null,
+		};
 } // end of slider constructor
+
+/**
+ * Prefix to use when generating ids for instances of Slider.
+ * @const
+ * @type {string}
+ */
+Slider.autoIdPrefix = "sldr_auto_";
 
 
 /* **************************************************************************
@@ -84,25 +120,26 @@ function Slider(config, eventManager)
  *
  * The Slider allows the user to set a numeric value over some defined range.
  *
- * @param {!d3.selection}
- *					container	-The container DOM element to append the slider
- * @param {node}	config.node	-d3 selection of target ID to write out slider
- * @param {number}	size.height	-The height for the graph.
- * @param {number}	size.width	-The width for the graph.
+ * @param {!Element}	container	-The DOM element this slider will be created
+ * 									 as the last child of.
  *
  ****************************************************************************/
 Slider.prototype.draw = function(container)
 {	
-	/**
-	 *  a jquery selection in the document, tells where to write the slider.  
-	 */
-	this.node = container;
+	this.lastdrawn.container = container;
+
+	// Provide a reference to this Slider instance for use in any function expressions defined here.
 	var that = this;
-	var readOut = $("<span id='"+this.id + "_readout"+"'>"+this.startVal+"</span>");
-	this.rootEl = this.node;
+
+	var readOut = $("<span class='readout'>" + this.format(this.startVal) + "</span>");
+
+	// All widgets get a top level "grouping" element which gets a class identifying the widget type.
+	$(container).append($("<span />").addClass("widgetSlider"));
+	var widgetGroup = $("span.widgetSlider", container);
+
 	//write a label in front of the input if there is one
-	this.rootEl
-				.attr("class", "dataInput")
+	widgetGroup
+				.addClass("dataInput") // TODO: There is styling associated w/ this class that isn't widget specific. I don't think we want that. -mjl
 				.append($("<span role='label' />")
 					.html(this.label ? this.label : "")
 				)
@@ -111,7 +148,7 @@ Slider.prototype.draw = function(container)
 				.append($("<span />")
 					.html(" &nbsp;&nbsp;&nbsp;" + this.minVal)
 				)
-				.append($("<span id='"+that.id+"' style='display:inline-block; min-width: 100px;' />")
+				.append($("<span class='slider' style='display:inline-block; min-width: 100px;' />")
 					.slider(
 						{
 							max : this.maxVal,
@@ -125,14 +162,14 @@ Slider.prototype.draw = function(container)
 								var newVal = ui.value;
 								//newVal = that.format(newVal);
 								//that.display.setValue(newVal);
-								readOut.html(ui.value)
+								readOut.text(that.format(ui.value))
 								that.eventManager.publish(that.changedValueEventId,
-												{value: ui.value});
+												{newValue: ui.value});
 							}
 						} )
 				)
 				.append($("<span />")
-					.html(this.maxVal)
+					.text(this.maxVal)
 				);
 	
 	/*this.display = new Readout({
@@ -144,6 +181,8 @@ Slider.prototype.draw = function(container)
 			unit:  (this.unit ? this.unit : ""), 
 		});*/
 
+	this.lastdrawn.widgetGroup = widgetGroup.get(0);
+
 }; // end of Slider.draw()
 
 /* **************************************************************************
@@ -154,8 +193,8 @@ Slider.prototype.draw = function(container)
  ****************************************************************************/
 Slider.prototype.getValue = function()
 {
-	// The value is kept in the input element which was given an id
-	return $("#" + this.id).slider("option", "value");
+	var jSlider = $("span.slider", this.lastdrawn.widgetGroup);
+	return jSlider.slider("option", "value");
 };
 
 /* **************************************************************************
@@ -169,7 +208,10 @@ Slider.prototype.getValue = function()
  ****************************************************************************/
 Slider.prototype.setValue = function(newValue)
 {
-	// The value is set in the input element which was given an id
-	$("#" + this.id).slider("option", "value", newValue);
-	$("#"+this.id+"_readout").html($("#" + this.id).slider("option", "value"));
+	var jSlider = $("span.slider", this.lastdrawn.widgetGroup);
+	var jReadout = $("span.readout", this.lastdrawn.widgetGroup);
+
+	jSlider.slider("option", "value", newValue);
+	jReadout.text(this.format(newValue));
 };
+

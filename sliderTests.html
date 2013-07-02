@@ -367,10 +367,10 @@
 			maxVal: t5_1Extent[1],
 			stepVal: 1,
 			label: "Test 5 slider 1",
-			format: d3.format('5.2f'),
+			format: d3.format(String.fromCharCode(0x2007/*figure space*/) + '>2f'),
 		}, eventManager);
 
-	t5_1Slide.draw($("#t5_1slider"));
+	t5_1Slide.draw($("#t5_1slider").get(0));
 
 	var t5_2Slide = new Slider ({
 			id: "t5_2Val",
@@ -379,10 +379,10 @@
 			maxVal: t5_2Extent[1],
 			stepVal: 1,
 			label: "Test 5 slider 2",
-			format: d3.format('5.2f'),
+			format: d3.format(String.fromCharCode(0x2007/*figure space*/) + '>2f'),
 		}, eventManager);
 
-	t5_2Slide.draw($("#t5_2slider"));
+	t5_2Slide.draw(d3.select("#t5_2slider").node());
 	
 	var t5_3Slide = new Slider ({
 			id: "t5_3Val",
@@ -391,10 +391,10 @@
 			maxVal: t5_3Extent[1],
 			stepVal: 1,
 			label: "Test 5 slider 3",
-			format: d3.format('5.2f'),
+			format: d3.format(String.fromCharCode(0x2007/*figure space*/) + '>2f'),
 		}, eventManager);
 		
-	t5_3Slide.draw($("#t5_3slider"));
+	t5_3Slide.draw(d3.select("#t5_3slider").node());
 	
 	var t5Readout = new Readout ({
 			node: d3.select("#t5val"),
