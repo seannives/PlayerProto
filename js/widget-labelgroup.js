@@ -68,7 +68,7 @@
  * 										 if undefined a unique id will be assigned.
  * @param {Array.<LabelConfig>}
  *						config.labels	-An array describing each label in the group.
- *										 each trace is an array of points defining that trace.
+ *										  
  * @param {string}		type			-string specifying bullets for dots, numbered
  *										 for dots and #, or anything else for just labels
  *
@@ -211,6 +211,9 @@ LabelGroup.prototype.draw = function(container, size)
 		.append("g")
 		.attr("class","widgetLabel");
 		
+	//on redraw, get rid of any series which now have no data
+	labelCollection.exit().remove();  
+
 	// autokey entries which have no key with the data index
 	labelCollection.each(function (d, i) { 
 					// if there is no key assigned, make one from the index

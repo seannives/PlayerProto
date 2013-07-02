@@ -63,12 +63,13 @@
 	<script src="js/eCourse-master.js"></script>    
 	<script src="js/d3.v3.min.js"></script>
 
-<script src="js/widgets.js"></script>    
+	<script src="js/widgets.js"></script>    
 
 	<script src="js/widget-base.js"></script>
 	<script src="js/widget-barchart.js"></script>
     <script src="js/widget-slider.js"></script>
     <script src="js/widget-numeric.js"></script>
+    <script src="js/widget-markergroup.js"></script>
 	<script src="js/eventmanager.js"></script>
 
 	<script>
@@ -136,7 +137,7 @@
 	var cont1 = new SVGContainer({
 			node: d3.select("#barChart"),
 			maxWid: 450,
-			maxHt: 300
+			maxHt: 400
 		});
 	var Bars = new BarChart({
 			id: "bc0",
@@ -149,41 +150,22 @@
 						   orientation: "left",
 						    },
 		});		
-	cont1.append(Bars, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+	//draw the bar chart to not use the whole height so there is room for the marker label
+	cont1.append(Bars, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 1});
 
-	var svg70 = new MakeSVGContainer(
+	var markerVal = [(levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0]];
+
+	var barMarks = new MarkerGroup(
 		{
-			node: d3.select("#barChart0"),
-			maxWid: 450,
-			maxHt: 300
-		});
-
-	svg70.Axes( 
-		{
-			xPosPerc: 0, yPosPerc:0,
-			xPerc: 1, yPerc: 1,
-			xaxisType: "linear", yaxisType: "ordinal",
-			Data: [dextroData, levoData],
-			xTicks: [0,10,20,30,40,50,60,70,80,90,100],
-			xOrient: "bottom",
-			yOrient: "left",
-			xLabel: "% enantiomers"
-		});
-
+		marks: markerVal
+		}, eventManager);
 		
-	svg70.BarChart({
-		Data: [dextroData,levoData],
-		type: "linear" //ignored for anything but grouped
-	});//this doesn't have an eventmanager argument, because it isn't
-	//emitting events in this page.  If we were dragging around the ends 
-	//of the bars, then it would.
-	
-	//This is the marker that will stick to the end of the shortest bar
-	svg70.LineMarkers({
-		xMarks: [levoData[0]] //start it on the end of the levoData bar, arbitrarily
-		//because they are of equal length to start
-	});
-	
+	// write the markers onto the graph in the local coordinates, inside the 
+	// data area.  These are designed to slop over the top, that's why the
+	// graph is written to the bottom 80% of SVG area
+	Bars.append(barMarks);
+		
+		
 	var diff = inputDextro.startVal-inputLevo.startVal,
 		absDiff = Math.abs(diff);
 	
@@ -341,18 +323,14 @@
 		console.log("TODO: fired updateBarChart log");
 		levoData[0].x = inputLevo.getValue();
 		dextroData[0].x = inputDextro.getValue();
-		svg70.BarChart({
-			Data: [dextroData, levoData],
-			type: "linear" //ignored for anything but grouped
-			});
-		var newMark = (levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0];
-		svg70.LineMarkers( {
-			xMarks: [newMark]
-			});
 		
-		Bars.redraw(Bars.lastdrawn.container,Bars.lastdrawn.size);
+		Bars.Data = [dextroData,levoData]
+		
+		var newMark = [(levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0]];
+		barMarks.marks = newMark;
+		console.log("marks", barMarks.marks)
+		Bars.redraw();
 
-		
 	}
 
 	function updatePieChart(diff)

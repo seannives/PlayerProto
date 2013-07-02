@@ -74,8 +74,8 @@
 				<div class="test">
 					<p>Test 5: Three sliders, one readout</p>
 					<div id="t5sliders">
-						<span id="t5_1slider"></span>
-						<span id="t5_2slider"></span>
+						<span id="t5_1slider"></span><br />
+						<span id="t5_2slider"></span><br />
 						<span id="t5_3slider"></span>
 					</div>
 					<p>(Slider 1 + Slider 2) / Slider 3 = <span id="t5val"></span></p>
@@ -225,14 +225,14 @@
 			size: 10,
 		}, eventManager);
 		
-	function test2function (input)
+	function test2function(input)
 	{
 		return d3.round(input, 2);
 	}
 	
 	eventManager.subscribe(t2Slide.changedValueEventId, t2handleChangedValue);
 	
-	function t2handleChangedValue (newValue)
+	function t2handleChangedValue(eventDetails)
 	{
 		newVal = test2function(t2Slide.getValue());
 		t2Readout.setValue(newVal);
@@ -284,9 +284,14 @@
 	eventManager.subscribe(t3_1Slide.changedValueEventId, t3handleChangedValue);
 	eventManager.subscribe(t3_2Slide.changedValueEventId, t3handleChangedValue);
 	
-	function t3handleChangedValue (newValue)
+	function t3handleChangedValue(eventDetails)
 	{
-		newVal = test3function(t3_1Slide.getValue(), t3_2Slide.getValue());
+		slide1 = t3_1Slide.getValue();
+		slide2 = t3_2Slide.getValue();
+		/*console.log("eventDetails.newValue=" + eventDetails.newValue +
+					"; slide1=" + slide1 +
+					"; slide2=" + slide2 + ";");*/
+		newVal = test3function(slide1, slide2);
 		t3Readout.setValue(newVal);
 	}
 	
@@ -367,7 +372,7 @@
 			maxVal: t5_1Extent[1],
 			stepVal: 1,
 			label: "Test 5 slider 1",
-			format: d3.format('5.2f'),
+			format: d3.format(String.fromCharCode(0x2007/*figure space*/) + '>2f'),
 		}, eventManager);
 
 	t5_1Slide.draw(d3.select("#t5_1slider"));
@@ -379,7 +384,7 @@
 			maxVal: t5_2Extent[1],
 			stepVal: 1,
 			label: "Test 5 slider 2",
-			format: d3.format('5.2f'),
+			format: d3.format(String.fromCharCode(0x2007/*figure space*/) + '>2f'),
 		}, eventManager);
 
 	t5_2Slide.draw(d3.select("#t5_2slider"));
@@ -391,7 +396,7 @@
 			maxVal: t5_3Extent[1],
 			stepVal: 1,
 			label: "Test 5 slider 3",
-			format: d3.format('5.2f'),
+			format: d3.format(String.fromCharCode(0x2007/*figure space*/) + '>2f'),
 		}, eventManager);
 		
 	t5_3Slide.draw(d3.select("#t5_3slider"));
