@@ -88,6 +88,50 @@
 		}, eventManager);
 		
 	t1Button.draw(d3.select("#t1slider"));
+
+	// set up a dummy object w/ a score request event that we will fire when the button is pressed
+	var dummyQ = { submitScoreRequestEventId: "t1ScoreRequest" };
+
+	/************************************************************************
+	* t1handleClick                                                     *//**
+	*
+	* t1handleClick is called from the event handler for the "submit" button,
+	* firing the dummy question's submitScoreRequestEvent
+	*************************************************************************/
+	function t1handleClick()
+	{
+		var slider = t1Slide.getValue();
+		var ans = slider == 11 ? "answer011" : slider == 0 ? "answer000": "answer001";
+
+		var submitAnsDetails =
+			{
+				question: dummyQ,
+				questionId: "SanVan003",
+				answerKey: ans,
+				responseCallback: t1HandleResponse
+			};
+
+		// fire off the submit method of the SubmitManager, sending value from Slider
+		eventManager.publish(dummyQ.submitScoreRequestEventId, submitAnsDetails);
+	}
+
+	/************************************************************************
+	* t1HandleResponse                                                  *//**
+	*
+	* t1handleResponse is called from the event handler for the submitManager
+	* when it returns a response after sending the student's submission off
+	* for processing.  It plops the response into the resultDisplay Readout.
+	*
+	* @param eventDetails			These are the keyed values returned by 
+	*								the event:
+	*                               grade: 0..1
+	*                               response: string response
+	*************************************************************************/
+	function t1HandleResponse(responseDetails)
+	{
+		SubmitManager.appendResponseWithDefaultFormatting(t1Button.lastdrawn.container, responseDetails);
+	}
+	
 	// subscribe to the "submit" button press
 	eventManager.subscribe(t1Button.pressedEventId, t1handleClick);
 
@@ -98,8 +142,9 @@
 		container: t1Button.lastdrawn.container
 	};
 	var submitManager = new SubmitManager(t1SubmitManagerConfig, eventManager);
-	// subscribe to the submitManager
-	eventManager.subscribe(submitManager.submittedEventId, t1handleResponse);
+
+	// Get the submit manager to handle scoring requests from the dummy slider question
+	submitManager.handleRequestsFrom(dummyQ);
 
 	/* wish I could use the d3 method to read JSON but cross origin requests error prevents it
 	
@@ -115,38 +160,6 @@
 	- extract as much of this configuration stuff into a dynamic js "builder" script with config
 	*/
 
-	/************************************************************************
-	* t1handleClick                                                     *//**
-	*
-	* t1handleClick is called from the event handler for the "submit" button,
-	* sending the value of the slider to the submitManager.
-	*************************************************************************/
-	function t1handleClick()
-	{
-		var slider = t1Slide.getValue();
-		var ans = slider == 11 ? "answer011" : slider == 0 ? "answer000": "answer001";
-
-		// fire off the submit method of the SubmitManager, sending value from Slider
-		submitManager.submit(ans);
-	}
-
-	/************************************************************************
-	* t1handleResponse                                                  *//**
-	*
-	* t1handleResponse is called from the event handler for the submitManager
-	* when it returns a response after sending the student's submission off
-	* for processing.  It plops the response into the resultDisplay Readout.
-	*
-	* @param eventDetails			These are the keyed values returned by 
-	*								the event:
-	*                               grade: 0..1
-	*                               response: string response
-	*************************************************************************/
-	function t1handleResponse(eventDetails)
-	{
-		SubmitManager.appendResponseWithDefaultFormatting(eventDetails.container, eventDetails);
-	}
-	
 	//------------------- Q1 Test --------------------
 
 	var Q1Choices = [

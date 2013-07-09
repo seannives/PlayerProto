@@ -218,6 +218,9 @@ function MultipleChoiceQuestion(config, eventManager)
 	 * @property {SelecOneQuestion} question	-This question widget
 	 * @property {string} 			questionId	-The id which identifies this question to the scoring engine.
 	 * @property {string} 			answerKey	-The answerKey associated with the selected answer.
+	 * @property {function(Object)}	responseCallback
+	 * 											-[optional] function to call with the response when it is
+	 * 											 returned by the scoring engine.
 	 */
 
 	// subscribe to events of our 'child' widgets
