@@ -51,14 +51,9 @@ Gravity only affects the vertical (y) component. Experiment with different initi
                 	<span id="veloSlider"></span> 
                     <span id="angleSlider"></span>     
                 	<div id="basketball"></div> 
-                	<button class="btn-primary">Check it!</button> <span id="veloSlider"></span> 
+                	<div id="submitVelAngle"></div> 
           		</div>
-               		<table width="100%">
-                    
-					<tr><td class="rightAlign"><span id="popDay"></span></td>
-                    	<td class="rightAlign"><span id="pop2010"></span></td></tr>
-                  
-            		</table>
+               	
 			</div>
 		</div>
 	</div>
@@ -81,7 +76,11 @@ Gravity only affects the vertical (y) component. Experiment with different initi
     <script src="js/widget-image.js"></script>
    	<script src="js/widget-sketch.js"></script>
     <script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-button.js"></script>
+    <script src="js/fakeactivitydb.js"></script>
+	<script src="js/answerman.js"></script>
 	<script src="js/eventmanager.js"></script>
+	<script src="js/submitmanager.js"></script>
 
 	<script>
 
@@ -250,21 +249,16 @@ var cntr = new SVGContainer(cntrConfig);
 		}
 		
 	
-	
+	var q1Button = new Button ({
+			//id: "t1Button",
+			text: "Check It!"
+		}, eventManager);
+		
+	q1Button.draw(d3.select("#submitVelAngle"));
+
 	var shapeDataTrue = circleGen(pts,deltaxTrue,deltayTrue);
 	var vXData = xlineGen(pts,deltaxTrue,deltayTrue);
 	var hots = shapeDataTrue.concat(vXData);
-	
-	// Create the population growth in a day
-	var popDayRead = new Readout({
-			node: d3.select("#popDay"),
-			id: 'pDay',
-			startVal: d3.format(",.0f")(vi),
-			readOnly: true,
-			size: 5,
-			label: "Initial Velocity"
-		});
-	
 	
 
 	var lines = new LineGraph({
@@ -320,6 +314,67 @@ var cntr = new SVGContainer(cntrConfig);
 
 							});
 
+	// set up a dummy object w/ a score request event that we will fire when the button is pressed
+	// this is needed because sliders aren't a real question type yet
+	var dummyQ = { submitScoreRequestEventId: "VelAngleScoreRequest" };
+
+	/************************************************************************
+	* submitForScore                                                     *//**
+	*
+	* called from the event handler for the "submit" button,
+	* firing the dummy question's submitScoreRequestEvent
+	*************************************************************************/
+	function submitForScore()
+	{
+		//get the values of the velocity and angle 
+		var vi = velocity.getValue();
+		var theta = angle.getValue()*Math.PI/180;
+	
+		var ans = (vi == 7.3 && angle.getValue() ==  59) ? "right" : "notright";
+
+		var submitAnsDetails =
+			{
+				question: dummyQ,
+				questionId: "ThrowTheBall",
+				answerKey: ans,
+				responseCallback: handleResponse
+			};
+
+		// fire off the submit method of the SubmitManager, sending value from Slider
+		eventManager.publish(dummyQ.submitScoreRequestEventId, submitAnsDetails);
+	}
+
+	// create submit manager
+	var q1SubmitManagerConfig = {
+		//id: 't1sm',
+		sequenceNodeID: 'SanVan003',
+		container: q1Button.lastdrawn.container
+	};
+	var submitManager = new SubmitManager(q1SubmitManagerConfig, eventManager);
+
+	// Get the submit manager to handle scoring requests from the dummy slider question
+	submitManager.handleRequestsFrom(dummyQ);
+
+	/************************************************************************
+	* handleResponse                                                  *//**
+	*
+	* handleResponse is called from the event handler for the submitManager
+	* when it returns a response after sending the student's submission off
+	* for processing.  It plops the response into the resultDisplay Readout.
+	*
+	* @param eventDetails			These are the keyed values returned by 
+	*								the event:
+	*                               grade: 0..1
+	*                               response: string response
+	*************************************************************************/
+	function handleResponse(responseDetails)
+	{
+		SubmitManager.appendResponseWithDefaultFormatting(q1Button.lastdrawn.container, responseDetails);
+	}
+	
+	// subscribe to the "submit" button press
+	eventManager.subscribe(q1Button.pressedEventId, submitForScore);
+
 	//set initial state
 	eqDesc.lite("delta");
 	eqVel.lite("delta");
@@ -339,12 +394,9 @@ var cntr = new SVGContainer(cntrConfig);
 	 ****************************************************************************/
 	function handleChangedValue(newValue)
 	{
-		//get the values of the growth rate
+		//get the values of the velocity and angle 
 		var vi = velocity.getValue();
 		var theta = angle.getValue()*Math.PI/180;
-		//use that to calculate the new populations
-		popDayRead.setValue(d3.format(",.0f")
-			(vi));
 	
 		
 		//recalculate the data

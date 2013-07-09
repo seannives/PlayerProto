@@ -75,6 +75,19 @@ var activities = {
 				response:  "I believe you are thinking of vampires.",
 				},
 		},
+	ThrowTheBall: { 
+		question: "Set the initial velocity and angle of the throw such that the player makes the basket.",
+		"notright": {
+				content: "0",
+				score: 0,
+				response: "That velocity and angle will miss the basket."
+				},
+		"right": {
+				content: "v = 7.3, &alpha = 59&deg;",
+				score: 1,
+				response:  "Right on target.",
+				}
+		},
 	"http://hub.paf.pearson.com/resources/sequences/123/nodes/1": {
 		"1": {
 				content: "1",
