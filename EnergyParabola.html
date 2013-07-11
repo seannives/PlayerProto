@@ -328,9 +328,10 @@ var cntr = new SVGContainer(cntrConfig);
 	{
 		//get the values of the velocity and angle 
 		var vi = velocity.getValue();
-		var theta = angle.getValue()*Math.PI/180;
+		var angleDegrees = angle.getValue();
+		var theta = angleDegrees * Math.PI/180;
 	
-		var ans = (7.2 <= vi && vi <= 7.5 && 56 <= angle.getValue() && angle.getValue() <= 61) ? "right" : "notright";
+		var ans = (7.2 <= vi && vi <= 7.5 && 56 <= angleDegrees && angleDegrees <= 61) ? "right" : "notright";
 
 		var submitAnsDetails =
 			{
@@ -338,7 +339,9 @@ var cntr = new SVGContainer(cntrConfig);
 				questionId: "ThrowTheBall",
 				answerKey: ans,
 				answerValue: [vi, angle.getValue()],
-				responseCallback: handleResponse
+				responseCallback: handleResponse,
+				velocity: vi,
+				angleDegrees: angleDegrees
 			};
 
 		// fire off the submit method of the SubmitManager, sending value from Slider
@@ -370,6 +373,13 @@ var cntr = new SVGContainer(cntrConfig);
 	*************************************************************************/
 	function handleResponse(responseDetails)
 	{
+		var vi = responseDetails.submitDetails.velocity;
+		var angleDegrees = responseDetails.submitDetails.angleDegrees;
+		var newResponse = responseDetails.response;
+
+		newResponse = newResponse + " with a velocity of " + vi + "m/s and an angle of " + angleDegrees + " degrees.";
+
+		responseDetails.response = newResponse;
 		SubmitManager.appendResponseWithDefaultFormatting(q1Button.lastdrawn.container, responseDetails);
 	}
 	
