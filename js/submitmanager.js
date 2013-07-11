@@ -7,7 +7,7 @@
  * The SubmitManager does some stuff.
  *
  * Created on		June 04, 2013
- * @author			Seann
+ * @author			Seann Ives
  *
  * Copyright (c) 2013 Pearson, All rights reserved.
  *
@@ -21,6 +21,8 @@
 (function()
 {
 	var submit1Config = {
+		sequenceNodeID: 'ThrowTheBall',
+		container: q1Button.lastdrawn.container
 		};
 });
 

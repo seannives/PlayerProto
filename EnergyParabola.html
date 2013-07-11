@@ -330,13 +330,14 @@ var cntr = new SVGContainer(cntrConfig);
 		var vi = velocity.getValue();
 		var theta = angle.getValue()*Math.PI/180;
 	
-		var ans = (vi == 7.3 && angle.getValue() ==  59) ? "right" : "notright";
+		var ans = (7.2 <= vi && vi <= 7.5 && 56 <= angle.getValue() && angle.getValue() <= 61) ? "right" : "notright";
 
 		var submitAnsDetails =
 			{
 				question: dummyQ,
 				questionId: "ThrowTheBall",
 				answerKey: ans,
+				answerValue: [vi, angle.getValue()],
 				responseCallback: handleResponse
 			};
 
@@ -347,7 +348,7 @@ var cntr = new SVGContainer(cntrConfig);
 	// create submit manager
 	var q1SubmitManagerConfig = {
 		//id: 't1sm',
-		sequenceNodeID: 'SanVan003',
+		sequenceNodeID: 'ThrowTheBall',
 		container: q1Button.lastdrawn.container
 	};
 	var submitManager = new SubmitManager(q1SubmitManagerConfig, eventManager);

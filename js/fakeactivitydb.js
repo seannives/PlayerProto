@@ -78,12 +78,12 @@ var activities = {
 	ThrowTheBall: { 
 		question: "Set the initial velocity and angle of the throw such that the player makes the basket.",
 		"notright": {
-				content: "0",
+				content: "",
 				score: 0,
 				response: "That velocity and angle will miss the basket."
 				},
 		"right": {
-				content: "v = 7.3, &alpha = 59&deg;",
+				content: "v<sub>i</sub> = 7.3, &theta; = 59&deg;",
 				score: 1,
 				response:  "Right on target.",
 				}
