@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="Leslie Bondaryk" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="eCourses Author, Title" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap_plus.css" rel="stylesheet">
+	<link href="../css/widgets.css" rel="stylesheet">
+</head>
+
+<body>
+	<div id="bricTarget"></div>
+
+	<script src="../js/jquery-latest.js"></script>
+	<script src="../js/d3.v3.min.js"></script>
+
+   	<script src="../js/widget-base.js"></script>
+	<script src="../js/widget-button.js"></script>
+	<script src="../js/widget-sketch.js"></script>
+	<script src="../js/widget-labelgroup.js"></script>
+	<script src="../js/eventmanager.js"></script>
+
+	<script>
+	var eventManager = new EventManager();
+
+	var svg4 = new SVGContainer({
+		node: d3.select("#bricTarget"),
+		maxWid: 300,
+		maxHt: 300
+	});
+
+// original sketch does not change
+var sketch4_1 = new Sketch ({
+		id: "sketch4_1",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.14, .9], length: 0.1, angle: -Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.14, .7], length: 0.1, angle: Math.PI/5 }]},
+			
+			{ shape: "line", 	data: [{ xyPos: [.26, .78], length: 0.1, angle: 0 }]},
+			{ shape: "line", 	data: [{ xyPos: [.26, .82], length: 0.1, angle: 0 }]},
+			{ shape: "line", 	data: [{ xyPos: [.5, .9], length: 0.1, angle: -4*Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.5, .7], length: 0.1, angle: 4*Math.PI/5 }]},
+
+		 	{ shape: "textBit", data: [{ xyPos: [.12, .89], text: 'H'}]},
+			{ shape: "textBit", data: [{ xyPos: [.23, .78], text: 'C'}]},
+			{ shape: "textBit", data: [{ xyPos: [.4, .78], text: 'C'}]},
+		  	{ shape: "textBit", data: [{ xyPos: [.08, .69], text: 'H3C'}]},
+			{ shape: "textBit", data: [{ xyPos: [.56, .9], text: 'CH3' }]},
+			{ shape: "textBit", data: [{ xyPos: [.56, .7], text: 'H' }]},
+		]
+	});
+
+// duplicate sketch is divided into parts	
+var sketch4_2 = new Sketch ({
+		id: "sketch4_2",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.26, .78], length: 0.1, angle: 0 }]},
+			{ shape: "line", 	data: [{ xyPos: [.26, .82], length: 0.1, angle: 0 }]},
+
+			{ shape: "textBit", data: [{ xyPos: [.23, .78], text: 'C'}]},
+			{ shape: "textBit", data: [{ xyPos: [.4, .78], text: 'C'}]},
+		]
+	});
+
+// left side is able to be flipped
+var sketch4_3 = new Sketch ({
+		id: "sketch4_3",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.14, .9], length: 0.1, angle: -Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.14, .7], length: 0.1, angle: Math.PI/5 }]},
+			
+			{ shape: "textBit", data: [{ xyPos: [.12, .89], text: 'H'}]},
+			{ shape: "textBit", data: [{ xyPos: [.08, .69], text: 'H3C'}]},
+		]
+	});
+
+// right side is also able to be flipped
+var sketch4_4 = new Sketch ({
+		id: "sketch4_4",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.5, .9], length: 0.1, angle: -4*Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.5, .7], length: 0.1, angle: 4*Math.PI/5 }]},
+
+			{ shape: "textBit", data: [{ xyPos: [.56, .9], text: 'CH3' }]},
+			{ shape: "textBit", data: [{ xyPos: [.56, .7], text: 'H' }]},
+		]
+	});
+	
+// message to be displayed
+var sketch4_5 = new Sketch ({
+		id: "sketch4_5",
+		drawShape:
+		[
+			{ shape: "textBit", data: [{ xyPos: [.85, .84], text: 'These structures are' }]},
+			{ shape: "textBit", data: [{ xyPos: [.85, .8], text: 'superposable and are' }]},
+			{ shape: "textBit", data: [{ xyPos: [.85, .76], text: 'therefore homomers (identical)' }]},
+		]
+	});
+
+// draw all the sketches
+svg4.append(sketch4_1);
+svg4.append(sketch4_2);
+svg4.append(sketch4_3);
+svg4.append(sketch4_4);
+svg4.append(sketch4_5);
+
+// message starts out invisible
+sketch4_5.setOpacity(0, 0, 0);
+
+
+
+        window.onload = function(){
+			window.parent.postMessage({
+                    width: document.documentElement.offsetWidth,
+                    height: document.documentElement.offsetHeight
+                }, '*');
+        };
+
+
+	
+	</script>
+</body>
+</html>
