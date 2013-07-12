@@ -45,9 +45,12 @@ MessageBroker.prototype.initialize = function (options) {
 		this.bricIframes = $("iframe.bric");
 
 		// Handle events.
-        window.addEventListener('message', function(e){
-            if (e.data.messageType === 'bricevent') this.relay(e);
-            if (e.data.messageType === 'resize') resize(e);
+
+		var _self = this;
+        window.addEventListener('message', function(evt){
+console.log("Message Received")
+            if (evt.data.method === 'save') _self.relay(evt);
+            if (evt.data.method === 'resize') _self.resize(evt);
         });
 	};
 
@@ -55,20 +58,24 @@ MessageBroker.prototype.initialize = function (options) {
 	////////// The rest of methods //////////
 
 	// Relay the message to the rest of iframes
-MessageBroker.prototype.relay = function (source, message) {
+MessageBroker.prototype.relay = function (evt) {
 		
         [].forEach.call(this.bricIframes, function(bricIframes){
             // Skip over the widget that sent the message.
-            if (source === bricIframes.contentWindow) return;
+            if (evt.source === bricIframes.contentWindow) return;
 
+            var message = {
+                method: 'restore',
+                value: evt.data.value
+            }
             bricIframes.contentWindow.postMessage(message, '*')
         });
 	};
 
-MessageBroker.prototype.resize = function (e) {
-        var sourceObject = findIFrameWithWindow(e.source);
-        sourceObject.style.width = e.data.width + 'px';
-        sourceObject.style.height = e.data.height + 'px';
+MessageBroker.prototype.resize = function (evt) {
+        var sourceObject = findIFrameWithWindow(evt.source);
+        sourceObject.style.width = evt.data.width + 'px';
+        sourceObject.style.height = evt.data.height + 'px';
     };
 
 MessageBroker.prototype.findIFrameWithWindow = function (win){
@@ -81,7 +88,7 @@ MessageBroker.prototype.findIFrameWithWindow = function (win){
     // Probably will be refactored to MasterDocumentManager
 
     // Method returns a queryString from <param> tags inside and <object>.
-MessageBroker.prototype.buildQueryStringFromParams = function (objectNode){
+function buildQueryStringFromParams(objectNode){
         var params = objectNode.querySelectorAll('param');
         var queryString = [].reduce.call(params, function(acc, paramNode){
             var name = paramNode.getAttribute('name');
@@ -108,7 +115,7 @@ MessageBroker.prototype.convertObjectTagToIframeTag = function () {
 	            if (attrValue !== null) iframeNode.setAttribute(attrName, attrValue);
 	        });
 
-	        var queryString = this.buildQueryStringFromParams(objectNode);
+	        var queryString = buildQueryStringFromParams(objectNode);
 	        var url = objectNode.getAttribute('data') + '?' + queryString;
 	        iframeNode.setAttribute('src', url);
 	        // Swap the <object> for the <iframe> node.
