@@ -580,58 +580,8 @@ function handleClick9_3 ()
 	sketch9_6.reflect(null, .6, 1000, 0);
 }
 	
-///////////////////////////////////////
 
-// static image for now
-// will require drawing program in future
-
-var svg10 = new MakeSVGContainer(
-	{node: d3.select("#picture10"),
-	maxWid: 800,
-	maxHt: 600
-	}
-);
-
-svg10.Axes({
-	xPosPerc: .25, yPosPerc: .25,
-	xPerc: .5, yPerc: .5,
-	xaxisType: "linear", yaxisType: "ordinal",
-	xOrient: "bottom",
-	yOrient: "left",
-	xLabel: "population"
-});
-
-svg10.ScalableImage(
-	{images: [
-			{URI:'../img/ch7_1_14.png', caption: "Placeholder for interactive."}]
-	});
 	
-/////////////////////////////////////////
-
-// static image for now
-// will require drawing program in future
-
-var svg11 = new MakeSVGContainer(
-	{node: d3.select("#picture11"),
-	maxWid: 800,
-	maxHt: 600
-	}
-);
-
-svg11.Axes({
-	xPosPerc: .25, yPosPerc: .25,
-	xPerc: .5, yPerc: .5,
-	xaxisType: "linear", yaxisType: "ordinal",
-	xOrient: "bottom",
-	yOrient: "left",
-	xLabel: "population"
-});
-
-svg11.ScalableImage(
-	{images: [
-			{URI:'../img/ch7_1_15.png', caption: "Placeholder for interactive."}]
-	});
-
 </script>
 </body>
 </html>
