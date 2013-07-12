@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="Leslie Bondaryk" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="eCourses Author, Title" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap_plus.css" rel="stylesheet">
+	<link href="../css/widgets.css" rel="stylesheet">
+</head>
+
+<body>
+	<div id="bricTarget"></div>
+
+	<script src="../js/jquery-latest.js"></script>
+	<script src="../js/d3.v3.min.js"></script>
+
+   	<script src="../js/widget-base.js"></script>
+	<script src="../js/widget-button.js"></script>
+	<script src="../js/widget-sketch.js"></script>
+	<script src="../js/widget-labelgroup.js"></script>
+	<script src="../js/eventmanager.js"></script>
+
+	<script>
+	var eventManager = new EventManager();
+
+	var svg0 = new SVGContainer({
+		node: d3.select("#bricTarget"),
+		maxWid: 400,
+		maxHt: 400
+	});
+
+	// original sketch, does not change
+var sketch1_1 = new Sketch ({
+		id: "sketch1_1",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.14, .9], length: 0.1, angle: -Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.14, .7], length: 0.1, angle: Math.PI/5 }]},
+			
+			{ shape: "line", 	data: [{ xyPos: [.26, .78], length: 0.1, angle: 0 }]},
+			{ shape: "line", 	data: [{ xyPos: [.26, .82], length: 0.1, angle: 0 }]},
+			{ shape: "line", 	data: [{ xyPos: [.5, .9], length: 0.1, angle: -4*Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.5, .7], length: 0.1, angle: 4*Math.PI/5 }]},
+
+		 	{ shape: "textBit", data: [{ xyPos: [.12, .89], text: 'H'}]},
+			{ shape: "textBit", data: [{ xyPos: [.23, .78], text: 'C'}]},
+			{ shape: "textBit", data: [{ xyPos: [.4, .78], text: 'C'}]},
+		  	{ shape: "textBit", data: [{ xyPos: [.08, .69], text: 'H3C'}]},
+			{ shape: "textBit", data: [{ xyPos: [.56, .9], text: 'CH3' }]},
+			{ shape: "textBit", data: [{ xyPos: [.56, .7], text: 'H' }]},
+		]
+	});
+
+// duplicated sketch is split up so different parts can move separately
+var sketch1_2 = new Sketch ({
+		id: "sketch1_2",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.14, .9], length: 0.1, angle: -Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.14, .7], length: 0.1, angle: Math.PI/5 }]},
+
+			{ shape: "line", 	data: [{ xyPos: [.26, .78], length: 0.1, angle: 0 }]},
+			{ shape: "line", 	data: [{ xyPos: [.26, .82], length: 0.1, angle: 0 }]},
+
+		 	{ shape: "textBit", data: [{ xyPos: [.12, .89], text: 'H'}]},
+			{ shape: "textBit", data: [{ xyPos: [.23, .78], text: 'C'}]},
+			{ shape: "textBit", data: [{ xyPos: [.4, .78], text: 'C'}]},
+		  	{ shape: "textBit", data: [{ xyPos: [.08, .69], text: 'H3C'}]},
+		]
+	});
+
+// right side of molecule is separated so it can be reflected
+var sketch1_3 = new Sketch ({
+		id: "sketch1_3",
+		drawShape:
+		[
+			{ shape: "line", 	data: [{ xyPos: [.5, .9], length: 0.1, angle: -4*Math.PI/5 }]},
+			{ shape: "line", 	data: [{ xyPos: [.5, .7], length: 0.1, angle: 4*Math.PI/5 }]},
+
+			{ shape: "textBit", data: [{ xyPos: [.56, .9], text: 'CH3' }]},
+			{ shape: "textBit", data: [{ xyPos: [.56, .7], text: 'H' }]},
+		]
+	});
+	
+// message is also a sketch
+var sketch1_4 = new Sketch ({
+		id: "sketch1_4",
+		drawShape:
+		[
+			{ shape: "textBit", data: [{ xyPos: [.85, .84], text: 'These structures are non-' }]},
+			{ shape: "textBit", data: [{ xyPos: [.85, .8], text: 'superposable and are' }]},
+			{ shape: "textBit", data: [{ xyPos: [.85, .76], text: 'therefore stereoisomers.' }]},
+		]
+	});
+
+// draw all the sketches
+svg0.append(sketch1_1);
+svg0.append(sketch1_2);
+svg0.append(sketch1_3);
+svg0.append(sketch1_4);
+
+// message starts out invisible
+sketch1_4.setOpacity(0, 0, 0);
+
+
+        window.onload = function(){
+			console.log('img loaded');
+			window.parent.postMessage({
+                    width: document.documentElement.offsetWidth,
+                    height: document.documentElement.offsetHeight
+                }, '*');
+        };
+
+
+	
+	</script>
+</body>
+</html>
