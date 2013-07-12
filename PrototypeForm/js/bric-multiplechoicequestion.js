@@ -299,6 +299,8 @@ MultipleChoiceQuestion.prototype.handleSubmitResponse_ = function(responseDetail
 	// For now just use the helper function to write the response.
 	//SubmitManager.appendResponseWithDefaultFormatting(responseDiv, responseDetails);
 
+	// YSAP - Instead of the SubmitManager (who's agnostic of the rendering mechanism)
+	//        its the MCQ that renders the answer feedback.
 	responseDiv.append("div")
 		.html(responseDetails.feedback);
 };
