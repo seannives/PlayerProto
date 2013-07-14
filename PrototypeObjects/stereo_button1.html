@@ -41,7 +41,7 @@ var b1_bricModifyEventId = 'b1' + '_bricModify';
 
 eventManager.subscribe(b1_bricModifyEventId, modify_b1);
 
-var modify_b1 = function (eventDetails)
+function modify_b1(eventDetails)
 {
 	var b1 = button0;
 	if (eventDetails.enable !== undefined)
@@ -53,7 +53,7 @@ var modify_b1 = function (eventDetails)
 	{
 		b1.setText(eventDetails.text);
 	}
-};
+}
 
     window.onload = function(){
 		window.parent.postMessage({
