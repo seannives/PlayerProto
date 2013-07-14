@@ -28,9 +28,9 @@
 	<script src="../js/eventmanager.js"></script>
 
 	<script>
-	var eventManager = new EventManager();
+var eventManager = new EventManager();
 
-	var svg7 = new SVGContainer({
+var svg7 = new SVGContainer({
 		node: d3.select("#bricTarget"),
 		maxWid: 400,
 		maxHt: 400
@@ -280,35 +280,27 @@ var sketch7_11 = new Sketch ({
 		]
 	});
 
-// button used to reset animation
-var button7 = new Button ({
-		id: "b7",
-		text: "Click to reset"
-	}, eventManager);
-
-button7.draw(d3.select("#button7"));
-
 // draw all the sketches
-svg7.append(sketch7_0, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_01, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_5, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_6, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_7, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_8, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_9, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_10, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(sketch7_11, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+svg7.append(sketch7_0);
+svg7.append(sketch7_01);
+svg7.append(sketch7_1);
+svg7.append(sketch7_2);
+svg7.append(sketch7_3);
+svg7.append(sketch7_4);
+svg7.append(sketch7_5);
+svg7.append(sketch7_6);
+svg7.append(sketch7_7);
+svg7.append(sketch7_8);
+svg7.append(sketch7_9);
+svg7.append(sketch7_10);
+svg7.append(sketch7_11);
 // draw all the hotspots
-svg7.append(hotspot7_1, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(hotspot7_2, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(hotspot7_3, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(hotspot7_4, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(hotspot7_5, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
-svg7.append(hotspot7_6, {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
+svg7.append(hotspot7_1);
+svg7.append(hotspot7_2);
+svg7.append(hotspot7_3);
+svg7.append(hotspot7_4);
+svg7.append(hotspot7_5);
+svg7.append(hotspot7_6);
 
 // hotspots and button trigger events
 eventManager.subscribe(hotspot7_1.selectedEventId, handleClick7_1);
@@ -317,7 +309,8 @@ eventManager.subscribe(hotspot7_3.selectedEventId, handleClick7_3);
 eventManager.subscribe(hotspot7_4.selectedEventId, handleClick7_4);
 eventManager.subscribe(hotspot7_5.selectedEventId, handleClick7_5);
 eventManager.subscribe(hotspot7_6.selectedEventId, handleClick7_6);
-eventManager.subscribe(button7.pressedEventId, handleClick7_7);
+var button7pressedEventId = 'b7' + '_Pressed';
+eventManager.subscribe(button7pressedEventId, handleClick7_7);
 
 // much of the exercise starts out invisible
 sketch7_01.setOpacity(0, 0, 0);
@@ -347,6 +340,7 @@ function handleClick7_1 ()
 	// reveal message if all simplified molecules have been revealed
 	if (reveal7_1 == 1 && reveal7_2 == 1 && reveal7_3 == 1) sketch7_01.setOpacity(1, 500, 0);
 }
+
 // reveal middle simplified molecule
 function handleClick7_2 ()
 {
@@ -356,6 +350,7 @@ function handleClick7_2 ()
 	// reveal message if all simplified molecules have been revealed
 	if (reveal7_1 == 1 && reveal7_2 == 1 && reveal7_3 == 1) sketch7_01.setOpacity(1, 500, 0);
 }
+
 // reveal right simplified molecule
 function handleClick7_3 ()
 {
@@ -365,6 +360,7 @@ function handleClick7_3 ()
 	// reveal message if all simplified molecules have been revealed
 	if (reveal7_1 == 1 && reveal7_2 == 1 && reveal7_3 == 1) sketch7_01.setOpacity(1, 500, 0);
 }
+
 // click left simplified molecule
 function handleClick7_4 (eventDetails)
 {
@@ -380,6 +376,7 @@ function handleClick7_4 (eventDetails)
 		setTimeout(function () {canclick7 = true;}, 500);
 	}
 }
+
 // click middle simplified molecule
 function handleClick7_5 (eventDetails)
 {
@@ -395,6 +392,7 @@ function handleClick7_5 (eventDetails)
 		setTimeout(function () {canclick7 = true;}, 500);
 	}
 }
+
 // click right simplified molecule
 function handleClick7_6 (eventDetails)
 {
@@ -410,6 +408,7 @@ function handleClick7_6 (eventDetails)
 		setTimeout(function () {canclick7 = true;}, 500);
 	}
 }
+
 // reset
 function handleClick7_7 ()
 {
@@ -438,6 +437,7 @@ function handleClick7_7 ()
 		setTimeout(function () {canclick7 = true;}, 25);
 	}
 }
+
 // check for correct answer (middle and right simplified molecules)
 function checkAnswer7 ()
 {
@@ -457,10 +457,6 @@ function checkAnswer7 ()
 	}
 }
 
-
-
-
-	
 	</script>
 </body>
 </html>

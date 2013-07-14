@@ -28,9 +28,9 @@
 	<script src="../js/eventmanager.js"></script>
 
 	<script>
-	var eventManager = new EventManager();
+var eventManager = new EventManager();
 
-	var svg6 = new SVGContainer({
+var svg6 = new SVGContainer({
 		node: d3.select("#bricTarget"),
 		maxWid: 300,
 		maxHt: 300
@@ -92,14 +92,6 @@ var sketch6_4 = new Sketch ({
 		]
 	});
 
-// button used to reset animation
-var button6 = new Button ({
-		id: "b6",
-		text: "Play animation"
-	}, eventManager);
-
-button6.draw(d3.select("#button6"));
-
 // draw all the sketches
 svg6.append(sketch6_1);
 svg6.append(sketch6_2);
@@ -109,10 +101,49 @@ svg6.append(sketch6_4);
 // message starts out invisible
 sketch6_4.setOpacity(0, 0, 0);
 
+// button triggers event
+var button6pressedEventId = 'b6' + '_Pressed';
 
+eventManager.subscribe(button6pressedEventId, handleClick6);
 
+// event to publish to make changes to button in another iframe (temp hack for test)
+var b6_bricModifyEventId = 'b6' + '_bricModify';
 
-	
+// animation can be played once and reset using the button
+var click6 = 0;
+function handleClick6 ()
+{
+	// play the animation
+	if (click6 == 0)
+	{
+		eventManager.publish(b6_bricModifyEventId, {enable: false});
+		sketch6_2.setColor("blue", 500, 0);
+		sketch6_3.setColor("red", 500, 0);
+		sketch6_2.reflect(null, .7, 800, 500);
+		sketch6_3.reflect(null, .7, 800, 500);
+		sketch6_4.setOpacity(1, 600, 1000);
+		click6 ++;
+		setTimeout(function ()
+						{
+							eventManager.publish(b6_bricModifyEventId, {enable: true, text: "Restart"});
+						}, 2000);
+	}
+	// reset
+	else if (click6 == 1)
+	{
+		eventManager.publish(b6_bricModifyEventId, {enable: false});
+		sketch6_2.reflect(null, .7, 0, 0);
+		sketch6_3.reflect(null, .7, 0, 0);
+		sketch6_2.setColor("grey", 0, 20);
+		sketch6_3.setColor("grey", 0, 20);
+		sketch6_4.setOpacity(0, 0, 0);
+		click6 = 0;
+		setTimeout(function ()
+						{
+							eventManager.publish(b6_bricModifyEventId, {enable: true, text: "Play animation"});
+						}, 25);
+	}
+}
 	</script>
 </body>
 </html>
