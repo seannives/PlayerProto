@@ -25,22 +25,43 @@
 	<script src="../js/eventmanager.js"></script>
 
 	<script>
-	var eventManager = new EventManager();
+var eventManager = new EventManager();
 
-	// instantiate button 
-	var button5 = new Button ({
+// instantiate button 
+var button5 = new Button ({
+		id: "b9_1",
 		text: "Hide H"
 	}, eventManager);
 	
 	// draw button
 	button5.draw(d3.select("#bricTarget"));
 
-    window.onload = function(){
-		window.parent.postMessage({
-             width: document.documentElement.offsetWidth,
-             height: document.documentElement.offsetHeight
-                }, '*');
-        };
+// Event published in another iframe to modify the button in this one (hack for test)
+var b9_1_bricModifyEventId = 'b9_1' + '_bricModify';
+
+eventManager.subscribe(b9_1_bricModifyEventId, modify_b9_1);
+
+function modify_b9_1(eventDetails)
+{
+	var b9_1 = button5;
+	if (eventDetails.enable !== undefined)
+	{
+		b9_1.setEnabled(eventDetails.enable);
+	}
+
+	if (eventDetails.text !== undefined)
+	{
+		b9_1.setText(eventDetails.text);
+	}
+}
+
+
+window.onload = function(){
+	window.parent.postMessage({
+		 width: document.documentElement.offsetWidth,
+		 height: document.documentElement.offsetHeight
+			}, '*');
+	};
 	
 	</script>
 </body>

@@ -25,22 +25,24 @@
 	<script src="../js/eventmanager.js"></script>
 
 	<script>
-	var eventManager = new EventManager();
+var eventManager = new EventManager();
 
-	// instantiate button 
-	var button5 = new Button ({
+// instantiate button 
+var button5 = new Button ({
+		id: "b9_2",
 		text: "Swap Cis/Trans"
 	}, eventManager);
 	
-	// draw button
-	button5.draw(d3.select("#bricTarget"));
+// draw button
+button5.draw(d3.select("#bricTarget"));
 
-    window.onload = function(){
-		window.parent.postMessage({
-             width: document.documentElement.offsetWidth,
-             height: document.documentElement.offsetHeight
-                }, '*');
-        };
+
+window.onload = function(){
+	window.parent.postMessage({
+		 width: document.documentElement.offsetWidth,
+		 height: document.documentElement.offsetHeight
+			}, '*');
+	};
 	
 	</script>
 </body>
