@@ -42,6 +42,7 @@
 	<script src="../../js/fakeactivitydb.js"></script>
 	<script>
 
+$(document).ready(function(){
 	// create event manager
 	var eventManager = new EventManager();
 	
@@ -105,12 +106,20 @@
 	$("#title").text("Test: " + title);
 
 
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
+	function getParameterByName(name) {
+	    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+	        results = regex.exec(location.search);
+	    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
+
+	// I can call parent's function
+	var parentsData = parent.window.globalData;
+	parentsData = parent.window.hello();
+	console.log("Accessing global data: "+ parentsData);
+	console.log(title + " is ready.");
+
+});
 	</script>
 
 </body>

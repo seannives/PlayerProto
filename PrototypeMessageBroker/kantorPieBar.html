@@ -28,7 +28,7 @@
 	<script src="../js/widget-markergroup.js"></script>
     <script src="../js/widget-slider.js"></script>
     <script src="../js/widget-numeric.js"></script>
-	<script src="../js/eventmanager.js"></script>
+	<script src="eventmanager.js"></script>
 </head>
 
 <body>
@@ -188,7 +188,7 @@
 		xMarks: [levoData[0]] //start it on the end of the levoData bar, arbitrarily
 		//because they are of equal length to start
 	});
-*/levoData
+*/
 
 	// VOGEL: Resize the iframe to the correct height when this is done loading. This can also be done on resize.
 	window.parent.postMessage({
@@ -197,6 +197,7 @@
         height: document.documentElement.offsetHeight
     }, '*');
 
+	/* YSAP - This is now done by the new EventManager
     // VOGEL: Listen for updates from the parent and update the widget.
     window.addEventListener('message', function(e){
         var data = e.data;
@@ -214,6 +215,153 @@
 			Bars.redraw();
         }
     });
+	*/
+
+	/* YSAP - a store local to this iframe that holds relevant data from bric in other iframes.
+	        To be more specific, it holds the current levo and dextro values.
+	        Three implementation options here:
+	        1. A global variable (of course within the iframe) as is implemented here (quick & dirty)
+	        	Manually keep track of the values (see the handlers below)
+	        2. State maintained by the EventManager: when initializing EventManager, configure it so
+	        	it keep track of specific brics. E.g. if interested in levo, then it will listen to "levo/valueChanged"
+	        3. State maintained by the actual bric instance.
+	        It seems that #2 would be a good solution.
+	*/       
+	var bricsStates = {};
+
+	// YSAP - bring back the original code
+	// Handle changes of the levo and dextro input values
+	eventManager.subscribe("levo" + '_valueChanged', // inputLevo.changedValueEventId,
+						   function(ed) { handleLevoValueChanged(ed.newValue); });
+	eventManager.subscribe("dextro" + '_valueChanged', // inputDextro.changedValueEventId,
+						   function(ed) { handleDextroValueChanged(ed.newValue); });
+	eventManager.subscribe(sl1.changedValueEventId, function(ed) { handleNumericInputChanged(ed.newValue); });
+
+	// YSAP - Must start listening to the broker
+	eventManager.listenBroker();
+
+	/* **************************************************************************
+	* handleInputValueChanged                                              *//**
+	*
+	* handleInputValueChanged is called from the event handler for one of
+	* the input widgets when the user changes its value. It updates the
+	* given matching input widget's value to match the new value and then
+	* updates the bar chart.
+	*
+	* @param {NumericInput} otherInputWidget -This is the other input widget
+	*                                         whose value needs to be updated
+	*                                         to match the user changed widget.
+	* @param {number} newValue - The value of the widget that was changed.
+	*
+	****************************************************************************/
+	function handleLevoValueChanged(newValue)
+	{
+		// YSAP - Update the local storage
+		bricsStates.levo = newValue;
+		bricsStates.dextro = 100 - newValue;
+
+		// YSAP - Publish control event telling dextro to change value 
+		eventManager.publish("dextro/changeValue", {value: bricsStates.dextro });
+
+		var diff = bricsStates.dextro - bricsStates.levo,
+		    absDiff = Math.abs(diff);
+		// YSAP - remove access to objects non pertinent to this iframe
+		//eeReadout.setValue(absDiff);
+		//rot.setValue(sl1.getValue() * diff/100);
+		updateBarChart();
+		updatePieChart(diff);
+	}
+	
+	/* **************************************************************************
+	* handleInputValueChanged                                              *//**
+	*
+	* handleInputValueChanged is called from the event handler for one of
+	* the input widgets when the user changes its value. It updates the
+	* given matching input widget's value to match the new value and then
+	* updates the bar chart.
+	*
+	* @param {NumericInput} otherInputWidget -This is the other input widget
+	*                                         whose value needs to be updated
+	*                                         to match the user changed widget.
+	* @param {number} newValue - The value of the widget that was changed.
+	*
+	****************************************************************************/
+	function handleDextroValueChanged(newValue)
+	{
+		// YSAP - Update the local storage
+		bricsStates.dextro = newValue;
+		bricsStates.levo = 100 - newValue;
+
+		// YSAP - Publish control event telling levo to change value 
+		eventManager.publish("levo/changeValue", {value: bricsStates.levo });
+
+		var diff = bricsStates.dextro - bricsStates.levo,
+		    absDiff = Math.abs(diff);
+		// YSAP - remove access to objects non pertinent to this iframe
+		//eeReadout.setValue(absDiff);
+		//rot.setValue(sl1.getValue() * diff/100);
+		updateBarChart();
+		updatePieChart(diff);
+	}
+	
+	/* **************************************************************************
+	 * handleNumericInputChanged                                            *//**
+	 *
+	* handleInputValueChanged is called from the event handler for one of
+	* the input widgets when the user changes its value. It updates the
+	* given matching input widget's value to match the new value and then
+	* updates the bar chart.
+	*
+	* @param {NumericInput} Otherwidgetarray -These are the other widgets
+	*                                         which need to be updated
+	*                                         to match the user changed widget.
+	* @param {number} newValue - The value of the widget that was changed.
+	*
+	****************************************************************************/
+	function handleNumericInputChanged(WidgetList, newValue)
+	{
+		// YSAP - Changed acces to bric object reference to a local state store
+		var diff = bricsStates.dextro - bricsStates.levo;
+		//var angle = newValue * diff/10;
+		//rot.setValue(newValue * diff/100);
+		updatePieChart(diff);
+	}
+
+	/* **************************************************************************
+	 * updateBarChart                                                       *//**
+	 *
+	 * updateBarChart updates the bar chart widget to match the current values
+	 * of the levo and dextro input widgets.
+	 *
+	 ****************************************************************************/
+	function updateBarChart()
+	{
+console.log("TODO: fired updateBarChart log");
+		levoData[0].x = bricsStates.levo;
+		dextroData[0].x = bricsStates.dextro;
+		
+		Bars.Data = [dextroData,levoData]
+		
+		var newMark = [(levoData[0].x > dextroData[0].x) ? dextroData[0] : levoData[0]];
+		barMarks.marks = newMark;
+		console.log("marks", barMarks.marks)
+		Bars.redraw();
+
+	}
+
+	function updatePieChart(diff)
+	{
+		console.log("TODO: fired updatePieChart log");
+		pieDish.Pie({
+			Data: [{x: sl1.getValue() * diff/360}],
+			xYPos: [0.5,0.5]
+			});
+		var newMark = {x:(1/2), label: d3.format("+0r2")(sl1.getValue() * diff/100) + "&deg;"};
+		pieDish.LineMarkers( {
+			xMarks: [newMark]
+			});
+		
+	}
 	</script>
 </body>
 </html>
