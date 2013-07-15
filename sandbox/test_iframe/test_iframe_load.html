@@ -5,6 +5,7 @@
         <script src="http://code.jquery.com/jquery-1.10.2.js" ></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js" ></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.0/underscore-min.js" ></script>
+
 <style>
     .container {border:1px solid green;}
 </style>
@@ -18,6 +19,11 @@
         </div>
 
         <script >
+
+        var globalData = "Hello, I am parents data!";
+        function hello() {
+            return "Hello from parent";
+        }
 
 // A $( document ).ready() block.
 $( document ).ready(function() {
@@ -40,6 +46,7 @@ $( document ).ready(function() {
         $iframes.append($iframeEl);
     }
     
+    console.log("Main HTML is ready.");
 });
 
 function getParameterByName(name) {
@@ -48,6 +55,10 @@ function getParameterByName(name) {
         results = regex.exec(location.search);
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+$('iframe').load(function(evt) {
+    console.log("iframe  " + evt + "loaded");
+});
 
         </script>
     </body>
