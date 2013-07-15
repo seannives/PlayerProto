@@ -293,4 +293,4 @@ var activityManager = {
         };
     }
 
-}
+};
