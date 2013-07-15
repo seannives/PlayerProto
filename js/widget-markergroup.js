@@ -312,23 +312,6 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		//move each group to the data point specified for the marker
 	});
 
-
-	//draw the marker lines for each data point
-	markerCollection.append("line") 
-		//within each group, always start at x=0
-		.attr("x1", 0)
-		.attr("x2", 
-		//if the markers are horizontal from the y axis, then the 
-		//second x point is the full width of the box.  Otherwise,
-		//it stays at 0.
-			  (that.type === "y") ? that.lastdrawn.xScale(size.width) : 0)
-		//y starts at the top of the box, 0 pixels at top in SVG
-		.attr("y1", 0)
-		//if the markers are horizontal from the y axis, then the 
-		//second y point is also 0.  Otherwise, it's the full height of the graph rectangle.
-		.attr("y2", that.type === "y" ? 0 : size.height);
-
-
 	//draw the horizontal or vertical marker line
 	markerCollection.append("line") 
 		.attr("class", "markers")
@@ -337,13 +320,13 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		//if the markers are horizontal from the y axis, then the 
 		//second x point is the full width of the box.  Otherwise,
 		//it stays at 0.
-			(this.type === "y") ? this.lastdrawn.xScale(size.width) : 0)
+			(this.type === "y") ? size.width : 0)
 		//starts at the top of the box, 0 pixels at top in SVG
 		.attr("y1", 0)
 		.attr("y2", 
 		//if the markers are horizontal from the y axis, then the 
 		//second y point is 0.  Otherwise, it's the full height of the graph rectangle.
-			(this.type === "y") ? 0 : this.lastdrawn.yScale(0));
+			(this.type === "y") ? 0 : size.height);
 		
 		
 	markerCollection.append("circle")
