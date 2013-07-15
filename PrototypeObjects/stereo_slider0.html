@@ -26,13 +26,14 @@
 	<script src="../js/eventmanager.js"></script>
 
 	<script>
-	var eventManager = new EventManager();
+var eventManager = new EventManager();
 
-	// instantiate button 
-	var buteneExtent = [1, 6];
+// instantiate button 
+var buteneExtent = [1, 6];
 
-	// slider instantiation
-	var buteneSlide1 = new Slider ({
+// slider instantiation
+var buteneSlide1 = new Slider ({
+		id: "b1Val",
 		startVal: 1,
 		minVal: buteneExtent[0],
 		maxVal: buteneExtent[1],
@@ -41,7 +42,18 @@
 		format: d3.format('5.0f'),
 	}, eventManager);
 	
-	buteneSlide1.draw(d3.select("#bricTarget"));
+buteneSlide1.draw(d3.select("#bricTarget"));
+
+// changing the slider or clicking an image should trigger events
+var fullrot2selectedEventId = 'cisIv' + '_crsl' + '_itemSelected';
+
+eventManager.subscribe(fullrot2selectedEventId, buteneHandleSelection2);
+
+// clicking an image should update the carousel and the slider
+function buteneHandleSelection2(eventDetails)
+{
+	buteneSlide2.setValue(eventDetails.index + 1);
+}
 
 
     window.onload = function(){

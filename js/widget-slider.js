@@ -97,6 +97,7 @@ function Slider(config, eventManager)
 	/**
 	 * The event details for this.changedValueEventId events
 	 * @typedef {Object} ChangedValueEventDetails
+	 * @property {number} oldValue	-The previous value of this slider.
 	 * @property {number} newValue	-The new/current value of this slider.
 	 */
 

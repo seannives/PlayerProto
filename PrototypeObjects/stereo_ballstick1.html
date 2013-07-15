@@ -20,19 +20,19 @@
 	<script src="../js/jquery-latest.js"></script>
 	<script src="../js/d3.v3.min.js"></script>
 
+	<script src="../js/eventmanager.js"></script>
    	<script src="../js/widget-base.js"></script>
 	<script src="../js/widget-image.js"></script>
     <script src="../js/widget-carousel.js"></script>
     <script src="../js/widget-imageviewer.js"></script>
-	<script src="../js/eventmanager.js"></script>
 
 	<script>
 var eventManager = new EventManager();
 
 var svg0 = new SVGContainer({
 		node: d3.select("#picture0"),
-		maxWid: 300,
-		maxHt: 400
+		maxWid: 400,
+		maxHt: 450
 	});
 
 //////////////////////////////////////////////
@@ -40,6 +40,7 @@ var svg0 = new SVGContainer({
 //////////////////////////////////////////////
 
 var ballStick_imgs = new ImageViewer({
+		id: 'ballstickIv',
 		items:
 			[
 				new Image({
@@ -67,7 +68,14 @@ svg0.append(ballStick_imgs);
                 }, '*');
         };
 
+// the carousel images should trigger events
+eventManager.subscribe(ballStick_imgs.selectedEventId, handleSelect);
 
+// handle image selection
+function handleSelect(eventDetails)
+{
+	ballStick_imgs.lite(eventDetails.selectKey);
+}
 	
 	</script>
 </body>

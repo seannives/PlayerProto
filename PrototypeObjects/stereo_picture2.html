@@ -27,41 +27,38 @@
 	<script src="../js/eventmanager.js"></script>
 
 	<script>
-	var eventManager = new EventManager();
+var eventManager = new EventManager();
 
-	//////////////////////////////////////////////
-/* image with caption		*/
+//////////////////////////////////////////////
+/* image with caption                       */
 //////////////////////////////////////////////
 
-	var svg0 = new SVGContainer({
+var svg0 = new SVGContainer({
 		node: d3.select("#bricTarget"),
 		maxWid: 800,
 		maxHt: 600
 	});
+
 	
-		
-	var cimg0 = new CaptionedImage({
-			image: new Image({
-			URI: '../img/butene/ch7_1_6.png',
-			caption: "Figure 7.1.4 Stereocenters in But-2-ene",
-			actualSize: {height: 600, width: 800}
-		}),
-//			captionPosition: "below"
-		});
+var cimg0 = new CaptionedImage({
+		image: new Image({
+				URI: '../img/butene/ch7_1_6.png',
+				caption: "Figure 7.1.4 Stereocenters in But-2-ene",
+				actualSize: {height: 185, width: 285}
+			}),
+		// captionPosition: "below"
+	});
+
+// draw both image carousels
+svg0.append(cimg0, {topPercentOffset: 0.25, leftPercentOffset: 0.25, heightPercent: 0.5, widthPercent: 0.5});
 
 
-
-	// draw both image carousels
-	svg0.append(cimg0);
-
-    window.onload = function(){
-		window.parent.postMessage({
-                width: document.documentElement.offsetWidth,
-                height: document.documentElement.offsetHeight
-                }, '*');
-        };
-
-
+window.onload = function(){
+	window.parent.postMessage({
+			width: document.documentElement.offsetWidth,
+			height: document.documentElement.offsetHeight
+			}, '*');
+	};
 	
 	</script>
 </body>
