@@ -63,18 +63,18 @@ var MessageBroker = function(options) {
  */
 MessageBroker.prototype.initialize = function (options) {
 
- 		this.convertObjectTagToIframeTag();
+		this.convertObjectTagToIframeTag();
 
 		this.bricIframes = document.querySelectorAll('iframe.bric'); // 
 		//this.bricIframes = $("iframe.bric");  // Using jQuery 
 
 		// Listen to messages.
 		var _self = this;
-        window.addEventListener('message', function(evt){
+		window.addEventListener('message', function(evt){
 console.log("[MB] Message Received: " + evt.data.messageType);
-            if (evt.data.messageType === 'bricevent') _self.relay(evt);
-            if (evt.data.messageType === 'resize') _self.resize(evt);
-        });
+			if (evt.data.messageType === 'bricevent') _self.relay(evt);
+			if (evt.data.messageType === 'resize') _self.resize(evt);
+		});
 	};
 
 
@@ -92,17 +92,17 @@ console.log("[MB] Message Received: " + evt.data.messageType);
  * 
  */
 MessageBroker.prototype.relay = function (evt) {
-		
-        [].forEach.call(this.bricIframes, function(bricIframe){
-            // Skip over the iframe that sent the message.
-            if (evt.source === bricIframe.contentWindow) return;
 
-            var message = {
-            	messageType: evt.data.messageType,
-            	message: evt.data.message
-            }
-            bricIframe.contentWindow.postMessage(message, '*');
-        });
+		[].forEach.call(this.bricIframes, function(bricIframe){
+			// Skip over the iframe that sent the message.
+			if (evt.source === bricIframe.contentWindow) return;
+
+			var message = {
+				messageType: evt.data.messageType,
+				message: evt.data.message
+			}
+			bricIframe.contentWindow.postMessage(message, '*');
+		});
 	};
 
 /**
@@ -116,15 +116,15 @@ MessageBroker.prototype.relay = function (evt) {
  * @param {Object} evt		The event object as sent by the postMessage().
  */
 MessageBroker.prototype.resize = function (evt) {
-        var sourceObject = findIFrameWithWindow(evt.source);
-        sourceObject.style.width = evt.data.width + 'px';
-        sourceObject.style.height = evt.data.height + 'px';
-    };
+		var sourceObject = findIFrameWithWindow(evt.source);
+		sourceObject.style.width = evt.data.width + 'px';
+		sourceObject.style.height = evt.data.height + 'px';
+	};
 
-    ////////// methods related to DOM
-    // Maybe is a good idea to refactor them to to a separate class
-    // Say, MasterDocumentManager, that handles DOM related events.
-    // And provides abstraction of specific DOM manipulation
+	////////// methods related to DOM
+	// Maybe is a good idea to refactor them to to a separate class
+	// Say, MasterDocumentManager, that handles DOM related events.
+	// And provides abstraction of specific DOM manipulation
 
 /**
  * MessageBroker.findIFrameWithWindow
@@ -134,10 +134,10 @@ MessageBroker.prototype.resize = function (evt) {
  * @param {Object} evt		The event object as sent by the postMessage().
  */
 MessageBroker.prototype.findIFrameWithWindow = function (win){
-        for (var i = 0; i < this.bricIframes.length; i++){
-            if (win === this.bricIframes[i].contentWindow) return this.bricIframes[i];
-        }
-    };
+		for (var i = 0; i < this.bricIframes.length; i++){
+			if (win === this.bricIframes[i].contentWindow) return this.bricIframes[i];
+		}
+	};
 
 /**
  * MessageBroker.findIFrameWithWindow
@@ -147,16 +147,16 @@ MessageBroker.prototype.findIFrameWithWindow = function (win){
  * @param {Node} objectNode		The object node that will be changed to iframe, and contains the params.
  */
 function buildQueryStringFromParams(objectNode){
-        var params = objectNode.querySelectorAll('param');
-        var queryString = [].reduce.call(params, function(acc, paramNode){
-            var name = paramNode.getAttribute('name');
-            var value = paramNode.getAttribute('value');
+		var params = objectNode.querySelectorAll('param');
+		var queryString = [].reduce.call(params, function(acc, paramNode){
+			var name = paramNode.getAttribute('name');
+			var value = paramNode.getAttribute('value');
 
-            if (acc) acc += '&';
-            return acc + encodeURIComponent(name) + '=' + encodeURIComponent(value);
-        }, '');
-        return queryString;
-    };
+			if (acc) acc += '&';
+			return acc + encodeURIComponent(name) + '=' + encodeURIComponent(value);
+		}, '');
+		return queryString;
+	};
 
 /**
  * MessageBroker.convertObjectTagToIframeTag
@@ -167,24 +167,24 @@ function buildQueryStringFromParams(objectNode){
  */
 MessageBroker.prototype.convertObjectTagToIframeTag = function () {
 		// Turn the <object> tags into <iframe> tags to work around webkit bug https://bugs.webkit.org/show_bug.cgi?id=75395.
-	    // Also append parameters to iframe url so they're accessible to the iframe implementation.
-	    // To prevent the flicker when loading, you might want to do this transformation work before rendering the HTML in your player.
-	    var objectNodes = document.querySelectorAll('object.bric');
-	    [].forEach.call(objectNodes, function(objectNode){
-	        var iframeNode = document.createElement('iframe');
-	        iframeNode.setAttribute('sandbox', 'allow-scripts');
+		// Also append parameters to iframe url so they're accessible to the iframe implementation.
+		// To prevent the flicker when loading, you might want to do this transformation work before rendering the HTML in your player.
+		var objectNodes = document.querySelectorAll('object.bric');
+		[].forEach.call(objectNodes, function(objectNode){
+			var iframeNode = document.createElement('iframe');
+			iframeNode.setAttribute('sandbox', 'allow-scripts');
 
-	        // Copy over whitelisted attributes from the <object> to the <iframe>.
-	        ['height','width','class','style'].forEach(function(attrName){
-	            var attrValue = objectNode.getAttribute(attrName);
-	            if (attrValue !== null) iframeNode.setAttribute(attrName, attrValue);
-	        });
+			// Copy over whitelisted attributes from the <object> to the <iframe>.
+			['height','width','class','style'].forEach(function(attrName){
+				var attrValue = objectNode.getAttribute(attrName);
+				if (attrValue !== null) iframeNode.setAttribute(attrName, attrValue);
+			});
 
-	        var queryString = buildQueryStringFromParams(objectNode);
-	        var url = objectNode.getAttribute('data') + '?' + queryString;
-	        iframeNode.setAttribute('src', url);
-	        // Swap the <object> for the <iframe> node.
-	        objectNode.parentNode.replaceChild(iframeNode, objectNode);
-	    });
-    };
-    
+			var queryString = buildQueryStringFromParams(objectNode);
+			var url = objectNode.getAttribute('data') + '?' + queryString;
+			iframeNode.setAttribute('src', url);
+			// Swap the <object> for the <iframe> node.
+			objectNode.parentNode.replaceChild(iframeNode, objectNode);
+		});
+	};
+

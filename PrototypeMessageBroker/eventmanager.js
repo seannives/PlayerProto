@@ -9,6 +9,10 @@
  * A javascript implementation of this pattern is available at:
  * https://github.com/mroderick/PubSubJS
  *
+ * @todo: See whether changing to object literal (singleton) makes more sense.
+ *        Make it requirejs friendly
+ *        Do we need regexp or subtopic matching? 
+ *
  * Created on		March 18, 2013
  * @author			Michael Jay Lippert
  * @author			Young Suk Ahn Park
@@ -136,9 +140,9 @@ EventManager.prototype.publish = function(eventId, eventDetails)
 			messageType: "bricevent",
 			message: {
 				topic: eventId,
-	            eventData: eventDetails
+				eventData: eventDetails
 			}
-        }, '*');
+		}, '*');
 };
 
 /* **************************************************************************
@@ -155,12 +159,12 @@ EventManager.prototype.listenBroker = function()
 {
 	var _this = this;
 	window.addEventListener('message', function(e){
-        var data = e.data;
-        var here = location.href;
-        if (data.messageType === 'bricevent'){
+	var data = e.data;
+	var here = location.href;
+	if (data.messageType === 'bricevent'){
 console.log("["+location.href+"] EventManager: Handling bricevent:" + JSON.stringify(data));
 			// Publish in the local iframe 
 			_this.publishLocal(data.message.topic, data.message.eventData, true);
-        }
-    });
+		}
+	});
 }
