@@ -44,7 +44,7 @@
  */
 var MessageBroker = function(options) {
 
-	// 
+	// List of iframes that contains brics
 	this.bricIframes = null;
 
 
