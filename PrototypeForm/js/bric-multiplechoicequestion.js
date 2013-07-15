@@ -218,9 +218,6 @@ function MultipleChoiceQuestion(config, eventManager)
 	 * @property {SelecOneQuestion} question	-This question widget
 	 * @property {string} 			questionId	-The id which identifies this question to the scoring engine.
 	 * @property {string} 			answerKey	-The answerKey associated with the selected answer.
-	 * @property {function(Object)}	responseCallback
-	 * 											-[optional] function to call with the response when it is
-	 * 											 returned by the scoring engine.
 	 */
 
 	// subscribe to events of our 'child' widgets
@@ -261,7 +258,8 @@ MultipleChoiceQuestion.prototype.handleSubmitRequested_ = function()
 		{
 			question: this,
 			questionId: this.questionId,
-			answerKey: this.choiceWidget.selectedItem().answerKey,
+			answerKey: this.choiceWidget.selectedItem().answerKey, 
+			// YSAP - @todo no callbacks
 			responseCallback: function (responseDetails) { that.handleSubmitResponse_(responseDetails); }
 		};
 
@@ -299,7 +297,10 @@ MultipleChoiceQuestion.prototype.handleSubmitResponse_ = function(responseDetail
 	var responseDiv = this.lastdrawn.widgetGroup.select("div.responses");
 
 	// For now just use the helper function to write the response.
-	SubmitManager.appendResponseWithDefaultFormatting(responseDiv, responseDetails);
+	//SubmitManager.appendResponseWithDefaultFormatting(responseDiv, responseDetails);
+
+	responseDiv.append("div")
+		.html(responseDetails.feedback);
 };
 
 /* **************************************************************************

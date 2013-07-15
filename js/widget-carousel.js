@@ -121,6 +121,7 @@ function Carousel(config, eventManager)
 	/**
 	 * The event details for this.selectedEventId events
 	 * @typedef {Object} SelectedEventDetails
+	 * @property {number} index		-The 0-based index of the selected item.
 	 * @property {string} selectKey	-The key associated with the selected item.
 	 */
 
@@ -282,7 +283,7 @@ Carousel.prototype.selectItemAtIndex = function (index)
 	itemGroups.classed("selected", false);
 	selectedItemGroup.classed("selected", true);
 
-	this.eventManager.publish(this.selectedEventId, {selectKey: selectedItemGroup.datum().key});
+	this.eventManager.publish(this.selectedEventId, {index: index, selectKey: selectedItemGroup.datum().key});
 };
 
 /* **************************************************************************

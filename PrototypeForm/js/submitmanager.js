@@ -7,7 +7,7 @@
  * The SubmitManager does some stuff.
  *
  * Created on		June 04, 2013
- * @author			Seann Ives
+ * @author			Seann
  *
  * Copyright (c) 2013 Pearson, All rights reserved.
  *
@@ -21,8 +21,6 @@
 (function()
 {
 	var submit1Config = {
-		sequenceNodeID: 'ThrowTheBall',
-		container: q1Button.lastdrawn.container
 		};
 });
 
@@ -48,6 +46,12 @@
  ****************************************************************************/
 function SubmitManager(config, eventManager)
 {
+	/**
+	 * YSAP - The answer provider is an object.
+	 * The answer provider
+	 */
+	this.answerProvider = config.answerProvider;
+
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
@@ -99,6 +103,8 @@ function SubmitManager(config, eventManager)
 SubmitManager.prototype.handleRequestsFrom = function(questionWidget)
 {
 	var that = this;
+
+	this.submitScoreRequestEventId = questionWidget.submitScoreRequestEventId;
 	this.eventManager.subscribe(questionWidget.submitScoreRequestEventId,
 								function (eventDetails) {that.handleScoreRequest_(eventDetails);});
 };
@@ -162,19 +168,24 @@ SubmitManager.prototype.submitForScoring_ = function(submitDetails)
 	// todo: Although we're getting a synchronous response here, we should
 	// enhance this to have the "answerMan" give us an asynchronous
 	// response, probably via an eventManager event. -mjl
-	var submissionResponse = answerMan({sequenceNode: submitDetails.sequenceNodeId},
-										submitDetails.answer);
+	var submissionResponse = this.answerProvider.submitAnswer(submitDetails.answer);
 
 	// We handle the reply from the scoring engine (in the event handler eventually)
 	// by removing the request from the list of pending request
 	// and calling the given callback if it exists
 	var pendingDetails = this.requestsAwaitingResponse_[submitDetails.sequenceNodeId];
+
 	delete this.requestsAwaitingResponse_[submitDetails.sequenceNodeId];
+
 	if (typeof pendingDetails.responseCallback === "function")
 	{
 		submissionResponse.submitDetails = pendingDetails.requestDetails;
 		pendingDetails.responseCallback(submissionResponse);
 	}
+
+	// YSAP - @todo replace above callback with message passing as below
+	//this.eventManager.publish(this.submittedEventId, submissionResponse);
+
 };
 
 /* **************************************************************************
@@ -206,79 +217,6 @@ SubmitManager.prototype.submit = function (submission)
 	this.eventManager.publish(this.submittedEventId, submissionResponse);
 };
 
-/* **************************************************************************
- * SubmitManager.appendResponseWithDefaultFormatting                    *//**
- *
- * This is a temporary helper method to format the responses to submitted
- * answers.
- *
- * @note This function is attached to the SubmitManager just as a convenient
- * place for widgets to access it while the actual details of the response
- * are worked out. It might otherwise be a utility function or a static class
- * method on the base class of question widgets.
- *
- * @param {!d3.selection}
- * 					container		-The html element to write the formatted
- * 									 response into.
- * @param {Object}	responseDetails	-The response details returned by the
- * 									 scoring engine.
- * 									 The details must contain the following
- * 									 properties:
- * 									 score, submission, response.
- *
- * @note It would be nice if the score property of the responseDetails was
- * changed from the possible values of -1, 0, 1 or undefined to either a
- * string (perhaps matching the responseFormat table below), or at least
- * a whole number that could be used as an index w/o manipulation. -mjl
- *
- ****************************************************************************/
-SubmitManager.appendResponseWithDefaultFormatting = function (container, responseDetails)
-{
-	var responseFormat = {
-			correct: {
-				icon: "icon-ok-sign",
-				answerPrefix: "Congratulations, Your answer, ",
-				answerSuffix:  ", is correct. ",
-				responseClass: "alert-success"
-			},
-			incorrect: {
-				icon: "icon-remove",
-				answerPrefix: "Sorry, Your answer, ",
-				answerSuffix:  ", is not correct. ",
-				responseClass: "alert-error"
-			},
-			partial: {
-				icon: "icon-adjust",
-				answerPrefix: "Your answer, ",
-				answerSuffix:  ", is partially correct. ",
-				responseClass: "alert-info"
-			},
-			unknown: {
-				icon: "icon-adjust",
-				answerPrefix: "something has gone horribly awry - we can't score this answer.",
-				responseClass: ""
-			}
-		};
-
-	var scoreAnsType = ["unknown", "incorrect", "correct"];
-
-	var ansType = "unknown";
-	if (typeof responseDetails.score === "number")
-	{
-		ansType = scoreAnsType[responseDetails.score + 1];
-	}
-
-	var responseHtml = "<i class='" + responseFormat[ansType].icon + "'></i> " +
-				responseFormat[ansType].answerPrefix +
-				(responseDetails.submission || "") +
-				(responseFormat[ansType].answerSuffix || "") + " " +
-				(responseDetails.response || "");
-
-	// display the results of the submission in the given container
-	container.append("div")
-		.attr("class", ["alert", responseFormat[ansType].responseClass].join(" "))
-		.html(responseHtml);
-};
 
 /* **************************************************************************
  * fancyAnswerEngine                                                    *//**
