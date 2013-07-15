@@ -75,7 +75,7 @@ function Callouts(config,eventManager)
 	 * A unique id for this instance of the widget
 	 * @type {string}
 	 */
-	this.id = config.id;
+	this.id = getIdFromConfigOrAuto(config, Callouts);
 	this.textBits = config.textBits;
 	this.headers = config.headers;
 	this.type = config.type;
@@ -84,8 +84,14 @@ function Callouts(config,eventManager)
 	// Define the ids of the events the slider uses
 	this.selectedEventId = this.id + '_Callout';
 	 	
-} // end of barChart constructor
+} // end of callout constructor
 
+/**
+ * Prefix to use when generating ids 
+ * @const
+ * @type {string}
+ */
+Callouts.autoIdPrefix = "callout_";
 
 /* **************************************************************************
  * Callouts.draw                                                       *//**

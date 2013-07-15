@@ -152,7 +152,7 @@ function MarkerGroup(config, eventManager)
  * @const
  * @type {string}
  */
-MarkerGroup.autoIdPrefix = "lblg_auto_";
+MarkerGroup.autoIdPrefix = "marker_";
 
 /* **************************************************************************
  * MarkerGroup.draw                                                     *//**
@@ -346,6 +346,15 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 			(this.type === "y") ? 0 : this.lastdrawn.yScale(0));
 		
 		
+	markerCollection.append("circle")
+		.attr("cx", function (d){	
+			return d3.round(that.lastdrawn.xScale(that.type === "y" ? d.x : 0));
+		})
+		.attr("cy", function (d){	
+			return d3.round(that.lastdrawn.yScale(that.type === "y" ? 0 : d.y));
+		})
+		.attr("r", 8);
+
 	//draw the marker arrows (triangles)
 		markerCollection.append("polygon") 
 		.attr("points", 
@@ -410,7 +419,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 					that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
 				});
 				
-	this.lastdrawn.markerCollection = markerGroup.selectAll("g.widgetMarker");
+	this.lastdrawn.markerCollection = markerGroup.selectAll("g.marker");
 
 }; // end of MarkerGroup.draw()
 
@@ -457,7 +466,7 @@ MarkerGroup.prototype.lite = function (liteKey)
 	// then find the set that matches
 	var matchesIndex = function (d, i) { return d.key === liteKey; };
 	
-	var markersToLite = allMarkers.filter(matchesLabelIndex);
+	var markersToLite = allMarkers.filter(matchesIndex);
 
 	// Highlight the labels w/ the matching key
 	markersToLite
@@ -465,7 +474,7 @@ MarkerGroup.prototype.lite = function (liteKey)
 
 	if (markersToLite.empty())
 	{
-		console.log("No key '" + liteKey + "' in Markers group " + this.id );
+		console.log("No key '" + liteKey + "' in MarkerGroup " + this.id );
 	}
 }; // end of MarkerGroup.lite()
 

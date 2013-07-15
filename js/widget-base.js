@@ -616,6 +616,7 @@ function AxisFormat()
 	 *                  discrete itemized list, gathered from the graphed data.
 	 * <li> "double positive" - axis that always counts up from zero,
 	 *                          regardless of the sign of the data
+	 * <li> "time" - expects data/time formatted values
 	 * </ul>
 	 * @type {string}
 	 */
@@ -715,16 +716,14 @@ function Axes(container, config)
 					left: 10,
 					right: 20 };
 
-	//axis format type is a string specifying "linear", "log", "ordinal" or "double positive" for axis that always count up from zero,
-	//regardless of the sign of the data - log only hooked up on x and ordinal only on y at the moment.
+	//axis format type is a string specifying "linear", "log", "ordinal", "time", or "double positive" for axis that always count up from zero,
+	//regardless of the sign of the data - log only hooked up on x
 	//TODO this works for x axis only, if y is needed must be expanded
 
 	//xTicks is either an integer number of ticks or an array of values to use as tickmarks
 	//xOrient is a string for orientation "bottom" or "top". Likewise for the yTicks and yOrient
 	var xTicks = this.xFmt.ticks;
 	var yTicks = this.yFmt.ticks;
-
-	// Add to the margin area for drawing the axis labels depending on their placement and existence
 	var xOrient = this.xFmt.orientation;
 	var yOrient = this.yFmt.orientation;
 	var hasXAxisLabel = 'label' in this.xFmt;
@@ -783,7 +782,7 @@ function Axes(container, config)
 	{
 		if (this.yFmt.type == "ordinal")
 		{
-			//if we're making horizontal ordinal bars, x axis must include 0
+			//if we're making horizontal ordinal bars (y ordinal axis), x axis must include 0
 			this.xFmt.extent.push(0);
 			this.xFmt.extent = d3.extent(this.xFmt.extent);
 		}
@@ -792,6 +791,18 @@ function Axes(container, config)
 		//Check if explicit ticks are specified, and if so, use them as the mapped range of the graph width
 		//ignore the actual data range
 		var xExtent = (Array.isArray(xTicks)) ? d3.extent(xTicks) : this.xFmt.extent;
+
+
+		if (this.xFmt.type == "ordinal")
+		{
+			// domain is xTicks. The intention is to have 
+			//the graph set the yTicks when the y axis is ordinal from the data. -mjl
+			this.xScale = d3.scale.ordinal().domain(xTicks) //lists all ordinal x vals
+				.rangeRoundBands([dataAreaWidth, 0], 0.4);
+			//width is broken into even spaces allowing for bar/data point width and
+			//a uniform white space between each, in this case, 40% white space
+			// @todo - fix this so it's not just good for bar graphs
+	    }
 
 		if (this.xFmt.type == "linear")
 		{
@@ -858,7 +869,11 @@ function Axes(container, config)
 		//set up the functions that will generate the x axis
 		this.xAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 			.scale(this.xScale) //telling the axis to use the scale defined by the function x
-			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
+			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3);
+
+		// The formatting defaults seem to be ok.  I removed this because it otherwise
+		// needs to be special cased for ordinal. -lb
+		//this.xAxis.tickFormat(format);
 
 		if (this.xFmt.type == "log")
 		{
@@ -928,7 +943,8 @@ function Axes(container, config)
 	{
 		if (this.yFmt.type == "ordinal")
 		{
-			// @todo changed the domain from yRange to yTicks. The intention is to have the graph set the yTicks when the y axis is ordinal from the data. -mjl
+			// @todo changed the domain from yRange to yTicks. The intention is to have 
+			//the graph set the yTicks when the y axis is ordinal from the data. -mjl
 			this.yScale = d3.scale.ordinal().domain(yTicks) //lists all ordinal y vals
 				.rangeRoundBands([dataAreaHeight, 0], 0.4);
 
