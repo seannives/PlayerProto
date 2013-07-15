@@ -1,5 +1,5 @@
 /* **************************************************************************
- * $Workfile:: widget-MarkerGroup.js                                         $
+ * $Workfile:: widget-MarkerGroup.js                                        $
  * **********************************************************************//**
  *
  * @fileoverview Implementation of the MarkerGroup widget.
@@ -43,7 +43,7 @@
  */
 	
 /* **************************************************************************
- * MarkerGroup                                                           *//**
+ * MarkerGroup                                                          *//**
  *
  * The MarkerGroup widget draws a group of markers at specified locations
  * in an SVGContainer.
@@ -155,7 +155,7 @@ function MarkerGroup(config, eventManager)
 MarkerGroup.autoIdPrefix = "lblg_auto_";
 
 /* **************************************************************************
- * MarkerGroup.draw                                                      *//**
+ * MarkerGroup.draw                                                     *//**
  *
  * Draw this MarkerGroup in the given container. Draw is meant to be called
  * initially and once per page/instance in the case where markers don't yet exist. 
@@ -204,7 +204,7 @@ MarkerGroup.prototype.draw = function(container, size)
 
 
 /* **************************************************************************
- * MarkerGroup.redraw                                                     *//**
+ * MarkerGroup.redraw                                                   *//**
  *
  * Redraw the data as it may have been modified. It will be
  * redrawn into the same container area as it was last drawn.
@@ -217,7 +217,7 @@ MarkerGroup.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * MarkerGroup.drawWidget_                                                *//**
+ * MarkerGroup.drawWidget_                                              *//**
  *
  * Draw the given child widget in this charts's data area.
  * This chart must have been drawn BEFORE this method is called or
@@ -235,7 +235,7 @@ MarkerGroup.prototype.drawWidget_ = function (widget)
 };
 
  /* **************************************************************************
- * markerGroup.redrawWidget_                                              *//**
+ * markerGroup.redrawWidget_                                             *//**
  *
  * Redraw the given child widget.
  * This child widget must have been drawn BEFORE this
@@ -253,7 +253,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 
 
 /* **************************************************************************
- * markerGroup.drawData_                                                  *//**
+ * markerGroup.drawData_                                                *//**
  *
  * Draw the marker data (overwriting any existing data).
  *
@@ -415,7 +415,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 }; // end of MarkerGroup.draw()
 
 /* **************************************************************************
- * MarkerGroup.setScale                                                  *//**
+ * MarkerGroup.setScale                                                 *//**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -436,7 +436,7 @@ MarkerGroup.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * MarkerGroup.lite                                                      *//**
+ * MarkerGroup.lite                                                     *//**
  *
  * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
@@ -470,7 +470,7 @@ MarkerGroup.prototype.lite = function (liteKey)
 }; // end of MarkerGroup.lite()
 
 /* **************************************************************************
- * MarkerGroup.setLastdrawnScaleFns2ExplicitOrDefault_                   *//**
+ * MarkerGroup.setLastdrawnScaleFns2ExplicitOrDefault_                  *//**
  *
  * Set this.lastdrawn.xScale and yScale to those stored in explicitScales
  * or to the default scale functions w/ a data domain of [0,1].
@@ -504,7 +504,7 @@ MarkerGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSi
 }; // end of MarkerGroup.setLastdrawnScaleFns2ExplicitOrDefault_()
 
 /* **************************************************************************
- * MarkerGroup.setOpacity                                                  *//**
+ * MarkerGroup.setOpacity                                               *//**
  *
  * Set the opacity of the sketch
  *
@@ -513,7 +513,6 @@ MarkerGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSi
  * @param {number}		delay		- the delay before the transition starts in milliseconds
  *
  ****************************************************************************/
-
 MarkerGroup.prototype.setOpacity = function (opacity, duration, delay)
 {
 	var xScale = this.lastdrawn.xScale;
