@@ -22,7 +22,7 @@
 <body>
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span6 leftCol">
+			<div class="span4 leftCol">
             	<h2 class="setTitle"></h2>
               	<p> In 1958, a scientist from Scripps Institution of Oceanography in San Diego, CA, named Dave Keeling started measuring carbon dioxide in the atmosphere. He wanted a pollution-free sample so he went to the top of Mauna Loa in Hawaii. Every month he took a samples of the air. After only two years he noticed some interesting things about his data. The amount of CO2 in the air was highest in the spring (May) and lowest in the fall (October). He correctly reasoned that this Annual Cycle is due to plants on land.
               	</p>
@@ -35,7 +35,7 @@
 				<p>This trend he found is still continuing, in fact, the yearly increase is getting larger – it is twice as big today (2013) as it was when he started taking measurements 55 years ago.
 				</p>
 			</div>
-			<div class="span6 rightCol">         
+			<div class="span8 rightCol">         
                 <div id="graph0"></div> 
                		<table width="100%">
                     <tr><td colspan="2">
@@ -78,10 +78,10 @@
 	var eventManager = new EventManager();
 	 
 	var iceFloe = [
-	{x:	"09-1-1957"	, y:	306.78	},
-	{x:	"11-1-1957"	, y:	311	},
-	{x:	"12-1-1957"	, y:	314	},
-	{x:	"02-1-1958"	, y:	316	}
+	{x:	"8 1957"	, y:	306.78	},
+	{x:	"10 1957"	, y:	311	},
+	{x:	"11 1957"	, y:	314	},
+	{x:	"1 1958"	, y:	316	}
 	]; 
 	
 	var maunaLoa = [
@@ -193,7 +193,7 @@
 
 	var cont1 = new SVGContainer({
 			node: d3.select("#graph0"),
-			maxWid: 570,
+			maxWid: 800,
 			maxHt: 500
 		});
 		
@@ -208,7 +208,7 @@
 			yAxisFormat: { type: "linear",
 						   orientation: "left",
 						   label: "CO<sub>2</sub> Concentration (ppm)",
-						    ticks: [305,310,315,320],
+						    ticks: [305,310,315,320,325],
 						    },
 		},eventManager);	
 			

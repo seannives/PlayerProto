@@ -328,15 +328,15 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		//second y point is 0.  Otherwise, it's the full height of the graph rectangle.
 			(this.type === "y") ? 0 : size.height);
 		
-		
+		//if a full data point crossing is specified, put a dot there.
 	markerCollection.append("circle")
 		.attr("cx", function (d){	
-			return d3.round(that.lastdrawn.xScale(that.type === "y" ? d.x : 0));
+			return d.x ? d3.round(that.lastdrawn.xScale(that.type === "y" ? d.x : 0)) : NaN;
 		})
 		.attr("cy", function (d){	
-			return d3.round(that.lastdrawn.yScale(that.type === "y" ? 0 : d.y));
+			return d.y ? d3.round(that.lastdrawn.yScale(that.type === "y" ? 0 : d.y )) : -size.height;
 		})
-		.attr("r", 8);
+		.attr("r", 6);
 
 	//draw the marker arrows (triangles)
 		markerCollection.append("polygon") 

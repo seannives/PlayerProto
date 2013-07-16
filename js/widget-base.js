@@ -796,9 +796,9 @@ function Axes(container, config)
 		if (this.xFmt.type == "ordinal")
 		{
 			// domain is xTicks. The intention is to have 
-			//the graph set the yTicks when the y axis is ordinal from the data. -mjl
+			//the graph set the xTicks for ordinal scale, and use that as the extent
 			this.xScale = d3.scale.ordinal().domain(xTicks) //lists all ordinal x vals
-				.rangeRoundBands([dataAreaWidth, 0], 0.4);
+				.rangePoints([0, dataAreaWidth], 0);
 			//width is broken into even spaces allowing for bar/data point width and
 			//a uniform white space between each, in this case, 40% white space
 			// @todo - fix this so it's not just good for bar graphs
@@ -1034,7 +1034,16 @@ function Axes(container, config)
 
 		dataAreaWidth = dataAreaWidth - this.margin.right - this.margin.left;
 		//using the new dimensions, redo the scale and axes
-		this.xScale.rangeRound([0, dataAreaWidth]);
+		
+		if (this.xFmt.type=="ordinal")
+		{
+			this.xScale.rangePoints([0, dataAreaWidth]);
+		}
+		else
+		{
+			this.xScale.rangeRound([0, dataAreaWidth]);
+		}
+
 		this.xAxis.scale(this.xScale);
 		console.log("x margins increased, new inner width is ", dataAreaWidth, " margin ", this.margin.left, this.margin.right);
 		this.xaxis.call(this.xAxis);
