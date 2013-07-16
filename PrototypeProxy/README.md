@@ -1,6 +1,7 @@
 eCourses/SanVan PAF Proxy with a rough eCourses/SanVan player.
 
-To run this, drop this in your tomcat webapps directory and fire up tomcat.  It will only run on localhost:8080, so...
+To run this, drop this in your tomcat webapps directory, make sure you name the directory 'ecourses-paf-proxy' and 
+fire up tomcat.  It will only run on localhost:8080, so...
 http://localhost:8080/ecourses-paf-proxy/jsp/paflaunchmulti.jsp
 
 A few things:
