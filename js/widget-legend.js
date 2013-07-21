@@ -1,17 +1,17 @@
 /* **************************************************************************
- * $Workfile:: widget-legend.js                                          $
- * **********************************************************************//**
+ * $Workfile:: widget-legend.js                                             $
+ * *********************************************************************/ /**
  *
- * @fileoverview Implementation of the Legend widget.
+ * @fileoverview Implementation of the {@link Legend} bric.
  *
- * The Legend widget provides a line or box legend with the standard
+ * The Legend widget provides a line or box graph with the standard
  * fill color sequence and labels.
  *
  * Created on		April 22, 2013
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -28,28 +28,32 @@
 });
 	
 /* **************************************************************************
- * Legend                                                               *//**
+ * Legend                                                              */ /**
  *
- * The Legend widget makes a legend for any series of labels. Should be callable
- * either standalone or from another widget that has options to generate a legend
- * from it's data.
+ * Constructor function for a Legend bric.
+ *
  * @constructor
  * @implements {IWidget}
  *
  * @param {Object}		config			-The settings to configure this widget
  * @param {string}		config.id		-String to uniquely identify this widget
- * @param {Array}		config.labels	- strings for each label
- * @param {string}		config.type		- "box", or anything else (ignored) produces lines
- * @param {string}		config.xPos, yPos - position in axes "left"/"right" and  	  
- * 										"bottom"/"top"
- * @param {Array}		config.key		- strings to specify highlighting relationship
- *										to other widgets
- * @param {eventManager} eventManager	- allows the object to emit events
+ * @param {Array}		config.labels	-strings for each label
+ * @param {string}		config.type		-"box", or anything else (ignored) produces lines
+ * @param {string}		config.xPos		-horizontal position in axes: "left" or "right"
+ * @param {string}		config.yPos 	-vertical position in axes: "top" or "bottom"
+ * @param {Array}		config.key		-strings to specify highlighting relationship
+ *										 to other widgets
+ * @param {EventManager=} eventManager	-allows the object to emit events
+ *
+ * @classdesc
+ * The Legend widget makes a legend for any series of labels. Should be callable
+ * either standalone or from another widget that has options to generate a legend
+ * from it's data.
  *
  * NOTES: Measures the number of characters in the longest label, then sizes
  * the box around it based on that.  Eventually might have to resize or rescale
  * axes to make room for this, but for now position it in one corner of axes.
- * TODO: need to add symbols for scatter plots, including custom images
+ * @todo: need to add symbols for scatter plots, including custom images
  **************************************************************************/
 
 function Legend(config, eventManager)
@@ -105,16 +109,14 @@ function Legend(config, eventManager)
 
 
 /* **************************************************************************
- * Legend.draw       	                                                *//**
+ * Legend.draw                                                         */ /**
  *
  * The LineGraph widget provides a line (or scatter) graph visualization
  * of sets of data points.
  *
  * @param {!d3.selection}
  *					container	-The container svg element to append the graph element tree to.
- * @param {Object}	size		-The size in pixels for the graph
- * @param {number}	size.height	-The height for the graph.
- * @param {number}	size.width	-The width for the graph.
+ * @param {Size}	size		-The height and width in pixels for the graph
  *
  ****************************************************************************/
 Legend.prototype.draw = function (container, size)
@@ -249,12 +251,29 @@ Legend.prototype.draw = function (container, size)
 	
 }; //end of Legend.draw
 
-Legend.prototype.setScale = function ()
+/* **************************************************************************
+ * Legend.setScale                                                     */ /**
+ *
+ * Legend's don't position by values given in the data domain, so the
+ * scales provided to this bric by this function are not needed, and therefore
+ * this function does nothing.
+ * It exists because it is required of any SVG bric which is appended in or on
+ * top of another bric.
+ *
+ * @param {function(number): number}
+ *						xScale	-function to convert a horizontal data offset
+ *								 to the pixel offset into the data area.
+ * @param {function(number): number}
+ *						yScale	-function to convert a vertical data offset
+ *								 to the pixel offset into the data area.
+ *
+ ****************************************************************************/
+Legend.prototype.setScale = function (xScale, yScale)
 {
 };
 
 /* **************************************************************************
- * Legend.lite                                                      *//**
+ * Legend.lite                                                         */ /**
  *
  * Highlight the members of the collection associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
@@ -292,3 +311,4 @@ Legend.prototype.lite = function(liteKey)
 	}
 
 };
+

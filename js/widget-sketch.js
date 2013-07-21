@@ -1,6 +1,6 @@
 /* **************************************************************************
- * $Workfile:: widget-sketch.js                                         $
- * **********************************************************************//**
+ * $Workfile:: widget-sketch.js                                             $
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the sketch widget.
  *
@@ -11,7 +11,7 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -58,7 +58,7 @@
  */
 	
 /* **************************************************************************
- * Sketch                                                           *//**
+ * Sketch                                                              */ /**
  *
  * The Sketch widget draws a group of geometric objects at specified locations
  * in an SVGContainer.
@@ -66,6 +66,9 @@
  * data extents and scale functions to convert data points to pixel positions
  * in the container. If the scale functions are not set before this widget is
  * drawn, it assumes the data extents are 0 - 1.
+ *
+ * @note: this might or might not be the start of something like an
+ * equation editor or a chemistry editor
  *
  * @constructor
  * @implements {IWidget}
@@ -76,9 +79,6 @@
  *						config.drawShape	-An array describing each drawing object in the group.
  * @param {string}		config.type		- "hot" draws transparent hotspots
  *
- * NOTES:
- * @todo: this might or might not be the start of something like an 
- * equation editor or a chemistry editor
  ****************************************************************************/
 function Sketch(config, eventManager)
 {
@@ -154,8 +154,9 @@ function Sketch(config, eventManager)
  * @type {string}
  */
 Sketch.autoIdPrefix = "auto_";
+
 /* **************************************************************************
- * Sketch.draw                                                      *//**
+ * Sketch.draw                                                         */ /**
  *
  * Draw this Sketch in the given container.
  *
@@ -213,12 +214,11 @@ Sketch.prototype.draw = function(container, size)
 	this.lastdrawn.widgetGroup = sketchContainer;
 
 	this.redraw();
-	
-	
+
 }; // end of Sketch.draw()
 
 /* **************************************************************************
- * Sketch.setScale                                                  *//**
+ * Sketch.setScale                                                     */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -239,7 +239,7 @@ Sketch.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * Sketch.move                                                  *//**
+ * Sketch.move                                                         */ /**
  *
  * Move the entire sketch by x and y offset values over a period of time
  *
@@ -249,7 +249,6 @@ Sketch.prototype.setScale = function (xScale, yScale)
  * @param {number}		delay		- the delay before the transition starts in milliseconds
  *
  ****************************************************************************/
-
 Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 {
 	var xScale = this.lastdrawn.xScale;
@@ -394,11 +393,10 @@ Sketch.prototype.move = function (xOffset, yOffset, duration, delay)
 		.duration(duration).delay(delay);
 
 	this.lastdrawn.drawCollection = sketchContainer.selectAll("g.shape");
-	
 };
 
 /* **************************************************************************
- * Sketch.reflect                                                  *//**
+ * Sketch.reflect                                                      */ /**
  *
  * Reflect the sketch over a vertical line, horizontal line, or both
  *
@@ -657,7 +655,7 @@ Sketch.prototype.reflect = function (xLine, yLine, duration, delay)
 };
 
 /* **************************************************************************
- * Sketch.setOpacity                                                  *//**
+ * Sketch.setOpacity                                                   */ /**
  *
  * Set the opacity of the sketch
  *
@@ -666,7 +664,6 @@ Sketch.prototype.reflect = function (xLine, yLine, duration, delay)
  * @param {number}		delay		- the delay before the transition starts in milliseconds
  *
  ****************************************************************************/
-
 Sketch.prototype.setOpacity = function (opacity, duration, delay)
 {
 	var sketchContainer = this.lastdrawn.widgetGroup;
@@ -682,7 +679,7 @@ Sketch.prototype.setOpacity = function (opacity, duration, delay)
 };
 
 /* **************************************************************************
- * Sketch.setColor                                                     *//**
+ * Sketch.setColor                                                     */ /**
  *
  * Set the color of the sketch
  *
@@ -691,7 +688,6 @@ Sketch.prototype.setOpacity = function (opacity, duration, delay)
  * @param {number}		delay		- the delay before the transition starts in milliseconds
  *
  ****************************************************************************/
-
 Sketch.prototype.setColor = function (color, duration, delay)
 {
 	var sketchContainer = this.lastdrawn.widgetGroup;
@@ -721,7 +717,7 @@ Sketch.prototype.setColor = function (color, duration, delay)
 };
 
 /* **************************************************************************
- * Sketch.redraw                        	                             *//**
+ * Sketch.redraw                                                       */ /**
  *
  * Redraw the sketch as it may have been modified in size or draw bits. It will be
  * redrawn into the same container area as it was last drawn.
@@ -1007,7 +1003,7 @@ Sketch.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * Sketch.createHexagon - static                                       *//**
+ * Sketch.createHexagon - static                                       */ /**
  *
  * Return an array of points representing an equilateral hexagon
  *
@@ -1037,10 +1033,10 @@ Sketch.createHexagon = function (x, y, side)
 	var points = [[left, bot] , [mid, farbot] , [right, bot] ,
 					[right, top] , [mid, fartop] , [left, top]];
 	return points;
-}
+};
 
 /* **************************************************************************
- * Sketch.createTriangle - static                                       *//**
+ * Sketch.createTriangle - static                                      */ /**
  *
  * Return an array of points representing an equilateral triangle
  *
@@ -1067,10 +1063,10 @@ Sketch.createTriangle = function (x, y, side)
 	// create an array of points using the values
 	var points = [[left, bot] , [right, bot] , [mid, top]];
 	return points;
-}
+};
 
 /* **************************************************************************
- * Sketch.createWedge - static                                       *//**
+ * Sketch.createWedge - static                                         */ /**
  *
  * Return an array of points representing a wedge
  *
@@ -1099,10 +1095,10 @@ Sketch.createWedge = function (x, y, wid, len, ang)
 	// create an array of points based on the values
 	var points = [[tip1x, tip1y] , [x, y] , [tip2x, tip2y]];
 	return points;
-}
+};
 
 /* **************************************************************************
- * Sketch.reflectValue - static                                       *//**
+ * Sketch.reflectValue - static                                        */ /**
  *
  * Reflects the value over the given line
  *
@@ -1116,10 +1112,10 @@ Sketch.reflectValue = function (value, line)
 	var diff = line - value;
 	// reflect it
 	return line + diff;
-}
+};
 
 /* **************************************************************************
- * Sketch.splitOnNumbers - static                                       *//**
+ * Sketch.splitOnNumbers - static                                      */ /**
  *
  * Return an array w/ an odd number of elements derived by splitting the given
  * string on groups of decimal digits. Each even element (0, 2, 4...) contains
@@ -1153,7 +1149,7 @@ Sketch.splitOnNumbers = function (s)
 };
 
 /* **************************************************************************
- * Sketch.pointString - static                                       *//**
+ * Sketch.pointString - static                                         */ /**
  *
  * Return a string matching the format needed for the point string of a d3
  * polygon, based on the given 2-dimensional array of points.
@@ -1185,11 +1181,11 @@ Sketch.pointString = function (a, xScale, yScale)
 	
 	// return the string
 	return pointstr;
-}
+};
 
 
 /* **************************************************************************
- * Sketch.lite                                                 *//**
+ * Sketch.lite                                                         */ /**
  *
  * Highlight the drawing bits associated w/ the given key and
  * remove any highlighting on all others.
@@ -1197,8 +1193,6 @@ Sketch.pointString = function (a, xScale, yScale)
  * @param {string|number}	liteKey	-The key associated with the label(s) to be highlighted.
  *
  ****************************************************************************/
-
-
 Sketch.prototype.lite = function (liteKey)
 {
 	console.log("TODO: Log fired Sketch Select " + liteKey);

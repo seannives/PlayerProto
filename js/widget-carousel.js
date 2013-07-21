@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-carousel.js                                           $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the Carousel widget.
  *
@@ -10,7 +10,7 @@
  * Created on		May 04, 2013
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -30,7 +30,7 @@
 });
 
 /* **************************************************************************
- * Carousel                                                             *//**
+ * Carousel                                                            */ /**
  *
  * The Carousel widget draws a collection of images in an SVGContainer and
  * allows one of them to be selected.
@@ -56,6 +56,9 @@
  *										-If the carousel presentation is "scroll" should it
  *										 wrap from one end to the other or stop when the
  *										 first or last item is visible.
+ * @param {EventManager=}
+ * 						eventManager	-The event manager to use for publishing events
+ * 										 and subscribing to them.
  *
  * @todo Implement the "vertical" layout -mjl
  * @todo Implement the "scroll" presentation, after we figure out what it means to fit naturally (maybe it means we specify an itemAspectRatio). -mjl
@@ -145,7 +148,7 @@ function Carousel(config, eventManager)
 Carousel.autoIdPrefix = "crsl_auto_";
 
 /* **************************************************************************
- * Carousel.draw                                                        *//**
+ * Carousel.draw                                                       */ /**
  *
  * Draw this Carousel in the given container.
  *
@@ -232,7 +235,7 @@ Carousel.prototype.draw = function(container, size)
 }; // end of Carousel.draw()
 
 /* **************************************************************************
- * Carousel.redraw                                                      *//**
+ * Carousel.redraw                                                     */ /**
  *
  * Redraw the image as it may have been changed (new URI or caption). It will be
  * redrawn into the same container area as it was last drawn.
@@ -250,7 +253,7 @@ Carousel.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * Carousel.selectedItem                                                *//**
+ * Carousel.selectedItem                                               */ /**
  *
  * Return the selected item in the carousel.
  *
@@ -263,7 +266,7 @@ Carousel.prototype.selectedItem = function ()
 };
 
 /* **************************************************************************
- * Carousel.selectItemAtIndex                                           *//**
+ * Carousel.selectItemAtIndex                                          */ /**
  *
  * Select the item in the carousel at the given index. If the item is
  * already selected, do nothing.
@@ -287,7 +290,7 @@ Carousel.prototype.selectItemAtIndex = function (index)
 };
 
 /* **************************************************************************
- * Carousel.itemKeyToIndex                                              *//**
+ * Carousel.itemKeyToIndex                                             */ /**
  *
  * Find the first item in the list of items in this Carousel which has the
  * specified key and return its index. If no item has that key return null.
@@ -312,7 +315,7 @@ Carousel.prototype.itemKeyToIndex = function(key)
 };
 
 /* **************************************************************************
- * Carousel.calcOptimumHeightForWidth                                   *//**
+ * Carousel.calcOptimumHeightForWidth                                  */ /**
  *
  * Calculate the optimum height for this carousel laid out horizontally
  * to fit within the given width.
@@ -343,7 +346,7 @@ Carousel.prototype.calcOptimumHeightForWidth = function (width)
 };
 
 /* **************************************************************************
- * Carousel.assignMissingItemKeys_                                      *//**
+ * Carousel.assignMissingItemKeys_                                     */ /**
  *
  * Assign a key property value of the index in the item list to any
  * item which doesn't have a key property. This key is used for selection and
@@ -364,7 +367,7 @@ Carousel.prototype.assignMissingItemKeys_ = function ()
 };
 
 /* **************************************************************************
- * Carousel.lite                                                        *//**
+ * Carousel.lite                                                       */ /**
  *
  * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.

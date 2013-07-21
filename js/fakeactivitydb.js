@@ -1,4 +1,27 @@
+/* **************************************************************************
+ * $Workfile:: widget-multiplechoicequestion.js                             $
+ * *********************************************************************/ /**
+ *
+ * @fileoverview Defines a fake database used by the mock scoring engine.
+ *
+ * If it had been possible to read a local JSON file, this would not define
+ * a global variable, the scoring engine would have processed a strict
+ * JSON file.
+ *
+ * Created on		June 18, 2013
+ * @author			Leslie Bondaryk
+ *
+ * @copyright (c) 2013 Pearson, All rights reserved.
+ *
+ * **************************************************************************/
 // JSON FakeActiviyDB Document
+/**
+ * activities is a global object used as a scoring database.
+ * It is an object whose keys are the sequenceNodeId's that identify
+ * the activity being scored, and the value contains properties used by
+ * the mock scoring engine {@link answerMan}.
+ * @type {Object}
+ * */
 var activities = {		
 	SanVan001: { 
 		question: "Why does it take less and less time to add each additional billion people to the planet?",

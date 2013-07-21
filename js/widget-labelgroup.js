@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-labelgroup.js                                         $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the LabelGroup widget.
  *
@@ -11,7 +11,7 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -50,7 +50,7 @@
  */
 	
 /* **************************************************************************
- * LabelGroup                                                           *//**
+ * LabelGroup                                                          */ /**
  *
  * The LabelGroup widget draws a group of labels at specified locations
  * in an SVGContainer.
@@ -69,10 +69,12 @@
  * @param {Array.<LabelConfig>}
  *						config.labels	-An array describing each label in the group.
  *										  
- * @param {string}		type			-string specifying bullets for dots, numbered
+ * @param {string}		config.type		-string specifying bullets for dots, numbered
  *										 for dots and #, or anything else for just labels
+ * @param {EventManager=}
+ * 						eventManager	-The event manager to use for publishing events
+ * 										 and subscribing to them.
  *
- * NOTES:
  * @todo: role: a string which is one of "label", "distractor".
  * @todo: we need some sort of autowidth intelligence on these, but I don't
  * know how to reconcile that with giving user control over wrapping
@@ -88,8 +90,9 @@ function LabelGroup(config, eventManager)
 	/**
 	 * Array of traces to be graphed, where each trace is an array of points and each point is an
 	 * object w/ a {number} x and {number} y property.
-	 * @type Array.<Array.<{x: number, y: number}>
-	 * e.g. 2 traces, 1st w/ 2 points, 2nd with 3 points:
+	 * @type {Array.<Array.<{x: number, y: number}>>}
+	 * @example
+	 *   // here are 2 traces, 1st w/ 2 points, 2nd with 3 points:
 	 *   [ [{x: -1.2, y: 2.0} {x: 2, y: 3.1}], [{x: -2, y: -2}, {x: 0, y: 0}, {x: 2, y: 2}] ]
 	 */
 	this.labels = config.labels;
@@ -97,10 +100,10 @@ function LabelGroup(config, eventManager)
 	/**
 	 * The type specifies an adornment on each label or no adornment if it is not specified.
 	 * It must be one of:
-	 * <ul>
-	 *  <li> "bullets" for a solid bullet adornment
-	 *  <li> "numbered" for a bullet containing the index number adornment
-	 * </ul>
+	 *
+	 * - "bullets" for a solid bullet adornment
+	 * - "numbered" for a bullet containing the index number adornment
+	 *
 	 * @type {string|undefined}
 	 */
 	this.type = config.type;
@@ -164,7 +167,7 @@ function LabelGroup(config, eventManager)
 LabelGroup.autoIdPrefix = "lblg_auto_";
 
 /* **************************************************************************
- * LabelGroup.draw                                                      *//**
+ * LabelGroup.draw                                                     */ /**
  *
  * Draw this LabelGroup in the given container.
  *
@@ -278,7 +281,7 @@ LabelGroup.prototype.draw = function(container, size)
 }; // end of LabelGroup.draw()
 
 /* **************************************************************************
- * LabelGroup.setScale                                                  *//**
+ * LabelGroup.setScale                                                 */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -299,7 +302,7 @@ LabelGroup.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * LabelGroup.lite                                                      *//**
+ * LabelGroup.lite                                                     */ /**
  *
  * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
@@ -333,7 +336,7 @@ LabelGroup.prototype.lite = function (liteKey)
 }; // end of LabelGroup.lite()
 
 /* **************************************************************************
- * LabelGroup.setLastdrawnScaleFns2ExplicitOrDefault_                   *//**
+ * LabelGroup.setLastdrawnScaleFns2ExplicitOrDefault_                  */ /**
  *
  * Set this.lastdrawn.xScale and yScale to those stored in explicitScales
  * or to the default scale functions w/ a data domain of [0,1].
@@ -367,7 +370,7 @@ LabelGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSiz
 }; // end of LabelGroup.setLastdrawnScaleFns2ExplicitOrDefault_()
 
 /* **************************************************************************
- * LabelGroup.setOpacity                                                  *//**
+ * LabelGroup.setOpacity                                               */ /**
  *
  * Set the opacity of the sketch
  *

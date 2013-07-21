@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-base.js                                               $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the utility functions and objects
  *               used by widgets.
@@ -9,14 +9,14 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
 
 /* **************************************************************************
  * Utilities
- * **********************************************************************//**
+ * *********************************************************************/ /**
  * @todo These need to be moved out of global scope! -mjl
  * **************************************************************************/
 
@@ -41,7 +41,7 @@ function logFormat(d)
 }
 
 /* **************************************************************************
- * sign                                                                 *//**
+ * sign                                                                */ /**
  *
  * Return 1 for positive numbers, -1 for negative numbers and 0 for things
  * which are neither.
@@ -60,13 +60,13 @@ function sign(x)
 };
 
 /* **************************************************************************
- * attrFnVal                                                            *//**
+ * attrFnVal                                                           */ /**
  *
  * Utility method that constructs a string function call given the
  * function name and arguments.
  *
  * @param {string}		fnName		-Function name that will be called.
- * @param {...[number]} arguments	-Arguments for the function call.
+ * @param {...number} 	arguments	-Arguments for the function call.
  ****************************************************************************/
 function attrFnVal(fnName)
 {
@@ -81,7 +81,7 @@ function attrFnVal(fnName)
 }
 
 /* **************************************************************************
- * getIdFromConfigOrAuto                                                *//**
+ * getIdFromConfigOrAuto                                               */ /**
  *
  * Utility method that returns the id property of the config object or
  * uses the autoIdCount and autoIdPrefix properties of the class to return
@@ -118,7 +118,7 @@ function getIdFromConfigOrAuto(config, autoIdClass)
 }
 
 /* **************************************************************************
- * randomizeArray                                                       *//**
+ * randomizeArray                                                      */ /**
  *
  * Randomize the order of the elements of the given array.
  *
@@ -150,7 +150,7 @@ randomizeArray = function(a)
 getIdFromConfigOrAuto.autoPrefixCount = 0;
 
 /* **************************************************************************
- * Rect                                                                 *//**
+ * Rect                                                                */ /**
  *
  * A Rect defines a rectangle on a plane whose coordinates increase down and
  * to the right.
@@ -179,7 +179,7 @@ function Rect(x, y, width, height)
 }
 
 /* **************************************************************************
- * Rect.getSize                                                         *//**
+ * Rect.getSize                                                        */ /**
  *
  * Get the size of this rect in a Size object.
  *
@@ -191,7 +191,7 @@ function Rect(x, y, width, height)
  };
 
 /* **************************************************************************
- * Rect.makeRect - static                                               *//**
+ * Rect.makeRect - static                                              */ /**
  *
  * Helper function to create a rect from any 2 vertical values (t,b,h) and
  * any 2 horizontal values (l,r,w). If 3 values are specified, the height
@@ -281,10 +281,12 @@ Rect.makeRect = function (definedBy)
 }; // end Rect.makeRect
 
 /* **************************************************************************
- * Size                                                                 *//**
+ * Size                                                                */ /**
  *
  * Size defines a 2 dimensional area. It has a height and a width in some
  * common unit such as pixels.
+ *
+ * @constructor
  *
  * @param {number}	height	-The vertical dimension in the common units
  * @param {number}	width	-The horizontal dimension in the common units
@@ -305,7 +307,7 @@ function Size(height, width)
 }
  
 /* **************************************************************************
- * Size.matchRatioWithHeight                                            *//**
+ * Size.matchRatioWithHeight                                           */ /**
  *
  * Return a Size with the specified height whose aspect ratio is the same as
  * that of the given size.
@@ -321,7 +323,7 @@ Size.matchRatioWithHeight = function (desiredHeight, desiredRatio)
 };
 
 /* **************************************************************************
- * Size.matchRatioWithWidth                                             *//**
+ * Size.matchRatioWithWidth                                            */ /**
  *
  * Return a Size with the specified width whose aspect ratio is the same as
  * that of the given size.
@@ -342,7 +344,7 @@ Size.matchRatioWithWidth = function (desiredWidth, desiredRatio)
  * **************************************************************************/
  
 /* **************************************************************************
- * IWidget                                                              *//**
+ * IWidget                                                             */ /**
  *
  * IWidget defines the methods and properties that are expected to exist
  * on all widgets defined by this library.
@@ -351,7 +353,7 @@ Size.matchRatioWithWidth = function (desiredWidth, desiredRatio)
 IWidget = function () {};
  
 /* **************************************************************************
- * IWidget.draw                                                         *//**
+ * IWidget.draw                                                        */ /**
  *
  * Render the widget into the given svg container at the given pixel size.
  *
@@ -365,7 +367,7 @@ IWidget = function () {};
 IWidget.prototype.draw = function (container, size) {};
 
 /* **************************************************************************
- * IWidget.redraw                                                       *//**
+ * IWidget.redraw                                                      */ /**
  *
  * Redraw the widget assuming its data may have been modified. It will be
  * redrawn into the same container area as it was last drawn.
@@ -374,7 +376,7 @@ IWidget.prototype.draw = function (container, size) {};
 IWidget.prototype.redraw = function () {};
 
 /* **************************************************************************
- * IWidget.setScale                                                     *//**
+ * IWidget.setScale                                                    */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -390,7 +392,7 @@ IWidget.prototype.redraw = function () {};
 IWidget.prototype.setScale = function (xScale, yScale) {};
 
 /* **************************************************************************
- * IWidget.lite                                                         *//**
+ * IWidget.lite                                                        */ /**
  *
  * Highlight the area identified by the given key, unlighting all other
  * liteable areas.
@@ -403,7 +405,7 @@ IWidget.prototype.setScale = function (xScale, yScale) {};
 IWidget.prototype.lite = function (liteKey) {};
 
 /* **************************************************************************
- * IWidget.xScale                                                       *//**
+ * IWidget.xScale                                                      */ /**
  *
  * Convert a data X position into a horizontal pixel position.
  *
@@ -413,7 +415,7 @@ IWidget.prototype.lite = function (liteKey) {};
 IWidget.prototype.xScale = function (dataX) {};
 
 /* **************************************************************************
- * IWidget.yScale                                                       *//**
+ * IWidget.yScale                                                      */ /**
  *
  * Convert a data Y position into a vertical pixel position.
  *
@@ -433,7 +435,7 @@ function SVGContainerConfig()
 	/**
 	 * The parent node for the created svg element
 	 * @type {!d3.selection}
-	// Note: may need to change this to be a standard DOM node object -lb
+	 * @note may need to change this to be a standard DOM node object -lb
 	 */
 	this.node = null;
 
@@ -451,16 +453,16 @@ function SVGContainerConfig()
 }
 
 /* **************************************************************************
- * SVGContainer                                                         *//**
- *
- * @constructor
+ * SVGContainer                                                        */ /**
  *
  * The SVGContainer creates an svg element and appends it as the last
  * child of the given node. The svg elements properties are set based on
  * the given configuration values.
  *
+ * @constructor
+ *
  * @param {Object}        config -The settings to configure this SVGContainer
- * @param {!d3.selection} config.node -The parent node for the created svg element
+ * @param {!d3.selection}  config.node -The parent node for the created svg element
  * @param {number}        config.maxWid -The maximum width of the svg container (in pixels)
  * @param {number}        config.maxHt -The maximum width of the svg container (in pixels)
  *
@@ -513,7 +515,7 @@ function SVGContainer(config)
 }
 
 /* **************************************************************************
- * SVGContainer.append                                                  *//**
+ * SVGContainer.append                                                 */ /**
  *
  * Append the given widgets to the container at the specified location
  * within it. If multiple widgets are passed in, the x and y scale of
@@ -557,7 +559,7 @@ SVGContainer.prototype.append = function(svgWidgets, location)
 };
 
 /* **************************************************************************
- * SVGContainer.append_one_                                             *//**
+ * SVGContainer.append_one_                                            */ /**
  *
  * Private helper that appends the given widget to the container at the
  * specified location within it.
@@ -637,7 +639,9 @@ function AxisFormat()
 	 * If undefined, will default to [0, 1], or the [min, max] of the ticks
 	 * array if it is an array.
 	 * @type {Array.<number>|undefined}
-	 * TODO: find out why current behavior defaults a vertical axis to [0,1] and a horizontal axis to [1e-10,1] -mjl
+	 *
+	 * @todo find out why current behavior defaults a vertical axis to [0,1] and
+	 *       a horizontal axis to [1e-10,1] -mjl
 	 */
 	this.extent = [0, 1];
 
@@ -671,14 +675,14 @@ function AxisFormat()
 } // end of AxisFormat
 
 /* **************************************************************************
- * Axes                                                                 *//**
- *
- * @constructor
+ * Axes                                                                */ /**
  *
  * Axes draw x-y axes in an SVG Container and provide scaling methods
  * to map data points into the area defined by the axes.
  * The bounds of each axis is defined by either the tick values or by
  * the data extents defined in that axis' AxisFormat.
+ *
+ * @constructor
  *
  * @param {!d3.selection}
  *						container			-The container svg element to append the axes element tree to.

@@ -1,18 +1,18 @@
 /* **************************************************************************
  * $Workfile:: eventmanager.js                                              $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of an EventManager object.
  *
  * The EventManager implements the Observer pattern, aka (Publish/Subscribe)
- * as described here: http://msdn.microsoft.com/en-us/magazine/hh201955.aspx
+ * as described here: {@link http://msdn.microsoft.com/en-us/magazine/hh201955.aspx}
  * A javascript implementation of this pattern is available at:
- * https://github.com/mroderick/PubSubJS
+ * {@link https://github.com/mroderick/PubSubJS}
  *
  * Created on		March 18, 2013
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Michael Jay Lippert, All rights reserved.
+ * @copyright (c) 2013 Michael Jay Lippert, All rights reserved.
  *
  * **************************************************************************/
 
@@ -25,9 +25,7 @@
  ****************************************************************************/
 
 /* **************************************************************************
- * EventManager                                                         *//**
- *
- * @constructor
+ * EventManager                                                        */ /**
  *
  * The event manager keeps track of subscribers of a particular topic (event)
  * so that when a publisher publishes that topic all of the subscribers can
@@ -37,6 +35,8 @@
  * one widget on a page to respond to an event published (fired) by another
  * widget on the page. It also will allow for multiple response to a single
  * event.
+ *
+ * @constructor
  *
  ****************************************************************************/
 function EventManager()
@@ -53,7 +53,7 @@ function EventManager()
 }
 
 /* **************************************************************************
- * EventManager.subscribe                                               *//**
+ * EventManager.subscribe                                              */ /**
  *
  * EventManager class method to subscribe to an event that an object may fire.
  *
@@ -82,7 +82,7 @@ EventManager.prototype.subscribe = function(eventId, handler)
 };
 
 /* **************************************************************************
- * EventManager.publish                                                 *//**
+ * EventManager.publish                                                */ /**
  *
  * EventManager class method to publish (fire) an event calling the
  * notification function of all subscribers of that event.

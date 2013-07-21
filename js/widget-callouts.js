@@ -1,8 +1,8 @@
 /* **************************************************************************
  * $Workfile:: widget-callouts.js                                          $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
- * @fileoverview Implementation of the slider widget.
+ * @fileoverview Implementation of the {@link Callouts} bric.
  *
  * The callout widget creates sequential keyed blobs of HTML for highlight
  * association with a labeled, keyed image.  Can be shown individually or as 
@@ -12,7 +12,7 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -44,64 +44,94 @@ var callOutConfig = {
 		]
 	};
 });
+
+/**
+ * CalloutItems are usd to describe the individual callouts in the configuration
+ * object for the {@link Callouts} bric.
+ *
+ * @typedef {Object} CalloutItem
+ * @property {string}	key		-key used to associate this item w/ items in other
+ * 								 brix usually used for highlighting.
+ * @property {Array.<htmlString>}
+ * 						cols	-Formatted information that describes the callout item.
+ * 								 each element is a different category of info, meant
+ * 								 to be displayed in a different column of the item row.
+ *
+ */
 	
 /* **************************************************************************
- * Callouts	                                                            *//**
+ * Callouts	                                                           */ /**
+ *
+ * Constructor function for Callouts brix.
  *
  * @constructor
  *
+ * @param {Object}		config			-The settings to configure this widget
+ * @param {string}		config.id		-String to uniquely identify this widget
+ * @param {string}		config.type 	-switch to autogenerate "numbered"
+ * @param {string}		config.show		-String to specify "all" or one row (null)
+ * @param {Array}		config.headers 	-strings to specify headers on table (optional)
+ * @param {Array.<CalloutItem>}
+ * 						config.textBits	-list of all the callout items to be presented
+ * @param {EventManager=}
+ * 						eventManager	-The event manager to use for publishing events
+ * 										 and subscribing to them.
+ *
+ * @todo there is a desire to show all text when in landscape, but just 
+ * the highlighted text in portrait, and I'm not sure how best to achieve that.
+ *
+ * @classdesc
  * The callout widget creates HTML blobs of explanatory (callout) text. 
  * They are designed to be used with a keyed, interactive image and appear
  * either one at a time or highlighted one at a time when the user clicks on 
  * related tags over an image.
  *
- * @param {Object}		config			-The settings to configure this widget
- * @param {string}		config.id		-String to uniquely identify this widget
- * @param {string}		config.type 	- switch to autogenerate "numbered"
- * @param {string}		config.show		-String to specify "all" or one row (null)
- * @param {Array}		config.headers 	- strings to specify headers on table (optional)
- * @param {Array}		config.textBits	- array of objects
- * @param {string}		textBits.key   	- used to ID row for highlighting (optional)
- * @param {Array}		textBits.cols	- strings to be displayed in cols, may contain
- *										  tags or extended characters
- *
- * NOTES: TODO there is a desire to show all text when in landscape, but just 
- * the highlighted text in portrait, and I'm not sure how best to achieve that.
  **************************************************************************/
 
-function Callouts(config,eventManager)
+function Callouts(config, eventManager)
 {
 	/**
 	 * A unique id for this instance of the widget
 	 * @type {string}
 	 */
 	this.id = config.id;
+
 	this.textBits = config.textBits;
 	this.headers = config.headers;
 	this.type = config.type;
 	this.show = config.show;
+
+	/**
+	 * The event manager to use to publish (and subscribe to) events for this widget
+	 * @type {EventManager}
+	 */
 	this.eventManager = eventManager;
-	// Define the ids of the events the slider uses
+
+	/**
+	 * The event id published when the user selects a particular callout item.
+	 * @const
+	 * @type {string}
+	 */
 	this.selectedEventId = this.id + '_Callout';
 	 	
-} // end of barChart constructor
+} // end of Callouts constructor
 
 
 /* **************************************************************************
- * Callouts.draw                                                       *//**
+ * Callouts.draw                                                       */ /**
  *
- * The Slider allows the user to set a numeric value over some defined range.
+ * "draw" this Callouts bric at the end of the given container, by appending
+ * a new element tree representation to that container.
  *
  * @param {!d3.selection}
- *					container	-The container DOM element to append the slider
- * @param {node}		node		- d3 selection of target ID to write out slider
+ *					container	-The container html element to append the callouts
+ *								 element tree to.
  *
  ****************************************************************************/
-   
-
-Callouts.prototype.draw = function (node) { //begin callout drawing method
-
-	this.node = node;
+Callouts.prototype.draw = function (container)
+{
+	// @todo this.node property really should be this.lastdrawn.container -mjl 7-22-2013
+	this.node = container;
 	
 	var numLabels = this.textBits.length;
 	
@@ -176,18 +206,19 @@ Callouts.prototype.draw = function (node) { //begin callout drawing method
 } //end Callouts object draw function
 
 /* ********************************************************************
-* calloutSwap                                                     *//**
+* calloutSwap                                                    */ /**
 *
 * Updates the Callouts widget to display the text that matches 
 * the currently selected index, lite.
 *
-* @param lite				the index or key specifying which of a
-*							collection to lite up
-*
-* NOTES: this is currently all based on members of a collection having
+* @note: this is currently all based on members of a collection having
 * ID's that have the litekey or index appended to them after the ID.
 * Handles either the one-at-a-time callOuts display or the table 
 * row highlight display.
+*
+* @param lite				the index or key specifying which of a
+*							collection to lite up
+*
 ***********************************************************************/
 Callouts.prototype.lite = function (lite)
 	{
