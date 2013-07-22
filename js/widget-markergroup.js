@@ -130,7 +130,7 @@ function MarkerGroup(config, eventManager)
 	 *								 to the pixel offset into the data area.
 	 * @private
 	 */
-	this.explicitScales_ = {xScale: null, yScale: null};
+	this.explicitScales_ = {xScale: null, yScale: null, axisType: null};
 	
 	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
@@ -143,7 +143,8 @@ function MarkerGroup(config, eventManager)
 			markerGroup: null,
 			xScale: null,
 			yScale: null,
-			markerCollection: null
+			axisType: null,
+			markerCollection: null,
 		};
 } // end of Label constructor
 
@@ -305,7 +306,8 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		// move the group to the x data value horizontally, but stay at 0 vertically.
 		// TODO: logic here is a little flawed, it assumes that the axes is on the 
 		// bottom and left of the graph - lb
-		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : d.x));
+
+		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : (that.axisType == "time" ? new Date(d.x) : d.x)));
 		var yVal = d3.round(that.type === "y" ? that.lastdrawn.yScale(d.y) : 0);
 
 		return attrFnVal("translate", xVal, yVal);
@@ -424,6 +426,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 MarkerGroup.prototype.setScale = function (xScale, yScale)
 {
 	this.explicitScales_.xScale = xScale;
+	this.axisType = (xScale.domain()[0] instanceof Date) ? "time" : "linear";
 	this.explicitScales_.yScale = yScale;
 };
 
@@ -476,6 +479,7 @@ MarkerGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSi
 	if (this.explicitScales_.xScale !== null)
 	{
 		this.lastdrawn.xScale = this.explicitScales_.xScale;
+		this.lastdrawn.axisType = this.explicitScales_.xScale.scale;
 	}
 	else
 	{

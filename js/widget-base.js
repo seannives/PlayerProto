@@ -786,22 +786,22 @@ function Axes(container, config)
 			this.xFmt.extent.push(0);
 			this.xFmt.extent = d3.extent(this.xFmt.extent);
 		}
-		//TEST
-		console.log("x extent is two elements" , this.xFmt.extent.length == 2);
-		//Check if explicit ticks are specified, and if so, use them as the mapped range of the graph width
+	
+		//Check if explicit ticks are specified, and if so, use them as the mapped domain of the graph width
 		//ignore the actual data range
-		var xExtent = (Array.isArray(xTicks)) ? d3.extent(xTicks) : this.xFmt.extent;
+		var xExtent = (Array.isArray(xTicks) && this.xFmt.type != "ordinal") ? d3.extent(xTicks) : this.xFmt.extent;
 
+		// this block of ifs sets the scale according to the type, with custom
+		// subdivisions suitable to each type -lb
 
 		if (this.xFmt.type == "ordinal")
 		{
-			// domain is xTicks. The intention is to have 
-			//the graph set the xTicks for ordinal scale, and use that as the extent
-			this.xScale = d3.scale.ordinal().domain(xTicks) //lists all ordinal x vals
-				.rangePoints([0, dataAreaWidth], 0);
-			//width is broken into even spaces allowing for bar/data point width and
+			//the graph set the extent for ordinal scale to be all the string vals
+			this.xScale = d3.scale.ordinal().domain(xExtent) //lists all ordinal x vals
+				.rangePoints([0, dataAreaWidth], .4);
+			//width is broken into even spaces allowing for data point width and
 			//a uniform white space between each, in this case, 40% white space
-			// @todo - fix this so it's not just good for bar graphs
+			// @todo - fix this so it's not just good for scatter graphs -lb
 	    }
 
 		if (this.xFmt.type == "linear")
@@ -823,6 +823,13 @@ function Axes(container, config)
 			this.xScale = d3.scale.log().domain([0.99 * Math.pow(10, low), Math.pow(10, high)])
 				.rangeRound([0, dataAreaWidth]);
 			//xScale is now a log-scale function mapping x-data to the width of the drawing space
+	    }
+
+	    if (this.xFmt.type == "time")
+	    {
+	    	this.xScale = d3.time.scale()
+    			.domain(xExtent)
+    			.rangeRound([0, dataAreaWidth]);
 	    }
 
 		//if the axis is double positive then create leftPositive and rightPositive
@@ -875,6 +882,10 @@ function Axes(container, config)
 		// needs to be special cased for ordinal. -lb
 		//this.xAxis.tickFormat(format);
 
+		// this if block sets up the tick number or hard-set display
+		// according to type, starting with formats, then moving on to specific tick
+		// values or automatically distributed numbers of ticks - lb
+		
 		if (this.xFmt.type == "log")
 		{
 			this.xAxis.tickFormat(logFormat);
@@ -901,6 +912,8 @@ function Axes(container, config)
 		}
 		else
 		{
+			//in the face of anything that isn't double positive, supply an explicit array 
+			//of ticks to tickValues, or a number of ticks to ticks.
 			Array.isArray(xTicks) ? (this.xAxis.tickValues(xTicks)) : (this.xAxis.ticks(xTicks));
 		}
 
@@ -1037,7 +1050,7 @@ function Axes(container, config)
 		
 		if (this.xFmt.type=="ordinal")
 		{
-			this.xScale.rangePoints([0, dataAreaWidth]);
+			this.xScale.rangePoints([0, dataAreaWidth], 0.4);
 		}
 		else
 		{
