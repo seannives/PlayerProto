@@ -67,22 +67,31 @@ svg g.bricMarkers line
   stroke-width: 2;
 }
 
+svg g.bricMarkers circle
+{
+
+  opacity: 0.5;
+}
 svg g.bricMarkers .lit line
 {
-  stroke:   #1d95ae;
+  stroke:   #bce8f1;
   stroke-width: 4;
 }
 
 svg g.bricMarkers polygon,
-svg g.bricMarkers rect
+svg g.bricMarkers rect,
+svg g.bricMarkers circle
 {
   fill:    #aaa;
 }
 
 svg g.bricMarkers .lit rect,
-svg g.bricMarkers .lit polygon
+svg g.bricMarkers .lit polygon,
+svg g.bricMarkers .lit circle
 {
   fill:    #e3effe;
+  stroke:   #bce8f1;
+  stroke-width: 2;
 }
 
 svg g.bricMarkers .markerLabel

@@ -133,7 +133,7 @@ function MarkerGroup(config, eventManager)
 	 *								 to the pixel offset into the data area.
 	 * @private
 	 */
-	this.explicitScales_ = {xScale: null, yScale: null};
+	this.explicitScales_ = {xScale: null, yScale: null, axisType: null};
 	
 	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
@@ -146,7 +146,8 @@ function MarkerGroup(config, eventManager)
 			markerGroup: null,
 			xScale: null,
 			yScale: null,
-			markerCollection: null
+			axisType: null,
+			markerCollection: null,
 		};
 } // end of Label constructor
 
@@ -155,7 +156,7 @@ function MarkerGroup(config, eventManager)
  * @const
  * @type {string}
  */
-MarkerGroup.autoIdPrefix = "lblg_auto_";
+MarkerGroup.autoIdPrefix = "marker_";
 
 /* **************************************************************************
  * MarkerGroup.draw                                                    */ /**
@@ -306,29 +307,13 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		// move the group to the x data value horizontally, but stay at 0 vertically.
 		// TODO: logic here is a little flawed, it assumes that the axes is on the 
 		// bottom and left of the graph - lb
-		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : d.x));
+
+		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : (that.axisType == "time" ? new Date(d.x) : d.x)));
 		var yVal = d3.round(that.type === "y" ? that.lastdrawn.yScale(d.y) : 0);
 
 		return attrFnVal("translate", xVal, yVal);
 		//move each group to the data point specified for the marker
 	});
-
-
-	//draw the marker lines for each data point
-	markerCollection.append("line") 
-		//within each group, always start at x=0
-		.attr("x1", 0)
-		.attr("x2", 
-		//if the markers are horizontal from the y axis, then the 
-		//second x point is the full width of the box.  Otherwise,
-		//it stays at 0.
-			  (that.type === "y") ? that.lastdrawn.xScale(size.width) : 0)
-		//y starts at the top of the box, 0 pixels at top in SVG
-		.attr("y1", 0)
-		//if the markers are horizontal from the y axis, then the 
-		//second y point is also 0.  Otherwise, it's the full height of the graph rectangle.
-		.attr("y2", that.type === "y" ? 0 : size.height);
-
 
 	//draw the horizontal or vertical marker line
 	markerCollection.append("line") 
@@ -338,15 +323,24 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		//if the markers are horizontal from the y axis, then the 
 		//second x point is the full width of the box.  Otherwise,
 		//it stays at 0.
-			(this.type === "y") ? this.lastdrawn.xScale(size.width) : 0)
+			(this.type === "y") ? size.width : 0)
 		//starts at the top of the box, 0 pixels at top in SVG
 		.attr("y1", 0)
 		.attr("y2", 
 		//if the markers are horizontal from the y axis, then the 
 		//second y point is 0.  Otherwise, it's the full height of the graph rectangle.
-			(this.type === "y") ? 0 : this.lastdrawn.yScale(0));
+			(this.type === "y") ? 0 : size.height);
 		
-		
+		//if a full data point crossing is specified, put a dot there.
+	markerCollection.append("circle")
+		.attr("cx", function (d){	
+			return d.x ? d3.round(that.lastdrawn.xScale(that.type === "y" ? d.x : 0)) : NaN;
+		})
+		.attr("cy", function (d){	
+			return d.y ? d3.round(that.lastdrawn.yScale(that.type === "y" ? 0 : d.y )) : -size.height;
+		})
+		.attr("r", 6);
+
 	//draw the marker arrows (triangles)
 		markerCollection.append("polygon") 
 		.attr("points", 
@@ -411,7 +405,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 					that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
 				});
 				
-	this.lastdrawn.markerCollection = markerGroup.selectAll("g.widgetMarker");
+	this.lastdrawn.markerCollection = markerGroup.selectAll("g.marker");
 
 }; // end of MarkerGroup.draw()
 
@@ -433,6 +427,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 MarkerGroup.prototype.setScale = function (xScale, yScale)
 {
 	this.explicitScales_.xScale = xScale;
+	this.axisType = (xScale.domain()[0] instanceof Date) ? "time" : "linear";
 	this.explicitScales_.yScale = yScale;
 };
 
@@ -458,7 +453,7 @@ MarkerGroup.prototype.lite = function (liteKey)
 	// then find the set that matches
 	var matchesIndex = function (d, i) { return d.key === liteKey; };
 	
-	var markersToLite = allMarkers.filter(matchesLabelIndex);
+	var markersToLite = allMarkers.filter(matchesIndex);
 
 	// Highlight the labels w/ the matching key
 	markersToLite
@@ -466,7 +461,7 @@ MarkerGroup.prototype.lite = function (liteKey)
 
 	if (markersToLite.empty())
 	{
-		console.log("No key '" + liteKey + "' in Markers group " + this.id );
+		console.log("No key '" + liteKey + "' in MarkerGroup " + this.id );
 	}
 }; // end of MarkerGroup.lite()
 
@@ -485,6 +480,7 @@ MarkerGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSi
 	if (this.explicitScales_.xScale !== null)
 	{
 		this.lastdrawn.xScale = this.explicitScales_.xScale;
+		this.lastdrawn.axisType = this.explicitScales_.xScale.scale;
 	}
 	else
 	{
