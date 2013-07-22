@@ -1,17 +1,17 @@
 /* **************************************************************************
- * $Workfile:: widget-barchart.js                                          $
- * **********************************************************************//**
+ * $Workfile:: widget-barchart.js                                           $
+ * *********************************************************************/ /**
  *
- * @fileoverview Implementation of the Barchart widget.
+ * @fileoverview Implementation of the {@link BarChart} bric.
  *
- * The Barchart widget provides a line (or scatter) graph visualization
+ * The Barchart bric provides a line (or scatter) graph visualization
  * of sets of data points.
  *
  * Created on		April 11, 2013
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -34,33 +34,37 @@
 });
 	
 /* **************************************************************************
- * BarChart                                                             *//**
+ * BarChart                                                            */ /**
+ *
+ * Constructor function for a BarChart bric.
  *
  * @constructor
  *
- * The BarChart widget provides single or multiple series bar chart
- * visualization of sets of data points. Can create pyramid chart (two sided)
- *or grouped bar chart (several bars on the same label from different series - multivariate)
- *
  * @param {Object}		config			-The settings to configure this BarChart
  * @param {string}		config.id		-String to uniquely identify this BarChart.
- * @param {Array.<Array.<{x: number, y: label}>}
+ * @param {Array.<Array.<{x: number, y: string, key: string|undefined}>>}
  *						config.Data		-An array of series;
  *										 each series is an array of one or more bars with names.
- * @param {Array.<Array.<{key: "string">}
- *						config.Data  	Either bars or series can have a key label for highlighting.
- * @param {string		config.type		-String specifying "grouped", or anything else (ignored)
+ *										 Either bars or series can have a key label for highlighting.
+ * @param {string}		config.type		-String specifying "grouped", or anything else (ignored)
  * @param {AxisFormat}	config.xAxisFormat -Format of the x axis of the graph.
  * @param {AxisFormat}	config.yAxisFormat -Format of the y axis of the graph.
- * @param {eventManager} eventManager	- allows the object to emit events
+ * @param {eventManager=} eventManager	-allows the object to emit events
  *
- * NOTES: One of the two axes must be ordinal for a bar graph. Only y is accomodated
+ * @note: One of the two axes must be ordinal for a bar graph. Only y is accomodated
  * for now.
  * There's a lot of logic in here to make sure that both positive and
  * negative values are accomodated.  Negative values have to count right to x=0
  * and positive must always count right from x=0. Currently all bar graphs are
- * assumed to layout horizontally.  TODO: vertical bar graphs (thermometers)
- * TODO: emit events when edges of bars are dragged to set a new value
+ * assumed to layout horizontally.
+ * @todo: vertical bar graphs (thermometers)
+ * @todo: emit events when edges of bars are dragged to set a new value
+ *
+ * @classdesc
+ * The BarChart widget provides single or multiple series bar chart
+ * visualization of sets of data points. Can create pyramid chart (two sided)
+ * or grouped bar chart (several bars on the same label from different series - multivariate)
+ *
  **************************************************************************/
 
 function BarChart(config, eventManager)
@@ -75,21 +79,28 @@ function BarChart(config, eventManager)
 	 * Array of bar series, where each series is an array of objects/bars, and each object is a
 	 * bar lengths and category w/ a {number/size} x and {string} y property.
 	 * Negative bar lengths Mean bars should face the other way.
-	 * @type Array.<Array.<{x: number, y: string}>
-	 * e.g. 3 series, 1 bar each:
-	 *   [[{y: "High Income", x: 5523.6}], [{yVal: "Middle Income", xVal: 1509.3}], [{y: "Low Income", x: 491.8}]]
-	 * bar objects may also include an optional key: string in which case they will be given an ID that 
-	 * associates them with other widget events in the page, such as clicks on the legend.
+	 * @type {Array.<Array.<{x: number, y: string}>>}
+	 *
+	 * @example
+	 *   // 3 series, 1 bar each:
+	 *   [[{y: "High Income", x: 5523.6}],
+	 *    [{yVal: "Middle Income", xVal: 1509.3}],
+	 *    [{y: "Low Income", x: 491.8}]]
+	 * @example
+	 *   // bar objects may also include an optional key: string in
+	 *   // which case they will be given an ID that  associates them
+	 *   // with other widget events in the page, such as clicks on
+	 *   // the legend.
 	 */
 	this.data = config.Data;
 
 	/**
 	 * The render type is one of:
-	 * <ul>
-	 *  <li> "grouped" for bars from multiple series with the same label, 
-	 *		 plotted side by side instead of on top of one another
-	 *  <li> <null> for regular bars
-	 * </ul>
+	 *
+	 *  - "grouped" for bars from multiple series with the same label, 
+	 *    plotted side by side instead of on top of one another
+	 *  - {null} for regular bars
+	 *
 	 * @type {string}
 	 */
 	this.type = config.type;
@@ -101,7 +112,7 @@ function BarChart(config, eventManager)
 	 * List of child widgets which are to be drawn before and after this
 	 * bar chart's data in its data area.
 	 * Child widgets are added using BarChart.append.
-	 * @type {beforeData: Array.<IWidget>, afterData: Array.<IWidget>}
+	 * @type {{beforeData: Array.<IWidget>, afterData: Array.<IWidget>}}
 	 */
 	this.childWidgets = {beforeData: [], afterData: []};
 	
@@ -147,7 +158,7 @@ BarChart.autoIdPrefix = "auto_";
 
 
 /* **************************************************************************
- * BarChart.draw                                                       *//**
+ * BarChart.draw                                                       */ /**
  *
  * The LineGraph widget provides a line (or scatter) graph visualization
  * of sets of data points.
@@ -283,7 +294,7 @@ BarChart.prototype.draw = function(container, size)
 
 
 /* **************************************************************************
- * BarChart.redraw                                                     *//**
+ * BarChart.redraw                                                     */ /**
  *
  * Redraw the line graph data as it may have been modified. It will be
  * redrawn into the same container area as it was last drawn.
@@ -302,7 +313,7 @@ BarChart.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * BarChart.drawWidget_                                                *//**
+ * BarChart.drawWidget_                                                */ /**
  *
  * Draw the given child widget in this charts's data area.
  * This chart must have been drawn BEFORE this method is called or
@@ -321,7 +332,7 @@ BarChart.prototype.drawWidget_ = function (widget)
 
 
 /* **************************************************************************
- * BarChart.redrawWidget_                                              *//**
+ * BarChart.redrawWidget_                                              */ /**
  *
  * Redraw the given child widget.
  * This bar chart and this child widget must have been drawn BEFORE this
@@ -338,7 +349,7 @@ BarChart.prototype.redrawWidget_ = function (widget)
 };
 
 /* **************************************************************************
- * BarChart.drawData_                                                  *//**
+ * BarChart.drawData_                                                  */ /**
  *
  * Draw the chart data (overwriting any existing data).
  *
@@ -447,7 +458,7 @@ BarChart.prototype.redrawWidget_ = function (widget)
 }
 
 /* **************************************************************************
- * BarChart.append                                                     *//**
+ * BarChart.append                                                     */ /**
  *
  * Append the widget or widgets to this bar chart and draw it/them on top
  * of the data area and any widgets appended earlier. If append
@@ -491,7 +502,7 @@ BarChart.prototype.append = function(svgWidgets, zOrder)
 }; // end of BarChart.append()
 
 /* **************************************************************************
- * BarChart.append_one_                                                *//**
+ * BarChart.append_one_                                                */ /**
  *
  * Helper for append that does the work needed to append a single widget.
  * This can handle drawing the widget after the data even after the data
@@ -528,7 +539,7 @@ BarChart.prototype.append_one_ = function(widget, zOrder)
 
 
 /* **************************************************************************
- * BarChart.lite                                                      *//**
+ * BarChart.lite                                                       */ /**
  *
  * Highlight the members of the collection associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.

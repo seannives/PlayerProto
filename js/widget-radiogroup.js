@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-radiogroup.js                                         $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the RadioGroup widget.
  *
@@ -10,7 +10,7 @@
  * Created on		May 29, 2013
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -78,10 +78,9 @@
 
 
 /* **************************************************************************
- * RadioGroup                                                           *//**
+ * RadioGroup                                                          */ /**
  *
- * The RadioGroup widget draws a list of choices and allows the user to
- * select one of the choices.
+ * Constructor function for RadioGroup widget instances.
  *
  * @constructor
  * @implements {IWidget}
@@ -98,6 +97,10 @@
  * @param {EventManager|undefined}
  * 						eventManager	-The event manager to use for publishing events
  * 										 and subscribing to them. (Optional)
+ *
+ * @classdesc
+ * The RadioGroup widget draws a list of choices and allows the user to
+ * select one of the choices by selecting a radio button next to the choice.
  *
  ****************************************************************************/
 function RadioGroup(config, eventManager)
@@ -162,7 +165,7 @@ function RadioGroup(config, eventManager)
 RadioGroup.autoIdPrefix = "rg_auto_";
 
 /* **************************************************************************
- * RadioGroup.draw                                                      *//**
+ * RadioGroup.draw                                                     */ /**
  *
  * Draw this RadioGroup in the given container.
  *
@@ -231,7 +234,7 @@ RadioGroup.prototype.draw = function(container)
 }; // end of RadioGroup.draw()
 
 /* **************************************************************************
- * RadioGroup.selectedItem                                              *//**
+ * RadioGroup.selectedItem                                             */ /**
  *
  * Return the selected choice in the radio group or null if nothing has been
  * selected.
@@ -247,7 +250,7 @@ RadioGroup.prototype.selectedItem = function ()
 };
 
 /* **************************************************************************
- * RadioGroup.selectItemAtIndex                                         *//**
+ * RadioGroup.selectItemAtIndex                                        */ /**
  *
  * Select the choice in the radio group at the given index. If the choice is
  * already selected, do nothing.
@@ -272,7 +275,7 @@ RadioGroup.prototype.selectItemAtIndex = function (index)
 };
 
 /* **************************************************************************
- * RadioGroup.getChoiceNumberToDisplayFn_                               *//**
+ * RadioGroup.getChoiceNumberToDisplayFn_                              */ /**
  *
  * Get a function which returns the string that should be prefixed to the
  * choice at a given index

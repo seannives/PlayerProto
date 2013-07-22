@@ -1,0 +1,43 @@
+{
+	"opts":
+		{
+			"private": true,
+			"lenient": false,
+		},
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+		"include": [],
+		"exclude":
+			[
+				"activitymanager-seann.js",
+				"assessment.js",
+				"bootstrap.min.js",
+				"d3.v2.min.js",
+				"d3.v3.js",
+				"d3.v3.min.js",
+				"eCourse-master.js",
+				"goog.base.js",
+				"graphing.js",
+				"jquery-latest.js",
+				"jquery.touchSwipe.min.js",
+				"jquery-ui-1.10.2.custom.js",
+				"neff-structure.js",
+				"solutionAppletLabel.js",
+				"toc-structure.js",
+				"widget-axes.js",
+				"widgets.js",
+			],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": ["plugins/markdown", "plugins/verboseOutput"],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "outputSourceFiles": true
+        }
+    }
+}

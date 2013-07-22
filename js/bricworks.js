@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: bricworks.js                                                 $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the BricWorks bric factory.
  *
@@ -9,21 +9,25 @@
  * Created on		June 26, 2013
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
 /* **************************************************************************
- * BricWorks                                                            *//**
+ * BricWorks                                                           */ /**
  *
- * A BricWorks is a factory which creates brix.
+ * Constructor function for the BricWorks factory.
  *
  * @constructor
  *
  * @param {Object}		config			-The settings to configure this RadioGroup
- * @param {EventManager|undefined}
+ * @param {EventManager=}
  * 						eventManager	-The event manager to use for publishing events
- * 										 and subscribing to them. (Optional)
+ * 										 and subscribing to them.
+ *
+ * @classdesc
+ * A BricWorks is a factory which creates brix using the bricMolds which have
+ * been registered with the BricWorks.
  *
  ****************************************************************************/
 function BricWorks(config, eventManager)
@@ -38,13 +42,14 @@ function BricWorks(config, eventManager)
 	 * The bricCatalogue is the reference to all of the brix that this BricWorks
 	 * can manufacture.
 	 * @type {Object.<string, function(Object, EventManager)>}
+	 * @private
 	 */
 	this.bricCatalogue_ = {};
 
 } // end of BricWorks constructor
 
 /* **************************************************************************
- * BricWorks.registerMold                                               *//**
+ * BricWorks.registerMold                                              */ /**
  *
  * Register the mold (constructor) used to create a bric.
  *
@@ -60,7 +65,7 @@ BricWorks.prototype.registerMold = function (bricName, bricMold)
 };
 
 /* **************************************************************************
- * BricWorks.createBric                                                 *//**
+ * BricWorks.createBric                                                */ /**
  *
  * Create the specified type of bric.
  *

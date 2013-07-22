@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-image.js                                              $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the Image widget.
  *
@@ -11,7 +11,7 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -40,7 +40,7 @@
 });
 
 /* **************************************************************************
- * Image                                                                *//**
+ * Image                                                               */ /**
  *
  * The Image widget draws an image in an SVGContainer.
  *
@@ -90,8 +90,8 @@ function Image(config, eventManager)
 	/**
 	 * String that determines if the aspect ratio of the image should be preserved, and if
 	 * so how it should be laid out in the viewport. The values that are allowed are defined by svg.
-	 * @see <a href="https://developer.mozilla.org/en-US/docs/SVG/Attribute/preserveAspectRatio">
-	 *      SVG Doc on preserveAspectRatio</a>
+	 * @see {@link https://developer.mozilla.org/en-US/docs/SVG/Attribute/preserveAspectRatio|SVG Doc on preserveAspectRatio}
+	 *      
 	 * @type {string}
 	 * @default "xMinYMin meet"
 	 */
@@ -160,7 +160,7 @@ function Image(config, eventManager)
 Image.autoIdPrefix = "img_auto_";
 
 /* **************************************************************************
- * Image.draw                                                           *//**
+ * Image.draw                                                          */ /**
  *
  * Draw this Image in the given container.
  *
@@ -222,7 +222,7 @@ Image.prototype.draw = function(container, size)
 }; // end of Image.draw()
 
 /* **************************************************************************
- * Image.redraw                                                         *//**
+ * Image.redraw                                                        */ /**
  *
  * Redraw the image as it may have been changed (new URI or caption). It will be
  * redrawn into the same container area as it was last drawn.
@@ -242,7 +242,7 @@ Image.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * Image.drawWidget_                                                    *//**
+ * Image.drawWidget_                                                   */ /**
  *
  * Draw the given child widget in this image's area.
  * This image must have been drawn BEFORE this method is called or
@@ -260,7 +260,7 @@ Image.prototype.drawWidget_ = function (widget)
 };
 
 /* **************************************************************************
- * Image.redrawWidget_                                                  *//**
+ * Image.redrawWidget_                                                 */ /**
  *
  * Redraw the given child widget.
  * This line graph and this child widget must have been drawn BEFORE this
@@ -277,7 +277,7 @@ Image.prototype.redrawWidget_ = function (widget)
 };
 
 /* **************************************************************************
- * Image.changeImage                                                    *//**
+ * Image.changeImage                                                   */ /**
  *
  * Change the URI of this Image and/or the caption. After changing the
  * image it should be redrawn.
@@ -301,7 +301,7 @@ Image.prototype.changeImage = function (URI, opt_caption)
 };
 
 /* **************************************************************************
- * Image.setScale                                                       *//**
+ * Image.setScale                                                      */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -322,7 +322,7 @@ Image.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * Image.append                                                         *//**
+ * Image.append                                                        */ /**
  *
  * Append the widget or widgets to this image and draw it/them on top
  * of the image and any widgets appended earlier. If append
@@ -348,7 +348,7 @@ Image.prototype.append = function(svgWidgets)
 }; // end of Image.append()
 
 /* **************************************************************************
- * Image.append_one_                                                    *//**
+ * Image.append_one_                                                   */ /**
  *
  * Helper for append that does the work needed to append a single widget.
  *
@@ -368,7 +368,7 @@ Image.prototype.append_one_ = function(widget)
 }; // end of Image.append_one_()
 
 /* **************************************************************************
- * Image.lite                                                           *//**
+ * Image.lite                                                          */ /**
  *
  * Highlight the image if it is identified by the given liteKey.
  *
@@ -382,7 +382,7 @@ Image.prototype.lite = function (liteKey)
 };
 
 /* **************************************************************************
- * Image.setLastdrawnScaleFns2ExplicitOrDefault_                        *//**
+ * Image.setLastdrawnScaleFns2ExplicitOrDefault_                       */ /**
  *
  * Set this.lastdrawn.xScale and yScale to those stored in explicitScales
  * or to the default scale functions w/ a data domain of [0,1].
@@ -416,7 +416,7 @@ Image.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSize)
 }; // end of Image.setLastdrawnScaleFns2ExplicitOrDefault_()
 
 /* **************************************************************************
- * CaptionedImage                                                       *//**
+ * CaptionedImage                                                      */ /**
  *
  * The CaptionedImage widget draws an image in an SVGContainer with a caption.
  *
@@ -484,7 +484,7 @@ function CaptionedImage(config, eventManager)
 CaptionedImage.autoIdPrefix = "cimg_auto_";
 
 /* **************************************************************************
- * CaptionedImage.draw                                                  *//**
+ * CaptionedImage.draw                                                 */ /**
  *
  * Draw this CaptionedImage in the given container.
  *
@@ -542,7 +542,7 @@ CaptionedImage.prototype.draw = function(container, size)
 } // end of CaptionedImage.draw()
 
 /* **************************************************************************
- * CaptionedImage.redraw                                                *//**
+ * CaptionedImage.redraw                                               */ /**
  *
  * Redraw the image as it may have been changed (new URI or caption). It will be
  * redrawn into the same container area as it was last drawn.
@@ -562,7 +562,7 @@ CaptionedImage.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * CaptionedImage.changeImage                                           *//**
+ * CaptionedImage.changeImage                                          */ /**
  *
  * Change the URI of this Image and/or the caption. After changing the
  * image it should be redrawn.
@@ -578,7 +578,7 @@ CaptionedImage.prototype.changeImage = function (URI, opt_caption)
 };
 
 /* **************************************************************************
- * CaptionedImage.setScale                                              *//**
+ * CaptionedImage.setScale                                             */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -601,7 +601,7 @@ CaptionedImage.prototype.setScale = function (xScale, yScale)
 };
 
 /* **************************************************************************
- * CaptionedImage.append                                                *//**
+ * CaptionedImage.append                                               */ /**
  *
  * Append the widget or widgets to the encapsulated image.
  *

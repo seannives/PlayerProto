@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-imageviewer.js                                        $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the ImageViewer widget.
  *
@@ -11,7 +11,7 @@
  * Created on		May 18, 2013
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -27,7 +27,7 @@
 });
 
 /* **************************************************************************
- * ImageViewer                                                          *//**
+ * ImageViewer                                                         */ /**
  *
  * The ImageViewer widget draws the common widget configuration of a
  * Carousel widget presenting a collection of images with the selected
@@ -154,15 +154,13 @@ function ImageViewer(config, eventManager)
 ImageViewer.autoIdPrefix = "imgvwr_auto_";
 
 /* **************************************************************************
- * ImageViewer.draw                                                     *//**
+ * ImageViewer.draw                                                    */ /**
  *
  * Draw this ImageViewer in the given container.
  *
  * @param {!d3.selection}
  *					container	-The container svg element to append the carousel element tree to.
- * @param {Object}	size		-The size in pixels for the carousel
- * @param {number}	size.height	-The height in pixels of the area the carousel is drawn within.
- * @param {number}	size.width	-The width in pixels of the area the carousel is drawn within.
+ * @param {Size}	size		-The height and width in pixels for the carousel
  *
  ****************************************************************************/
 ImageViewer.prototype.draw = function(container, size)
@@ -207,7 +205,7 @@ ImageViewer.prototype.draw = function(container, size)
 }; // end of ImageViewer.draw()
 
 /* **************************************************************************
- * ImageViewer.redraw                                                   *//**
+ * ImageViewer.redraw                                                  */ /**
  *
  * Redrawing the ImageViewer currently does nothing.
  *
@@ -217,7 +215,7 @@ ImageViewer.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * ImageViewer.selectedItem                                             *//**
+ * ImageViewer.selectedItem                                            */ /**
  *
  * Return the selected item in the carousel.
  *
@@ -230,7 +228,7 @@ ImageViewer.prototype.selectedItem = function ()
 };
 
 /* **************************************************************************
- * ImageViewer.selectItemAtIndex                                        *//**
+ * ImageViewer.selectItemAtIndex                                       */ /**
  *
  * Select the item in the carousel at the given index.
  *
@@ -243,7 +241,7 @@ ImageViewer.prototype.selectItemAtIndex = function (index)
 };
 
 /* **************************************************************************
- * ImageViewer.itemKeyToIndex                                           *//**
+ * ImageViewer.itemKeyToIndex                                          */ /**
  *
  * Find the first item in the list of items in this ImageViewer which has the
  * specified key and return its index. If no item has that key return null.
@@ -260,7 +258,7 @@ ImageViewer.prototype.itemKeyToIndex = function(key)
 };
 
 /* **************************************************************************
- * ImageViewer.assignMissingItemKeys_                                   *//**
+ * ImageViewer.assignMissingItemKeys_                                  */ /**
  *
  * Assign a key property value of the index in the item list to any
  * item which doesn't have a key property. This key is used for selection and
@@ -281,7 +279,7 @@ ImageViewer.prototype.assignMissingItemKeys_ = function ()
 };
 
 /* **************************************************************************
- * ImageViewer.lite                                                     *//**
+ * ImageViewer.lite                                                    */ /**
  *
  * Highlight the image(s) associated w/ the given liteKey (key) in the
  * carousel, and select the 1st highlighted image.

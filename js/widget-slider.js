@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-slider.js                                             $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the slider widget.
  *
@@ -12,7 +12,7 @@
  * @author			Michael Jay Lippert
  * @author			Greg Davis
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -32,7 +32,7 @@
 });
 	
 /* **************************************************************************
- * Slider                                                               *//**
+ * Slider                                                              */ /**
  *
  * The slider widget creates a jQuery slider for setting a numerical value
  * from a range.
@@ -47,16 +47,18 @@
  * @param {number}		config.minVal	-minimum value of slider
  * @param {number}		config.maxVal	-maximum value of slider
  * @param {number}		config.stepVal	-step size of slider
- * @param {htmlString}	config.label	-text preceding the slider, optional
- * @param {htmlString}	config.unit		-text following the slider, optional
+ * @param {htmlString|undefined}
+ * 						config.label	-text preceding the slider, optional
+ * @param {htmlString|undefined}
+ * 						config.unit		-text following the slider, optional
  * @param {function(number): string}
- * 						config.format	-formatting function for displaying value in readout
- *										 https://github.com/mbostock/d3/wiki/Formatting
- * @param {EventManager|undefined}
+ * 						config.format	-{@link https://github.com/mbostock/d3/wiki/Formatting|formatting function}
+ * 										 for displaying value in readout
+ * @param {EventManager=}
  * 						eventManager	-The event manager to use for publishing events
- * 										 and subscribing to them. (Optional)
+ * 										 and subscribing to them.
  *
- * NOTES: firefox doesn't support HTML5 sliders, they degrade to numeric input
+ * @note: firefox doesn't support HTML5 sliders, they degrade to numeric input
  * fields.
  **************************************************************************/
 function Slider(config, eventManager)
@@ -122,7 +124,7 @@ Slider.autoIdPrefix = "sldr_auto_";
 
 
 /* **************************************************************************
- * Slider.draw                                                          *//**
+ * Slider.draw                                                         */ /**
  *
  * The Slider allows the user to set a numeric value over some defined range.
  *
@@ -199,7 +201,7 @@ Slider.prototype.draw = function(container)
 }; // end of Slider.draw()
 
 /* **************************************************************************
- * Slider.getValue                                                      *//**
+ * Slider.getValue                                                     */ /**
  *
  * The getValue method returns the current value of this Slider bric.
  *
@@ -216,7 +218,7 @@ Slider.prototype.getValue = function()
 };
 
 /* **************************************************************************
- * Slider.setValue                                                      *//**
+ * Slider.setValue                                                     */ /**
  *
  * The setValue method sets the value of this Slider bric.
  * This does NOT fire the changedValue event.
