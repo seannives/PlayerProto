@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -34,37 +33,57 @@
   	<script src="eventmanager.js"></script>
 
 	<script>
+var eventManager = new EventManager();
 
-	// SI - you still need an eventManager for the scripts to not throw an error.  It just doesn't do anything
- 
-	var eventManager = new EventManager();
+// LB - include only js for this 'object'.  Needs the data again redundantly
+var levoVal = 35;
+var dextroVal = 65;
 
-	// LB - include only js for this 'object'.  Needs the data again redundantly
- 	var levoData =   [ { x: 35, y: "Levo" } ];
-	var dextroData = [ { x: 65, y: "Dextro" } ];
+// Create the ee readout widget
+var eeReadout = new Readout({
+	node: d3.select("#ee"),
+	id: 'eeRead',
+	startVal: 0,
+	readOnly: true,
+	size: 4,
+	unit: "%", 
+	label: "ee ="
+}, eventManager);
 
-	// Create the ee readout widget
-	var eeReadout = new Readout({
-		node: d3.select("#ee"),
-        id: 'eeRead',
-		startVal: Math.abs(dextroData[0].x - levoData[0].x),
-		readOnly: true,
-		size: 4,
-		unit: "%", 
-		label: "ee ="
-	}, eventManager);
+var updateEeReadout = function ()
+{
+	var newValue = Math.abs(dextroVal - levoVal);
+	eeReadout.setValue(newValue);
+};
 
-    // VOGEL: Listen for updates from the parent and update the widget.
-    window.addEventListener('message', function(e){
-        var data = e.data;
-        if (data.method === 'restore'){
-            var lexoValue = data.value['levoValue'] || 0;
-            var dextroValue = data.value['dextroValue'] || 0;
-            var delta = Math.abs(lexoValue - dextroValue);
-            eeReadout.setValue(delta)
-        }
-    });
+// set the initial value
+updateEeReadout();
 
-	</script>
+// the changes to the levo slider and the dextro slider should change the ee readout
+var levoChangedValueEventId = 'levo' + '_valueChanged';
+var dextroChangedValueEventId = 'dextro' + '_valueChanged';
+var handleLevoChanged = function (eventDetails)
+{
+	// change the global (for now) variable
+	levoVal = eventDetails.newValue;
+
+	updateEeReadout();
+};
+
+var handleDextroChanged = function (eventDetails)
+{
+	// change the global (for now) variable
+	dextroVal = eventDetails.newValue;
+
+	updateEeReadout();
+};
+
+eventManager.subscribe(levoChangedValueEventId, handleLevoChanged);
+eventManager.subscribe(dextroChangedValueEventId, handleDextroChanged);
+
+// YSAP - Must start listening to the broker
+eventManager.listenBroker();
+
+</script>
 </body>
 </html>
