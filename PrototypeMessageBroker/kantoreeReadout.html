@@ -35,7 +35,13 @@
 	<script>
 var eventManager = new EventManager();
 
-// LB - include only js for this 'object'.  Needs the data again redundantly
+// We either need to cache the values when we hear they've changed
+// or we need a protocol to query values from brix in other objects.
+// For now we're going to cache the values here.
+// note: this was the discussion that Young Suk and Mike were having.
+//       also a further thought, it's possible that once we design some
+//       calculation cement object that these would be properties of that
+//       object. -mjl
 var levoVal = 35;
 var dextroVal = 65;
 
