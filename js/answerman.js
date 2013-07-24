@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: answerman.js                                                 $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Client-side answer evaluation engine object.
  *
@@ -10,14 +10,20 @@
  * Created on		June 17, 2013
  * @author			Leslie Bondaryk
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
-/* -----------------------------------------------
-Student feedback and scoring functions
--------------------------------------------------*/
-
+/* **************************************************************************
+ * answerMan                                                           */ /**
+ *
+ * Mock scoring engine.
+ *
+ * @param {Object}		config			-The settings to configure this score attempt.
+ * @param {string} 		config.sequenceNode
+ * 										-The sequence node id of the activity being scored.
+ * @param {string} 		studAnswer		-The student's answer.
+ ****************************************************************************/
 var answerMan = function (config, studAnswer)
 {
 	//set the sequence node. This will be used to look up the activity

@@ -1,16 +1,16 @@
 /* **************************************************************************
  * $Workfile:: widget-MarkerGroup.js                                        $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
- * @fileoverview Implementation of the MarkerGroup widget.
+ * @fileoverview Implementation of the {@link MarkerGroup} bric.
  *
- * The MarkerGroup widget draws a group of labels at specified locations
- * in an SVGContainer.
+ * The MarkerGroup bric draws a group of labels at specified locations
+ * in an {@link SVGContainer}.
  *
  * Created on		June 26, 2013
  * @author			Leslie Bondaryk
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -43,7 +43,7 @@
  */
 	
 /* **************************************************************************
- * MarkerGroup                                                          *//**
+ * MarkerGroup                                                         */ /**
  *
  * The MarkerGroup widget draws a group of markers at specified locations
  * in an SVGContainer.
@@ -62,9 +62,11 @@
  * @param {Array.<LabelConfig>}
  *						config.markers	-An array describing each marker in the group.
  *										 
- * @param {string}		type			-string specifying orientation, x or y
+ * @param {string}		config.type		-string specifying orientation, x or y
+ * @param {EventManager=}
+ * 						eventManager	-The event manager to use for publishing events
+ * 										 and subscribing to them.
  *
- * NOTES:
  * @todo: role: a string which is one of "label", "distractor".
  * @todo: we need some sort of autowidth intelligence on these, but I don't
  * know how to reconcile that with giving user control over wrapping
@@ -79,19 +81,20 @@ function MarkerGroup(config, eventManager)
 
 	/**
 	 * Array of markers to be graphed, where each marker is an object in an array
-	 * @type Array.<Array.<{x: number, y: number, label: string, key: string}>
-	 * e.g. 2 markers, first numerical, second shows string label:
-	 *  	[{x: -1.2, y: 2.0}, {x: 5, y: 5, label: "big data"}]
+	 * @type {Array.<Array.<{x: number, y: number, label: string, key: string}>>}
+	 * @example
+	 *   // 2 markers, first numerical, second shows string label:
+	 *   [{x: -1.2, y: 2.0}, {x: 5, y: 5, label: "big data"}]
 	 */
 	this.marks = config.marks;
 
 	/**
 	 * The type specifies an adornment on each label or no adornment if it is not specified.
 	 * It must be one of:
-	 * <ul>
-	 *  <li> "bullets" for a solid bullet adornment
-	 *  <li> "numbered" for a bullet containing the index number adornment
-	 * </ul>
+	 *
+	 *  - "bullets" for a solid bullet adornment
+	 *  - "numbered" for a bullet containing the index number adornment
+	 *
 	 * @type {string|undefined}
 	 */
 	this.type = config.type;
@@ -130,7 +133,7 @@ function MarkerGroup(config, eventManager)
 	 *								 to the pixel offset into the data area.
 	 * @private
 	 */
-	this.explicitScales_ = {xScale: null, yScale: null};
+	this.explicitScales_ = {xScale: null, yScale: null, axisType: null};
 	
 	/**
 	 * Information about the last drawn instance of this line graph (from the draw method)
@@ -143,7 +146,8 @@ function MarkerGroup(config, eventManager)
 			markerGroup: null,
 			xScale: null,
 			yScale: null,
-			markerCollection: null
+			axisType: null,
+			markerCollection: null,
 		};
 } // end of Label constructor
 
@@ -152,19 +156,17 @@ function MarkerGroup(config, eventManager)
  * @const
  * @type {string}
  */
-MarkerGroup.autoIdPrefix = "lblg_auto_";
+MarkerGroup.autoIdPrefix = "marker_";
 
 /* **************************************************************************
- * MarkerGroup.draw                                                     *//**
+ * MarkerGroup.draw                                                    */ /**
  *
  * Draw this MarkerGroup in the given container. Draw is meant to be called
  * initially and once per page/instance in the case where markers don't yet exist. 
  *
  * @param {!d3.selection}
  *					container	-The container svg element to append the labels element tree to.
- * @param {Object}	size		-The size in pixels for the label
- * @param {number}	size.height	-The height in pixels of the area the labels are drawn within.
- * @param {number}	size.width	-The width in pixels of the area the labels are drawn within.
+ * @param {Size}	size		-The height and width in pixels for the label
  *
  ****************************************************************************/
 MarkerGroup.prototype.draw = function(container, size)
@@ -204,7 +206,7 @@ MarkerGroup.prototype.draw = function(container, size)
 
 
 /* **************************************************************************
- * MarkerGroup.redraw                                                   *//**
+ * MarkerGroup.redraw                                                  */ /**
  *
  * Redraw the data as it may have been modified. It will be
  * redrawn into the same container area as it was last drawn.
@@ -217,7 +219,7 @@ MarkerGroup.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * MarkerGroup.drawWidget_                                              *//**
+ * MarkerGroup.drawWidget_                                             */ /**
  *
  * Draw the given child widget in this charts's data area.
  * This chart must have been drawn BEFORE this method is called or
@@ -235,7 +237,7 @@ MarkerGroup.prototype.drawWidget_ = function (widget)
 };
 
  /* **************************************************************************
- * markerGroup.redrawWidget_                                             *//**
+ * markerGroup.redrawWidget_                                            */ /**
  *
  * Redraw the given child widget.
  * This child widget must have been drawn BEFORE this
@@ -253,7 +255,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 
 
 /* **************************************************************************
- * markerGroup.drawData_                                                *//**
+ * markerGroup.drawData_                                               */ /**
  *
  * Draw the marker data (overwriting any existing data).
  *
@@ -305,29 +307,13 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		// move the group to the x data value horizontally, but stay at 0 vertically.
 		// TODO: logic here is a little flawed, it assumes that the axes is on the 
 		// bottom and left of the graph - lb
-		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : d.x));
+
+		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : (that.axisType == "time" ? new Date(d.x) : d.x)));
 		var yVal = d3.round(that.type === "y" ? that.lastdrawn.yScale(d.y) : 0);
 
 		return attrFnVal("translate", xVal, yVal);
 		//move each group to the data point specified for the marker
 	});
-
-
-	//draw the marker lines for each data point
-	markerCollection.append("line") 
-		//within each group, always start at x=0
-		.attr("x1", 0)
-		.attr("x2", 
-		//if the markers are horizontal from the y axis, then the 
-		//second x point is the full width of the box.  Otherwise,
-		//it stays at 0.
-			  (that.type === "y") ? that.lastdrawn.xScale(size.width) : 0)
-		//y starts at the top of the box, 0 pixels at top in SVG
-		.attr("y1", 0)
-		//if the markers are horizontal from the y axis, then the 
-		//second y point is also 0.  Otherwise, it's the full height of the graph rectangle.
-		.attr("y2", that.type === "y" ? 0 : size.height);
-
 
 	//draw the horizontal or vertical marker line
 	markerCollection.append("line") 
@@ -337,15 +323,24 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		//if the markers are horizontal from the y axis, then the 
 		//second x point is the full width of the box.  Otherwise,
 		//it stays at 0.
-			(this.type === "y") ? this.lastdrawn.xScale(size.width) : 0)
+			(this.type === "y") ? size.width : 0)
 		//starts at the top of the box, 0 pixels at top in SVG
 		.attr("y1", 0)
 		.attr("y2", 
 		//if the markers are horizontal from the y axis, then the 
 		//second y point is 0.  Otherwise, it's the full height of the graph rectangle.
-			(this.type === "y") ? 0 : this.lastdrawn.yScale(0));
+			(this.type === "y") ? 0 : size.height);
 		
-		
+		//if a full data point crossing is specified, put a dot there.
+	markerCollection.append("circle")
+		.attr("cx", function (d){	
+			return d.x ? d3.round(that.lastdrawn.xScale(that.type === "y" ? d.x : 0)) : NaN;
+		})
+		.attr("cy", function (d){	
+			return d.y ? d3.round(that.lastdrawn.yScale(that.type === "y" ? 0 : d.y )) : -size.height;
+		})
+		.attr("r", 6);
+
 	//draw the marker arrows (triangles)
 		markerCollection.append("polygon") 
 		.attr("points", 
@@ -410,12 +405,12 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 					that.eventManager.publish(that.selectedEventId, {selectKey: d.key});
 				});
 				
-	this.lastdrawn.markerCollection = markerGroup.selectAll("g.widgetMarker");
+	this.lastdrawn.markerCollection = markerGroup.selectAll("g.marker");
 
 }; // end of MarkerGroup.draw()
 
 /* **************************************************************************
- * MarkerGroup.setScale                                                 *//**
+ * MarkerGroup.setScale                                                */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -432,11 +427,12 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 MarkerGroup.prototype.setScale = function (xScale, yScale)
 {
 	this.explicitScales_.xScale = xScale;
+	this.axisType = (xScale.domain()[0] instanceof Date) ? "time" : "linear";
 	this.explicitScales_.yScale = yScale;
 };
 
 /* **************************************************************************
- * MarkerGroup.lite                                                     *//**
+ * MarkerGroup.lite                                                    */ /**
  *
  * Highlight the label(s) associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
@@ -457,7 +453,7 @@ MarkerGroup.prototype.lite = function (liteKey)
 	// then find the set that matches
 	var matchesIndex = function (d, i) { return d.key === liteKey; };
 	
-	var markersToLite = allMarkers.filter(matchesLabelIndex);
+	var markersToLite = allMarkers.filter(matchesIndex);
 
 	// Highlight the labels w/ the matching key
 	markersToLite
@@ -465,12 +461,12 @@ MarkerGroup.prototype.lite = function (liteKey)
 
 	if (markersToLite.empty())
 	{
-		console.log("No key '" + liteKey + "' in Markers group " + this.id );
+		console.log("No key '" + liteKey + "' in MarkerGroup " + this.id );
 	}
 }; // end of MarkerGroup.lite()
 
 /* **************************************************************************
- * MarkerGroup.setLastdrawnScaleFns2ExplicitOrDefault_                  *//**
+ * MarkerGroup.setLastdrawnScaleFns2ExplicitOrDefault_                 */ /**
  *
  * Set this.lastdrawn.xScale and yScale to those stored in explicitScales
  * or to the default scale functions w/ a data domain of [0,1].
@@ -484,6 +480,7 @@ MarkerGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSi
 	if (this.explicitScales_.xScale !== null)
 	{
 		this.lastdrawn.xScale = this.explicitScales_.xScale;
+		this.lastdrawn.axisType = this.explicitScales_.xScale.scale;
 	}
 	else
 	{
@@ -504,7 +501,7 @@ MarkerGroup.prototype.setLastdrawnScaleFns2ExplicitOrDefault_ = function (cntrSi
 }; // end of MarkerGroup.setLastdrawnScaleFns2ExplicitOrDefault_()
 
 /* **************************************************************************
- * MarkerGroup.setOpacity                                               *//**
+ * MarkerGroup.setOpacity                                              */ /**
  *
  * Set the opacity of the sketch
  *

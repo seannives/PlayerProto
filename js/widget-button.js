@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-button.js                                             $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the button widget.
  *
@@ -11,7 +11,7 @@
  * @author			Jordan Vishniac
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -26,7 +26,7 @@
 });
 	
 /* **************************************************************************
- * Button                                                               *//**
+ * Button                                                              */ /**
  *
  * The Button widget creates a clickable html button that publishes events.
  *
@@ -67,6 +67,7 @@ function Button(config, eventManager)
 	 * Determines whether the button should be enabled or disabled.
 	 * May be accessed using the methods getEnabled, setEnabled.
 	 * @type {bool}
+	 * @private
 	 */
 	this.enabled_ = config.enabled === false ? false : true;
 
@@ -96,7 +97,7 @@ function Button(config, eventManager)
 } // end of button constructor
 
 /* **************************************************************************
- * Button.draw                                                          *//**
+ * Button.draw                                                         */ /**
  *
  * Draw this Button in the given container.
  *
@@ -131,7 +132,7 @@ Button.prototype.draw = function (container)
 };
 
 /* **************************************************************************
- * Button.redraw                                                        *//**
+ * Button.redraw                                                       */ /**
  *
  * Redraw the button using the current property values (such as text,
  * and enabled).
@@ -147,7 +148,7 @@ Button.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * Button.setText                                                       *//**
+ * Button.setText                                                      */ /**
  *
  * This method sets the text displayed on the button to the given string
  *
@@ -166,7 +167,7 @@ Button.prototype.setText = function (text)
 };
 
 /* **************************************************************************
- * Button.getText                                                       *//**
+ * Button.getText                                                      */ /**
  *
  * This method retrieves the text currently displayed on the button,
  *
@@ -177,7 +178,7 @@ Button.prototype.getText = function ()
 };
 
 /* **************************************************************************
- * Button.setEnabled                                                    *//**
+ * Button.setEnabled                                                   */ /**
  *
  * This method sets the current enable state of the button.
  *
@@ -198,7 +199,7 @@ Button.prototype.setEnabled = function (newEnableState)
 };
 
 /* **************************************************************************
- * Button.getEnabled                                                    *//**
+ * Button.getEnabled                                                   */ /**
  *
  * This method retrieves the current enable state of the button.
  *

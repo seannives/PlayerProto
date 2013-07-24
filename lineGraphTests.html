@@ -20,19 +20,22 @@
 		<div class="row-fluid">
 			<div class="span6 leftCol">
                 <h2 class="setTitle"></h2>
-				<div id="widgetTarget0n"><p>0n. Line Graph one line linear</p></div>
-				<div id="widgetTarget1n"><p>1n. Line graph several traces linear</p>
+				<div id="widgetTarget0n"><p>0. Line Graph one line linear</p></div>
+				<div id="widgetTarget1n"><p>1. Line graph several traces linear</p>
                 </div>
-				<div id="widgetTarget2n"><p>2n. Scatter graph</p></div>
+				<div id="widgetTarget2n"><p>2. Scatter graph</p></div>
 				<div id="widgetTarget3n">
-                	<p>3n. Lines and points several traces linear</p>
+                	<p>3. Lines and points several traces linear</p>
+                </div>
+                <div id="ordX">
+                	<p>4. Ordinal x values are strings</p>
                 </div>
 			</div>
 			<div class="span6 rightCol">
-				<div id="widgetTarget50n"><p>50n. Several traces log scale</p></div>
-				<div id="widgetTarget60n"><p>60n. Several traces Ordinal <span style="color: red">BUG: this graph doesn't use the full available width, it should.</span></p></div>
-				<div id="widgetTarget70n"><p>70n. Small multiples (several line graphs in container) <span style="color: red">BUG: the first axis shoves over too far leaving not enough remaining space to draw the graph.  Need to rethink sizing when it doesn't fit.</span></p></div>
-				<div id="widgetTarget80n"><p>80n. Lines with Legend</p></div>
+				<div id="widgetTarget50n"><p>5. Several traces log scale</p></div>
+				<div id="widgetTarget60n"><p>6. Several traces Ordinal <span style="color: red">BUG: this graph doesn't use the full available width, it should.</span></p></div>
+				<div id="widgetTarget70n"><p>7. Small multiples (several line graphs in container) <span style="color: red">BUG: the first axis shoves over too far leaving not enough remaining space to draw the graph.  Need to rethink sizing when it doesn't fit.</span></p></div>
+				<div id="widgetTarget80n"><p>8. Lines with Legend</p></div>
 			</div>
 		</div>
 	</div>
@@ -202,6 +205,12 @@
 			{x: 2010, y: 6.908688 }
 		]; // array of data - could be read from file
 
+	var ordinalxData = [
+			{x: "1900", y: 2000.55 },
+			{x: "string value", y: 3056 },
+			{x: "10-1-1980", y: 210 },
+		]; // array of data - could be read from file
+
 	projected = [];
 	for ( i = 0; i < 10; i++) {
 		projected[i] = { x: 2010 + i*5,
@@ -351,6 +360,26 @@
 	lineGraph[n] = new LineGraph(config[n].lg);
 	cntr[n].append(lineGraph[n], {topPercentOffset: 0, leftPercentOffset: 0, heightPercent: 1, widthPercent: 1});
 
+  //  <div id="ordX"><p>4. Ordinal x values are strings</p></div>
+	var ordXSVG = new SVGContainer( {
+			node: d3.select("#ordX"),
+			maxWid: 400,
+			maxHt: 400
+		});
+
+	var ordXGraph = new LineGraph({
+			Data: [ordinalxData],
+			type: "lines+points",
+			xAxisFormat: { type: "ordinal",
+						   orientation: "bottom",
+						   label: "ordinal scale" },
+			yAxisFormat: { type: "linear",
+						   orientation: "left",
+						   ticks: 2,
+						   label: "linear scale" },
+		});
+
+	ordXSVG.append(ordXGraph);
 
     //  <div id="widgetTarget60"><p>5. traces Ordinal</p></div>
 	n = config.push({cntr: null, lg: null}) - 1;

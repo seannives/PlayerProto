@@ -1,6 +1,6 @@
 /* **************************************************************************
- * $Workfile:: widget-selectgroup.js                                         $
- * **********************************************************************//**
+ * $Workfile:: widget-selectgroup.js                                        $
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the SelectGroup widget.
  *
@@ -10,7 +10,7 @@
  * Created on		June 12, 2013
  * @author			Leslie Bondaryk
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -79,7 +79,7 @@
 
 
 /* **************************************************************************
- * SelectGroup                                                           *//**
+ * SelectGroup                                                         */ /**
  *
  * The SelectGroup widget draws a list of choices and allows the user to
  * select one of the choices.
@@ -150,7 +150,7 @@ function SelectGroup(config, eventManager)
 SelectGroup.autoIdPrefix = "sg_auto_";
 
 /* **************************************************************************
- * SelectGroup.draw                                                      *//**
+ * SelectGroup.draw                                                    */ /**
  *
  * Draw this SelectGroup in the given container.
  *
@@ -203,7 +203,7 @@ SelectGroup.prototype.draw = function(container)
 }; // end of SelectGroup.draw()
 
 /* **************************************************************************
- * SelectGroup.getselectedIndex                                           *//**
+ * SelectGroup.getselectedIndex                                        */ /**
  *
  * Return the selected item in the select group.
  *
@@ -215,7 +215,7 @@ SelectGroup.prototype.getSelectedIndex = function ()
 	return document.getElementById(this.id).selectedIndex;
 };
 /* **************************************************************************
- * SelectGroup.selectedItem                                              *//**
+ * SelectGroup.selectedItem                                            */ /**
  *
  * Return the selected item in the select group.
  *

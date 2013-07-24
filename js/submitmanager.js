@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: submitmanager.js                                             $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of a SubmitManager object.
  *
@@ -9,7 +9,7 @@
  * Created on		June 04, 2013
  * @author			Seann Ives
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -27,15 +27,9 @@
 });
 
 /* **************************************************************************
- * SubmitManager                                                        *//**
+ * SubmitManager                                                       */ /**
  *
- * @constructor
- *
- * The submit manager handles your submissions, yo.
- * It listens (subscribes) for scoring requests from registered widgets,
- * handles getting the request to the scoring engine and processes the
- * response, returning that response to the requesting widget if there
- * is a callback associated w/ the request.
+ * Constructor function for the SubmitManager class
  *
  * @constructor
  *
@@ -44,6 +38,14 @@
  * @param {!EventManager}
  * 						eventManager	-The event manager to use for publishing events
  * 										 and subscribing to them.
+ *
+ * @classdesc
+ * The submit manager handles your submissions, yo.
+ *
+ * It listens (subscribes) for scoring requests from registered widgets,
+ * handles getting the request to the scoring engine and processes the
+ * response, returning that response to the requesting widget if there
+ * is a callback associated w/ the request.
  *
  ****************************************************************************/
 function SubmitManager(config, eventManager)
@@ -86,7 +88,7 @@ function SubmitManager(config, eventManager)
 }
 
 /* **************************************************************************
- * SubmitManager.handleRequestsFrom                                     *//**
+ * SubmitManager.handleRequestsFrom                                    */ /**
  *
  * Register the given question widget w/ this SubmitManager to handle any
  * submitScoreRequest events the widget may publish.
@@ -104,7 +106,7 @@ SubmitManager.prototype.handleRequestsFrom = function(questionWidget)
 };
 
 /* **************************************************************************
- * SubmitManager.handleScoreRequest_                                    *//**
+ * SubmitManager.handleScoreRequest_                                   */ /**
  *
  * The event handler of this SubmitManager for submitScoreRequest events
  * from registered question widgets.
@@ -137,7 +139,7 @@ SubmitManager.prototype.handleScoreRequest_ = function(eventDetails)
 };
 
 /* **************************************************************************
- * SubmitManager.submitForScoring_                                      *//**
+ * SubmitManager.submitForScoring_                                     */ /**
  *
  * Send the score request to the scoring engine using whatever means required
  * to access that scoring engine.
@@ -178,7 +180,7 @@ SubmitManager.prototype.submitForScoring_ = function(submitDetails)
 };
 
 /* **************************************************************************
- * SubmitManager.submit                                                 *//**
+ * SubmitManager.submit                                                */ /**
  *
  * Submit the student's submission to the answer engine.  Publish the result.
  *
@@ -207,7 +209,7 @@ SubmitManager.prototype.submit = function (submission)
 };
 
 /* **************************************************************************
- * SubmitManager.appendResponseWithDefaultFormatting                    *//**
+ * SubmitManager.appendResponseWithDefaultFormatting                   */ /**
  *
  * This is a temporary helper method to format the responses to submitted
  * answers.
@@ -281,7 +283,7 @@ SubmitManager.appendResponseWithDefaultFormatting = function (container, respons
 };
 
 /* **************************************************************************
- * fancyAnswerEngine                                                    *//**
+ * fancyAnswerEngine                                                   */ /**
  *
  * I'm just a stub
  * Yes, I'm only a stub

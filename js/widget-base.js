@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-base.js                                               $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the utility functions and objects
  *               used by widgets.
@@ -9,14 +9,14 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
 
 /* **************************************************************************
  * Utilities
- * **********************************************************************//**
+ * *********************************************************************/ /**
  * @todo These need to be moved out of global scope! -mjl
  * **************************************************************************/
 
@@ -41,7 +41,7 @@ function logFormat(d)
 }
 
 /* **************************************************************************
- * sign                                                                 *//**
+ * sign                                                                */ /**
  *
  * Return 1 for positive numbers, -1 for negative numbers and 0 for things
  * which are neither.
@@ -60,13 +60,13 @@ function sign(x)
 };
 
 /* **************************************************************************
- * attrFnVal                                                            *//**
+ * attrFnVal                                                           */ /**
  *
  * Utility method that constructs a string function call given the
  * function name and arguments.
  *
  * @param {string}		fnName		-Function name that will be called.
- * @param {...[number]} arguments	-Arguments for the function call.
+ * @param {...number} 	arguments	-Arguments for the function call.
  ****************************************************************************/
 function attrFnVal(fnName)
 {
@@ -81,7 +81,7 @@ function attrFnVal(fnName)
 }
 
 /* **************************************************************************
- * getIdFromConfigOrAuto                                                *//**
+ * getIdFromConfigOrAuto                                               */ /**
  *
  * Utility method that returns the id property of the config object or
  * uses the autoIdCount and autoIdPrefix properties of the class to return
@@ -118,7 +118,7 @@ function getIdFromConfigOrAuto(config, autoIdClass)
 }
 
 /* **************************************************************************
- * randomizeArray                                                       *//**
+ * randomizeArray                                                      */ /**
  *
  * Randomize the order of the elements of the given array.
  *
@@ -150,7 +150,7 @@ randomizeArray = function(a)
 getIdFromConfigOrAuto.autoPrefixCount = 0;
 
 /* **************************************************************************
- * Rect                                                                 *//**
+ * Rect                                                                */ /**
  *
  * A Rect defines a rectangle on a plane whose coordinates increase down and
  * to the right.
@@ -179,7 +179,7 @@ function Rect(x, y, width, height)
 }
 
 /* **************************************************************************
- * Rect.getSize                                                         *//**
+ * Rect.getSize                                                        */ /**
  *
  * Get the size of this rect in a Size object.
  *
@@ -191,7 +191,7 @@ function Rect(x, y, width, height)
  };
 
 /* **************************************************************************
- * Rect.makeRect - static                                               *//**
+ * Rect.makeRect - static                                              */ /**
  *
  * Helper function to create a rect from any 2 vertical values (t,b,h) and
  * any 2 horizontal values (l,r,w). If 3 values are specified, the height
@@ -281,10 +281,12 @@ Rect.makeRect = function (definedBy)
 }; // end Rect.makeRect
 
 /* **************************************************************************
- * Size                                                                 *//**
+ * Size                                                                */ /**
  *
  * Size defines a 2 dimensional area. It has a height and a width in some
  * common unit such as pixels.
+ *
+ * @constructor
  *
  * @param {number}	height	-The vertical dimension in the common units
  * @param {number}	width	-The horizontal dimension in the common units
@@ -305,7 +307,7 @@ function Size(height, width)
 }
  
 /* **************************************************************************
- * Size.matchRatioWithHeight                                            *//**
+ * Size.matchRatioWithHeight                                           */ /**
  *
  * Return a Size with the specified height whose aspect ratio is the same as
  * that of the given size.
@@ -321,7 +323,7 @@ Size.matchRatioWithHeight = function (desiredHeight, desiredRatio)
 };
 
 /* **************************************************************************
- * Size.matchRatioWithWidth                                             *//**
+ * Size.matchRatioWithWidth                                            */ /**
  *
  * Return a Size with the specified width whose aspect ratio is the same as
  * that of the given size.
@@ -342,7 +344,7 @@ Size.matchRatioWithWidth = function (desiredWidth, desiredRatio)
  * **************************************************************************/
  
 /* **************************************************************************
- * IWidget                                                              *//**
+ * IWidget                                                             */ /**
  *
  * IWidget defines the methods and properties that are expected to exist
  * on all widgets defined by this library.
@@ -351,7 +353,7 @@ Size.matchRatioWithWidth = function (desiredWidth, desiredRatio)
 IWidget = function () {};
  
 /* **************************************************************************
- * IWidget.draw                                                         *//**
+ * IWidget.draw                                                        */ /**
  *
  * Render the widget into the given svg container at the given pixel size.
  *
@@ -365,7 +367,7 @@ IWidget = function () {};
 IWidget.prototype.draw = function (container, size) {};
 
 /* **************************************************************************
- * IWidget.redraw                                                       *//**
+ * IWidget.redraw                                                      */ /**
  *
  * Redraw the widget assuming its data may have been modified. It will be
  * redrawn into the same container area as it was last drawn.
@@ -374,7 +376,7 @@ IWidget.prototype.draw = function (container, size) {};
 IWidget.prototype.redraw = function () {};
 
 /* **************************************************************************
- * IWidget.setScale                                                     *//**
+ * IWidget.setScale                                                    */ /**
  *
  * Called to preempt the normal scale definition which is done when the
  * widget is drawn. This is usually called in order to force one widget
@@ -390,7 +392,7 @@ IWidget.prototype.redraw = function () {};
 IWidget.prototype.setScale = function (xScale, yScale) {};
 
 /* **************************************************************************
- * IWidget.lite                                                         *//**
+ * IWidget.lite                                                        */ /**
  *
  * Highlight the area identified by the given key, unlighting all other
  * liteable areas.
@@ -403,7 +405,7 @@ IWidget.prototype.setScale = function (xScale, yScale) {};
 IWidget.prototype.lite = function (liteKey) {};
 
 /* **************************************************************************
- * IWidget.xScale                                                       *//**
+ * IWidget.xScale                                                      */ /**
  *
  * Convert a data X position into a horizontal pixel position.
  *
@@ -413,7 +415,7 @@ IWidget.prototype.lite = function (liteKey) {};
 IWidget.prototype.xScale = function (dataX) {};
 
 /* **************************************************************************
- * IWidget.yScale                                                       *//**
+ * IWidget.yScale                                                      */ /**
  *
  * Convert a data Y position into a vertical pixel position.
  *
@@ -433,7 +435,7 @@ function SVGContainerConfig()
 	/**
 	 * The parent node for the created svg element
 	 * @type {!d3.selection}
-	// Note: may need to change this to be a standard DOM node object -lb
+	 * @note may need to change this to be a standard DOM node object -lb
 	 */
 	this.node = null;
 
@@ -451,16 +453,16 @@ function SVGContainerConfig()
 }
 
 /* **************************************************************************
- * SVGContainer                                                         *//**
- *
- * @constructor
+ * SVGContainer                                                        */ /**
  *
  * The SVGContainer creates an svg element and appends it as the last
  * child of the given node. The svg elements properties are set based on
  * the given configuration values.
  *
+ * @constructor
+ *
  * @param {Object}        config -The settings to configure this SVGContainer
- * @param {!d3.selection} config.node -The parent node for the created svg element
+ * @param {!d3.selection}  config.node -The parent node for the created svg element
  * @param {number}        config.maxWid -The maximum width of the svg container (in pixels)
  * @param {number}        config.maxHt -The maximum width of the svg container (in pixels)
  *
@@ -513,7 +515,7 @@ function SVGContainer(config)
 }
 
 /* **************************************************************************
- * SVGContainer.append                                                  *//**
+ * SVGContainer.append                                                 */ /**
  *
  * Append the given widgets to the container at the specified location
  * within it. If multiple widgets are passed in, the x and y scale of
@@ -557,7 +559,7 @@ SVGContainer.prototype.append = function(svgWidgets, location)
 };
 
 /* **************************************************************************
- * SVGContainer.append_one_                                             *//**
+ * SVGContainer.append_one_                                            */ /**
  *
  * Private helper that appends the given widget to the container at the
  * specified location within it.
@@ -616,6 +618,7 @@ function AxisFormat()
 	 *                  discrete itemized list, gathered from the graphed data.
 	 * <li> "double positive" - axis that always counts up from zero,
 	 *                          regardless of the sign of the data
+	 * <li> "time" - expects data/time formatted values
 	 * </ul>
 	 * @type {string}
 	 */
@@ -637,7 +640,9 @@ function AxisFormat()
 	 * If undefined, will default to [0, 1], or the [min, max] of the ticks
 	 * array if it is an array.
 	 * @type {Array.<number>|undefined}
-	 * TODO: find out why current behavior defaults a vertical axis to [0,1] and a horizontal axis to [1e-10,1] -mjl
+	 *
+	 * @todo find out why current behavior defaults a vertical axis to [0,1] and
+	 *       a horizontal axis to [1e-10,1] -mjl
 	 */
 	this.extent = [0, 1];
 
@@ -671,14 +676,14 @@ function AxisFormat()
 } // end of AxisFormat
 
 /* **************************************************************************
- * Axes                                                                 *//**
- *
- * @constructor
+ * Axes                                                                */ /**
  *
  * Axes draw x-y axes in an SVG Container and provide scaling methods
  * to map data points into the area defined by the axes.
  * The bounds of each axis is defined by either the tick values or by
  * the data extents defined in that axis' AxisFormat.
+ *
+ * @constructor
  *
  * @param {!d3.selection}
  *						container			-The container svg element to append the axes element tree to.
@@ -715,16 +720,14 @@ function Axes(container, config)
 					left: 10,
 					right: 20 };
 
-	//axis format type is a string specifying "linear", "log", "ordinal" or "double positive" for axis that always count up from zero,
-	//regardless of the sign of the data - log only hooked up on x and ordinal only on y at the moment.
+	//axis format type is a string specifying "linear", "log", "ordinal", "time", or "double positive" for axis that always count up from zero,
+	//regardless of the sign of the data - log only hooked up on x
 	//TODO this works for x axis only, if y is needed must be expanded
 
 	//xTicks is either an integer number of ticks or an array of values to use as tickmarks
 	//xOrient is a string for orientation "bottom" or "top". Likewise for the yTicks and yOrient
 	var xTicks = this.xFmt.ticks;
 	var yTicks = this.yFmt.ticks;
-
-	// Add to the margin area for drawing the axis labels depending on their placement and existence
 	var xOrient = this.xFmt.orientation;
 	var yOrient = this.yFmt.orientation;
 	var hasXAxisLabel = 'label' in this.xFmt;
@@ -783,15 +786,27 @@ function Axes(container, config)
 	{
 		if (this.yFmt.type == "ordinal")
 		{
-			//if we're making horizontal ordinal bars, x axis must include 0
+			//if we're making horizontal ordinal bars (y ordinal axis), x axis must include 0
 			this.xFmt.extent.push(0);
 			this.xFmt.extent = d3.extent(this.xFmt.extent);
 		}
-		//TEST
-		console.log("x extent is two elements" , this.xFmt.extent.length == 2);
-		//Check if explicit ticks are specified, and if so, use them as the mapped range of the graph width
+	
+		//Check if explicit ticks are specified, and if so, use them as the mapped domain of the graph width
 		//ignore the actual data range
-		var xExtent = (Array.isArray(xTicks)) ? d3.extent(xTicks) : this.xFmt.extent;
+		var xExtent = (Array.isArray(xTicks) && this.xFmt.type != "ordinal") ? d3.extent(xTicks) : this.xFmt.extent;
+
+		// this block of ifs sets the scale according to the type, with custom
+		// subdivisions suitable to each type -lb
+
+		if (this.xFmt.type == "ordinal")
+		{
+			//the graph set the extent for ordinal scale to be all the string vals
+			this.xScale = d3.scale.ordinal().domain(xExtent) //lists all ordinal x vals
+				.rangePoints([0, dataAreaWidth], .4);
+			//width is broken into even spaces allowing for data point width and
+			//a uniform white space between each, in this case, 40% white space
+			// @todo - fix this so it's not just good for scatter graphs -lb
+	    }
 
 		if (this.xFmt.type == "linear")
 		{
@@ -812,6 +827,13 @@ function Axes(container, config)
 			this.xScale = d3.scale.log().domain([0.99 * Math.pow(10, low), Math.pow(10, high)])
 				.rangeRound([0, dataAreaWidth]);
 			//xScale is now a log-scale function mapping x-data to the width of the drawing space
+	    }
+
+	    if (this.xFmt.type == "time")
+	    {
+	    	this.xScale = d3.time.scale()
+    			.domain(xExtent)
+    			.rangeRound([0, dataAreaWidth]);
 	    }
 
 		//if the axis is double positive then create leftPositive and rightPositive
@@ -858,8 +880,16 @@ function Axes(container, config)
 		//set up the functions that will generate the x axis
 		this.xAxis = d3.svg.axis() //a function that will create the axis and ticks and text labels
 			.scale(this.xScale) //telling the axis to use the scale defined by the function x
-			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
+			.orient(xOrient).tickSize(tickheight, 0).tickPadding(3);
 
+		// The formatting defaults seem to be ok.  I removed this because it otherwise
+		// needs to be special cased for ordinal. -lb
+		//this.xAxis.tickFormat(format);
+
+		// this if block sets up the tick number or hard-set display
+		// according to type, starting with formats, then moving on to specific tick
+		// values or automatically distributed numbers of ticks - lb
+		
 		if (this.xFmt.type == "log")
 		{
 			this.xAxis.tickFormat(logFormat);
@@ -886,6 +916,8 @@ function Axes(container, config)
 		}
 		else
 		{
+			//in the face of anything that isn't double positive, supply an explicit array 
+			//of ticks to tickValues, or a number of ticks to ticks.
 			Array.isArray(xTicks) ? (this.xAxis.tickValues(xTicks)) : (this.xAxis.ticks(xTicks));
 		}
 
@@ -928,7 +960,8 @@ function Axes(container, config)
 	{
 		if (this.yFmt.type == "ordinal")
 		{
-			// @todo changed the domain from yRange to yTicks. The intention is to have the graph set the yTicks when the y axis is ordinal from the data. -mjl
+			// @todo changed the domain from yRange to yTicks. The intention is to have 
+			//the graph set the yTicks when the y axis is ordinal from the data. -mjl
 			this.yScale = d3.scale.ordinal().domain(yTicks) //lists all ordinal y vals
 				.rangeRoundBands([dataAreaHeight, 0], 0.4);
 
@@ -1018,7 +1051,16 @@ function Axes(container, config)
 
 		dataAreaWidth = dataAreaWidth - this.margin.right - this.margin.left;
 		//using the new dimensions, redo the scale and axes
-		this.xScale.rangeRound([0, dataAreaWidth]);
+		
+		if (this.xFmt.type=="ordinal")
+		{
+			this.xScale.rangePoints([0, dataAreaWidth], 0.4);
+		}
+		else
+		{
+			this.xScale.rangeRound([0, dataAreaWidth]);
+		}
+
 		this.xAxis.scale(this.xScale);
 		console.log("x margins increased, new inner width is ", dataAreaWidth, " margin ", this.margin.left, this.margin.right);
 		this.xaxis.call(this.xAxis);

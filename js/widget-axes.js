@@ -15,6 +15,7 @@ function AxisFormat()
 	 * <li> "log" - ...
 	 * <li> "ordinal" - The values along the axis are determined by a
 	 *                  discrete itemized list, calculated from the graphed data.
+	 * <li> "time" - the values are a series of dates/times
 	 * <li> "double positive" - axis that always counts up from zero,
 	 *                          regardless of the sign of the data
 	 * </ul>
@@ -101,9 +102,11 @@ function Axes(container, config)
 	this.yFmt = config.yAxisFormat;
 
 	// Set defaults for missing axis extents
+	// in case of log scale, I didn't make this zero - lgb
 	if (!('extent' in this.xFmt))
 		this.xFmt.extent = [1e-10, 1];
 
+	// haven't seen a log scale in y so far, so I didn't add the tiny value here
 	if (!('extent' in this.yFmt))
 		this.yFmt.extent = [0, 1];
 		
@@ -130,6 +133,8 @@ Axes.makeAxis = function (format, distance)
 			return new LogAxis(format, distance);
 		case 'ordinal':
 			return new OrdinalAxis(format, distance);
+		case 'time':
+			return new TimeAxis(format, distance);
 		default:
 			console.log("An unsupported axis scale was requested (%s)", format.type);
 			return null;

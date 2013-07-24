@@ -1,6 +1,6 @@
 /* **************************************************************************
  * $Workfile:: widget-linegraph.js                                          $
- * **********************************************************************//**
+ * *********************************************************************/ /**
  *
  * @fileoverview Implementation of the LineGraph widget.
  *
@@ -11,7 +11,7 @@
  * @author			Leslie Bondaryk
  * @author			Michael Jay Lippert
  *
- * Copyright (c) 2013 Pearson, All rights reserved.
+ * @copyright (c) 2013 Pearson, All rights reserved.
  *
  * **************************************************************************/
 
@@ -34,7 +34,7 @@
 });
 	
 /* **************************************************************************
- * LineGraph                                                            *//**
+ * LineGraph                                                           */ /**
  *
  * The LineGraph widget provides a line (or scatter) graph visualization
  * of sets of data points.
@@ -46,7 +46,7 @@
  * @param {string|undefined}
  * 						config.id		-String to uniquely identify this LineGraph.
  * 										 if undefined a unique id will be assigned.
- * @param {Array.<Array.<{x: number, y: number}>}
+ * @param {Array.<Array.<{x: number, y: number}>>}
  *						config.Data		-An array of traces (lines on the graph);
  *										 each trace is an array of points defining that trace.
  * @param {string		config.type		-String specifying "lines", "points", or
@@ -68,21 +68,22 @@ function LineGraph(config,eventManager)
 	/**
 	 * Array of traces to be graphed, where each trace is an array of points and each point is an
 	 * object w/ a {number} x and {number} y property.
-	 * @type Array.<Array.<{x: number, y: number}>
-	 * e.g. 2 traces, 1st w/ 2 points, 2nd with 3 points:
+	 * @type {Array.<Array.<{x: number, y: number}>>}
+	 * @example
+	 *   // here are 2 traces, 1st w/ 2 points, 2nd with 3 points:
 	 *   [ [{x: -1.2, y: 2.0} {x: 2, y: 3.1}], [{x: -2, y: -2}, {x: 0, y: 0}, {x: 2, y: 2}] ]
 	 */
 	this.data = config.Data;
 
 	/**
 	 * The render type is one of:
-	 * <ul>
-	 *  <li> "lines" for a line plot
-	 *  <li> "points" for a scatter plot
-	 *  <li> "lines+points" for interpolated plots
-	 * </ul>
+	 *
+	 *  - "lines" for a line plot
+	 *  - "points" for a scatter plot
+	 *  - "lines+points" for interpolated plots
+	 *
 	 * @type {string}
-	 * TODO supply images as point glyphs
+	 * @todo supply images as point glyphs
 	 */
 	this.type = config.type;
 
@@ -93,7 +94,7 @@ function LineGraph(config,eventManager)
 	 * List of child widgets which are to be drawn before and after this
 	 * line graph's data in its data area.
 	 * Child widgets are added using LineGraph.append.
-	 * @type {beforeData: Array.<IWidget>, afterData: Array.<IWidget>}
+	 * @type {{beforeData: Array.<IWidget>, afterData: Array.<IWidget>}}
 	 */
 	this.childWidgets = {beforeData: [], afterData: []};
 	
@@ -119,13 +120,14 @@ function LineGraph(config,eventManager)
 	// for inputs for mc questions. For accessibility
 	//we will eventually have to figure out how to do this with they keyboard too -lb
 	this.eventManager = eventManager;
+
 	/**
 	 * The event id published when a row in this group is selected.
 	 * @const
 	 * @type {string}
 	 */
-
 	this.selectedEventId = this.id + '_lineSelected';
+
 } // end of LineGraph constructor
 
 /**
@@ -137,7 +139,7 @@ LineGraph.autoIdPrefix = "lgrf_auto_";
 
 
 /* **************************************************************************
- * LineGraph.clearLastdrawn_                                            *//**
+ * LineGraph.clearLastdrawn_                                           */ /**
  *
  * Clear the lastdrawn property by setting all of its properties back to their
  * initial values.
@@ -160,7 +162,7 @@ LineGraph.prototype.clearLastdrawn_ = function ()
 };
 
 /* **************************************************************************
- * LineGraph.draw                                                       *//**
+ * LineGraph.draw                                                      */ /**
  *
  * Draw the LineGraph widget into the specified area of the given container.
  *
@@ -187,21 +189,53 @@ LineGraph.prototype.draw = function(container, size)
 	var dataPts = d3.merge(this.data);
 	axesConfig.xAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.x;});
 	axesConfig.yAxisFormat.extent = d3.extent(dataPts, function(pt) {return pt.y;});
-	
-	//Check to see whether ordinal or other scales will be generated
-	// and whether explicit ticks are set, which overrides the autoranging
-	if (axesConfig.xAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.xAxisFormat.ticks))
+	 
+	//Check to see whether ordinal extent and ticks are needed
+	if (axesConfig.xAxisFormat.type == 'ordinal')
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.x;}));
-		axesConfig.xAxisFormat.ticks = ordinalValueMap.values();
+		axesConfig.xAxisFormat.extent = ordinalValueMap.values();
+
+		// if the user hasn't specified explicit ticks, then
+		// take every datalength/ticks value to construct that array bcause d3
+		// ordinal graphs don't know how to do every nth tick automatically -lb
+		if(!$.isArray(axesConfig.xAxisFormat.ticks))
+		{
+		//count the number of points
+			var pts = axesConfig.xAxisFormat.extent.length;
+			var step = d3.round(pts/(axesConfig.xAxisFormat.ticks - 1));
+			var calcTicks = [];
+  			var i = 0;
+ 			while(i < pts) 
+ 			{
+ 				// push every step-th value onto the ticks array
+      			calcTicks.push(axesConfig.xAxisFormat.extent[i]);
+      			i = i + step;
+  			}
+  			//then push the last point on the domain onto the ticks array	
+  			calcTicks.push(axesConfig.xAxisFormat.extent[axesConfig.xAxisFormat.extent.length-1]);
+  			axesConfig.xAxisFormat.ticks = calcTicks;
+		}
 	}
 	
+	
+	//todo: the y axis probably needs similar conditioning to the x axis settings,
+	//ticks and extent are only synonymous if you are drawing bar charts, and even
+	//then that's not a perfect assumption -lb
 	if (axesConfig.yAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.yAxisFormat.ticks))
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.y;}));
 		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
 	}
 	
+	if (axesConfig.xAxisFormat.type == "time")
+	{
+		var timeValueMap = d3.set(dataPts.map(function (pt) {return new Date(pt.x);}));
+		dataPts = timeValueMap.values();
+		var extent = axesConfig.xAxisFormat.extent;
+		var low = new Date(extent[0]), high = new Date(extent[1]);
+		axesConfig.xAxisFormat.extent = [low, high];
+	}
 	//make the axes for this graph - draw these first because these are the 
 	//pieces that need extra unknown space for ticks, ticklabels, axis label
 	this.lastdrawn.axes = new Axes(this.lastdrawn.container, axesConfig);
@@ -249,7 +283,7 @@ LineGraph.prototype.draw = function(container, size)
 }; // end of LineGraph.draw()
 
 /* **************************************************************************
- * LineGraph.redraw                                                     *//**
+ * LineGraph.redraw                                                    */ /**
  *
  * Redraw the line graph data as it may have been modified. It will be
  * redrawn into the same container area as it was last drawn.
@@ -268,7 +302,7 @@ LineGraph.prototype.redraw = function ()
 };
 
 /* **************************************************************************
- * LineGraph.drawWidget_                                                *//**
+ * LineGraph.drawWidget_                                               */ /**
  *
  * Draw the given child widget in this line graph's data area.
  * This line graph must have been drawn BEFORE this method is called or
@@ -286,7 +320,7 @@ LineGraph.prototype.drawWidget_ = function (widget)
 };
 
 /* **************************************************************************
- * LineGraph.redrawWidget_                                              *//**
+ * LineGraph.redrawWidget_                                             */ /**
  *
  * Redraw the given child widget.
  * This line graph and this child widget must have been drawn BEFORE this
@@ -303,7 +337,7 @@ LineGraph.prototype.redrawWidget_ = function (widget)
 };
 
 /* **************************************************************************
- * LineGraph.drawData_                                                  *//**
+ * LineGraph.drawData_                                                 */ /**
  *
  * Draw the line graph data (overwriting any existing line graph data).
  *
@@ -331,7 +365,8 @@ LineGraph.prototype.drawData_ = function ()
 		var line = d3.svg.line()
 			// TODO: someday might want to add options for other interpolations -lb
 			.interpolate("basis")
-			.x(function (d) {return xScale(d.x);})
+			// if the data is in date format, convert the values to date objects
+			.x(function (d) {return xScale((that.xAxisFormat.type == "time" ? new Date(d.x) : d.x));})
 			.y(function (d) {return yScale(d.y);});
 
 		// rebind the trace data to the trace groups
@@ -410,8 +445,10 @@ LineGraph.prototype.drawData_ = function ()
 		// update the data on all points (new and old)
 		points
 			.attr("transform", function (d){
-						// move each symbol to the x,y coordinates in scale
-						return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+						// move each symbol to the x,y coordinates in scale.  Special handling is required
+						// if the data is time strings, which must be turned into date objects
+						return "translate(" + xScale((that.xAxisFormat.type == "time" ? 
+							new Date(d.x) : d.x)) + "," + yScale(d.y) + ")";
 							   })
 			.append("path")
 				.attr("d", 
@@ -433,7 +470,7 @@ LineGraph.prototype.drawData_ = function ()
 } // end of LineGraph.drawData_()
 
 /* **************************************************************************
- * LineGraph.append                                                     *//**
+ * LineGraph.append                                                    */ /**
  *
  * Append the widget or widgets to this line graph and draw it/them on top
  * of the line graph's data area and any widgets appended earlier. If append
@@ -477,7 +514,7 @@ LineGraph.prototype.append = function(svgWidgets, zOrder)
 }; // end of LineGraph.append()
 
 /* **************************************************************************
- * LineGraph.append_one_                                                *//**
+ * LineGraph.append_one_                                               */ /**
  *
  * Helper for append that does the work needed to append a single widget.
  * This can handle drawing the widget after the data even after the data
@@ -513,7 +550,7 @@ LineGraph.prototype.append_one_ = function(widget, zOrder)
 }; // end of LineGraph.append_one_()
 
 /* **************************************************************************
- * LineGraph.lite                                                      *//**
+ * LineGraph.lite                                                      */ /**
  *
  * Highlight the members of the collection associated w/ the given liteKey (key) and
  * remove any highlighting on all other labels.
