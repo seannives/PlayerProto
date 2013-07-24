@@ -16,7 +16,7 @@
 
 <body>
 	<!-- single target for the Brix going into this iframe -->
-	<div id="svg200" about="http://repo.paf.pearson.com/resources/activity/200" typeof="Activity"></div>
+	<div id="bricTarget" typeof="Activity"></div>
 
 
 	<!-- SCRIPTS -->
@@ -49,10 +49,10 @@
 		// off (?id=) and stuffs the remaining into the frameID var.  If ?id changes or if more params are added or if something untoward
 		// is stuffed into 'id' then this falls down.
 		var frameID = location.search.slice(4);
-		console.log("in brix-iframe.html " + frameID);
+		//console.log("in brix-iframe.html " + frameID);
 
 		// We need an eventManager on this page
-		var eventManager = new EventManager();
+		var eventManager = new EventManager(); 
 		
 
 		// At some point we may want a mini-ActivityManager here.  Probably not needed at this point.
@@ -61,10 +61,27 @@
 
 		// change this to match the id coming in from param
 		eventManager.subscribe("brixInit_" + frameID, function(evt) {
-			console.log("Got our value " + evt.value);
+			//console.log("Got our value " + evt);
+			interactives.init(evt, eventManager);
+
+			// NOTE: we should really put this into the interactives.init, so that it fires after the interactive has been fully created.
+			// However, for timing purposes that doesn't really matter if it's fired in the right order or not...just that it happened...
+			// as at this point we only care about how long the extra postMessage takes.
+			window.parent.postMessage(
+			{
+				messageType: "resize",
+				message: {
+					width: document.documentElement.scrollWidth,
+					height: document.documentElement.scrollHeight
+				}
+			}, '*');
 		})
 
 		eventManager.listenBroker();
+
+
+
+
 
 	</script>
 </body>

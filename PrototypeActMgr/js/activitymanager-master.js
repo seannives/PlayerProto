@@ -28,7 +28,8 @@ var activityManager = {
                         { // SVG Container
                             "xtype": "svgContainer",
                             "id": "svg" + sid,
-                            "nodeid": "svg" + sid,
+                            //"nodeid": "svg" + sid,
+                            "nodeid": "bricTarget",
                             "height": 310,
                             "maxHt": 350,
                             "actualSize": {height: 310, width: 680} // dupe from img above
@@ -119,13 +120,16 @@ var activityManager = {
     },
 
 
-    initMasterActivityManager : function(eventManager) {
+    initMasterActivityManager : function(eventManager, pafActivityIDs) {
         // 'that = this' avoids having to reference whatever we named our object (aM.) within this factory
         var that = this;
 
         window.onload = function() {
-            console.log("js/activitymanager-master.js - window.onload");
-            eventManager.publish("brixInit", { value: 'yay' });
+            //console.log("js/activitymanager-master.js - window.onload");
+            pafActivityIDs.forEach(function(pafActivityID) {
+                var content = that.collectContent(pafActivityID);
+                eventManager.publish("brixInit_" + pafActivityID, content);
+            });
         };
     }
 

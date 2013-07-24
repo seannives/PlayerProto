@@ -69,7 +69,7 @@ MessageBroker.prototype.initialize = function (options) {
 		// Listen to messages.
 		var _self = this;
 		window.addEventListener('message', function(evt){
-console.log("[MB] Message Received: " + evt.data.messageType);
+//console.log("[MB] Message Received: " + evt.data.messageType);
 			if (evt.data.messageType === 'bricevent') _self.relay(evt);
 			if (evt.data.messageType === 'resize') _self.resize(evt);
 		});
@@ -114,9 +114,10 @@ MessageBroker.prototype.relay = function (evt) {
  * @param {Object} evt		The event object as sent by the postMessage().
  */
 MessageBroker.prototype.resize = function (evt) {
-		var sourceObject = findIFrameWithWindow(evt.source);
-		sourceObject.style.width = evt.data.width + 'px';
-		sourceObject.style.height = evt.data.height + 'px';
+		//console.log("resizing " + JSON.stringify(evt.data));
+		var sourceObject = this.findIFrameWithWindow(evt.source);
+		sourceObject.style.width = evt.data.message.width + 'px';
+		sourceObject.style.height = evt.data.message.height + 'px';
 	};
 
 	////////// methods related to DOM

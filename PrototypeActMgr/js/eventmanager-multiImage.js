@@ -162,7 +162,7 @@ EventManager.prototype.listenBroker = function()
 	var data = e.data;
 	var here = location.href;
 	if (data.messageType === 'bricevent'){
-console.log("["+location.href+"] EventManager: Handling bricevent:" + JSON.stringify(data));
+//console.log("["+location.href+"] EventManager: Handling bricevent:" + JSON.stringify(data));
 			// Publish in the local iframe 
 			_this.publishLocal(data.message.topic, data.message.eventData, true);
 		}
