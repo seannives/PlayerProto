@@ -20,7 +20,7 @@
 	<script src="../js/jquery-latest.js"></script>
 	<script src="../js/d3.v3.min.js"></script>
 
-	<script src="../js/eventmanager.js"></script>
+	<script src="../js/eventmanager_ex.js"></script>
 	<script src="../js/widget-base.js"></script>
 	<script src="../js/widget-button.js"></script>
 	<script src="../js/widget-sketch.js"></script>
@@ -162,11 +162,14 @@ function handleClick0()
 window.onload = function () {
 	console.log('img loaded');
 	window.parent.postMessage({
+			messageType: 'resize',
 			width: document.documentElement.offsetWidth,
 			height: document.documentElement.offsetHeight
 		}, '*');
 };
 	
+eventManager.listenBroker();
+
 	</script>
 </body>
 </html>

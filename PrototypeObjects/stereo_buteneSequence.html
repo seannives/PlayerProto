@@ -25,7 +25,7 @@
 	<script src="../js/widget-button.js"></script>
 	<script src="../js/widget-sketch.js"></script>
 	<script src="../js/widget-labelgroup.js"></script>
-	<script src="../js/eventmanager.js"></script>
+	<script src="../js/eventmanager_ex.js"></script>
 
 	<script>
 	var eventManager = new EventManager();
@@ -182,10 +182,13 @@ function handleClick1 ()
 window.onload = function(){
 	console.log('img loaded');
 	window.parent.postMessage({
+			messageType: 'resize',
 			width: document.documentElement.offsetWidth,
 			height: document.documentElement.offsetHeight
 		}, '*');
 };
+
+eventManager.listenBroker();
 
 	</script>
 </body>
