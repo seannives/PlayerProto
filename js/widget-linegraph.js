@@ -194,12 +194,13 @@ LineGraph.prototype.draw = function(container, size)
 	if (axesConfig.xAxisFormat.type == 'ordinal')
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.x;}));
+		// for ordinal graphs, the extent is the array of all values, not just ends
 		axesConfig.xAxisFormat.extent = ordinalValueMap.values();
 
 		// if the user hasn't specified explicit ticks, then
 		// take every datalength/ticks value to construct that array bcause d3
 		// ordinal graphs don't know how to do every nth tick automatically -lb
-		if(!$.isArray(axesConfig.xAxisFormat.ticks))
+		if(!Array.isArray(axesConfig.xAxisFormat.ticks))
 		{
 		//count the number of points
 			var pts = axesConfig.xAxisFormat.extent.length;
@@ -222,7 +223,7 @@ LineGraph.prototype.draw = function(container, size)
 	//todo: the y axis probably needs similar conditioning to the x axis settings,
 	//ticks and extent are only synonymous if you are drawing bar charts, and even
 	//then that's not a perfect assumption -lb
-	if (axesConfig.yAxisFormat.type == 'ordinal' && !$.isArray(axesConfig.yAxisFormat.ticks))
+	if (axesConfig.yAxisFormat.type == 'ordinal' && !Array.isArray(axesConfig.yAxisFormat.ticks))
 	{
 		var ordinalValueMap = d3.set(dataPts.map(function (pt) {return pt.y;}));
 		axesConfig.yAxisFormat.ticks = ordinalValueMap.values();
@@ -230,11 +231,29 @@ LineGraph.prototype.draw = function(container, size)
 	
 	if (axesConfig.xAxisFormat.type == "time")
 	{
-		var timeValueMap = d3.set(dataPts.map(function (pt) {return new Date(pt.x);}));
+		// it's unclear whether it's better to calculate the extent as the whole data range,
+		// regardless of the hard-set ticks, and do all the truncation of the graph when
+		// drawing axes, or if we should just truncate the calculated domain using ticks up
+		// front.  Zoom and other redraw is likely impacted.  I've taken out the tick truncation  - lb
+		//var graphDomain = Array.isArray(axesConfig.xAxisFormat.ticks) ? axesConfig.xAxisFormat.ticks : dataPts;
+		
+		// if ticks are an array, convert them to dates
+		
+		if(Array.isArray(axesConfig.xAxisFormat.ticks))
+		{
+			axesConfig.xAxisFormat.ticks = axesConfig.xAxisFormat.ticks.map(function (pt) {return new Date(pt);});
+			console.log("ticks " , axesConfig.xAxisFormat.ticks);
+		}
+
+
+		// convert the extent to dates
+		var timeValueMap =   d3.set(dataPts.map(function (pt) {return new Date(pt.x);}));
 		dataPts = timeValueMap.values();
 		var extent = axesConfig.xAxisFormat.extent;
 		var low = new Date(extent[0]), high = new Date(extent[1]);
 		axesConfig.xAxisFormat.extent = [low, high];
+
+
 	}
 	//make the axes for this graph - draw these first because these are the 
 	//pieces that need extra unknown space for ticks, ticklabels, axis label

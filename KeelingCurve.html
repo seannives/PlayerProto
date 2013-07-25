@@ -55,7 +55,28 @@
               	</p>
 				<div id="graph1"></div>
 				<p>Here is a map of the world-wide sampling network for atmospheric carbon dioxide.
-Click on any of the closed symbols (red circles, blue squares, or green triangles) to see the actual monthly data of atmospheric CO2 recorded at that site. The red circles are locations where a person opens a flask to take a discrete air sample. The flask is then sealed and mailed to Colorado, where the amount of CO2 in the flask is determined. The blue squares are the 4 permanent observatories, where CO2 is recorded continuously by a machine. The green triangles are the “Tall Tower” measurements that are made continuously.</p>
+Click on any of the closed symbols (red circles, blue squares, or green triangles) to see the actual monthly data of atmospheric CO2 recorded at that site. The red circles are locations where a person opens a flask to take a discrete air sample. The flask is sealed and mailed to Colorado, where the concentration of CO2 in the flask is determined. The blue squares are the 4 permanent observatories, where CO2 is recorded continuously by a machine. The green triangles are the “Tall Tower” measurements that are also made continuously.</p>
+
+			</div>
+			<div class="span6 rightCol">    
+				<p>NOAA ESRL Carbon Cycle operates 4 measurement programs.  Semi-continuous measurements are made at 4 baseline observatories, a few surface sites, and from tall towers.  Discrete surface and aircraft samples are measured in Boulder, CO. Presently, atmospheric carbon dioxide, methane, carbon monoxide, hydrogen, nitrous oxide, sulfur hexafluoride, the stable isotopes of carbon dioxide and methane, and halocarbon and volatile organice compounds are measured. Contact: Dr. Pieter Tans, NOAA ESRL Carbon Cycle, Boulder, CO.  http://www.esrl.noaa.gov/gmd/ccgg/</p> 
+				<p>Select sample sites on the map to see the historical data from that site.</p>   
+                <div id="map0"></div> 
+			</div>
+		</div>
+
+		<div class="row-fluid">
+			<div class="span6 leftCol">
+            	<h2>Analyzing CO<sub>2</sub> data</h2>
+              	<p> Select one of the data sets and answer the following questions using the graph of the data between 1972 and 1974.
+              	</p>
+				<div id="graph2"></div>
+				<p>In what month is the CO2 usually highest for each year? May</p>
+				<p>In what month is it the lowest? Aug</p>
+				<p>What is the average decrease for these three years (high-low)? 15.6 ppm</p>
+				<p>What is the average increase in ppm from each of the 2 winters</p>
+					(change between the low in fall to the￼following high the next spring)? 17.3ppm</p>
+				<p>Based on 3&4, what is the yearly increase in ppm/yr?1.7 ppm/yr</p>
 			</div>
 			<div class="span6 rightCol">         
                 <div id="map0"></div> 
@@ -649,6 +670,14 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 	
 	var Data = [iceFloe, maunaLoa, aircraftHigh, aircraftLow];
 		
+
+	var observatories = [
+		{x: "180&deg;", y: "0"},
+		{x: "140&deg;", y: "30&deg;N"},
+		{x: "140&deg;", y: "60&deg;N"},
+
+	];
+
 // draw the highlightable dates table
 	var clickDates = new Callouts({
 		show: "all",
@@ -661,7 +690,7 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 	}, eventManager);
 	
 	clickDates.draw(d3.select("#dates"));
-// configure and draw the SVG container and the graph of the co2 data
+// configure and draw the SVG container and the graph of the multiple co2 data
 
 	var cont1 = new SVGContainer({
 			node: d3.select("#graph0"),
@@ -684,7 +713,7 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 						    },
 		},eventManager);	
 			
-	cont1.append(lines, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 0.9});
+	cont1.append(lines, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 0.8});
 	
 // configure and append the legend to the graph
 
@@ -699,8 +728,7 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 		type: "line"
 	},eventManager);
 	
-
-	
+	// add markers to the graph
 	var marks = new MarkerGroup(
 		{
 		type: "x",
@@ -713,6 +741,7 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 	lines.append([marks, legLines]);
 
 
+	//this draws the long-term swappable CO2 concentration graphs
 	var cont2 = new SVGContainer({
 			node: d3.select("#graph1"),
 			maxWid: 570,
@@ -736,6 +765,64 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 
 	cont2.append(barrowGraph);
 
+
+	//this draws the map with the selectable points that select data sets for the 
+	// CO2 graphs
+	var mapImg = new Image({
+		URI: 'img/CO2SamplesMap.jpg',
+		caption: "Cooperative Measurement Programs: NOAA ESRL Carbon Cycle",
+		preserveAspectRatio: "xMidYMid",
+		actualSize: {height: 194, width: 259}
+	});
+
+	var measure = new LineGraph(
+		{
+			Data: [observatories],
+			type: "points",
+			xAxisFormat: { type: "ordinal",
+						   ticks: 5,
+						   orientation: "bottom",
+						  },
+			yAxisFormat: { type: "ordinal",
+						   ticks: 5,
+						   orientation: "left",
+						   },
+		});
+	
+	
+	var mapSVG = new SVGContainer({
+			node: d3.select("#map0"),
+			maxWid: 500,
+			maxHt: 400
+		});
+	mapSVG.append(measure);
+	
+	//measure.append(mapImg, "before");
+	
+
+	//this draws the CO2 concentration question graph
+	var cont3 = new SVGContainer({
+			node: d3.select("#graph2"),
+			maxWid: 570,
+			maxHt: 500
+		});
+		
+	var qGraph = new LineGraph({
+			//id: "lg0",
+			Data: [barrow], 
+			type: "points",
+			xAxisFormat: { type: "time",
+						   ticks: ["1972 1", "1973 1", "1974 1", "1974 5"],
+						   orientation: "bottom",
+						   label: "Date" },
+			yAxisFormat: { type: "linear",
+						   orientation: "left",
+						   label: "CO<sub>2</sub> Concentration (ppm)",
+						    ticks: [315,320,325,330,335,340],
+						    },
+		},eventManager);	
+
+	cont3.append(qGraph);
 	// Handle changes of the growth rate slider (one subscription per
 	// event we listen to)
 	
@@ -779,7 +866,7 @@ Click on any of the closed symbols (red circles, blue squares, or green triangle
 //handler with a hard-set index of 0.  This should result in the
 //first label getting highlighted and the first callout being displayed.
 	handleSelectionChanged({selectKey: '0'});
-	console.log(new Date("1950 8"));
+	
 /************************************************************************
 * handleSelectionChanged                                            *//**
 *
