@@ -25,7 +25,7 @@
 	<script src="../js/widget-button.js"></script>
 	<script src="../js/widget-sketch.js"></script>
 	<script src="../js/widget-labelgroup.js"></script>
-	<script src="../js/eventmanager.js"></script>
+	<script src="../js/eventmanager_ex.js"></script>
 
 	<script>
 	var eventManager = new EventManager();
@@ -217,10 +217,13 @@ function handleClick4 ()
 
 window.onload = function(){
 	window.parent.postMessage({
+			messageType: 'resize',
 			width: document.documentElement.offsetWidth,
 			height: document.documentElement.offsetHeight
 		}, '*');
 };
+
+eventManager.listenBroker();
 	
 	</script>
 </body>
