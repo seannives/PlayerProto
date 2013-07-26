@@ -45,14 +45,14 @@ var buteneSlide1 = new Slider ({
 buteneSlide1.draw(d3.select("#bricTarget"));
 
 // changing the slider or clicking an image should trigger events
-var fullrot2selectedEventId = 'cisIv' + '_crsl' + '_itemSelected';
+var fullrot1selectedEventId = 'transIv' + '_crsl' + '_itemSelected';
 
-eventManager.subscribe(fullrot2selectedEventId, buteneHandleSelection2);
+eventManager.subscribe(fullrot1selectedEventId, buteneHandleSelection1);
 
 // clicking an image should update the carousel and the slider
-function buteneHandleSelection2(eventDetails)
+function buteneHandleSelection1(eventDetails)
 {
-	buteneSlide2.setValue(eventDetails.index + 1);
+	buteneSlide1.setValue(eventDetails.index + 1);
 }
 
 
