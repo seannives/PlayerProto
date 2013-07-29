@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Author" content="Leslie Bondaryk" />
+	<meta name="Owner" content="Pearson" />
+	<meta name="Copyright" content="Copyright (c) 2013 Pearson. All rights reserved." />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="Carmen Santiago, Demo Book" name="description" />
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap_plus.css" rel="stylesheet" media="screen">
+	<link href="css/widgets.css" rel="stylesheet">
+	<link href="css/learning-objective.css" rel="stylesheet">
+	<link href="css/eCourse-master.css" rel="stylesheet" media="screen">
+	<link href="css/grey-thing.css" rel="stylesheet">
+	<title class="setTitle"></title>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12 leftCol">
+            	<h2 class="setTitle"></h2>
+              	<p>Ocean temperature grows colder with depth.  Here are heat maps showing the distribution of ocean water temperatures across the globe at four depths.  Answer the questions about each temperature.
+              	</p>
+				<div id="selectEvents"></div>
+				<div id="oceanTemp"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+    <script src="js/jquery-latest.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!-- script src="js/jquery.touchSwipe.min.js"></script-->
+	<script src="js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/toc-structure.js"></script>    
+	<script src="js/eCourse-master.js"></script>    
+	<script src="js/d3.v3.min.js"></script>
+
+	<script src="js/widget-base.js"></script>
+	<script src="js/widget-linegraph.js"></script>
+    <script src="js/widget-labelgroup.js"></script>
+    <script src="js/widget-callouts.js"></script>
+    <script src="js/widget-legend.js"></script>
+    <script src="js/widget-numeric.js"></script>
+    <script src="js/widget-markergroup.js"></script>
+    <script src="js/widget-image.js"></script>
+    <script src="js/widget-carousel.js"></script>
+    <script src="js/widget-imageviewer.js"></script>
+    <script src="js/widget-selectgroup.js"></script>
+	<script src="js/eventmanager.js"></script>
+
+	<script>
+
+
+
+	//the eventManager is an object that is specific to this page.  A new one
+	//is created for every page, and then passed to the widgets in that page
+	//that must talk to it.
+	var eventManager = new EventManager();
+
+	//salinity carousel
+	var profiles = new SelectGroup(
+		{	id: "seas",
+			choices: [
+			{
+			content: "Sea Surface Temperature 0 m",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "wrong1",
+			},
+			{
+       		content: "Sea Surface Temperature 500 m",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "correct",
+ 			},
+			{
+			content: "Sea Surface Temperature 1000 m",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "wrong2",
+			},
+			{
+			content: "Sea Surface Temperature 2500 m",
+			//response: "Longer length requires more potential to move electrons across.",
+			//answerKey: "wrong2",
+			}]
+			
+		}, eventManager);
+		
+	profiles.draw(d3.select("#selectEvents"));
+							
+var svg3D = new SVGContainer({
+		node: d3.select("#oceanTemp"),
+		maxWid: 850,
+		maxHt: 650
+	});
+	
+var layers = new ImageViewer({
+		items:
+			[
+				new Image({
+				URI: 'img/oceans/oceanTemp0m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				}),
+				new Image({
+				URI: 'img/oceans/oceanTemp500m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				}),
+				new Image({
+				URI: 'img/oceans/oceanTemp1000m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				}),
+				new Image({
+				URI: 'img/oceans/oceanTemp2500m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				})
+			],
+	}, eventManager);
+
+svg3D.append(layers);
+							
+var labels = new LabelGroup(
+		{type: "numbered",
+		labels: 	
+		  [	
+			{content: "", xyPos:[0.5, 0.58], width: 100, key: "A"},
+			{content: "", xyPos:[0.78, 0.58], width: 80, key: "B"},
+			{content: "", xyPos:[0.62, 0.44], width: 80, key: "C"},
+			{content: "", xyPos:[0.77, 0.25], width: 70, key: "D"},
+			{content: "", xyPos:[0.33, 0.2], width: 100, key: "E"},
+		  ]
+		}, eventManager);
+		
+	// write the labels onto the graph in the local coordinates, inside the 
+	// data area
+	svg3D.append(labels);
+
+eventManager.subscribe(profiles.changedValueEventId, carouselUpdate);
+eventManager.subscribe(layers.selectedEventId, dropdownUpdate);
+
+function carouselUpdate (eventDetails)
+{
+	 
+	layers.selectItemAtIndex(eventDetails.selectedIndex);
+}
+
+function dropdownUpdate ()
+{
+	var newImage = layers.selectedItem();
+	var newval = layers.itemKeyToIndex(newImage.key);
+	profiles.setSelectedIndex(newval);
+}
+
+// draw the highlightable dates table
+	var clickDates = new Callouts({
+		show: "all",
+		headers: ["Date", "CO<sub>2</sub> Concentration (ppm)" ],
+		textBits: [
+		{cols: ["a question"]},
+			]
+	}, eventManager);
+	
+	//clickDates.draw(d3.select("#dates"));
+/* configure and draw the SVG container and the graph of the multiple co2 data
+
+	var cont1 = new SVGContainer({
+			node: d3.select("#graph0"),
+			maxWid: 800,
+			maxHt: 500
+		});
+		
+	var lines = new LineGraph({
+			id: "lg0",
+			Data: Data, 
+			type: "lines+points",
+			xAxisFormat: { type: "time",
+						   ticks: 12,
+						   orientation: "bottom",
+						   label: "Year" },
+			yAxisFormat: { type: "linear",
+						   orientation: "left",
+						   label: "CO<sub>2</sub> Concentration (ppm)",
+						    ticks: [305,310,315,320,325],
+						    },
+		},eventManager);	
+			
+	cont1.append(lines, {topPercentOffset: 0.2, leftPercentOffset: 0, heightPercent: 0.8, widthPercent: 0.8});
+	
+// configure and append the legend to the graph
+
+	var legLines = new Legend({
+		xPos: "left", yPos: "top",
+		labels: [
+				{ content: "Ice Floe Stations"},
+				{ content: "Mauna Loa"},
+				{ content: "Aircraft (higher air temperature)"},
+				{ content: "Aircraft (lower air temperature)"}
+				],
+		type: "line"
+	},eventManager);
+	
+	// add markers to the graph
+	var marks = new MarkerGroup(
+		{
+		type: "x",
+		marks: [maunaLoa[0], maunaLoa[11], maunaLoa[23]]
+		}, eventManager);
+		
+	// write the markers onto the graph in the local coordinates, inside the 
+	// data area.  These are designed to slop over the top, that's why the
+	// graph is written to the bottom 80% of SVG area
+	lines.append([marks, legLines]);
+
+*/
+	
+	
+	
+	
+	
+	eventManager.subscribe(legLines.selectedEventId,
+						   handleHighlight);
+	eventManager.subscribe(lines.selectedEventId,
+						   handleHighlight);
+
+
+	
+/************************************************************************
+* handleHighlight                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleHighlight(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+	
+		lines.lite(eventDetails.selectKey);
+		legLines.lite(eventDetails.selectKey);
+		
+	}
+
+// Handle highlight clicks on the markers and table
+	eventManager.subscribe(clickDates.selectedEventId,
+						   handleSelectionChanged);
+	eventManager.subscribe(marks.selectedEventId,
+						   handleSelectionChanged);
+
+ 
+//TEST: set the start highlight state of 0 index by calling the 
+//handler with a hard-set index of 0.  This should result in the
+//first label getting highlighted and the first callout being displayed.
+	handleSelectionChanged({selectKey: '0'});
+	
+/************************************************************************
+* handleSelectionChanged                                            *//**
+*
+* handleInputValueChanged is called from the event handler for one of
+* the input widgets when the user changes its value. It updates the
+* given matching input widget's value to match the new value and then
+* updates the bar chart.
+*
+* @param eventDetails			These are the keyed values returned by 
+*								the event, in this case, a selection
+*								(click).
+*************************************************************************/
+	function handleSelectionChanged(eventDetails)
+	{
+		//Handler needs to get written into each page, 
+		//each widget will have it's own way of responding  
+		//LabelLite should be a method of Labels, once Labels
+		//is written as a constructor
+		clickDates.lite(eventDetails.selectKey);
+		marks.lite(eventDetails.selectKey);
+		
+	}
+	
+	
+	</script>
+</body>
+</html>

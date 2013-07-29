@@ -895,14 +895,15 @@ function Axes(container, config)
 		if (this.xFmt.type == "time")
 		{
 			if (Array.isArray(xTicks)) { 
-					
-				function makeDate(val) {
-					return new Date(val);
-					}
 
 				function xTicksFun() {
 					return xTicks.map(identity);
 				}
+
+				// this is broken at the moment, so it's hard set to the d3 years function
+				// it needs to be made into a function that spits out the string of explicit
+				// values to set the tick positions and labels, but I can't tell how that should
+				// be constructed. I'm lame. - lb
 				this.xAxis.ticks(d3.time.years);
 			}
 
