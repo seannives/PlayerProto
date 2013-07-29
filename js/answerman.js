@@ -19,17 +19,12 @@
  *
  * Mock scoring engine.
  *
- * @param {Object}		config			-The settings to configure this score attempt.
- * @param {string} 		config.sequenceNode
- * 										-The sequence node id of the activity being scored.
+ * @param {string} 		sequenceNode	-The sequence node id of the activity being scored.
  * @param {string} 		studAnswer		-The student's answer.
  ****************************************************************************/
-var answerMan = function (config, studAnswer)
-{
-	//set the sequence node. This will be used to look up the activity
-	var sequenceNode = config.sequenceNode;
-	var activity = sequenceNode;
-	
+var answerMan = function (sequenceNode, studAnswer)
+{ 
+	 
 	//lookup the student answer in the answer key in fakeactivitydb.js, which
 	//got loaded with the page
 	var activity = (sequenceNode in activities) ? activities[sequenceNode] : "activity not found";
@@ -44,7 +39,6 @@ var answerMan = function (config, studAnswer)
 	//(specifies where to write the responses), the value of the student submission,
 	//the score, and any specialized response.
 	var scored = {
-				container: config.container,
 				submission: solution.content,
 				response: feedback
 				};
