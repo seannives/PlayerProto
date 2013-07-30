@@ -247,7 +247,8 @@ var activityManager = {
                 // you can change this to point to the minified library if you want, like
                 // interactives: '../PrototypeDist/dist/interactives',
                 interactives: '../PrototypeDist/interactives',
-                d3: '../PrototypeDist/lib/d3' // TODO - shouldn't reference version
+                d3: '../PrototypeDist/lib/d3', // TODO - shouldn't reference version
+                resig: '../PrototypeDist/lib/resigClassFramework'
             },
             shim: {
                 underscore: {
@@ -262,7 +263,7 @@ var activityManager = {
         window.onload = function() {
             
             // this is require loading is weird but just here for testing/debugging
-            require(['interactives', 'jquery', 'underscore', 'd3'], function (interactives, $, _, d3) {
+            require(['interactives'], function (interactives) {
                 // todo - see note in initActivityManager below
 
                 that.loadNodes(function(content){

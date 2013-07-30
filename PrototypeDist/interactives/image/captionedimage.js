@@ -1,11 +1,8 @@
-define(['jquery',
-		'd3',
-		'/PlayerProto/PrototypeDist/interactives/base/util.js',
-		'/PlayerProto/PrototypeDist/interactives/image.js'], 
-		function ($, d3, util, image) {
+define(['jquery', 'd3', 'interactives/base/util', 'interactives/image'], 
+		function ($, d3, util, Image) {
     'use strict';
 
-    return {
+    var CaptionedImage = Image.subClass({
     		/* **************************************************************************
 		 * CaptionedImage                                                       *//**
 		 *
@@ -24,23 +21,12 @@ define(['jquery',
 		 *										 relation to the image.
 		 *
 		 ****************************************************************************/
-		init : function init(config,eventManager)
+		init: function (config, eventManager) 
 		{
-			/**
-			 * A unique id for this instance of the captioned image widget
-			 * @type {string}
-			 */
-			// NOTE: this was changed from
-			// this.id = getIdFromConfigOrAuto(config, CaptionedImage);
-			this.id = util.getIdFromConfigOrAuto(config, this);
-			
-			/**
-			 * The Image which is to be drawn with a caption.
-			 * @type {Image}
-			 */
-			this.image = config.image;
-			
-			
+			// constuct the base
+			this._super(config, eventManager);
+			console.log("cap config:");
+			console.log(JSON.stringify(config));
 			/**
 			 * Where the caption should be placed in relation to the image.
 			 *   <ul>
@@ -52,36 +38,21 @@ define(['jquery',
 			this.captionPosition = config.captionPosition;
 			
 			/**
-			 * The event manager to use to publish (and subscribe to) events for this widget
-			 * @type {EventManager}
-			 */
-			this.eventManager = eventManager;
-
-			/**
 			 * Information about the last drawn instance of this image (from the draw method)
 			 * @type {Object}
 			 */
-			this.lastdrawn =
+			this.captioned_lastdrawn =
 				{
 					container: null,
 					size: {height: 0, width: 0},
 					widgetGroup: null,
+					URI: null,
+					caption: null,
 				};
-		}, // end of CaptionedImage constructor
-
-		/**
-		 * Prefix to use when generating ids for instances of CaptionedImage.
-		 * @const
-		 * @type {string}
-		 */
-		autoIdPrefix : function autoIdPrefix()
-		{
-			var prefix = "cimg_auto_";
-			return prefix
 		},
 
 		/* **************************************************************************
-		 * CaptionedImage.draw                                                  *//**
+		 * CaptionedImage.draw                                                 */ /**
 		 *
 		 * Draw this CaptionedImage in the given container.
 		 *
@@ -92,12 +63,12 @@ define(['jquery',
 		 * @param {number}	size.width	-The width in pixels of the area the captioned image are drawn within.
 		 *
 		 ****************************************************************************/
-		draw : function draw(container, size)
+		draw: function (container, size)
 		{
-			this.lastdrawn.container = container;
-			this.lastdrawn.size = size;
-			this.lastdrawn.URI = this.image.URI;
-			this.lastdrawn.caption = this.image.caption;
+			this.captioned_lastdrawn.container = container;
+			this.captioned_lastdrawn.size = size;
+			this.captioned_lastdrawn.URI = this.URI;
+			this.captioned_lastdrawn.caption = this.caption;
 
 			// make a group to hold the image
 			var widgetGroup = container.append("g")
@@ -109,7 +80,7 @@ define(['jquery',
 			
 			// Draw the image
 			var imageGroup = widgetGroup.append("g");
-			this.image.draw(imageGroup, imageSize);	
+			this._super(imageGroup, imageSize);	
 			
 			// Draw the caption
 			var captionGroup = widgetGroup.append("g");
@@ -122,58 +93,44 @@ define(['jquery',
 						.style("margin", "0px")		// this interior body shouldn't inherit margins from page body
 						.append("div")
 							.attr("class", "widgetImageCaption")
-							.html(this.image.caption);
+							.html(this.caption);
 
 			// position the caption
 			if (this.captionPosition === "above")
 			{
-				// todo - attrFnVal changed to this.attrFnVal - see how it works from base extend
-				imageGroup.attr("transform", this.attrFnVal("translate", 0, captionSize.height));
+				imageGroup.attr("transform", util.attrFnVal("translate", 0, captionSize.height));
 			}
 			else // assume below
 			{
-				// todo - attrFnVal changed to this.attrFnVal - see how it works from base extend
-				captionGroup.attr("transform", this.attrFnVal("translate", 0, imageSize.height));
+				captionGroup.attr("transform", util.attrFnVal("translate", 0, imageSize.height));
 			}
-			
-			this.lastdrawn.widgetGroup = widgetGroup;
+
+			this.captioned_lastdrawn.widgetGroup = widgetGroup;
 			
 		}, // end of CaptionedImage.draw()
 
-// todo - this needs to have come from base
-attrFnVal : function attrFnVal(fnName)
-{
-	// get the fn args into an Array
-	var args = Array.prototype.slice.call(arguments, 1);
-
-	var fnCallStr = fnName + '(';
-	fnCallStr += args.join(',');
-	fnCallStr += ')';
-	
-	return fnCallStr;
-},
 		/* **************************************************************************
-		 * CaptionedImage.redraw                                                *//**
+		 * CaptionedImage.redraw                                               */ /**
 		 *
 		 * Redraw the image as it may have been changed (new URI or caption). It will be
 		 * redrawn into the same container area as it was last drawn.
 		 *
 		 ****************************************************************************/
-		redraw : function redraw()
+		redraw: function ()
 		{
 			// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
 			//       by doing nothing? -mjl
-			this.image.redraw();
+			this._super();
 
 			// NOTE: for some reason foreignObject in a d3 selector doesn't work
 			//       but body does.
 			// TODO: updating the html isn't causing it to be re-rendered (at least in Chrome)
 			var captionDiv = this.lastdrawn.widgetGroup.select("g body div")
-				.html(this.image.caption);
+				.html(this.caption);
 		},
 
 		/* **************************************************************************
-		 * CaptionedImage.changeImage                                           *//**
+		 * CaptionedImage.changeImage                                          */ /**
 		 *
 		 * Change the URI of this Image and/or the caption. After changing the
 		 * image it should be redrawn.
@@ -183,13 +140,13 @@ attrFnVal : function attrFnVal(fnName)
 		 * @param	{string=}	opt_caption	-The new caption for the image.
 		 *
 		 ****************************************************************************/
-		changeImage : function changeImage(URI, opt_caption)
+		changeImage: function (URI, opt_caption)
 		{
-			this.image.changeImage(URI, opt_caption);
+			this._super(URI, opt_caption);
 		},
 
 		/* **************************************************************************
-		 * CaptionedImage.setScale                                              *//**
+		 * CaptionedImage.setScale                                             */ /**
 		 *
 		 * Called to preempt the normal scale definition which is done when the
 		 * widget is drawn. This is usually called in order to force one widget
@@ -206,13 +163,13 @@ attrFnVal : function attrFnVal(fnName)
 		 *								 to the pixel offset into the data area.
 		 *
 		 ****************************************************************************/
-		setScale : function setScale(xScale, yScale)
+		setScale: function (xScale, yScale)
 		{
-			this.image.setScale(xScale, yScale);
+			this._super(xScale, yScale);
 		},
 
 		/* **************************************************************************
-		 * CaptionedImage.append                                                *//**
+		 * CaptionedImage.append                                               */ /**
 		 *
 		 * Append the widget or widgets to the encapsulated image.
 		 *
@@ -221,10 +178,12 @@ attrFnVal : function attrFnVal(fnName)
 		 *									 this encapsulated image's area.
 		 *
 		 ****************************************************************************/
-		append : function append(svgWidgets)
+		append: function (svgWidgets)
 		{
-			this.image.append(svgWidgets);
+			this._super(svgWidgets);
 				
-		} // end of CaptionedImage.append()
-	}
+		}, // end of CaptionedImage.append()
+
+	}); //end of CaptionedImage Class
+	return CaptionedImage;
 });

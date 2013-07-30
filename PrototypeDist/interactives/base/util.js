@@ -188,7 +188,6 @@ function matchRatioWithWidth(desiredWidth, desiredRatio)
 };
 
 
-
 	return {
 		measure : measure,
 		logFormat : logFormat,

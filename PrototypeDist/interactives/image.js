@@ -1,7 +1,6 @@
-// TODO: not sure why the baseURL isn't working
-define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], function ($, d3, util) {
+define(['jquery','d3','interactives/base/util'], function ($, d3, util) {
     'use strict';
-
+    
 		/* **************************************************************************
 		 * $Workfile:: widget-image.js                                              $
 		 * **********************************************************************//**
@@ -43,7 +42,6 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 
 		});
 
-	return {
 
 		/* **************************************************************************
 		 * Image                                                                *//**
@@ -72,23 +70,21 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 *										 image should be highlighted.
 		 *
 		 ****************************************************************************/
-		init : function init(config,eventManager)
+	var Image = Object.subClass({
+		init: function (config, eventManager)
 		{
 			/**
 			 * A unique id for this instance of the image widget
 			 * @type {string}
 			 */
-			// Require base/util
-			// TODO: Not sure this is actually working ... 'Image' maybe should throw an error?
-			this.id = util.getIdFromConfigOrAuto(config, Image);
+			this.id = util.getIdFromConfigOrAuto(config, this);
 
 			/**
 			 * The URI where the image resource is located.
 			 * @type {string}
 			 */
 			this.URI = config.URI;
-			
-			
+				
 			/**
 			 * The caption for the image.
 			 * @type {string}
@@ -158,17 +154,6 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 					size: {height: 0, width: 0},
 					widgetGroup: null,
 				};
-		}, // end of Image constructor
-
-		/**
-		 * Prefix to use when generating ids for instances of Image.
-		 * @const
-		 * @type {string}
-		 */
-		autoIdPrefix : function autoIdPrefix()
-		{
-			var prefix = "img_auto_";
-			return prefix
 		},
 
 		/* **************************************************************************
@@ -183,7 +168,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @param {number}	size.width	-The width in pixels of the area the labels are drawn within.
 		 *
 		 ****************************************************************************/
-		draw : function draw(container, size)
+		draw: function (container, size)
 		{
 			this.lastdrawn.container = container;
 			this.lastdrawn.size = size;
@@ -240,7 +225,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * redrawn into the same container area as it was last drawn.
 		 *
 		 ****************************************************************************/
-		redraw : function redraw()
+		redraw: function ()
 		{
 			// TODO: Do we want to allow calling redraw before draw (ie handle it gracefully
 			//       by doing nothing? -mjl
@@ -265,7 +250,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @todo implement some form of error handling! -mjl
 		 *
 		 ****************************************************************************/
-		drawWidget_ : function drawWidget_(widget)
+		drawWidget_: function (widget)
 		{
 			widget.setScale(this.lastdrawn.xScale, this.lastdrawn.yScale);
 			widget.draw(this.lastdrawn.widgetGroup, this.lastdrawn.size);
@@ -283,7 +268,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @todo implement some form of error handling! -mjl
 		 *
 		 ****************************************************************************/
-		redrawWidget_ : function redrawWidget_(widget)
+		redrawWidget_: function (widget)
 		{
 			widget.redraw();
 		},
@@ -299,7 +284,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @param	{string=}	opt_caption	-The new caption for the image.
 		 *
 		 ****************************************************************************/
-		changeImage : function changeImage(URI, opt_caption)
+		changeImage: function (URI, opt_caption)
 		{
 			if (URI)
 			{
@@ -327,7 +312,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 *								 to the pixel offset into the data area.
 		 *
 		 ****************************************************************************/
-		setScale : function setScale(xScale, yScale)
+		setScale: function (xScale, yScale)
 		{
 			this.explicitScales_.xScale = xScale;
 			this.explicitScales_.yScale = yScale;
@@ -346,7 +331,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 *									 this image's area.
 		 *
 		 ****************************************************************************/
-		append : function append(svgWidgets)
+		append: function(svgWidgets)
 		{
 			if (!$.isArray(svgWidgets))
 			{
@@ -370,10 +355,10 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @private
 		 *
 		 ****************************************************************************/
-		append_one_ : function append_one_(widget)
+		append_one_: function(widget)
 		{
 			this.childWidgets.push(widget);
-			
+
 			if (this.lastdrawn.container !== null)
 				this.drawWidget_(widget);
 				
@@ -387,7 +372,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @param {string}	liteKey	-The key associated with this image if it is to be highlighted.
 		 *
 		 ****************************************************************************/
-		lite : function lite(liteKey)
+		lite: function (liteKey)
 		{
 			var shouldHilight = liteKey === this.key;
 			this.lastdrawn.widgetGroup.classed('lit', shouldHilight);
@@ -403,7 +388,7 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 		 * @private
 		 *
 		 ****************************************************************************/
-		setLastdrawnScaleFns2ExplicitOrDefault_ : function setLastdrawnScaleFns2ExplicitOrDefault_(cntrSize)
+		setLastdrawnScaleFns2ExplicitOrDefault_: function (cntrSize)
 		{
 			if (this.explicitScales_.xScale !== null)
 			{
@@ -425,6 +410,8 @@ define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], f
 				// but from bottom to top
 				this.lastdrawn.yScale = d3.scale.linear().rangeRound([cntrSize.height, 0]);
 			}
-		} // end of Image.setLastdrawnScaleFns2ExplicitOrDefault_()
-	}
+		}, // end of Image.setLastdrawnScaleFns2ExplicitOrDefault_()
+
+	}); //end of Image Class
+	return Image;
 });

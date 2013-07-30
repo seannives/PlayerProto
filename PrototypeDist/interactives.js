@@ -92,16 +92,24 @@ define(function (require) {
 	// captionedImage bric mold
 	function captionedImageMold(bric, eventManager) {
 		// create an image first, using the imageMold
+
 		var img = imageMold(bric.image, eventManager);
+		//console.log("imgMold: " + JSON.stringify(img));
 		// todo - figure out how to chain these; Object.create(xImage).init(imgConfig)
 
-
-		var capImg = Object.create(xCaptionedImage);
+		// pre-resig
+		/*var capImg = Object.create(xCaptionedImage);
 		capImg.init({
 				id: bric.id,
 				image: img,
 				captionPosition: bric.captionPosition
-			});	
+			});*/
+		var capImgConfig = {
+				URI: bric.image.URI,
+				caption: bric.image.caption,
+				actualSize: bric.image.actualSize,
+				captionPosition: bric.captionPosition}
+		var capImg = new xCaptionedImage(capImgConfig);
 		return capImg;
 	}
 
@@ -115,9 +123,13 @@ define(function (require) {
 				actualSize: bric.actualSize
 			};
 
-		var img = Object.create(xImage);
-		img.init(imgConfig);
+
 		// todo - figure out how to chain these; Object.create(xImage).init(imgConfig)
+		// Old pre-Resig method
+		//var img = Object.create(xImage);
+		//img.init(imgConfig);
+
+		var img = new xImage(imgConfig);
 		return img;
 	}
 
