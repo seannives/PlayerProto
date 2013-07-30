@@ -831,6 +831,7 @@ function Axes(container, config)
 
 	    if (this.xFmt.type == "time")
 	    {
+	    	console.log("x extent", xExtent);
 	    	this.xScale = d3.time.scale()
     			.domain(xExtent)
     			.rangeRound([0, dataAreaWidth]);
@@ -886,18 +887,39 @@ function Axes(container, config)
 		// needs to be special cased for ordinal. -lb
 		//this.xAxis.tickFormat(format);
 
-		// this if block sets up the tick number or hard-set display
+		// this if block sets up the number of ticks or hard-set tick display
 		// according to type, starting with formats, then moving on to specific tick
 		// values or automatically distributed numbers of ticks - lb
-		
-		if (this.xFmt.type == "log")
+
+		// if the type is a time axis and ticks are explicit, turn the ticks into Date objects
+		if (this.xFmt.type == "time")
+		{
+			if (Array.isArray(xTicks)) { 
+
+				function xTicksFun() {
+					return xTicks.map(identity);
+				}
+
+				// this is broken at the moment, so it's hard set to the d3 years function
+				// it needs to be made into a function that spits out the string of explicit
+				// values to set the tick positions and labels, but I can't tell how that should
+				// be constructed. I'm lame. - lb
+				this.xAxis.ticks(d3.time.years);
+			}
+
+			else {
+				this.xAxis.ticks(xTicks);
+				console.log(" ticks : ", this.xAxis.ticks);
+			}
+		}
+		else if (this.xFmt.type == "log")
 		{
 			this.xAxis.tickFormat(logFormat);
 			//this prevents too many tick labels on log graphs, making
 			//them unreadable
+			Array.isArray(xTicks) ? this.xAxis.tickValues(xTicks) : (this.xAxis.ticks(xTicks));
 		}
-
-		if (this.xFmt.type == "double positive")
+		else if (this.xFmt.type == "double positive")
 		{
 			this.leftXAxis = d3.svg.axis()
 				.scale(leftPositive) //do the faux positive left-hand axis
@@ -906,19 +928,16 @@ function Axes(container, config)
 			this.xAxis = d3.svg.axis()
 				.scale(rightPositive) //do the real positive right-hand axis
 				.orient(xOrient).tickSize(tickheight, 0).tickPadding(3).tickFormat(format);
-		}
 
-		//next set the ticks to absolute values or just a number of ticks
-		if (this.xFmt.type == "double positive")
-		{
-			$.isArray(xTicks) ? (this.xAxis.tickValues(posTicks) && this.leftXAxis.tickValues(negTicks))
+			//next set the ticks to absolute values or just a number of ticks
+			Array.isArray(xTicks) ? (this.xAxis.tickValues(posTicks) && this.leftXAxis.tickValues(negTicks))
 							  : (this.xAxis.ticks(xTicks - 2) && this.leftXAxis.ticks(2));
 		}
 		else
 		{
-			//in the face of anything that isn't double positive, supply an explicit array 
+			//in the face of anything that isn't log or double positive, supply an explicit array 
 			//of ticks to tickValues, or a number of ticks to ticks.
-			Array.isArray(xTicks) ? (this.xAxis.tickValues(xTicks)) : (this.xAxis.ticks(xTicks));
+			Array.isArray(xTicks) ? this.xAxis.tickValues(xTicks) : (this.xAxis.ticks(xTicks));
 		}
 
 		//now draw the horizontal axis

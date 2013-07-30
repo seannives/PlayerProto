@@ -69,46 +69,51 @@ svg g.bricMarkers line
 
 svg g.bricMarkers circle
 {
-
   opacity: 0.5;
 }
+
 svg g.bricMarkers .lit line
 {
-  stroke:   #bce8f1;
-  stroke-width: 4;
+  stroke:   #F05A24;
+  stroke-width: 3;
 }
 
 svg g.bricMarkers polygon,
 svg g.bricMarkers rect,
 svg g.bricMarkers circle
 {
-  fill:    #aaa;
+  fill:     #f4f4f4;
 }
 
 svg g.bricMarkers .lit rect,
+svg g.bricMarkers .lit circle
+{
+  fill:    #f4f4f4;
+  stroke:  #F05A24;
+  stroke-width: 2;
+}
+
 svg g.bricMarkers .lit polygon,
 svg g.bricMarkers .lit circle
 {
-  fill:    #e3effe;
-  stroke:   #bce8f1;
+  fill:    #F05A24;
+  stroke:  #F05A24;
   stroke-width: 2;
 }
 
 svg g.bricMarkers .markerLabel
 {
- 
   max-width: 12em;
-  padding: .2em  .3em;
-  font: .9em HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Lucida, sans-serif;
+  padding: 2px;
   text-align:right;
+  color: 666;
+  font: Helvetica 9pt;
+  border: 2px solid #e4e4e4;
+  background-color: #f4f4f4;
+  background-image: -webkit-linear-gradient(left, #f4f4f4 0%, #e4e4e4 100%);
+  padding: 8px 8px;
 }
 
-svg g.widgetLabel.lit .markerLabel
-{
-  color: #1d456e;
-  font-weight: 600;
-  background-color: #e3effe;
-}
 
 /* Labels
 ================================================== */
@@ -120,8 +125,8 @@ svg g.widgetLabel>circle
 }
 svg g.widgetLabel.lit>circle
 {
-	fill:			#e3effe;
-	stroke:			#1d95ae;
+	fill:			#F05A24;
+	stroke:		#f4f4f4;
 }
 svg g.widgetLabel>text
 {
@@ -130,14 +135,26 @@ svg g.widgetLabel>text
 }
 svg g.widgetLabel.lit>text
 {
-	fill:			#1d456e;
+	fill:			#f4f4f4;
+}
+
+svg g.widgetLabel .descLabel
+{
+  color: 666;
+  font: Helvetica 9pt;
+  border: 2px solid #e4e4e4;
+  background-color: #f4f4f4;
+  background-image: -webkit-linear-gradient(bottom, #f4f4f4 0%, #e4e4e4 100%);
+  padding: 8px 8px;
+
 }
 
 svg g.widgetLabel.lit .descLabel
 {
-	color: #1d456e;
-	font-weight: 600;
-	background-color: #e3effe;
+	color: #f4f4f4;
+	background-color: #F05A24;
+  background-image: -webkit-linear-gradient(bottom, #FF7b4d 0%, #F05A24 100%);
+  border: 0px;
 }
 
 /* Radio groups
@@ -159,17 +176,17 @@ div.widgetRadioGroup table.questionTable tr>td:nth-of-type(2)
 /* tables of callouts
 ================================================== */
 table.widgetCallout {
-  border-collapse: collapse;
-  width: 100%; }
+  border: 2px solid #f4f4f4;
+  width: 90%; }
 
 table.widgetCallout td {
   vertical-align: top;
   padding-top: 5px;
   padding-right: 15px;
-  padding-left: 5px; }
+  padding-left: 15px; }
 
 table.widgetCallout thead>tr td {
-  border-bottom: 1px solid #000000;
+  border-bottom: 2px solid #f4f4f4;
   padding-bottom: 2px;
   font-weight: bold; }
   
@@ -177,11 +194,17 @@ table.widgetCallout thead>tr td {
 table tr.widgetCallout.lit 
 {
 	color:#1d456e;
-	border: 2px solid #bce8f1;
-	background-color: #E3EFFE;
-
+	border-left: 4px solid #F05A24;
+	background-color: #f4f4f4;
+  background-image: -webkit-linear-gradient(left, #f4f4f4 0%, #e4e4e4 100%);
 }
 
+table tr.widgetCallout.lit .stepBadge
+{
+  
+  background-color: #F05A24;
+
+}
 /* used in callout automatic step numbering */
 
 .stepBadge {
@@ -189,18 +212,20 @@ table tr.widgetCallout.lit
     background-color: black;
     border: 2px solid white;
     border-radius: 14px; /* one half of ( (border * 2) + height + padding ) */
-    box-shadow: 1px 1px 1px black;
+    
   /*Got this from stack overflow, it's pretty close */
     color: white;
-    font: 0.9em/1.1em Helvetica, Verdana, Tahoma;
+    font: 0.9em/1.3em Helvetica, Verdana, Tahoma;
     height: 16px; 
     min-width: 16px;
-    padding: 4px 3px 3px 3px;
+    padding: 4px 3px 2px 3px;
   	margin: 4px 11px 3px 0px;
     text-align: center;
 	display: block;
 	float: left;
 }
+
+
 
 
  
@@ -218,7 +243,7 @@ svg g.widgetSketch .shape.hot {
 }
 
 svg g.widgetSketch .shape.lit {
-	fill: #e3effe;
+	fill: #F05A24;
 	stroke: #1d95ae;
 	stroke-width:3;
 	opacity: 0.5;
@@ -236,7 +261,7 @@ svg g.widgetSketch .shape>text {
 .math {
   font: bold italic 1em Times, serif;
   border: 0;
-  font-size: 155%;
+  font-size: 125%;
   padding: 0;
 }
 .math sup {
@@ -347,7 +372,7 @@ table.questionTable td {
   color: #008496; }
 
 
-.descLabel {
+.widget .axis .descLabel {
   border: solid 1px #5bafe4;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -428,25 +453,29 @@ svg g.widgetLegend .legendBox {
 }
 
 svg g .stroke0 {
-  stroke: #2C6CB8; }
+  stroke: #6176ba; }
 
 svg g .stroke1 {
-  stroke: #66A62E; }
+  stroke: #27a9b0; }
 
 svg g .stroke2 {
-  stroke: #E8B12E; }
+  stroke: #d04753; }
 
 svg g .stroke3 {
-  stroke: #6B4FB8; }
+  stroke: #78ad5c; }
 
 svg g .stroke4 {
-  stroke: #D44C17; }
+ stroke: #f05a24; }
 
 svg g .stroke5 {
-  stroke: #E39014; }
+  stroke: #f1b13b; }
 
 svg g .stroke6 {
-  stroke: #666666; }
+  stroke: #667383; }
+
+svg g .stroke7 {
+  stroke: #3c434d; }
+
 
 /* bars, lines and points
 ================================================== */
@@ -460,25 +489,28 @@ svg g.widgetBarChart rect .lit {
 
 
 svg g .fill0 {
-  fill: #2C6CB8; }
+  fill: #6176ba; }
 
 svg g .fill1 {
-  fill: #66A62E; }
+  fill: #27a9b0; }
 
 svg g .fill2 {
-  fill: #E8B12E; }
+  fill: #d04753; }
 
 svg g .fill3 {
-  fill: #6B4FB8; }
+  fill: #78ad5c; }
 
 svg g .fill4 {
-  fill: #D44C17; }
+  fill: #f05a24; }
 
 svg g .fill5 {
-  fill: #E39014; }
+  fill: #f1b13b; }
 
 svg g .fill6 {
-  fill: #666666; }
+  fill: #667383; }
+
+svg g .fill7 {
+  fill: #3c434d; }
 
 svg g .fillWhite {
   fill: #fff;

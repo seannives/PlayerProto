@@ -338,7 +338,6 @@ var cntr = new SVGContainer(cntrConfig);
 				question: dummyQ,
 				questionId: "ThrowTheBall",
 				answerKey: ans,
-				answerValue: [vi, angle.getValue()],
 				responseCallback: handleResponse,
 				velocity: vi,
 				angleDegrees: angleDegrees
@@ -377,8 +376,8 @@ var cntr = new SVGContainer(cntrConfig);
 		var angleDegrees = responseDetails.submitDetails.angleDegrees;
 		var newResponse = responseDetails.response;
 
-		newResponse = newResponse + " with a velocity of " + vi + "m/s and an angle of " + angleDegrees + " degrees.";
-
+		//newResponse = newResponse + " with a velocity of " + vi + "m/s and an angle of " + angleDegrees + " degrees.";
+		responseDetails.submission = "v<sub>i</sub> = " + vi + ", &theta; = " + angleDegrees + "\u00B0";
 		responseDetails.response = newResponse;
 		SubmitManager.appendResponseWithDefaultFormatting(q1Button.lastdrawn.container, responseDetails);
 	}

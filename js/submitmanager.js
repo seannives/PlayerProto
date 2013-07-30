@@ -164,7 +164,7 @@ SubmitManager.prototype.submitForScoring_ = function(submitDetails)
 	// todo: Although we're getting a synchronous response here, we should
 	// enhance this to have the "answerMan" give us an asynchronous
 	// response, probably via an eventManager event. -mjl
-	var submissionResponse = answerMan({sequenceNode: submitDetails.sequenceNodeId},
+	var submissionResponse = answerMan(submitDetails.sequenceNodeId,
 										submitDetails.answer);
 
 	// We handle the reply from the scoring engine (in the event handler eventually)

@@ -308,7 +308,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 		// TODO: logic here is a little flawed, it assumes that the axes is on the 
 		// bottom and left of the graph - lb
 
-		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : (that.axisType == "time" ? new Date(d.x) : d.x)));
+		var xVal = d3.round(that.lastdrawn.xScale(that.type === "y" ? 0 : (that.axisType == "time" ? new Date(d.x): d.x)));
 		var yVal = d3.round(that.type === "y" ? that.lastdrawn.yScale(d.y) : 0);
 
 		return attrFnVal("translate", xVal, yVal);
@@ -388,7 +388,7 @@ MarkerGroup.prototype.redrawWidget_ = function (widget)
 			.html(function(d, i) {
 				// make the label from value, or, if a label is 
 				// specified, use just that
-					return d.y ? ("x: " + d.x + "<br> y: " + d.y) : d.label;
+					return d.y ? ("x: " + (that.axisType == "time" ? d3.time.format("%b %Y")(new Date(d.x)): d.x) + "<br> y: " + d.y) : d.label;
 			}); 
 		
 	// autokey entries which have no key with the data index
