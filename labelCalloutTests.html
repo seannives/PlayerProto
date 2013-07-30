@@ -19,7 +19,7 @@
 				<div id="widgetTarget0"><p>0. Single image with labels</p></div>
 				<div id="newBruce"><p>1. Line Graph with labels and callouts (events)</p></div>
 				<div id="phaseCall"></div>
-				
+				<div id="oceans"><p>1a. Image carousel with alpha labels</p></div>
 			</div>
 			<div class="span6 rightCol">
 				<div id="widgetTarget50n"><p>2. Label positions</p></div>
@@ -46,7 +46,8 @@
     <script src="js/widget-markergroup.js"></script>
     <script src="js/widget-callouts.js"></script>
 	<script src="js/widget-image.js"></script>
-
+	<script src="js/widget-imageviewer.js"></script>
+	<script src="js/widget-carousel.js"></script>
 <script>
 
 	var eventManager = new EventManager();
@@ -310,6 +311,57 @@ for (i = 0; i < dataPts; i++)
 	}, eventManager);
 
 	phases.draw(d3.select("#phaseCall"));
+
+	// <div id="oceans"><p>1a. alpha labels on image carousel</p></div>
+	var svg3D = new SVGContainer({
+		node: d3.select("#oceans"),
+		maxWid: 550,
+		maxHt: 440
+	});
+	
+	var layers = new ImageViewer({
+		items:
+			[
+				new Image({
+				URI: 'img/oceans/oceanTemp0m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				}),
+				new Image({
+				URI: 'img/oceans/oceanTemp500m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				}),
+				new Image({
+				URI: 'img/oceans/oceanTemp1000m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				}),
+				new Image({
+				URI: 'img/oceans/oceanTemp2500m.png',
+				caption: "",
+				actualSize: {height: 530, width: 930}
+				})
+			],
+	}, eventManager);
+
+svg3D.append(layers);
+							
+var Oceanlabels = new LabelGroup(
+		{type: "latin-upper",
+		labels: 	
+		  [	
+			{content: "", xyPos:[0.5, 0.58], width: 0, key: "A"},
+			{content: "", xyPos:[0.78, 0.58], width: 0, key: "B"},
+			{content: "", xyPos:[0.62, 0.44], width: 0, key: "C"},
+			{content: "", xyPos:[0.77, 0.25], width: 0, key: "D"},
+			{content: "", xyPos:[0.33, 0.2], width: 0, key: "E"},
+		  ]
+		});
+		
+	// write the labels onto the graph in the local coordinates, inside the 
+	// data area
+	svg3D.append(Oceanlabels);
 
 	//	<div id="widgetTarget50"><p>Labels in grid</p></div>
 	var cntrConfig50 = {

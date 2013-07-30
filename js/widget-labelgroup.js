@@ -20,6 +20,7 @@
 {
 	var lbl1Config = {
 			id: "lbl1",
+			type: "numbered",
 			labels: 	
 			[	
 				{ content: "Pre-development",	xyPos: [ 0, -.25], width: 100 },
@@ -69,8 +70,9 @@
  * @param {Array.<LabelConfig>}
  *						config.labels	-An array describing each label in the group.
  *										  
- * @param {string}		config.type		-string specifying bullets for dots, numbered
- *										 for dots and #, or anything else for just labels
+ * @param {string}		config.type		-string specifying "bullets" for dots, "numbered"
+ *										 for dots and #, "alpha" for letters, or anything 
+ *										 else for just labels
  * @param {EventManager=}
  * 						eventManager	-The event manager to use for publishing events
  * 										 and subscribing to them.
@@ -103,11 +105,12 @@ function LabelGroup(config, eventManager)
 	 *
 	 * - "bullets" for a solid bullet adornment
 	 * - "numbered" for a bullet containing the index number adornment
+	 * - "latin-upper" for a bullet containing a sequential capital letter
 	 *
 	 * @type {string|undefined}
 	 */
-	this.type = config.type;
-	
+	this.type = config.type || "none";
+
 	/**
 	 * The event manager to use to publish (and subscribe to) events for this widget
 	 * @type {EventManager}
@@ -250,7 +253,7 @@ LabelGroup.prototype.draw = function(container, size)
 
 	// bullets type just puts big black circle markers on key areas of a diagram
 	// a precursor to hotspot answertypes
-	if (this.type == "bullets" || this.type == "numbered")
+	if (this.type != "none")
 	{
 		labelCollection.append("circle")
 			.attr("class", "numSteps")
@@ -262,14 +265,24 @@ LabelGroup.prototype.draw = function(container, size)
 	// bug in Chrome when highlighting circles or anything that overlaps the 
 	// foreign object. Recommend using either numbers or text labels. -lb
 	
-	if (this.type == "numbered")
+	if (this.type !== "none")
+	{
+		var choiceIndex = this.getChoiceNumberToDisplayFn_();
+
+		labelCollection.append("text")
+			.attr("text-anchor", "middle")
+			.attr("alignment-baseline", "middle")
+			.text(function (d, i) {return choiceIndex(i);});
+	}
+
+	/* if (this.type == "numbered")
 	{
 		labelCollection.append("text")
 			.attr("text-anchor", "middle")
 			.attr("alignment-baseline", "middle")
 			.text(function (d, i) { return i + 1; });
 	}
-	
+	*/
 	labelCollection.on('click',
 				function (d, i)
 				{
@@ -393,3 +406,40 @@ LabelGroup.prototype.setOpacity = function (opacity, duration, delay)
 
 
 };
+
+/* **************************************************************************
+ * LabelGroup.getChoiceNumberToDisplayFn_                              */ /**
+ *
+ * Get a function which returns the string that should be prefixed to the
+ * choice at a given index
+ *
+ * @private
+ *
+ ****************************************************************************/
+LabelGroup.prototype.getChoiceNumberToDisplayFn_ = function ()
+{
+	var formatIndexUsing =
+	{
+		"none": function (i)
+				{
+					return "";
+				},
+		"latin-upper": function (i)
+				{
+					return String.fromCharCode("A".charCodeAt(0) + i);
+				},
+		"latin-lower": function (i)
+				{
+					return String.fromCharCode("a".charCodeAt(0) + i);
+				},
+		"numbered": function (i)
+				{
+					return (i+1).toString();
+				},
+	};
+
+	return (this.type in formatIndexUsing) ? formatIndexUsing[this.type]
+												   : formatIndexUsing["none"];
+};
+
+
