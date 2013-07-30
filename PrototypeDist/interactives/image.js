@@ -1,4 +1,5 @@
-define(['jquery','d3'], function ($,d3) {
+// TODO: not sure why the baseURL isn't working
+define(['jquery','d3','/PlayerProto/PrototypeDist/interactives/base/util.js'], function ($, d3, util) {
     'use strict';
 
 		/* **************************************************************************
@@ -77,9 +78,9 @@ define(['jquery','d3'], function ($,d3) {
 			 * A unique id for this instance of the image widget
 			 * @type {string}
 			 */
-			//TODO - extend from base to get this guy
-			//this.id = getIdFromConfigOrAuto(config, Image);
-			this.id = config.id;
+			// Require base/util
+			// TODO: Not sure this is actually working ... 'Image' maybe should throw an error?
+			this.id = util.getIdFromConfigOrAuto(config, Image);
 
 			/**
 			 * The URI where the image resource is located.

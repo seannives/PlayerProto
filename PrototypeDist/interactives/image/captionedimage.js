@@ -1,4 +1,8 @@
-define(['jquery','d3'], function ($,d3) {
+define(['jquery',
+		'd3',
+		'/PlayerProto/PrototypeDist/interactives/base/util.js',
+		'/PlayerProto/PrototypeDist/interactives/image.js'], 
+		function ($, d3, util, image) {
     'use strict';
 
     return {
@@ -26,10 +30,10 @@ define(['jquery','d3'], function ($,d3) {
 			 * A unique id for this instance of the captioned image widget
 			 * @type {string}
 			 */
-			//TODO - extend from base, or image, to get this
-			//this.id = getIdFromConfigOrAuto(config, CaptionedImage);
-			this.id = config.id || "momma";
-
+			// NOTE: this was changed from
+			// this.id = getIdFromConfigOrAuto(config, CaptionedImage);
+			this.id = util.getIdFromConfigOrAuto(config, this);
+			
 			/**
 			 * The Image which is to be drawn with a caption.
 			 * @type {Image}

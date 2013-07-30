@@ -95,12 +95,13 @@ define(function (require) {
 		var img = imageMold(bric.image, eventManager);
 		// todo - figure out how to chain these; Object.create(xImage).init(imgConfig)
 
+
 		var capImg = Object.create(xCaptionedImage);
 		capImg.init({
 				id: bric.id,
 				image: img,
 				captionPosition: bric.captionPosition
-			});
+			});	
 		return capImg;
 	}
 
